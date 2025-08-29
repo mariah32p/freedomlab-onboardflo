@@ -50,7 +50,7 @@ export default function Header() {
                 Pricing
               </Link>
               {showUserMenu && (
-                <Link to="/dashboard?tab=settings" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
+                <Link to="/settings" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
                   Settings
                 </Link>
               )}
@@ -102,7 +102,7 @@ export default function Header() {
                 Pricing
               </Link>
               {showUserMenu && (
-                <Link to="/dashboard?tab=settings" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
+                <Link to="/settings" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
                   Settings
                 </Link>
               )}
