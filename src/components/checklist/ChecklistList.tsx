@@ -1,0 +1,174 @@
+import React, { useState } from 'react';
+import { Plus, Edit, Trash2, Eye, Lock, Users, BarChart3, ExternalLink } from 'lucide-react';
+import { useChecklists } from '../../hooks/useChecklists';
+import { useSubscription } from '../../hooks/useSubscription';
+import { Checklist } from '../../types/checklist';
+
+interface ChecklistListProps {
+  onEditChecklist: (checklist: Checklist) => void;
+  onCreateNew: () => void;
+}
+
+export default function ChecklistList({ onEditChecklist, onCreateNew }: ChecklistListProps) {
+  const { checklists, loading, error, deleteChecklist } = useChecklists();
+  const { getAccessStatus } = useSubscription();
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const accessStatus = getAccessStatus();
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this checklist? This action cannot be undone.')) {
+      return;
+    }
+
+    setDeletingId(id);
+    const success = await deleteChecklist(id);
+    if (!success) {
+      // Error is handled by the hook
+    }
+    setDeletingId(null);
+  };
+
+  const getPublicUrl = (checklistId: string) => {
+    return `${window.location.origin}/c/${checklistId}`;
+  };
+
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      // You could add a toast notification here
+    } catch (err) {
+      console.error('Failed to copy to clipboard:', err);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+        <p className="text-red-600 text-sm font-sans">{error}</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900 font-sans">Onboarding Checklists</h2>
+          <p className="text-gray-600 font-sans">Create and manage your customer onboarding flows</p>
+        </div>
+        <button
+          onClick={onCreateNew}
+          className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center font-sans"
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          New Checklist
+        </button>
+      </div>
+
+      {/* Checklists Grid */}
+      {checklists.length === 0 ? (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
+          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Plus className="w-8 h-8 text-gray-400" />
+          </div>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2 font-sans">No checklists yet</h3>
+          <p className="text-gray-600 mb-6 font-sans">
+            Create your first onboarding checklist to get started
+          </p>
+          <button
+            onClick={onCreateNew}
+            className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-lg font-medium transition-colors font-sans"
+          >
+            Create Your First Checklist
+          </button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {checklists.map((checklist) => (
+            <div key={checklist.id} className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+              {/* Header with brand color */}
+              <div 
+                className="h-2 rounded-t-xl"
+                style={{ backgroundColor: checklist.brand_color }}
+              ></div>
+              
+              <div className="p-6">
+                {/* Title and description */}
+                <div className="mb-4">
+                  <div className="flex items-start justify-between mb-2">
+                    <h3 className="text-lg font-semibold text-gray-900 font-sans line-clamp-2">
+                      {checklist.title}
+                    </h3>
+                    <div className="flex items-center ml-2">
+                      {checklist.is_public ? (
+                        <Eye className="w-4 h-4 text-emerald-500" />
+                      ) : (
+                        <Lock className="w-4 h-4 text-gray-400" />
+                      )}
+                    </div>
+                  </div>
+                  <p className="text-gray-600 text-sm font-sans line-clamp-3">
+                    {checklist.description}
+                  </p>
+                </div>
+
+                {/* Stats */}
+                <div className="grid grid-cols-2 gap-4 mb-4 p-3 bg-gray-50 rounded-lg">
+                  <div className="text-center">
+                    <div className="text-lg font-bold text-gray-900 font-sans">0</div>
+                    <div className="text-xs text-gray-600 font-sans">Customers</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-lg font-bold text-gray-900 font-sans">0%</div>
+                    <div className="text-xs text-gray-600 font-sans">Completion</div>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() => onEditChecklist(checklist)}
+                      className="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
+                      title="Edit checklist"
+                    >
+                      <Edit className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => copyToClipboard(getPublicUrl(checklist.id))}
+                      className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      title="Copy public link"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(checklist.id)}
+                      disabled={deletingId === checklist.id}
+                      className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+                      title="Delete checklist"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                  
+                  <div className="text-xs text-gray-500 font-sans">
+                    {new Date(checklist.created_at).toLocaleDateString()}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

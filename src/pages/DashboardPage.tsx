@@ -3,6 +3,10 @@ import { useAuth } from '../contexts/AuthContext';
 import { useSubscription } from '../hooks/useSubscription';
 import PaymentBanner from '../components/PaymentBanner';
 import TrialBanner from '../components/TrialBanner';
+import ChecklistList from '../components/checklist/ChecklistList';
+import ChecklistBuilder from '../components/checklist/ChecklistBuilder';
+import { useChecklists } from '../hooks/useChecklists';
+import { Checklist, CreateChecklistData } from '../types/checklist';
 import { 
   BarChart3, 
   Users, 
@@ -100,45 +104,6 @@ const DashboardOverview = () => (
   </div>
 );
 
-const ChecklistsSection = () => (
-  <div className="space-y-6">
-    <div className="flex items-center justify-between">
-      <h2 className="text-2xl font-bold text-gray-900 font-sans">Onboarding Checklists</h2>
-      <button className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center font-sans">
-        <Plus className="w-4 h-4 mr-2" />
-        New Checklist
-      </button>
-    </div>
-
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-      <div className="p-6">
-        <div className="space-y-4">
-          {[
-            { name: 'SaaS Setup Checklist', customers: 45, completion: 89, status: 'active' },
-            { name: 'Enterprise Onboarding', customers: 12, completion: 76, status: 'active' },
-            { name: 'Quick Start Guide', customers: 89, completion: 94, status: 'active' }
-          ].map((flow, index) => (
-            <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-              <div>
-                <h3 className="font-medium text-gray-900 font-sans">{flow.name}</h3>
-                <p className="text-sm text-gray-600 font-sans">{flow.customers} customers • {flow.completion}% completion</p>
-              </div>
-              <div className="flex items-center space-x-2">
-                <span className="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-medium font-sans">
-                  {flow.status}
-                </span>
-                <button className="p-2 text-gray-400 hover:text-gray-600">
-                  <Settings className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
 const SubmissionsSection = () => (
   <div className="space-y-6">
     <div className="flex items-center justify-between">
@@ -194,12 +159,45 @@ const SubmissionsSection = () => (
 export default function DashboardPage() {
   const { user } = useAuth();
   const { subscription, getAccessStatus } = useSubscription();
+  const { createChecklist, updateChecklist } = useChecklists();
   const urlParams = new URLSearchParams(window.location.search);
   const tabFromUrl = urlParams.get('tab');
   const [activeTab, setActiveTab] = useState(tabFromUrl || 'dashboard');
   const isSuccess = urlParams.get('success') === 'true';
   const accessStatus = getAccessStatus();
+  
+  // Checklist builder state
+  const [showChecklistBuilder, setShowChecklistBuilder] = useState(false);
+  const [editingChecklist, setEditingChecklist] = useState<Checklist | null>(null);
 
+  const handleCreateChecklist = () => {
+    setEditingChecklist(null);
+    setShowChecklistBuilder(true);
+  };
+
+  const handleEditChecklist = (checklist: Checklist) => {
+    setEditingChecklist(checklist);
+    setShowChecklistBuilder(true);
+  };
+
+  const handleSaveChecklist = async (data: CreateChecklistData) => {
+    try {
+      if (editingChecklist) {
+        await updateChecklist(editingChecklist.id, data);
+      } else {
+        await createChecklist(data);
+      }
+      setShowChecklistBuilder(false);
+      setEditingChecklist(null);
+    } catch (err) {
+      console.error('Error saving checklist:', err);
+    }
+  };
+
+  const handleCloseBuilder = () => {
+    setShowChecklistBuilder(false);
+    setEditingChecklist(null);
+  };
   const tabs = [
     { id: 'dashboard', name: 'Dashboard', icon: Home },
     { id: 'checklists', name: 'Checklists', icon: CheckCircle },
@@ -211,7 +209,12 @@ export default function DashboardPage() {
       case 'dashboard':
         return <DashboardOverview />;
       case 'checklists':
-        return <ChecklistsSection />;
+        return (
+          <ChecklistList 
+            onEditChecklist={handleEditChecklist}
+            onCreateNew={handleCreateChecklist}
+          />
+        );
       case 'submissions':
         return <SubmissionsSection />;
       default:
@@ -283,6 +286,16 @@ export default function DashboardPage() {
 
         {/* Content */}
         {renderContent()}
+        
+        {/* Checklist Builder Modal */}
+        {showChecklistBuilder && (
+          <ChecklistBuilder
+            checklist={editingChecklist}
+            onSave={handleSaveChecklist}
+            onClose={handleCloseBuilder}
+            isCreating={!editingChecklist}
+          />
+        )}
       </div>
     </div>
   );
