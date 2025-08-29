@@ -8,7 +8,6 @@ export default function ResetPasswordPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const { updatePassword, session, loading: authLoading } = useAuth();
   const navigate = useNavigate();
@@ -19,10 +18,10 @@ export default function ResetPasswordPage() {
 
   // Check if user has a valid session (came from email link)
   useEffect(() => {
-    if (!authLoading && !session) {
+    if (!authLoading && !session && !showConfirmation && !loading) {
       navigate('/signin');
     }
-  }, [authLoading, session, navigate]);
+  }, [authLoading, session, showConfirmation, loading, navigate]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -62,11 +61,7 @@ export default function ResetPasswordPage() {
   };
 
   const handleContinueToSignIn = () => {
-    setSuccess(true);
-    // Redirect to sign in after showing success message
-    setTimeout(() => {
-      navigate('/signin');
-    }, 2000);
+    navigate('/signin');
   };
 
   if (showConfirmation) {
@@ -104,43 +99,12 @@ export default function ResetPasswordPage() {
     );
   }
 
-  if (success) {
+  if (authLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full space-y-8">
-          <div className="text-center">
-            <Link to="/" className="inline-flex items-center mb-8">
-              <div className="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
-                <Workflow className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xl font-bold text-gray-900 font-sans whitespace-nowrap">OnboardFlo</span>
-            </Link>
-            
-            <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <CheckCircle className="w-8 h-8 text-emerald-600" />
-            </div>
-            
-            <h2 className="text-3xl font-bold text-gray-900 mb-4 font-sans">
-              Password updated!
-            </h2>
-            <p className="text-gray-600 mb-8 font-sans">
-              Your password has been successfully updated. You'll be redirected to the sign in page in a few seconds.
-            </p>
-            
-            <Link 
-              to="/signin"
-              className="w-full flex justify-center py-3 px-4 border border-transparent text-lg font-medium rounded-lg text-white bg-emerald-600 hover:bg-emerald-700 transition-colors font-sans"
-            >
-              Sign In Now
-            </Link>
-          </div>
-        </div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-gray-600 font-sans">Loading...</div>
       </div>
     );
-  }
-
-  if (authLoading) {
-    return null;
   }
 
   if (!session) {

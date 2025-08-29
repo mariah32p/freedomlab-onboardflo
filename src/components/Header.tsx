@@ -9,6 +9,8 @@ export default function Header() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const showUserMenu = user && location.pathname !== '/reset-password';
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -19,7 +21,7 @@ export default function Header() {
   };
 
   const handleLogoClick = () => {
-    if (user) {
+    if (showUserMenu) {
       navigate('/dashboard');
     } else {
       navigate('/');
@@ -49,10 +51,10 @@ export default function Header() {
               </Link>
             </nav>
             <div className="flex items-center space-x-4">
-              {user ? (
+              {showUserMenu ? (
                 <>
                   <span className="text-gray-600 font-medium font-sans">
-                    {user.email}
+                    {user?.email}
                   </span>
                   <button
                     onClick={handleSignOut}
@@ -95,10 +97,10 @@ export default function Header() {
                 Pricing
               </Link>
               <div className="pt-4 border-t border-gray-100 flex flex-col space-y-2">
-                {user ? (
+                {showUserMenu ? (
                   <>
                     <span className="text-gray-600 font-medium font-sans">
-                      {user.email}
+                      {user?.email}
                     </span>
                     <button
                       onClick={handleSignOut}
