@@ -152,27 +152,6 @@ export default function SignUpPage() {
             </div>
           </div>
 
-          {/* Terms */}
-          <div className="flex items-start">
-            <input
-              id="terms"
-              name="terms"
-              type="checkbox"
-              required
-              className="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded mt-1"
-            />
-            <label htmlFor="terms" className="ml-2 block text-sm text-gray-700 font-sans">
-              I agree to the{' '}
-              <a href="#" className="text-emerald-600 hover:text-emerald-500 font-medium">
-                Terms of Service
-              </a>{' '}
-              and{' '}
-              <a href="#" className="text-emerald-600 hover:text-emerald-500 font-medium">
-                Privacy Policy
-              </a>
-            </label>
-          </div>
-
           <div>
             <button
               type="submit"
