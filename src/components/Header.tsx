@@ -1,12 +1,18 @@
 import React from 'react';
 import { Menu, X, Workflow } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const { user, signOut } = useAuth();
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
   };
 
   return (
@@ -31,12 +37,28 @@ export default function Header() {
               </Link>
             </nav>
             <div className="flex items-center space-x-4">
-              <Link to="/signin" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
-                Sign In
-              </Link>
-              <Link to="/get-started" className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium transition-colors font-sans">
-                Get Started
-              </Link>
+              {user ? (
+                <>
+                  <span className="text-gray-600 font-medium font-sans">
+                    {user.user_metadata?.first_name || user.email}
+                  </span>
+                  <button
+                    onClick={handleSignOut}
+                    className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans"
+                  >
+                    Sign Out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link to="/signin" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
+                    Sign In
+                  </Link>
+                  <Link to="/get-started" className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium transition-colors font-sans">
+                    Get Started
+                  </Link>
+                </>
+              )}
             </div>
           </div>
 
@@ -61,12 +83,28 @@ export default function Header() {
                 Pricing
               </Link>
               <div className="pt-4 border-t border-gray-100 flex flex-col space-y-2">
-                <Link to="/signin" className="text-gray-600 hover:text-gray-900 transition-colors text-left font-medium font-sans">
-                  Sign In
-                </Link>
-                <Link to="/get-started" className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-lg font-medium transition-colors text-left font-sans">
-                  Get Started
-                </Link>
+                {user ? (
+                  <>
+                    <span className="text-gray-600 font-medium font-sans">
+                      {user.user_metadata?.first_name || user.email}
+                    </span>
+                    <button
+                      onClick={handleSignOut}
+                      className="text-gray-600 hover:text-gray-900 transition-colors text-left font-medium font-sans"
+                    >
+                      Sign Out
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link to="/signin" className="text-gray-600 hover:text-gray-900 transition-colors text-left font-medium font-sans">
+                      Sign In
+                    </Link>
+                    <Link to="/get-started" className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-lg font-medium transition-colors text-left font-sans">
+                      Get Started
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
           </div>

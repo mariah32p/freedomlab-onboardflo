@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Workflow, Eye, EyeOff, Mail, Lock, User, Building } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function GetStartedPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const { signUp } = useAuth();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -13,10 +18,29 @@ export default function GetStartedPage() {
     confirmPassword: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement sign up logic
-    console.log('Sign up:', formData);
+    setLoading(true);
+    setError('');
+
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
+      setLoading(false);
+      return;
+    }
+
+    const { error: authError } = await signUp(formData.email, formData.password, {
+      first_name: formData.firstName,
+      last_name: formData.lastName,
+      company: formData.company,
+    });
+    
+    if (authError) {
+      setError(authError.message);
+      setLoading(false);
+    } else {
+      navigate('/dashboard');
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,6 +71,12 @@ export default function GetStartedPage() {
 
         {/* Form */}
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <p className="text-red-600 text-sm font-sans">{error}</p>
+            </div>
+          )}
+          
           <div className="space-y-4">
             {/* Name fields */}
             <div className="grid grid-cols-2 gap-4">
@@ -215,9 +245,10 @@ export default function GetStartedPage() {
           <div>
             <button
               type="submit"
+              disabled={loading}
               className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-lg font-medium rounded-lg text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors font-sans"
             >
-              Start 7-Day Free Trial
+              {loading ? 'Creating account...' : 'Start 7-Day Free Trial'}
             </button>
           </div>
 
