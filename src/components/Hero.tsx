@@ -64,88 +64,98 @@ export default function Hero() {
               <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-200">
                 <div className="flex items-center">
                   <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center mr-3">
-                    <Users className="w-4 h-4 text-white" />
+                    <CheckCircle className="w-4 h-4 text-white" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 font-sans">Customer Onboarding</h3>
-                    <p className="text-sm text-gray-500 font-sans">Main Dashboard • 12 active flows</p>
+                    <h3 className="font-semibold text-gray-900 font-sans">Client Project Setup</h3>
+                    <p className="text-sm text-gray-500 font-sans">New Client Checklist • TechCorp Website</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
                   <div className="flex items-center px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium font-sans">
                     <div className="w-2 h-2 bg-green-500 rounded-full mr-1"></div>
-                    LIVE
+                    IN PROGRESS
                   </div>
                   <button className="bg-emerald-500 text-white px-3 py-1 rounded-lg text-sm font-medium hover:bg-emerald-600 transition-colors font-sans">
-                    + New Flow
+                    Send Reminder
                   </button>
                 </div>
               </div>
               
-              {/* Active Flow Card */}
+              {/* Client Info Card */}
               <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 mb-4 border border-blue-100">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center">
-                    <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                    <span className="text-sm font-medium text-green-700 font-sans">RUNNING</span>
+                    <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                    <span className="text-sm font-medium text-blue-700 font-sans">CLIENT INFO</span>
                   </div>
                   <div className="text-right">
-                    <div className="text-sm text-gray-500 font-sans">2:34 PM</div>
+                    <div className="text-sm text-gray-500 font-sans">Started Jan 15</div>
                   </div>
                 </div>
                 
-                <h4 className="text-lg font-semibold text-gray-900 mb-2 font-sans">Enterprise Setup Flow</h4>
+                <h4 className="text-lg font-semibold text-gray-900 mb-2 font-sans">TechCorp Website Redesign</h4>
                 <div className="flex items-center text-sm text-gray-600 mb-3 font-sans">
                   <Users className="w-4 h-4 mr-1" />
                   <span>Sarah Chen</span>
                   <span className="mx-2">•</span>
-                  <span>TechCorp Inc.</span>
+                  <span>sarah@techcorp.com</span>
                 </div>
                 
                 {/* Progress bar */}
                 <div className="mb-3">
                   <div className="flex justify-between text-sm mb-1 font-sans">
-                    <span className="text-gray-600">Progress</span>
-                    <span className="font-medium text-emerald-600">60% complete</span>
+                    <span className="text-gray-600">Checklist Progress</span>
+                    <span className="font-medium text-emerald-600">7 of 12 completed</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-emerald-500 h-2 rounded-full" style={{ width: '60%' }}></div>
+                    <div className="bg-emerald-500 h-2 rounded-full" style={{ width: '58%' }}></div>
                   </div>
                 </div>
                 
-                <div className="bg-slate-800 rounded-lg p-3 text-white">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs text-emerald-400 font-medium font-sans">#onboard-team</span>
-                    <span className="text-xs text-gray-400 font-sans">StageCue Bot</span>
+                {/* Checklist Items */}
+                <div className="space-y-2">
+                  <div className="flex items-center text-sm">
+                    <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
+                    <span className="text-gray-700 font-sans">Brand guidelines & logo files</span>
                   </div>
-                  <p className="text-sm font-sans">✅ API Integration - 5 minutes remaining</p>
-                  <p className="text-xs text-gray-400 mt-1 font-sans">📋 Next: Security Review (3 team members)</p>
-                  <p className="text-xs text-gray-400 font-sans">👤 Sarah Chen finishing soon</p>
+                  <div className="flex items-center text-sm">
+                    <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
+                    <span className="text-gray-700 font-sans">Content & copy provided</span>
+                  </div>
+                  <div className="flex items-center text-sm">
+                    <div className="w-4 h-4 border-2 border-gray-300 rounded-full mr-2"></div>
+                    <span className="text-gray-500 font-sans">High-res product images</span>
+                  </div>
+                  <div className="flex items-center text-sm">
+                    <div className="w-4 h-4 border-2 border-gray-300 rounded-full mr-2"></div>
+                    <span className="text-gray-500 font-sans">Domain & hosting details</span>
+                  </div>
                 </div>
               </div>
               
-              {/* Next Up */}
+              {/* Next Steps */}
               <div className="border border-gray-200 rounded-xl p-4">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center">
-                    <div className="w-2 h-2 bg-purple-500 rounded-full mr-2"></div>
-                    <span className="text-sm font-medium text-purple-700 font-sans">NEXT UP</span>
+                    <div className="w-2 h-2 bg-orange-500 rounded-full mr-2"></div>
+                    <span className="text-sm font-medium text-orange-700 font-sans">PENDING</span>
                   </div>
                   <div className="text-right">
-                    <div className="text-2xl font-bold text-purple-600 font-sans">15:00</div>
-                    <div className="text-xs text-gray-500 font-sans">Starts after current</div>
+                    <div className="text-sm font-bold text-orange-600 font-sans">5 items</div>
+                    <div className="text-xs text-gray-500 font-sans">Awaiting client</div>
                   </div>
                 </div>
                 
-                <h4 className="font-semibold text-gray-900 mb-1 font-sans">Product Demo Session</h4>
-                <p className="text-sm text-gray-600 mb-3 font-sans">Marketing Team • Bay Area</p>
+                <h4 className="font-semibold text-gray-900 mb-1 font-sans">Wireframe Approval</h4>
+                <p className="text-sm text-gray-600 mb-3 font-sans">Review & approve initial layouts</p>
                 
                 <div className="flex justify-between items-center">
                   <button className="text-sm text-gray-600 hover:text-gray-800 transition-colors font-sans">
-                    Edit
+                    View Details
                   </button>
-                  <button className="bg-purple-500 text-white px-3 py-1 rounded-lg text-sm font-medium hover:bg-purple-600 transition-colors font-sans">
-                    Start Now
+                  <button className="bg-orange-500 text-white px-3 py-1 rounded-lg text-sm font-medium hover:bg-orange-600 transition-colors font-sans">
+                    Send Reminder
                   </button>
                 </div>
               </div>
