@@ -4,7 +4,7 @@ Landing page: Every button is a single CTA (“Start Free Trial”). All of them
 Sign-up: Create the user in Supabase Auth (email confirmation is turned off), then send them to /get-started.
 Get Started: User chooses Basic or Pro. When they click “Start 7-day trial,” the server creates a Stripe Checkout Session with a trial and redirects them to Stripe.
 Return: After Checkout, Stripe sends the user back to /dashboard. Your webhook marks the subscription as “trialing” and stores the trial end date.
-Dashboard: Shows the product’s real sections (e.g., Dashboard, My Events) plus Settings. A small banner shows trial days left and charge date. All features work during the trial.
+Dashboard: Shows the product’s real sections (e.g., Dashboard, Checklists, Submissions, Settings) plus Settings. A small banner shows trial days left and charge date. All features work during the trial.
 Auto-upgrade: At the end of the trial, Stripe automatically charges the card and the subscription becomes “active.”
 
 2) App structure
