@@ -38,7 +38,7 @@ export default function SignInPage() {
             </div>
             <span className="text-2xl font-bold text-gray-900 font-sans whitespace-nowrap">OnboardFlo</span>
           </Link>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2 font-sans">
+          <h2 className="text-3xl font-bold text-gray-900 mb-2 font-sans mt-8">
             Welcome back
           </h2>
           <p className="text-gray-600 font-sans">
