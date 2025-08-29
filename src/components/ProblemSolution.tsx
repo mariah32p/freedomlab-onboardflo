@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, ArrowRight, CheckCircle } from 'lucide-react';
+import { X, CheckCircle } from 'lucide-react';
 
 export default function ProblemSolution() {
   return (
@@ -67,14 +67,6 @@ export default function ProblemSolution() {
               ))}
             </div>
           </div>
-        </div>
-        
-        {/* CTA */}
-        <div className="text-center mt-12">
-          <button className="group bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 flex items-center mx-auto shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-            See OnboardFlo in Action
-            <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-          </button>
         </div>
       </div>
     </section>
