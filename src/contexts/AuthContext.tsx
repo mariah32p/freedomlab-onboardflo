@@ -117,7 +117,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { error };
   };
 
-  const resetPassword = async (password: string) => {
+  const updatePassword = async (password: string) => {
     if (!APP_CONFIG.ENABLE_REAL_AUTH) {
       // Mock mode - simulate password update
       return { error: null };
