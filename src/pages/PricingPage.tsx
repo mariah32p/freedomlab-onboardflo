@@ -16,7 +16,6 @@ const plans = [
       'Simple branding (logo + 1 color)',
       'Progress tracking dashboard',
       'Email completion notifications',
-      '7-day free trial'
     ]
   },
   {
@@ -32,8 +31,7 @@ const plans = [
       'Unlimited customer tracking',
       'Password protection for checklists',
       'Custom completion pages',
-      'Redirect to your website when done',
-      'Priority support'
+      'Custom completion pages'
     ]
   }
 ];
