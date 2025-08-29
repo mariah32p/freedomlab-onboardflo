@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Check, Zap, Building } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useSubscription } from '../hooks/useSubscription';
 import { useStripe } from '../hooks/useStripe';
 import { stripeProducts } from '../stripe-config';
 
 export default function GetStartedPage() {
   const { user } = useAuth();
+  const { subscription, getAccessStatus } = useSubscription();
   const { createCheckoutSession, loading, error } = useStripe();
   const navigate = useNavigate();
 
@@ -14,8 +16,15 @@ export default function GetStartedPage() {
   React.useEffect(() => {
     if (!user) {
       navigate('/signup');
+      return;
     }
-  }, [user, navigate]);
+
+    // If user already has active subscription, redirect to dashboard
+    const accessStatus = getAccessStatus();
+    if (accessStatus.hasAccess && !accessStatus.shouldRedirectToGetStarted) {
+      navigate('/dashboard');
+    }
+  }, [user, subscription, navigate, getAccessStatus]);
 
   const handleSelectPlan = async (priceId: string) => {
     if (!user) {
@@ -39,6 +48,11 @@ export default function GetStartedPage() {
     return null; // Will redirect to signup
   }
 
+  // If user has active subscription, will redirect to dashboard
+  const accessStatus = getAccessStatus();
+  if (accessStatus.hasAccess && !accessStatus.shouldRedirectToGetStarted) {
+    return null; // Will redirect to dashboard
+  }
   return (
     <div className="pt-20 pb-16 bg-gray-50 min-h-screen">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
+import RouteGuard from './components/RouteGuard';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import ProblemSolution from './components/ProblemSolution';
@@ -30,6 +31,7 @@ function App() {
   return (
     <AuthProvider>
       <Router>
+        <RouteGuard>
         <div className="min-h-screen">
           <Header />
           <main>
@@ -45,6 +47,7 @@ function App() {
             </Routes>
           </main>
         </div>
+        </RouteGuard>
       </Router>
     </AuthProvider>
   );
