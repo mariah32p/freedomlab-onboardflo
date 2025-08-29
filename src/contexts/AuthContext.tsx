@@ -129,6 +129,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Real mode - use Supabase
     const { error } = await supabase.auth.signOut();
+    
+    // Handle case where session doesn't exist on server
+    if (error && error.message === 'Session from session_id claim in JWT does not exist') {
+      // Clear local state since session is already invalid
+      setUser(null);
+      setSession(null);
+      return { error: null };
+    }
+    
     return { error };
   };
 
