@@ -25,7 +25,8 @@ export default function CTA() {
           </button>
           <Link 
             to="/pricing" 
-            className="group bg-transparent hover:bg-white/10 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 flex items-center justify-center border-2 border-white/30 hover:border-white/50 font-sans"
+            className="group bg-emerald-500/20 hover:bg-emerald-500/30 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 flex items-center justify-center border border-emerald-400/30 hover:border-emerald-400/50 font-sans"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           >
             View Pricing
             <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />

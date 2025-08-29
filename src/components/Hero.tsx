@@ -39,6 +39,7 @@ export default function Hero() {
               <Link 
                 to="/pricing" 
                 className="group bg-white/10 hover:bg-white/20 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 flex items-center justify-center border border-white/20 hover:border-white/30 backdrop-blur-sm font-sans"
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
               >
                 View Pricing
               </Link>
