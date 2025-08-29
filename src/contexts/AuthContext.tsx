@@ -102,6 +102,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signOut = async () => {
+    // Check if we have a valid session locally first
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (!session) {
+      // No session exists, just clear local state
+      setUser(null);
+      setSession(null);
+      return { error: null };
+    }
+    
     const { error } = await supabase.auth.signOut();
     
     // Handle case where session doesn't exist on server
