@@ -47,7 +47,7 @@ export default function Pricing() {
                 
                 <div className="text-center mb-6">
                   <div className="inline-flex items-center justify-center w-12 h-12 bg-gray-100 rounded-lg mb-4">
-                    <Icon className={\`w-6 h-6 ${plan.popular ? 'text-emerald-600' : 'text-gray-600'}`} />
+                    <Icon className={`w-6 h-6 ${plan.popular ? 'text-emerald-600' : 'text-gray-600'}`} />
                   </div>
                   <h3 className="text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
                   <p className="text-gray-600 mb-4">{plan.description}</p>
