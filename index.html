@@ -70,12 +70,12 @@
             </p>
             
             <div class="flex flex-col sm:flex-row gap-4 mb-8">
-              <button onclick="showSignupModal()" class="group bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-sans">
-                Start Free Trial
-                <svg class="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+              <a href="/signup" class="group bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-sans">
+                <svg class="mr-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                 </svg>
-              </button>
+                Start 7-Day Free Trial
+              </a>
               <a href="#pricing" class="group bg-white hover:bg-gray-50 text-gray-700 px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 flex items-center justify-center border border-gray-300 hover:border-gray-400 shadow-sm hover:shadow-md font-sans">
                 See Pricing
                 <svg class="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -650,10 +650,6 @@
                 <span class="text-gray-700 font-sans">Email completion notifications</span>
               </li>
             </ul>
-            
-            <button onclick="showSignupModal()" class="w-full py-4 rounded-lg font-semibold text-lg transition-all duration-200 bg-gray-900 hover:bg-gray-800 text-white font-sans">
-              Start Free Trial
-            </button>
           </div>
 
           <div class="relative bg-white rounded-2xl p-8 border-2 border-emerald-500 ring-4 ring-emerald-500/20 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
@@ -707,10 +703,17 @@
                 <span class="text-gray-700 font-sans">Custom completion pages</span>
               </li>
             </ul>
-            
-            <button onclick="showSignupModal()" class="w-full py-4 rounded-lg font-semibold text-lg transition-all duration-200 bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg hover:shadow-xl font-sans">
-              Start Free Trial
-            </button>
+          </div>
+        </div>
+        
+        <!-- Single CTA under pricing -->
+        <div class="text-center mt-12">
+          <div class="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 max-w-md mx-auto">
+            <h3 class="text-2xl font-bold text-gray-900 mb-4">Ready to get started?</h3>
+            <p class="text-gray-600 mb-6">Start your 7-day free trial and choose your plan during signup.</p>
+            <a href="/signup" class="w-full inline-block bg-emerald-500 hover:bg-emerald-600 text-white py-4 px-8 rounded-lg font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+              Start 7-Day Free Trial
+            </a>
           </div>
         </div>
         
@@ -734,12 +737,12 @@
         <p class="text-xl text-blue-100 mb-12 font-sans">Start your 7-day free trial and see the difference organized onboarding makes.</p>
         
         <div class="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-          <button onclick="showSignupModal()" class="group bg-white hover:bg-gray-50 text-emerald-600 px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-sans">
+          <a href="/signup" class="group bg-white hover:bg-gray-50 text-emerald-600 px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-sans">
             <svg class="mr-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
             </svg>
             Start 7-Day Free Trial
-          </button>
+          </a>
           <a href="#pricing" class="group bg-emerald-500/20 hover:bg-emerald-500/30 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 flex items-center justify-center border border-emerald-400/30 hover:border-emerald-400/50 font-sans">
             View Pricing
             <svg class="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
