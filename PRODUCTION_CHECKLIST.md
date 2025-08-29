@@ -24,30 +24,21 @@ If active and Basic → same UI, but Basic-gated actions remain disabled.
 
 If past_due or other payment issues → show a “Payment issue” banner and allow a 30-day grace window; after 30 days, treat as no active subscription.
 If no active subscription (canceled, >30-day payment issue, or sign-up abandoned before payment) → route to /get-started.
-Settings → Manage Subscription: Opens Stripe Customer Portal for cancel and payment method updates only. Do not use the portal for plan switching.
-Upgrade/Downgrade (plan changes): Handled manually in-app. When the user changes plans, the server starts a new Checkout Session without a trial, and Stripe charges immediately based on your proration policy. (Plan changes do not create a new trial.)
+Settings → Manage Subscription: Opens Stripe Customer Portal (https://billing.stripe.com/p/login/28E28r3f7fJDc9y7sG5os00) for cancel and payment method updates only. Do not use the portal for plan switching.
+Upgrade/Downgrade (plan changes): Handled manually in-app. When the user changes plans, the server starts a new Checkout Session without a trial, and Stripe charges immediately based on your proration policy. (Plan changes do not create a new trial.) Basic Price ID: price_1RzrMYDn6VTzl81bogCwhX1U, Pro Price ID price_1RzrMYDn6VTzl81bTSgcl0ZA. Both monthly subscriptions.
 
 4) Data model (Supabase)
-
 profiles (one row per user, keyed by auth.users.id) stores:
-
 email
-
 plan (basic | pro)
-
 subscription_status (trialing, active, past_due, canceled, etc.)
-
 trial_ends_at, current_period_end
-
 customer_id, subscription_id
-
 payment_issue_since (timestamp set on first payment failure; cleared on recovery)
-
 RLS: Users can read and update only their own profile row.
 
 Feature data: Create normal app tables for your product (e.g., events, projects, etc.). All reads/writes persist via Supabase with RLS so users only see their own data.
 
-If you’ll support multiple products per user, consider a separate subscriptions table (one row per product per user) instead of packing everything into profiles.
 
 5) Environment & deployment (Netlify)
 
