@@ -1,15 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
-// import { useAuth } from '../contexts/AuthContext';
-
-// Mock auth hook for now
-const useAuth = () => ({
-  signUp: async (email: string, password: string) => {
-    // Mock successful signup
-    return { error: null };
-  }
-});
+import { useAuth } from '../contexts/AuthContext';
 
 export default function GetStartedPage() {
   const [showPassword, setShowPassword] = useState(false);

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
+import { APP_CONFIG } from '../config/app';
 
 interface AuthContextType {
   user: User | null;
@@ -27,14 +28,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Get initial session
+    if (!APP_CONFIG.ENABLE_REAL_AUTH) {
+      // Mock mode - simulate authentication
+      setLoading(false);
+      return;
+    }
+
+    // Real mode - use Supabase
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
     });
 
-    // Listen for auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -47,6 +53,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signUp = async (email: string, password: string, userData?: any) => {
+    if (!APP_CONFIG.ENABLE_REAL_AUTH) {
+      // Mock mode - simulate successful signup
+      const mockUser = { ...APP_CONFIG.DEMO_USER, email } as User;
+      setUser(mockUser);
+      setSession({ user: mockUser } as Session);
+      return { error: null };
+    }
+
+    // Real mode - use Supabase
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -58,6 +73,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signIn = async (email: string, password: string) => {
+    if (!APP_CONFIG.ENABLE_REAL_AUTH) {
+      // Mock mode - simulate successful signin
+      const mockUser = { ...APP_CONFIG.DEMO_USER, email } as User;
+      setUser(mockUser);
+      setSession({ user: mockUser } as Session);
+      return { error: null };
+    }
+
+    // Real mode - use Supabase
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -66,6 +90,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signOut = async () => {
+    if (!APP_CONFIG.ENABLE_REAL_AUTH) {
+      // Mock mode - simulate signout
+      setUser(null);
+      setSession(null);
+      return { error: null };
+    }
+
+    // Real mode - use Supabase
     const { error } = await supabase.auth.signOut();
     return { error };
   };
