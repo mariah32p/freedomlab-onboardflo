@@ -1,13 +1,12 @@
 import React from 'react';
 import { Menu, X, Workflow } from 'lucide-react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -71,19 +70,15 @@ export default function Header() {
                   </Link>
                 </>
               )}
-                {location.pathname !== '/reset-password' && (
-                  <>
-                    <span className="text-gray-600 font-medium font-sans">
-                      {user.email}
-                    </span>
-                    <button
-                      onClick={handleSignOut}
-                      className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans"
-                    >
-                      Sign Out
-                    </button>
-                  </>
-                )}
+            </div>
+          </div>
+
+          {/* Mobile menu button */}
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          >
+            {isMenuOpen ? (
               <X className="w-6 h-6 text-gray-600" />
             ) : (
               <Menu className="w-6 h-6 text-gray-600" />
@@ -101,19 +96,15 @@ export default function Header() {
               <div className="pt-4 border-t border-gray-100 flex flex-col space-y-2">
                 {user ? (
                   <>
-                    {location.pathname !== '/reset-password' && (
-                      <>
-                        <span className="text-gray-600 font-medium font-sans">
-                          {user.email}
-                        </span>
-                        <button
-                          onClick={handleSignOut}
-                          className="text-gray-600 hover:text-gray-900 transition-colors text-left font-medium font-sans"
-                        >
-                          Sign Out
-                        </button>
-                      </>
-                    )}
+                    <span className="text-gray-600 font-medium font-sans">
+                      {user.email}
+                    </span>
+                    <button
+                      onClick={handleSignOut}
+                      className="text-gray-600 hover:text-gray-900 transition-colors text-left font-medium font-sans"
+                    >
+                      Sign Out
+                    </button>
                   </>
                 ) : (
                   <>
