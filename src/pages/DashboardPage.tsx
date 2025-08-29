@@ -13,8 +13,8 @@ import {
   FileText
 } from 'lucide-react';
 import { useChecklists } from '../hooks/useChecklists';
-import ChecklistBuilder from '../components/ChecklistBuilder';
-import ChecklistList from '../components/ChecklistList';
+import ChecklistBuilder from '../components/checklist/ChecklistBuilder';
+import ChecklistList from '../components/checklist/ChecklistList';
 
 // Dashboard sections
 const DashboardOverview = () => (
