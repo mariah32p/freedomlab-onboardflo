@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../lib/supabase';
 import { APP_CONFIG } from '../config/app';
 
 export function useStripe() {
@@ -8,7 +9,10 @@ export function useStripe() {
   const { session } = useAuth();
 
   const createCheckoutSession = async (priceId: string, mode: 'payment' | 'subscription' = 'subscription') => {
-    if (!session) {
+    // Get fresh session to ensure token is current
+    const { data: { session: currentSession } } = await supabase.auth.getSession();
+    
+    if (!currentSession) {
       throw new Error('User must be authenticated');
     }
 
@@ -30,7 +34,7 @@ export function useStripe() {
       const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/stripe-checkout`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${session.access_token}`,
+          'Authorization': `Bearer ${currentSession.access_token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
