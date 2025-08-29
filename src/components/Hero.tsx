@@ -156,7 +156,7 @@ export default function Hero() {
             </div>
             
             {/* Floating Success Metrics */}
-            <div className="absolute -top-6 -right-6 bg-emerald-500 text-white p-4 rounded-xl shadow-lg transform rotate-3 hover:rotate-0 transition-transform">
+            <div className="absolute top-8 -right-8 bg-emerald-500 text-white p-4 rounded-xl shadow-lg transform rotate-3 hover:rotate-0 transition-transform">
               <div className="flex items-center">
                 <TrendingUp className="w-5 h-5 mr-2" />
                 <div>
@@ -166,7 +166,7 @@ export default function Hero() {
               </div>
             </div>
             
-            <div className="absolute -bottom-6 -left-6 bg-blue-500 text-white p-4 rounded-xl shadow-lg transform -rotate-3 hover:rotate-0 transition-transform">
+            <div className="absolute bottom-8 -left-8 bg-blue-500 text-white p-4 rounded-xl shadow-lg transform -rotate-3 hover:rotate-0 transition-transform">
               <div className="flex items-center">
                 <Clock className="w-5 h-5 mr-2" />
                 <div>
@@ -177,7 +177,7 @@ export default function Hero() {
             </div>
 
             {/* Pulsing notification */}
-            <div className="absolute top-1/2 -right-8 bg-white rounded-lg shadow-lg p-3 border-l-4 border-emerald-500 animate-pulse">
+            <div className="absolute top-1/3 -right-12 bg-white rounded-lg shadow-lg p-3 border-l-4 border-emerald-500 animate-pulse">
               <div className="flex items-center">
                 <div className="w-2 h-2 bg-emerald-500 rounded-full mr-2"></div>
                 <div className="text-xs text-gray-700 font-sans">Sarah completed setup!</div>
