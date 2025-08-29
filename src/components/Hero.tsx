@@ -155,16 +155,6 @@ export default function Hero() {
               </div>
             </div>
             
-            {/* Floating Success Metrics */}
-            <div className="absolute -top-4 -right-12 bg-emerald-500 text-white p-4 rounded-xl shadow-lg transform rotate-3 hover:rotate-0 transition-transform">
-              <div className="flex items-center">
-                <TrendingUp className="w-5 h-5 mr-2" />
-                <div>
-                  <div className="text-lg font-bold font-sans">+127%</div>
-                  <div className="text-emerald-100 text-xs font-sans">Completion Rate</div>
-                </div>
-              </div>
-            </div>
             
             {/* Pulsing notification */}
             <div className="absolute top-1/2 -right-16 bg-white rounded-lg shadow-lg p-3 border-l-4 border-emerald-500 animate-pulse">
