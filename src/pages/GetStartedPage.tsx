@@ -49,10 +49,10 @@ export default function GetStartedPage() {
         {/* Header */}
         <div className="text-center">
           <Link to="/" className="inline-flex items-center mb-8">
-            <div className="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center mr-3">
+            <div className="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
               <Workflow className="w-6 h-6 text-white" />
             </div>
-            <span className="text-2xl font-bold text-gray-900 font-sans">OnboardFlo</span>
+            <span className="text-2xl font-bold text-gray-900 font-sans whitespace-nowrap">OnboardFlo</span>
           </Link>
           <h2 className="text-3xl font-bold text-gray-900 mb-2 font-sans">
             Start your free trial
