@@ -5,7 +5,6 @@ import Hero from './components/Hero';
 import Features from './components/Features';
 import ProblemSolution from './components/ProblemSolution';
 import CTA from './components/CTA';
-import Footer from './components/Footer';
 import PricingPage from './pages/PricingPage';
 
 function HomePage() {
@@ -30,7 +29,6 @@ function App() {
             <Route path="/pricing" element={<PricingPage />} />
           </Routes>
         </main>
-        <Footer />
       </div>
     </Router>
   );
