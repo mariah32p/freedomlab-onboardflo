@@ -6,6 +6,8 @@ import Features from './components/Features';
 import ProblemSolution from './components/ProblemSolution';
 import CTA from './components/CTA';
 import PricingPage from './pages/PricingPage';
+import SignInPage from './pages/SignInPage';
+import GetStartedPage from './pages/GetStartedPage';
 
 function HomePage() {
   return (
@@ -27,6 +29,8 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/pricing" element={<PricingPage />} />
+            <Route path="/signin" element={<SignInPage />} />
+            <Route path="/get-started" element={<GetStartedPage />} />
           </Routes>
         </main>
       </div>

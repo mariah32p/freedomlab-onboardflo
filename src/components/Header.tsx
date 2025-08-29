@@ -31,12 +31,12 @@ export default function Header() {
               </Link>
             </nav>
             <div className="flex items-center space-x-4">
-              <button className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
+              <Link to="/signin" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
                 Sign In
-              </button>
-              <button className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium transition-colors font-sans">
+              </Link>
+              <Link to="/get-started" className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium transition-colors font-sans">
                 Get Started
-              </button>
+              </Link>
             </div>
           </div>
 
@@ -61,12 +61,12 @@ export default function Header() {
                 Pricing
               </Link>
               <div className="pt-4 border-t border-gray-100 flex flex-col space-y-2">
-                <button className="text-gray-600 hover:text-gray-900 transition-colors text-left font-medium font-sans">
+                <Link to="/signin" className="text-gray-600 hover:text-gray-900 transition-colors text-left font-medium font-sans">
                   Sign In
-                </button>
-                <button className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-lg font-medium transition-colors font-sans">
+                </Link>
+                <Link to="/get-started" className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-lg font-medium transition-colors text-left font-sans">
                   Get Started
-                </button>
+                </Link>
               </div>
             </div>
           </div>
