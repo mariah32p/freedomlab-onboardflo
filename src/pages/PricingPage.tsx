@@ -90,16 +90,6 @@ export default function PricingPage() {
                   ))}
                 </ul>
                 
-                <button 
-                  onClick={() => handleSubscribe(plan.priceId)}
-                  disabled={loading}
-                  className={`w-full py-4 rounded-lg font-semibold text-lg transition-all duration-200 font-sans ${
-                  isPopular
-                    ? 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg hover:shadow-xl'
-                    : 'bg-gray-900 hover:bg-gray-800 text-white'
-                } disabled:opacity-50`}>
-                  {loading ? 'Loading...' : 'Start Free Trial'}
-                </button>
               </div>
             );
           })}
@@ -107,7 +97,7 @@ export default function PricingPage() {
         
         <div className="text-center mt-12">
           <p className="text-gray-600 mb-4 font-sans">
-            All plans include a 7-day free trial.
+            All plans include a 7-day free trial • Choose your plan after creating your account
           </p>
           <div className="flex items-center justify-center space-x-8 text-sm text-gray-500 font-sans">
             <span>✓ Cancel anytime</span>
