@@ -10,6 +10,8 @@ interface AuthContextType {
   signUp: (email: string, password: string, userData?: any) => Promise<{ error: AuthError | null }>;
   signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>;
   signOut: () => Promise<{ error: AuthError | null }>;
+  resetPassword: (email: string) => Promise<{ error: AuthError | null }>;
+  updatePassword: (password: string) => Promise<{ error: AuthError | null }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -102,6 +104,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { error };
   };
 
+  const resetPassword = async (email: string) => {
+    if (!APP_CONFIG.ENABLE_REAL_AUTH) {
+      // Mock mode - simulate password reset
+      return { error: null };
+    }
+
+    // Real mode - use Supabase
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    return { error };
+  };
+
+  const resetPassword = async (password: string) => {
+    if (!APP_CONFIG.ENABLE_REAL_AUTH) {
+      // Mock mode - simulate password update
+      return { error: null };
+    }
+
+    // Real mode - use Supabase
+    const { error } = await supabase.auth.updateUser({
+      password: password,
+    });
+    return { error };
+  };
   const value = {
     user,
     session,
@@ -109,6 +136,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signUp,
     signIn,
     signOut,
+    resetPassword,
+    updatePassword,
   };
 
   return (

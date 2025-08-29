@@ -9,6 +9,8 @@ import CTA from './components/CTA';
 import PricingPage from './pages/PricingPage';
 import SignUpPage from './pages/SignUpPage';
 import SignInPage from './pages/SignInPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 import GetStartedPage from './pages/GetStartedPage';
 import DashboardPage from './pages/DashboardPage';
 
@@ -37,6 +39,8 @@ function App() {
               <Route path="/signup" element={<SignUpPage />} />
               <Route path="/get-started" element={<GetStartedPage />} />
               <Route path="/signin" element={<SignInPage />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/reset-password" element={<ResetPasswordPage />} />
               <Route path="/dashboard" element={<DashboardPage />} />
             </Routes>
           </main>
