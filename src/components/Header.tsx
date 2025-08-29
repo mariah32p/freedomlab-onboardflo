@@ -1,13 +1,7 @@
 import React from 'react';
 import { Menu, X, Workflow } from 'lucide-react';
 import { Link } from 'react-router-dom';
-// import { useAuth } from '../contexts/AuthContext';
-
-// Mock auth hook for now
-const useAuth = () => ({
-  user: null,
-  signOut: async () => ({ error: null })
-});
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);

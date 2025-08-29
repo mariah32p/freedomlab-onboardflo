@@ -11,7 +11,7 @@ import PricingPage from './pages/PricingPage';
 import GetStartedPage from './pages/GetStartedPage';
 import SignInPage from './pages/SignInPage';
 import DashboardPage from './pages/DashboardPage';
-// import { AuthProvider } from './contexts/AuthContext';
+import { AuthProvider } from './contexts/AuthContext';
 
 // Simple landing page component that combines all sections
 function LandingPage() {
@@ -27,14 +27,9 @@ function LandingPage() {
   );
 }
 
-// Mock auth context for now
-const MockAuthProvider = ({ children }: { children: React.ReactNode }) => {
-  return <>{children}</>;
-};
-
 function App() {
   return (
-    <MockAuthProvider>
+    <AuthProvider>
       <Router>
         <div className="min-h-screen">
           <Header />
@@ -49,7 +44,7 @@ function App() {
           </main>
         </div>
       </Router>
-    </MockAuthProvider>
+    </AuthProvider>
   );
 }
 

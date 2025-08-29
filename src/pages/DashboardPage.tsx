@@ -1,25 +1,40 @@
 import React from 'react';
-// import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/AuthContext';
 import { BarChart3, Users, CheckCircle, Clock, Plus, Settings } from 'lucide-react';
-
-// Mock auth hook for now
-const useAuth = () => ({
-  user: { email: 'demo@example.com' }
-});
+import { APP_CONFIG } from '../config/app';
 
 export default function DashboardPage() {
   const { user } = useAuth();
+  const urlParams = new URLSearchParams(window.location.search);
+  const isDemo = urlParams.get('demo') === 'true';
+  const isSuccess = urlParams.get('success') === 'true';
 
   return (
     <div className="pt-20 min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Success message for demo mode */}
+        {isSuccess && isDemo && (
+          <div className="mb-8 bg-emerald-50 border border-emerald-200 rounded-lg p-6">
+            <div className="flex items-center">
+              <CheckCircle className="w-6 h-6 text-emerald-600 mr-3" />
+              <div>
+                <h3 className="text-lg font-semibold text-emerald-800 font-sans">Welcome to OnboardFlo!</h3>
+                <p className="text-emerald-700 font-sans">This is a demo dashboard. In production, you'd see your real customer data here.</p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2 font-sans">
-            Welcome back!
+            {!APP_CONFIG.ENABLE_REAL_AUTH ? 'Demo Dashboard' : 'Welcome back!'}
           </h1>
           <p className="text-gray-600 font-sans">
-            Manage your onboarding flows and track customer progress
+            {!APP_CONFIG.ENABLE_REAL_AUTH 
+              ? 'This is a preview of your OnboardFlo dashboard with sample data'
+              : 'Manage your onboarding flows and track customer progress'
+            }
           </p>
         </div>
 

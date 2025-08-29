@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { APP_CONFIG } from '../config/app';
 
 export function useStripe() {
   const [loading, setLoading] = useState(false);
@@ -11,6 +12,17 @@ export function useStripe() {
       throw new Error('User must be authenticated');
     }
 
+    if (!APP_CONFIG.ENABLE_REAL_AUTH) {
+      // Mock mode - simulate checkout process
+      setLoading(true);
+      
+      // Simulate processing time
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Redirect to success page
+      window.location.href = `${window.location.origin}/dashboard?success=true&demo=true`;
+      return { sessionId: 'mock-session-id', url: null };
+    }
     setLoading(true);
     setError(null);
 
