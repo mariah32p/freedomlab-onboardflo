@@ -98,7 +98,7 @@ export default function PricingPage() {
                     ? 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg hover:shadow-xl'
                     : 'bg-gray-900 hover:bg-gray-800 text-white'
                 } disabled:opacity-50`}>
-                  {loading ? 'Loading...' : user ? 'Start 7-Day Free Trial' : 'Sign Up to Continue'}
+                  {loading ? 'Loading...' : 'Start Free Trial'}
                 </button>
               </div>
             );
@@ -107,13 +107,7 @@ export default function PricingPage() {
         
         <div className="text-center mt-12">
           <p className="text-gray-600 mb-4 font-sans">
-            All plans include a 7-day free trial. {!user && (
-              <>
-                <Link to="/get-started" className="text-emerald-600 hover:text-emerald-500 font-medium">
-                  Create account
-                </Link> to get started.
-              </>
-            )}
+            All plans include a 7-day free trial.
           </p>
           <div className="flex items-center justify-center space-x-8 text-sm text-gray-500 font-sans">
             <span>✓ Cancel anytime</span>
