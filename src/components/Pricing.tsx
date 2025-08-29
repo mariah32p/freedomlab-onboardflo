@@ -1,57 +1,6 @@
 import React from 'react';
 import { Check, Zap, Building, Crown } from 'lucide-react';
 
-const plans = [
-  {
-    name: 'Starter',
-    icon: Zap,
-    price: 29,
-    description: 'Perfect for small teams getting started',
-    features: [
-      'Up to 100 customers/month',
-      '3 onboarding flows',
-      'Basic analytics',
-      'Email reminders',
-      'Standard support'
-    ],
-    popular: false,
-    cta: 'Start Free Trial'
-  },
-  {
-    name: 'Professional',
-    icon: Building,
-    price: 99,
-    description: 'For growing teams that need more power',
-    features: [
-      'Up to 1,000 customers/month',
-      'Unlimited onboarding flows',
-      'Advanced analytics & insights',
-      'Multi-channel notifications',
-      'Team collaboration',
-      'Priority support',
-      'Custom branding'
-    ],
-    popular: true,
-    cta: 'Start Free Trial'
-  },
-  {
-    name: 'Enterprise',
-    icon: Crown,
-    price: null,
-    description: 'For large organizations with custom needs',
-    features: [
-      'Unlimited customers',
-      'Advanced integrations',
-      'Custom workflows',
-      'Dedicated success manager',
-      'SLA guarantees',
-      'Single sign-on (SSO)',
-      'Advanced security features'
-    ],
-    popular: false,
-    cta: 'Contact Sales'
-  }
-];
 
 export default function Pricing() {
   return (
