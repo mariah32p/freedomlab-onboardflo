@@ -29,24 +29,6 @@ export function useSubscription() {
       return;
     }
 
-    if (!APP_CONFIG.ENABLE_REAL_AUTH) {
-      // Mock subscription data for demo mode
-      setSubscription({
-        customer_id: 'demo-customer',
-        subscription_id: 'demo-subscription',
-        price_id: 'price_1234567890',
-        status: 'trialing',
-        current_period_start: Math.floor(Date.now() / 1000),
-        current_period_end: Math.floor((Date.now() + 7 * 24 * 60 * 60 * 1000) / 1000),
-        cancel_at_period_end: false,
-        payment_method_brand: 'visa',
-        payment_method_last4: '4242',
-        payment_issue_since: null,
-      });
-      setLoading(false);
-      return;
-    }
-
     fetchSubscription();
   }, [user, session]);
 
