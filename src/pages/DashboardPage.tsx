@@ -247,8 +247,9 @@ const SettingsSection = () => {
 export default function DashboardPage() {
   const { user } = useAuth();
   const { subscription, getAccessStatus } = useSubscription();
-  const [activeTab, setActiveTab] = useState('dashboard');
   const urlParams = new URLSearchParams(window.location.search);
+  const tabFromUrl = urlParams.get('tab');
+  const [activeTab, setActiveTab] = useState(tabFromUrl || 'dashboard');
   const isSuccess = urlParams.get('success') === 'true';
   const accessStatus = getAccessStatus();
 

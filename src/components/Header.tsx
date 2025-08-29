@@ -49,6 +49,11 @@ export default function Header() {
               <Link to="/pricing" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans" onClick={scrollToTop}>
                 Pricing
               </Link>
+              {showUserMenu && (
+                <Link to="/dashboard?tab=settings" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
+                  Settings
+                </Link>
+              )}
             </nav>
             <div className="flex items-center space-x-4">
               {showUserMenu ? (
@@ -96,6 +101,11 @@ export default function Header() {
               <Link to="/pricing" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans" onClick={scrollToTop}>
                 Pricing
               </Link>
+              {showUserMenu && (
+                <Link to="/dashboard?tab=settings" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
+                  Settings
+                </Link>
+              )}
               <div className="pt-4 border-t border-gray-100 flex flex-col space-y-2">
                 {showUserMenu ? (
                   <>
