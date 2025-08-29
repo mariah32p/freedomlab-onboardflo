@@ -17,12 +17,23 @@ export default function RouteGuard({ children }: RouteGuardProps) {
     // Don't redirect while still loading
     if (authLoading || subscriptionLoading) return;
 
-    // Public routes that don't need authentication
-    const publicRoutes = ['/', '/pricing', '/signup', '/signin', '/forgot-password'];
+    // Public routes that don't need authentication (when not logged in)
+    const publicRoutes = ['/pricing', '/signup', '/signin', '/forgot-password'];
     const isPublicRoute = publicRoutes.includes(location.pathname);
 
-    // If not signed in and trying to access protected route
-    if (!user && !isPublicRoute) {
+    // Handle landing page - redirect logged in users
+    if (location.pathname === '/' && user) {
+      const accessStatus = getAccessStatus();
+      if (accessStatus.hasAccess && !accessStatus.shouldRedirectToGetStarted) {
+        navigate('/dashboard');
+      } else {
+        navigate('/get-started');
+      }
+      return;
+    }
+
+    // If not signed in and trying to access protected route (excluding landing page)
+    if (!user && !isPublicRoute && location.pathname !== '/') {
       navigate('/signup');
       return;
     }
