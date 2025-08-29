@@ -132,7 +132,7 @@ export function useSubscription() {
           shouldRedirectToGetStarted: false,
           showPaymentBanner: false,
           isTrialing: false,
-          isPro: subscription.price_id === 'price_0987654321' // Pro price ID
+          isPro: subscription.price_id === 'price_1RzrMYDn6VTzl81bTSgcl0ZA' // Pro price ID
         };
       
       case 'past_due':
@@ -141,7 +141,7 @@ export function useSubscription() {
           shouldRedirectToGetStarted: !inGrace,
           showPaymentBanner: true,
           isTrialing: false,
-          isPro: subscription.price_id === 'price_0987654321'
+          isPro: subscription.price_id === 'price_1RzrMYDn6VTzl81bTSgcl0ZA'
         };
       
       default: // canceled, unpaid, etc.

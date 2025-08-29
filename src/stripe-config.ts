@@ -1,7 +1,7 @@
 // Stripe product configuration
 export const stripeProducts = [
   {
-    priceId: 'price_1234567890', // Replace with your actual Stripe price ID for Basic plan
+    priceId: 'price_1RzrMYDn6VTzl81bogCwhX1U',
     name: 'Basic',
     description: 'Perfect for small teams getting started',
     price: 29,
@@ -16,7 +16,7 @@ export const stripeProducts = [
     ]
   },
   {
-    priceId: 'price_0987654321', // Replace with your actual Stripe price ID for Pro plan
+    priceId: 'price_1RzrMYDn6VTzl81bTSgcl0ZA',
     name: 'Pro',
     description: 'For SaaS companies, larger agencies',
     price: 49,
