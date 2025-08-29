@@ -18,10 +18,10 @@ export default function ResetPasswordPage() {
 
   // Check if user has a valid session (came from email link)
   useEffect(() => {
-    if (!authLoading && !session) {
+    if (!authLoading && !session && !showConfirmation && !loading) {
       navigate('/signin');
     }
-  }, [authLoading, session, navigate]);
+  }, [authLoading, session, showConfirmation, loading, navigate]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
