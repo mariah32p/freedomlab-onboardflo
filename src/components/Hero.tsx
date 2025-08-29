@@ -42,7 +42,7 @@ export default function Hero() {
             </div>
             
             <p className="text-gray-500 text-sm font-sans">
-              ✓ No credit card required • ✓ 7-day free trial • ✓ Setup in 5 minutes
+              ✓ 7-day free trial • ✓ Setup in 5 minutes
             </p>
           </div>
           
