@@ -1,15 +1,15 @@
 import React from 'react';
-import { ArrowRight, Shield, Zap, HeadphonesIcon, Users, CheckCircle, Clock, BarChart3 } from 'lucide-react';
+import { ArrowRight, Zap, Users, CheckCircle } from 'lucide-react';
 
 export default function Hero() {
   return (
-    <section className="relative bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 pt-24 pb-20 overflow-hidden min-h-screen flex items-center">
+    <section className="relative bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 pt-32 pb-20 overflow-hidden min-h-screen flex items-center">
       {/* Background decoration */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(120,119,198,0.3),transparent_50%)]"></div>
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(34,197,94,0.2),transparent_50%)]"></div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Left side - Content */}
           <div>
             {/* Badge */}
@@ -28,16 +28,16 @@ export default function Hero() {
             
             {/* Subheadline */}
             <p className="text-xl text-gray-300 mb-8 leading-relaxed">
-              Replace confusing setup processes and scattered follow-ups with organized onboarding flows and automatic progress tracking that keep your customers engaged.
+              Transform scattered setup processes into guided flows that keep customers engaged and reduce churn.
             </p>
             
             {/* CTA buttons */}
             <div className="flex flex-col sm:flex-row gap-4 mb-12">
-              <button className="group bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+              <button className="group bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
                 <Zap className="mr-2 w-5 h-5" />
-                Start 7-Day Free Trial
+                Start Free Trial
               </button>
-              <button className="group bg-white/10 hover:bg-white/20 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 flex items-center justify-center border border-white/20 hover:border-white/30 backdrop-blur-sm">
+              <button className="group bg-white/10 hover:bg-white/20 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 flex items-center justify-center border border-white/20 hover:border-white/30 backdrop-blur-sm">
                 View Pricing
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </button>
@@ -46,16 +46,16 @@ export default function Hero() {
             {/* Trust indicators */}
             <div className="flex flex-col sm:flex-row gap-6 text-sm text-gray-400">
               <div className="flex items-center">
-                <Shield className="w-4 h-4 mr-2 text-emerald-400" />
-                Enterprise Security
+                <CheckCircle className="w-4 h-4 mr-2 text-emerald-400" />
+                No credit card required
               </div>
               <div className="flex items-center">
-                <Zap className="w-4 h-4 mr-2 text-emerald-400" />
-                99.9% Uptime
+                <CheckCircle className="w-4 h-4 mr-2 text-emerald-400" />
+                Setup in 5 minutes
               </div>
               <div className="flex items-center">
-                <HeadphonesIcon className="w-4 h-4 mr-2 text-emerald-400" />
-                24/7 Support
+                <CheckCircle className="w-4 h-4 mr-2 text-emerald-400" />
+                Cancel anytime
               </div>
             </div>
           </div>
