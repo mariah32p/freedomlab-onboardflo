@@ -1,150 +1,134 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Check, Zap, Building } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useStripe } from '../hooks/useStripe';
+import { stripeProducts } from '../stripe-config';
 
 export default function GetStartedPage() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const { signUp } = useAuth();
+  const { user } = useAuth();
+  const { createCheckoutSession, loading, error } = useStripe();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    confirmPassword: ''
-  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
+  // Redirect to signup if not authenticated
+  React.useEffect(() => {
+    if (!user) {
+      navigate('/signup');
+    }
+  }, [user, navigate]);
 
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
-      setLoading(false);
+  const handleSelectPlan = async (priceId: string) => {
+    if (!user) {
+      navigate('/signup');
       return;
     }
 
-    const { error: authError } = await signUp(formData.email, formData.password);
-    
-    if (authError) {
-      setError(authError.message);
-      setLoading(false);
-    } else {
-      navigate('/dashboard');
+    try {
+      await createCheckoutSession(priceId, 'subscription');
+    } catch (err) {
+      console.error('Failed to create checkout session:', err);
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value
-    }));
+  const planIcons = {
+    'Basic': Zap,
+    'Pro': Building,
   };
 
+  if (!user) {
+    return null; // Will redirect to signup
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center pt-24 pb-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        {/* Header */}
-        <div className="text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2 font-sans">
-            Start your free trial
-          </h2>
-          <p className="text-gray-600 font-sans">
-            Create your account and get started in minutes
+    <div className="pt-20 pb-16 bg-gray-50 min-h-screen">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 font-sans">
+            Choose your plan
+          </h1>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto font-sans">
+            Start your 7-day free trial. Your card will be charged after the trial ends.
           </p>
         </div>
-
-        {/* Form */}
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-              <p className="text-red-600 text-sm font-sans">{error}</p>
-            </div>
-          )}
-          
-          <div className="space-y-4">
-            {/* Email */}
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2 font-sans">
-                Email address
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-400" />
+        
+        {error && (
+          <div className="mb-8 bg-red-50 border border-red-200 rounded-lg p-4 max-w-4xl mx-auto">
+            <p className="text-red-600 text-sm font-sans">{error}</p>
+          </div>
+        )}
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          {stripeProducts.map((plan, index) => {
+            const Icon = planIcons[plan.name as keyof typeof planIcons];
+            const isPopular = plan.name === 'Pro';
+            return (
+              <div 
+                key={index}
+                className={`relative bg-white rounded-2xl p-8 border-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 ${
+                  isPopular 
+                    ? 'border-emerald-500 ring-4 ring-emerald-500/20' 
+                    : 'border-gray-200 hover:border-emerald-300'
+                }`}
+              >
+                {isPopular && (
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                    <div className="bg-emerald-500 text-white px-4 py-2 rounded-full text-sm font-medium font-sans">
+                      Most Popular
+                    </div>
+                  </div>
+                )}
+                
+                <div className="text-center mb-8">
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-4 ${
+                    isPopular ? 'bg-emerald-500' : 'bg-gray-100'
+                  }`}>
+                    <Icon className={`w-6 h-6 ${isPopular ? 'text-white' : 'text-gray-600'}`} />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2 font-sans">{plan.name}</h3>
+                  <p className="text-gray-600 mb-4 font-sans">{plan.description}</p>
+                  <div className="mb-6">
+                    <span className="text-5xl font-bold text-gray-900 font-sans">${plan.price}</span>
+                    <span className="text-gray-600 ml-2 font-sans">/month</span>
+                  </div>
                 </div>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
-                  placeholder="john@company.com"
-                />
-              </div>
-            </div>
-
-            {/* Password */}
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2 font-sans">
-                Password
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  id="password"
-                  name="password"
-                  type={showPassword ? 'text' : 'password'}
-                  autoComplete="new-password"
-                  required
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
-                  placeholder="Create a password"
-                />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
-                  ) : (
-                    <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
-                  )}
+                
+                <ul className="space-y-4 mb-8">
+                  {plan.features.map((feature, featureIndex) => (
+                    <li key={featureIndex} className="flex items-start">
+                      <Check className="w-5 h-5 text-emerald-500 mt-0.5 mr-3 flex-shrink-0" />
+                      <span className="text-gray-700 font-sans">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                
+                <button 
+                  onClick={() => handleSelectPlan(plan.priceId)}
+                  disabled={loading}
+                  className={`w-full py-4 rounded-lg font-semibold text-lg transition-all duration-200 font-sans ${
+                  isPopular
+                    ? 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg hover:shadow-xl'
+                    : 'bg-gray-900 hover:bg-gray-800 text-white'
+                } disabled:opacity-50`}>
+                  {loading ? 'Loading...' : 'Start 7-Day Free Trial'}
                 </button>
               </div>
-            </div>
-
-            {/* Confirm Password */}
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2 font-sans">
-                Confirm password
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  autoComplete="new-password"
-                  required
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
-                  placeholder="Confirm your password"
-                />
-              </div>
-            </div>
+            );
+          })}
+        </div>
+        
+        <div className="text-center mt-12">
+          <p className="text-gray-600 mb-4 font-sans">
+            7-day free trial • Your card will be charged after the trial ends
+          </p>
+          <div className="flex items-center justify-center space-x-8 text-sm text-gray-500 font-sans">
+            <span>✓ Cancel anytime</span>
+            <span>✓ 30-day money back guarantee</span>
           </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
           {/* Terms */}
           <div className="flex items-start">

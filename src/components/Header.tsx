@@ -54,8 +54,8 @@ export default function Header() {
                   <Link to="/signin" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
                     Sign In
                   </Link>
-                  <Link to="/get-started" className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium transition-colors font-sans">
-                    Get Started
+                  <Link to="/signup" className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium transition-colors font-sans">
+                    Start Free Trial
                   </Link>
                 </>
               )}
@@ -100,8 +100,8 @@ export default function Header() {
                     <Link to="/signin" className="text-gray-600 hover:text-gray-900 transition-colors text-left font-medium font-sans">
                       Sign In
                     </Link>
-                    <Link to="/get-started" className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-lg font-medium transition-colors text-left font-sans">
-                      Get Started
+                    <Link to="/signup" className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-lg font-medium transition-colors text-left font-sans">
+                      Start Free Trial
                     </Link>
                   </>
                 )}

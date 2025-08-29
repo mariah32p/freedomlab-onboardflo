@@ -8,8 +8,9 @@ import Testimonials from './components/Testimonials';
 import Pricing from './components/Pricing';
 import CTA from './components/CTA';
 import PricingPage from './pages/PricingPage';
-import GetStartedPage from './pages/GetStartedPage';
+import SignUpPage from './pages/SignUpPage';
 import SignInPage from './pages/SignInPage';
+import GetStartedPage from './pages/GetStartedPage';
 import DashboardPage from './pages/DashboardPage';
 import { AuthProvider } from './contexts/AuthContext';
 
@@ -37,6 +38,7 @@ function App() {
             <Routes>
               <Route path="/" element={<LandingPage />} />
               <Route path="/pricing" element={<PricingPage />} />
+              <Route path="/signup" element={<SignUpPage />} />
               <Route path="/get-started" element={<GetStartedPage />} />
               <Route path="/signin" element={<SignInPage />} />
               <Route path="/dashboard" element={<DashboardPage />} />

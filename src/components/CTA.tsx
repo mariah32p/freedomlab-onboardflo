@@ -19,7 +19,7 @@ export default function CTA() {
         
         {/* CTA buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-          <Link to="/get-started" className="group bg-white hover:bg-gray-50 text-emerald-600 px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-sans">
+          <Link to="/signup" className="group bg-white hover:bg-gray-50 text-emerald-600 px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-sans">
             <Zap className="mr-2 w-5 h-5" />
             Start 7-Day Free Trial
           </Link>
