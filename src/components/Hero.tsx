@@ -32,10 +32,13 @@ export default function Hero() {
                 Start Free Trial
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
-              <button className="group bg-white hover:bg-gray-50 text-gray-700 px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 flex items-center justify-center border border-gray-300 hover:border-gray-400 shadow-sm hover:shadow-md font-sans">
-                <Play className="mr-2 w-5 h-5" />
-                Watch Demo
-              </button>
+              <Link 
+                to="/pricing" 
+                className="group bg-white hover:bg-gray-50 text-gray-700 px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 flex items-center justify-center border border-gray-300 hover:border-gray-400 shadow-sm hover:shadow-md font-sans"
+              >
+                See Pricing
+                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </Link>
             </div>
             
             <p className="text-gray-500 text-sm font-sans">
