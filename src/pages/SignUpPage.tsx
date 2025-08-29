@@ -15,7 +15,7 @@ export default function SignUpPage() {
     confirmPassword: ''
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError('');
@@ -26,13 +26,16 @@ export default function SignUpPage() {
       return;
     }
 
-    const { error: authError } = await signUp(formData.email, formData.password);
-    
-    if (authError) {
-      setError(authError.message);
+    try {
+      const { error: authError } = await signUp(formData.email, formData.password);
+
+      if (authError) {
+        setError(authError.message);
+      } else {
+        navigate('/get-started');
+      }
+    } finally {
       setLoading(false);
-    } else {
-      navigate('/get-started');
     }
   };
 
@@ -114,11 +117,12 @@ export default function SignUpPage() {
                   className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
                   placeholder="Create a password"
                 />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
                   {showPassword ? (
                     <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
                   ) : (
