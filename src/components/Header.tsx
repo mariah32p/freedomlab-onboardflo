@@ -13,6 +13,7 @@ export default function Header() {
 
   const handleSignOut = async () => {
     await signOut();
+    navigate('/');
   };
 
   return (
