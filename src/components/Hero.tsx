@@ -166,16 +166,6 @@ export default function Hero() {
               </div>
             </div>
             
-            <div className="absolute -bottom-4 -left-12 bg-blue-500 text-white p-4 rounded-xl shadow-lg transform -rotate-3 hover:rotate-0 transition-transform">
-              <div className="flex items-center">
-                <Clock className="w-5 h-5 mr-2" />
-                <div>
-                  <div className="text-lg font-bold font-sans">-73%</div>
-                  <div className="text-blue-100 text-xs font-sans">Support Tickets</div>
-                </div>
-              </div>
-            </div>
-
             {/* Pulsing notification */}
             <div className="absolute top-1/2 -right-16 bg-white rounded-lg shadow-lg p-3 border-l-4 border-emerald-500 animate-pulse">
               <div className="flex items-center">
