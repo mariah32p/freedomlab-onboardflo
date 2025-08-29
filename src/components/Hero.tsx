@@ -164,9 +164,9 @@ export default function Hero() {
               <div className="flex items-center">
                 <div className="w-2 h-2 bg-emerald-500 rounded-full mr-2"></div>
                 <div className="text-xs text-gray-700 font-sans">Sarah completed setup!</div>
-          <p className="text-gray-500 text-sm font-sans">
-            ✓ 7-day free trial • ✓ Setup in 5 minutes
-          </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
