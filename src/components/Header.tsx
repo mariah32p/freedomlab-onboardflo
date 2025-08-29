@@ -5,13 +5,17 @@ import { Link } from 'react-router-dom';
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <header className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-b border-gray-100 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center flex-shrink-0">
-            <Link to="/" className="flex items-center">
+            <Link to="/" className="flex items-center" onClick={scrollToTop}>
             <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center mr-3">
               <Workflow className="w-5 h-5 text-white" />
             </div>
@@ -22,7 +26,7 @@ export default function Header() {
           {/* Desktop Navigation and CTA */}
           <div className="hidden md:flex items-center space-x-8">
             <nav className="flex items-center space-x-8">
-              <Link to="/pricing" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
+              <Link to="/pricing" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans" onClick={scrollToTop}>
                 Pricing
               </Link>
             </nav>
@@ -53,7 +57,7 @@ export default function Header() {
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t border-gray-100">
             <div className="flex flex-col space-y-4">
-              <Link to="/pricing" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
+              <Link to="/pricing" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans" onClick={scrollToTop}>
                 Pricing
               </Link>
               <div className="pt-4 border-t border-gray-100 flex flex-col space-y-2">
