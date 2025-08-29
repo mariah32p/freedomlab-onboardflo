@@ -1,0 +1,40 @@
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+
+# JavaScript and CSS files
+/assets/*.js
+  Content-Type: application/javascript; charset=utf-8
+
+/assets/*.mjs
+  Content-Type: application/javascript; charset=utf-8
+
+/assets/*.css
+  Content-Type: text/css; charset=utf-8
+
+# Root level files
+/*.js
+  Content-Type: application/javascript; charset=utf-8
+
+/*.mjs
+  Content-Type: application/javascript; charset=utf-8
+
+/*.css
+  Content-Type: text/css; charset=utf-8
+
+# Icon and image files
+/*.ico
+  Content-Type: image/x-icon
+
+/*.png
+  Content-Type: image/png
+
+/*.svg
+  Content-Type: image/svg+xml
+
+# Fallback for any JS files
+/**/*.js
+  Content-Type: application/javascript; charset=utf-8
+
+/**/*.mjs
+  Content-Type: application/javascript; charset=utf-8
