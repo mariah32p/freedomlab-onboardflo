@@ -56,24 +56,42 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const refresh_token = params.get('refresh_token');
 
         if (access_token && refresh_token) {
-          const { error } = await supabase.auth.setSession({
-            access_token,
-            refresh_token,
-          });
-          if (error) {
-            console.error('Error recovering session from URL:', error);
+          try {
+            const { error } = await supabase.auth.setSession({
+              access_token,
+              refresh_token,
+            });
+            if (error) {
+              console.error('Error recovering session from URL:', error);
+              setUser(null);
+              setSession(null);
+              setLoading(false);
+            } else {
+              window.location.replace('/reset-password');
+            }
+          } catch (error) {
+            console.error('Failed to recover session:', error);
+            setUser(null);
+            setSession(null);
             setLoading(false);
-          } else {
-            window.location.replace('/reset-password');
           }
         } else {
+          setUser(null);
+          setSession(null);
           setLoading(false);
         }
       } else {
-        const { data: { session } } = await supabase.auth.getSession();
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+          setSession(session);
+          setUser(session?.user ?? null);
+          setLoading(false);
+        } catch (error) {
+          console.error('Failed to get session:', error);
+          setUser(null);
+          setSession(null);
+          setLoading(false);
+        }
       }
     };
 
