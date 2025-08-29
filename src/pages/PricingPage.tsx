@@ -90,6 +90,16 @@ export default function PricingPage() {
                   ))}
                 </ul>
                 
+                <Link 
+                  to="/signup"
+                  className={`block w-full py-4 rounded-lg font-semibold text-lg transition-all duration-200 text-center ${
+                    isPopular
+                      ? 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg hover:shadow-xl'
+                      : 'bg-gray-900 hover:bg-gray-800 text-white'
+                  }`}
+                >
+                  Get Started
+                </Link>
               </div>
             );
           })}
