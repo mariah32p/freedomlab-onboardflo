@@ -41,7 +41,7 @@ export function useStripe() {
 
       // Redirect to Stripe Checkout
       if (data.url) {
-        window.location.href = data.url;
+        window.open(data.url, '_blank', 'noopener,noreferrer');
       }
 
       return data;
