@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Workflow, Eye, EyeOff, Mail, Lock } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function GetStartedPage() {
@@ -48,12 +48,6 @@ export default function GetStartedPage() {
       <div className="max-w-md w-full space-y-8">
         {/* Header */}
         <div className="text-center">
-          <Link to="/" className="inline-flex items-center mb-8">
-            <div className="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
-              <Workflow className="w-6 h-6 text-white" />
-            </div>
-            <span className="text-2xl font-bold text-gray-900 font-sans whitespace-nowrap">OnboardFlo</span>
-          </Link>
           <h2 className="text-3xl font-bold text-gray-900 mb-2 font-sans">
             Start your free trial
           </h2>
