@@ -126,6 +126,27 @@ export default function SignUpPage() {
                   )}
                 </button>
               </div>
+              <div className="mt-2 text-sm text-gray-600 font-sans">
+                <p className="mb-1">Password must contain:</p>
+                <ul className="space-y-1 text-xs">
+                  <li className="flex items-center">
+                    <span className={`w-1.5 h-1.5 rounded-full mr-2 ${formData.password.length >= 8 ? 'bg-emerald-500' : 'bg-gray-300'}`}></span>
+                    At least 8 characters
+                  </li>
+                  <li className="flex items-center">
+                    <span className={`w-1.5 h-1.5 rounded-full mr-2 ${/[A-Z]/.test(formData.password) ? 'bg-emerald-500' : 'bg-gray-300'}`}></span>
+                    One uppercase letter
+                  </li>
+                  <li className="flex items-center">
+                    <span className={`w-1.5 h-1.5 rounded-full mr-2 ${/[a-z]/.test(formData.password) ? 'bg-emerald-500' : 'bg-gray-300'}`}></span>
+                    One lowercase letter
+                  </li>
+                  <li className="flex items-center">
+                    <span className={`w-1.5 h-1.5 rounded-full mr-2 ${/\d/.test(formData.password) ? 'bg-emerald-500' : 'bg-gray-300'}`}></span>
+                    One number
+                  </li>
+                </ul>
+              </div>
             </div>
 
             {/* Confirm Password */}
