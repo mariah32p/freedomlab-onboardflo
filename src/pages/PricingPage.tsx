@@ -3,37 +3,37 @@ import { Check, Zap, Building } from 'lucide-react';
 
 const plans = [
   {
-    name: 'Starter',
-    description: 'Perfect for freelancers and small agencies',
+    name: 'Basic',
+    description: 'Perfect for small teams, agencies, consultants',
     price: 29,
     icon: Zap,
     popular: false,
-    cta: 'Start Free Trial',
+    cta: 'Start 7-Day Free Trial',
     features: [
-      'Up to 50 clients/month',
-      'Basic onboarding checklists',
-      'Email notifications',
-      'Progress tracking',
-      'Mobile responsive',
-      'Email support'
+      'Up to 3 active checklists',
+      'Up to 100 customers tracked per month',
+      'Shareable public links for each checklist',
+      'Simple branding (logo + 1 color)',
+      'Progress tracking dashboard',
+      'Email completion notifications',
+      '7-day free trial'
     ]
   },
   {
-    name: 'Professional',
-    description: 'For growing agencies and design teams',
+    name: 'Pro',
+    description: 'For SaaS companies, larger agencies',
     price: 49,
     icon: Building,
     popular: true,
-    cta: 'Start Free Trial',
+    cta: 'Start 7-Day Free Trial',
     features: [
-      'Up to 200 clients/month',
-      'Advanced checklist builder',
-      'Custom branding',
-      'Client portal access',
-      'Team collaboration',
-      'Analytics & insights',
-      'Priority support',
-      'Integrations (Slack, Teams)'
+      'Everything in Basic, plus:',
+      'Unlimited checklists',
+      'Unlimited customer tracking',
+      'Password protection for checklists',
+      'Custom completion pages',
+      'Redirect to your website when done',
+      'Priority support'
     ]
   }
 ];
@@ -110,7 +110,6 @@ export default function PricingPage() {
           <div className="flex items-center justify-center space-x-8 text-sm text-gray-500 font-sans">
             <span>✓ Cancel anytime</span>
             <span>✓ 30-day money back guarantee</span>
-            <span>✓ Migration assistance included</span>
           </div>
         </div>
       </div>
