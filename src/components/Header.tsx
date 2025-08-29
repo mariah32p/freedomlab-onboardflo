@@ -1,5 +1,5 @@
 import React from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Workflow } from 'lucide-react';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
@@ -11,7 +11,7 @@ export default function Header() {
           {/* Logo */}
           <div className="flex items-center flex-shrink-0">
             <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center mr-3">
-              <span className="text-white font-bold text-sm">O</span>
+              <Workflow className="w-5 h-5 text-white" />
             </div>
             <span className="text-xl font-bold text-gray-900">OnboardFlo</span>
           </div>
