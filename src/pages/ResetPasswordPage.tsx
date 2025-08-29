@@ -23,7 +23,7 @@ export default function ResetPasswordPage() {
     }
   }, [authLoading, session, navigate]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError('');
@@ -40,19 +40,21 @@ export default function ResetPasswordPage() {
       return;
     }
 
-    const { error: authError } = await updatePassword(formData.password);
-    
-    if (authError) {
-      setError(authError.message);
+    try {
+      const { error: authError } = await updatePassword(formData.password);
+
+      if (authError) {
+        setError(authError.message);
+      } else {
+        setSuccess(true);
+
+        // Redirect to sign in after 3 seconds
+        setTimeout(() => {
+          navigate('/signin');
+        }, 3000);
+      }
+    } finally {
       setLoading(false);
-    } else {
-      setSuccess(true);
-      setLoading(false);
-      
-      // Redirect to sign in after 3 seconds
-      setTimeout(() => {
-        navigate('/signin');
-      }, 3000);
     }
   };
 
@@ -153,11 +155,12 @@ export default function ResetPasswordPage() {
                   className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
                   placeholder="Enter new password"
                 />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
                   {showPassword ? (
                     <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
                   ) : (
@@ -208,11 +211,12 @@ export default function ResetPasswordPage() {
                   className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
                   placeholder="Confirm new password"
                 />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                >
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
                   {showConfirmPassword ? (
                     <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
                   ) : (

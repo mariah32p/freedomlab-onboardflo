@@ -12,18 +12,20 @@ export default function SignInPage() {
   const { signIn } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError('');
+    try {
+      const { error: authError } = await signIn(email, password);
 
-    const { error: authError } = await signIn(email, password);
-    
-    if (authError) {
-      setError(authError.message);
+      if (authError) {
+        setError(authError.message);
+      } else {
+        navigate('/dashboard');
+      }
+    } finally {
       setLoading(false);
-    } else {
-      navigate('/dashboard');
     }
   };
 
@@ -99,6 +101,7 @@ export default function SignInPage() {
                 <button
                   type="button"
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (

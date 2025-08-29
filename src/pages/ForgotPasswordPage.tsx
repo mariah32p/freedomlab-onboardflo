@@ -10,18 +10,19 @@ export default function ForgotPasswordPage() {
   const [emailSent, setEmailSent] = useState(false);
   const { resetPassword } = useAuth();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError('');
+    try {
+      const { error: authError } = await resetPassword(email);
 
-    const { error: authError } = await resetPassword(email);
-    
-    if (authError) {
-      setError(authError.message);
-      setLoading(false);
-    } else {
-      setEmailSent(true);
+      if (authError) {
+        setError(authError.message);
+      } else {
+        setEmailSent(true);
+      }
+    } finally {
       setLoading(false);
     }
   };
