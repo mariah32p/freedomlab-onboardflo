@@ -13,7 +13,6 @@ import SignUpPage from './pages/SignUpPage';
 import SignInPage from './pages/SignInPage';
 import GetStartedPage from './pages/GetStartedPage';
 import DashboardPage from './pages/DashboardPage';
-import { AuthProvider } from './contexts/AuthContext';
 
 // Simple landing page component that combines all sections
 function LandingPage() {
