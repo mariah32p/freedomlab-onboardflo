@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Lock, Workflow, CheckCircle } from 'lucide-react';
+import { Eye, EyeOff, Lock, Workflow, CheckCircle, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function ResetPasswordPage() {
@@ -9,7 +9,7 @@ export default function ResetPasswordPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
-  const { updatePassword, session } = useAuth();
+  const { updatePassword, session, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     password: '',
@@ -18,10 +18,10 @@ export default function ResetPasswordPage() {
 
   // Check if user has a valid session (came from email link)
   useEffect(() => {
-    if (!session) {
+    if (!authLoading && !session) {
       navigate('/signin');
     }
-  }, [session, navigate]);
+  }, [authLoading, session, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -96,6 +96,10 @@ export default function ResetPasswordPage() {
         </div>
       </div>
     );
+  }
+
+  if (authLoading) {
+    return null;
   }
 
   if (!session) {

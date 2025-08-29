@@ -36,20 +36,48 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    // Real mode - use Supabase
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
+
+      if (event === 'PASSWORD_RECOVERY') {
+        window.location.replace('/reset-password');
+      }
     });
+
+    const initSession = async () => {
+      if (window.location.hash.includes('type=recovery')) {
+        const hash = window.location.hash.substring(1);
+        const params = new URLSearchParams(hash);
+        const access_token = params.get('access_token');
+        const refresh_token = params.get('refresh_token');
+
+        if (access_token && refresh_token) {
+          const { error } = await supabase.auth.setSession({
+            access_token,
+            refresh_token,
+          });
+          if (error) {
+            console.error('Error recovering session from URL:', error);
+            setLoading(false);
+          } else {
+            window.location.replace('/reset-password');
+          }
+        } else {
+          setLoading(false);
+        }
+      } else {
+        const { data: { session } } = await supabase.auth.getSession();
+        setSession(session);
+        setUser(session?.user ?? null);
+        setLoading(false);
+      }
+    };
+
+    initSession();
 
     return () => subscription.unsubscribe();
   }, []);
@@ -111,7 +139,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     // Real mode - use Supabase
-    const { error } = await supabase.auth.resetPasswordForEmail(email);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin,
+    });
     return { error };
   };
 
