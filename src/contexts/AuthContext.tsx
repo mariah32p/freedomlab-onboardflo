@@ -71,6 +71,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             }
           } catch (error) {
             console.error('Failed to recover session:', error);
+            console.error('This may indicate a Supabase connection issue. Please check your environment variables.');
             setUser(null);
             setSession(null);
             setLoading(false);
@@ -88,6 +89,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setLoading(false);
         } catch (error) {
           console.error('Failed to get session:', error);
+          console.error('This may indicate a Supabase connection issue. Please check your environment variables.');
           setUser(null);
           setSession(null);
           setLoading(false);
