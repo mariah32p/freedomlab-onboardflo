@@ -17,18 +17,27 @@ export default function Header() {
     navigate('/');
   };
 
+  const handleLogoClick = () => {
+    if (user) {
+      navigate('/dashboard');
+    } else {
+      navigate('/');
+      scrollToTop();
+    }
+  };
+
   return (
     <header className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-b border-gray-100 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <div className="flex items-center">
-            <Link to="/" className="flex items-center" onClick={scrollToTop}>
+            <button onClick={handleLogoClick} className="flex items-center">
               <div className="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center mr-4">
                 <Workflow className="w-6 h-6 text-white" />
               </div>
               <span className="text-2xl font-bold text-gray-900 font-sans">OnboardFlo</span>
-            </Link>
+            </button>
           </div>
 
           {/* Desktop Navigation and CTA */}
