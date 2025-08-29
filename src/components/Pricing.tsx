@@ -25,29 +25,29 @@ export default function Pricing() {
         
         <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {stripeProducts.map((plan, index) => {
-            const Icon = planIcons[plan.name] || Crown;
-            const isPopular = plan.popular;
-            
+            const Icon = planIcons[plan.name as keyof typeof planIcons] || Crown;
+            const isPopular = plan.name === 'Pro';
+
             return (
               <div
                 key={index}
                 className={`relative bg-white rounded-2xl p-8 shadow-lg transition-all duration-200 hover:shadow-xl ${
-                  plan.popular 
-                    ? 'border-emerald-500 ring-4 ring-emerald-500/20' 
+                  isPopular
+                    ? 'border-emerald-500 ring-4 ring-emerald-500/20'
                     : 'border-gray-200 hover:border-emerald-300'
                 }`}
               >
-                {plan.popular && (
+                {isPopular && (
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                     <div className="bg-emerald-500 text-white px-4 py-2 rounded-full text-sm font-medium">
-                     \ Most Popular
+                      Most Popular
                     </div>
                   </div>
                 )}
-                
+
                 <div className="text-center mb-6">
                   <div className="inline-flex items-center justify-center w-12 h-12 bg-gray-100 rounded-lg mb-4">
-                    <Icon className={`w-6 h-6 ${plan.popular ? 'text-emerald-600' : 'text-gray-600'}`} />
+                    <Icon className={`w-6 h-6 ${isPopular ? 'text-emerald-600' : 'text-gray-600'}`} />
                   </div>
                   <h3 className="text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
                   <p className="text-gray-600 mb-4">{plan.description}</p>
@@ -77,13 +77,16 @@ export default function Pricing() {
                   ))}
                 </ul>
                 
-                <button className={`w-full py-4 rounded-lg font-semibold text-lg transition-all duration-200 ${
-                  plan.popular
-                    ? 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg hover:shadow-xl'
-                    : 'bg-gray-900 hover:bg-gray-800 text-white'
-                }`}>
-                  {plan.cta}
-                </button>
+                <Link
+                  to="/signup"
+                  className={`w-full block py-4 rounded-lg font-semibold text-lg transition-all duration-200 text-center ${
+                    isPopular
+                      ? 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg hover:shadow-xl'
+                      : 'bg-gray-900 hover:bg-gray-800 text-white'
+                  }`}
+                >
+                  Start 7-Day Free Trial
+                </Link>
               </div>
             );
           })}

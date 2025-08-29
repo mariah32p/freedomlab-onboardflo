@@ -45,10 +45,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
+
+      if (event === 'PASSWORD_RECOVERY') {
+        window.location.replace('/reset-password');
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -111,7 +115,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     // Real mode - use Supabase
-    const { error } = await supabase.auth.resetPasswordForEmail(email);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin,
+    });
     return { error };
   };
 
