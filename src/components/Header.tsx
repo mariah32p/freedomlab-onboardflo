@@ -20,11 +20,11 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className="flex items-center flex-shrink-0">
+          <div className="flex items-center">
             <Link to="/" className="flex items-center" onClick={scrollToTop}>
-            <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center mr-3">
-              <Workflow className="w-5 h-5 text-white" />
-            </div>
+              <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center mr-3">
+                <Workflow className="w-5 h-5 text-white" />
+              </div>
               <span className="text-xl font-bold text-gray-900 font-sans">OnboardFlo</span>
             </Link>
           </div>
@@ -40,7 +40,7 @@ export default function Header() {
               {user ? (
                 <>
                   <span className="text-gray-600 font-medium font-sans">
-                    {user.user_metadata?.first_name || user.email}
+                    {user.email}
                   </span>
                   <button
                     onClick={handleSignOut}
@@ -86,7 +86,7 @@ export default function Header() {
                 {user ? (
                   <>
                     <span className="text-gray-600 font-medium font-sans">
-                      {user.user_metadata?.first_name || user.email}
+                      {user.email}
                     </span>
                     <button
                       onClick={handleSignOut}

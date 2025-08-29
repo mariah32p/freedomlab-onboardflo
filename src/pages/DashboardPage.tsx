@@ -11,7 +11,7 @@ export default function DashboardPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2 font-sans">
-            Welcome back, {user?.user_metadata?.first_name || 'there'}!
+            Welcome back!
           </h1>
           <p className="text-gray-600 font-sans">
             Manage your onboarding flows and track customer progress

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Workflow, Eye, EyeOff, Mail, Lock, User, Building } from 'lucide-react';
+import { Workflow, Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function GetStartedPage() {
@@ -10,10 +10,7 @@ export default function GetStartedPage() {
   const { signUp } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
     email: '',
-    company: '',
     password: '',
     confirmPassword: ''
   });
@@ -29,11 +26,7 @@ export default function GetStartedPage() {
       return;
     }
 
-    const { error: authError } = await signUp(formData.email, formData.password, {
-      first_name: formData.firstName,
-      last_name: formData.lastName,
-      company: formData.company,
-    });
+    const { error: authError } = await signUp(formData.email, formData.password);
     
     if (authError) {
       setError(authError.message);
@@ -78,46 +71,6 @@ export default function GetStartedPage() {
           )}
           
           <div className="space-y-4">
-            {/* Name fields */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2 font-sans">
-                  First name
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <User className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <input
-                    id="firstName"
-                    name="firstName"
-                    type="text"
-                    required
-                    value={formData.firstName}
-                    onChange={handleChange}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
-                    placeholder="John"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2 font-sans">
-                  Last name
-                </label>
-                <input
-                  id="lastName"
-                  name="lastName"
-                  type="text"
-                  required
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
-                  placeholder="Doe"
-                />
-              </div>
-            </div>
-
             {/* Email */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2 font-sans">
@@ -137,28 +90,6 @@ export default function GetStartedPage() {
                   onChange={handleChange}
                   className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
                   placeholder="john@company.com"
-                />
-              </div>
-            </div>
-
-            {/* Company */}
-            <div>
-              <label htmlFor="company" className="block text-sm font-medium text-gray-700 mb-2 font-sans">
-                Company name
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Building className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  id="company"
-                  name="company"
-                  type="text"
-                  required
-                  value={formData.company}
-                  onChange={handleChange}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
-                  placeholder="Your Company"
                 />
               </div>
             </div>
