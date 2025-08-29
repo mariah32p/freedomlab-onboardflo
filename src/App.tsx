@@ -5,7 +5,6 @@ import Header from './components/Header';
 import Hero from './components/Hero';
 import ProblemSolution from './components/ProblemSolution';
 import Features from './components/Features';
-import Testimonials from './components/Testimonials';
 import CTA from './components/CTA';
 import PricingPage from './pages/PricingPage';
 import SignUpPage from './pages/SignUpPage';
@@ -20,7 +19,6 @@ function LandingPage() {
       <Hero />
       <ProblemSolution />
       <Features />
-      <Testimonials />
       <CTA />
     </>
   );
