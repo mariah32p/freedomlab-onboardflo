@@ -30,7 +30,6 @@ const plans = [
       'Unlimited checklists',
       'Unlimited customer tracking',
       'Password protection for checklists',
-      'Custom completion pages',
       'Custom completion pages'
     ]
   }
