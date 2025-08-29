@@ -2,23 +2,39 @@
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
 
-# JavaScript files in any directory
-/**/*.js
-  Content-Type: application/javascript
+# JavaScript and CSS files
+/assets/*.js
+  Content-Type: application/javascript; charset=utf-8
 
-/**/*.mjs
-  Content-Type: application/javascript
+/assets/*.mjs
+  Content-Type: application/javascript; charset=utf-8
 
-# CSS files in any directory
-/**/*.css
-  Content-Type: text/css
+/assets/*.css
+  Content-Type: text/css; charset=utf-8
 
-# Icon files
-/**/*.ico
+# Root level files
+/*.js
+  Content-Type: application/javascript; charset=utf-8
+
+/*.mjs
+  Content-Type: application/javascript; charset=utf-8
+
+/*.css
+  Content-Type: text/css; charset=utf-8
+
+# Icon and image files
+/*.ico
   Content-Type: image/x-icon
 
-/**/*.png
+/*.png
   Content-Type: image/png
 
-/**/*.svg
+/*.svg
   Content-Type: image/svg+xml
+
+# Fallback for any JS files
+/**/*.js
+  Content-Type: application/javascript; charset=utf-8
+
+/**/*.mjs
+  Content-Type: application/javascript; charset=utf-8
