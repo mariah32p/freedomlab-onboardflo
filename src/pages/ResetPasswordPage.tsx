@@ -9,6 +9,7 @@ export default function ResetPasswordPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
   const { updatePassword, session, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -46,12 +47,7 @@ export default function ResetPasswordPage() {
       if (authError) {
         setError(authError.message);
       } else {
-        setSuccess(true);
-
-        // Redirect to sign in after 3 seconds
-        setTimeout(() => {
-          navigate('/signin');
-        }, 3000);
+        setShowConfirmation(true);
       }
     } finally {
       setLoading(false);
@@ -64,6 +60,49 @@ export default function ResetPasswordPage() {
       [e.target.name]: e.target.value
     }));
   };
+
+  const handleContinueToSignIn = () => {
+    setSuccess(true);
+    // Redirect to sign in after showing success message
+    setTimeout(() => {
+      navigate('/signin');
+    }, 2000);
+  };
+
+  if (showConfirmation) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full space-y-8">
+          <div className="text-center">
+            <Link to="/" className="inline-flex items-center mb-8">
+              <div className="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                <Workflow className="w-5 h-5 text-white" />
+              </div>
+              <span className="text-xl font-bold text-gray-900 font-sans whitespace-nowrap">OnboardFlo</span>
+            </Link>
+            
+            <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <CheckCircle className="w-8 h-8 text-emerald-600" />
+            </div>
+            
+            <h2 className="text-3xl font-bold text-gray-900 mb-4 font-sans">
+              Password updated successfully!
+            </h2>
+            <p className="text-gray-600 mb-8 font-sans">
+              Your password has been changed. You can now sign in with your new password.
+            </p>
+            
+            <button 
+              onClick={handleContinueToSignIn}
+              className="w-full flex justify-center py-3 px-4 border border-transparent text-lg font-medium rounded-lg text-white bg-emerald-600 hover:bg-emerald-700 transition-colors font-sans"
+            >
+              Continue to Sign In
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (success) {
     return (
