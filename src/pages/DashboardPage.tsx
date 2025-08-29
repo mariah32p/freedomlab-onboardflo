@@ -162,7 +162,7 @@ export default function DashboardPage() {
   const { createChecklist, updateChecklist } = useChecklists();
   const urlParams = new URLSearchParams(window.location.search);
   const tabFromUrl = urlParams.get('tab');
-  const [activeTab, setActiveTab] = useState(tabFromUrl || 'dashboard');
+  const [activeTab, setActiveTab] = useState(tabFromUrl || 'checklists');
   const isSuccess = urlParams.get('success') === 'true';
   const accessStatus = getAccessStatus();
   
@@ -199,15 +199,12 @@ export default function DashboardPage() {
     setEditingChecklist(null);
   };
   const tabs = [
-    { id: 'dashboard', name: 'Dashboard', icon: Home },
     { id: 'checklists', name: 'Checklists', icon: CheckCircle },
     { id: 'submissions', name: 'Submissions', icon: FileText },
   ];
 
   const renderContent = () => {
     switch (activeTab) {
-      case 'dashboard':
-        return <DashboardOverview />;
       case 'checklists':
         return (
           <ChecklistList 
@@ -218,7 +215,12 @@ export default function DashboardPage() {
       case 'submissions':
         return <SubmissionsSection />;
       default:
-        return <DashboardOverview />;
+        return (
+          <ChecklistList 
+            onEditChecklist={handleEditChecklist}
+            onCreateNew={handleCreateChecklist}
+          />
+        );
     }
   };
 
@@ -248,14 +250,18 @@ export default function DashboardPage() {
 
         {/* Header */}
         <div className="mb-8">
+          <DashboardOverview />
+        </div>
+
+        {/* Header */}
+        <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2 font-sans">
-            {accessStatus.isTrialing ? 'Welcome to your trial!' : 'Welcome back!'}
+            {activeTab === 'checklists' ? 'Checklists' : 
+             activeTab === 'submissions' ? 'Submissions' : 'Dashboard'}
           </h1>
           <p className="text-gray-600 font-sans">
-            {accessStatus.isTrialing 
-              ? 'Explore all features during your trial period'
-              : 'Manage your onboarding flows and track customer progress'
-            }
+            {activeTab === 'checklists' ? 'Create and manage your onboarding flows' :
+             activeTab === 'submissions' ? 'Track customer progress and submissions' : 'Overview of your onboarding performance'}
           </p>
         </div>
 

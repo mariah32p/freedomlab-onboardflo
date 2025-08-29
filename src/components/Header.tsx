@@ -46,9 +46,16 @@ export default function Header() {
           {/* Desktop Navigation and CTA */}
           <div className="hidden md:flex items-center space-x-8">
             <nav className="flex items-center space-x-8">
-              <Link to="/pricing" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans" onClick={scrollToTop}>
-                Pricing
-              </Link>
+              {showUserMenu && (
+                <>
+                  <Link to="/dashboard?tab=checklists" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
+                    Checklists
+                  </Link>
+                  <Link to="/dashboard?tab=submissions" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
+                    Submissions
+                  </Link>
+                </>
+              )}
               {showUserMenu && (
                 <Link to="/settings" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
                   Settings
@@ -121,10 +128,17 @@ export default function Header() {
                   </>
                 ) : (
                   <>
-                    <Link to="/signin" className="text-gray-600 hover:text-gray-900 transition-colors text-left font-medium font-sans">
-                      Sign In
-                    </Link>
                     <Link to="/signup" className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-lg font-medium transition-colors text-left font-sans">
+                  <>
+                    <Link to="/dashboard?tab=checklists" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
+                      Checklists
+                    </Link>
+                    <Link to="/dashboard?tab=submissions" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
+                      Submissions
+                    </Link>
+                  </>
+                )}
+                {showUserMenu && (
                       Start Free Trial
                     </Link>
                   </>
