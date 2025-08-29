@@ -34,7 +34,7 @@ export default function CTA() {
         </div>
         
         <p className="text-blue-200 text-sm font-sans">
-          No credit card required • Setup in under 5 minutes • Cancel anytime
+          Setup in under 5 minutes • Cancel anytime
         </p>
       </div>
     </section>

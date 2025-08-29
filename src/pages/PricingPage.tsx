@@ -102,7 +102,7 @@ export default function PricingPage() {
         
         <div className="text-center mt-12">
           <p className="text-gray-600 mb-4 font-sans">
-            All plans include a 7-day free trial. No credit card required.
+            All plans include a 7-day free trial.
           </p>
           <div className="flex items-center justify-center space-x-8 text-sm text-gray-500 font-sans">
             <span>✓ Cancel anytime</span>

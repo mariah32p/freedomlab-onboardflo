@@ -234,7 +234,7 @@ export default function GetStartedPage() {
         {/* Trust indicators */}
         <div className="text-center pt-6 border-t border-gray-200">
           <p className="text-xs text-gray-500 font-sans">
-            ✓ No credit card required • ✓ Cancel anytime • ✓ Setup in 5 minutes
+            ✓ Cancel anytime • ✓ Setup in 5 minutes
           </p>
         </div>
       </div>
