@@ -1,12 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Play, CheckCircle, Users, TrendingUp, Clock } from 'lucide-react';
+import { ArrowRight, Play, CheckCircle } from 'lucide-react';
 
 export default function Hero() {
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
   return (
     <section className="pt-20 pb-16 bg-gradient-to-br from-gray-50 to-white relative overflow-hidden">
       {/* Background decoration */}
@@ -17,11 +13,6 @@ export default function Hero() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left side - Content */}
           <div className="text-left">
-            <div className="inline-flex items-center bg-emerald-100 text-emerald-800 px-4 py-2 rounded-full text-sm font-medium mb-6 font-sans">
-              <CheckCircle className="w-4 h-4 mr-2" />
-              Trusted by 500+ companies
-            </div>
-            
             <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight font-sans">
               Customer onboarding
               <span className="text-emerald-600"> made simple</span>
@@ -31,22 +22,6 @@ export default function Hero() {
               Create beautiful, trackable onboarding checklists that guide your customers 
               to success and reduce support tickets by 60%.
             </p>
-            
-            {/* Stats */}
-            <div className="flex flex-wrap gap-6 mb-8">
-              <div className="flex items-center">
-                <TrendingUp className="w-5 h-5 text-emerald-500 mr-2" />
-                <span className="text-gray-700 font-medium font-sans">85% completion rate</span>
-              </div>
-              <div className="flex items-center">
-                <Clock className="w-5 h-5 text-emerald-500 mr-2" />
-                <span className="text-gray-700 font-medium font-sans">5-min setup</span>
-              </div>
-              <div className="flex items-center">
-                <Users className="w-5 h-5 text-emerald-500 mr-2" />
-                <span className="text-gray-700 font-medium font-sans">500+ customers</span>
-              </div>
-            </div>
             
             {/* CTA buttons */}
             <div className="flex flex-col sm:flex-row gap-4 mb-8">
