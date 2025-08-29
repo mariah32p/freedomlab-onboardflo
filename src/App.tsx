@@ -14,6 +14,8 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import GetStartedPage from './pages/GetStartedPage';
 import DashboardPage from './pages/DashboardPage';
+import ChecklistsPage from './pages/ChecklistsPage';
+import SubmissionsPage from './pages/SubmissionsPage';
 import SettingsPage from './pages/SettingsPage';
 
 // Simple landing page component that combines all sections
@@ -45,6 +47,8 @@ function App() {
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/reset-password" element={<ResetPasswordPage />} />
               <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/checklists" element={<ChecklistsPage />} />
+              <Route path="/submissions" element={<SubmissionsPage />} />
               <Route path="/settings" element={<SettingsPage />} />
             </Routes>
           </main>

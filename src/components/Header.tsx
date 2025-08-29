@@ -48,10 +48,10 @@ export default function Header() {
             <nav className="flex items-center space-x-8">
               {showUserMenu && (
                 <>
-                  <Link to="/dashboard?tab=checklists" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
+                  <Link to="/checklists" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
                     Checklists
                   </Link>
-                  <Link to="/dashboard?tab=submissions" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
+                  <Link to="/submissions" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
                     Submissions
                   </Link>
                 </>
@@ -110,10 +110,10 @@ export default function Header() {
               </Link>
               {showUserMenu && (
                 <>
-                  <Link to="/dashboard?tab=checklists" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
+                  <Link to="/checklists" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
                     Checklists
                   </Link>
-                  <Link to="/dashboard?tab=submissions" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
+                  <Link to="/submissions" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
                     Submissions
                   </Link>
                   <Link to="/settings" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
