@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArrowRight, Zap } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function CTA() {
   return (
@@ -22,10 +23,13 @@ export default function CTA() {
             <Zap className="mr-2 w-5 h-5" />
             Start 7-Day Free Trial
           </button>
-          <button className="group bg-transparent hover:bg-white/10 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 flex items-center justify-center border-2 border-white/30 hover:border-white/50 font-sans">
+          <Link 
+            to="/pricing" 
+            className="group bg-transparent hover:bg-white/10 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 flex items-center justify-center border-2 border-white/30 hover:border-white/50 font-sans"
+          >
             View Pricing
             <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-          </button>
+          </Link>
         </div>
         
         <p className="text-blue-200 text-sm font-sans">

@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArrowRight, Play, Users, Clock, CheckCircle, BarChart3 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function Hero() {
   return (
@@ -35,9 +36,12 @@ export default function Hero() {
                 Start 7-Day Free Trial
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </button>
-              <button className="group bg-white/10 hover:bg-white/20 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 flex items-center justify-center border border-white/20 hover:border-white/30 backdrop-blur-sm font-sans">
+              <Link 
+                to="/pricing" 
+                className="group bg-white/10 hover:bg-white/20 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 flex items-center justify-center border border-white/20 hover:border-white/30 backdrop-blur-sm font-sans"
+              >
                 View Pricing
-              </button>
+              </Link>
             </div>
             
             {/* Trust indicators */}
