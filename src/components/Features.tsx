@@ -6,32 +6,32 @@ export default function Features() {
     {
       icon: CheckCircle,
       title: 'Visual Checklist Builder',
-      description: 'Simple form to create checklists with steps, descriptions, and links. Build professional onboarding flows in minutes.',
+      description: 'Create professional onboarding flows in minutes with our simple form builder.',
     },
     {
       icon: Link,
-      title: 'Shareable Checklist Links',
-      description: 'Each checklist gets a public URL customers can visit. No logins required - just send the link and track progress.',
+      title: 'Shareable Links',
+      description: 'Send customers a simple URL - no logins required, just click and complete.',
     },
     {
       icon: Eye,
       title: 'Progress Tracking',
-      description: 'See which customers completed which steps via email collection. Know exactly where each client stands.',
+      description: 'Know exactly where each customer stands in real-time.',
     },
     {
       icon: Smartphone,
-      title: 'Customer Experience',
-      description: 'Clean, mobile-friendly checklist page that customers visit. Professional appearance that reflects your brand.',
+      title: 'Mobile-Friendly',
+      description: 'Clean, responsive checklist pages that work perfectly on any device.',
     },
     {
       icon: BarChart3,
-      title: 'Basic Analytics',
-      description: 'Completion rates and common drop-off points. Understand where customers need more help.',
+      title: 'Analytics',
+      description: 'See completion rates and identify where customers need help.',
     },
     {
       icon: Palette,
-      title: 'Simple Branding',
-      description: 'Add your logo and colors to public checklist pages. Maintain brand consistency throughout the process.',
+      title: 'Brand Consistency',
+      description: 'Add your logo and colors to maintain professional appearance.',
     },
   ];
 
@@ -40,10 +40,10 @@ export default function Features() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 font-sans">
-            Everything you need for client onboarding
+            Everything you need for smooth onboarding
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto font-sans">
-            Core features that work for agencies, consultants, and SaaS companies
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto font-sans">
+            Simple tools that work for any business
           </p>
         </div>
         
