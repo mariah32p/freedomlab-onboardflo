@@ -111,9 +111,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     // Real mode - use Supabase
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `http://localhost:5173/reset-password`,
-    });
+    const { error } = await supabase.auth.resetPasswordForEmail(email);
     return { error };
   };
 
