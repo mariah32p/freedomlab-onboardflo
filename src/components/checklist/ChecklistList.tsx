@@ -62,8 +62,6 @@ export default function ChecklistList({ onEditChecklist, onCreateNew }: Checklis
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 font-sans">Onboarding Checklists</h2>
-          <p className="text-gray-600 font-sans">Create and manage your customer onboarding flows</p>
         </div>
         <button
           onClick={onCreateNew}
