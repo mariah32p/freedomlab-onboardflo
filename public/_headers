@@ -1,17 +1,24 @@
-/*.js
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+
+# JavaScript files in any directory
+/**/*.js
   Content-Type: application/javascript
 
-/*.mjs
+/**/*.mjs
   Content-Type: application/javascript
 
-/*.ts
-  Content-Type: application/javascript
-
-/*.tsx
-  Content-Type: application/javascript
-
-/*.css
+# CSS files in any directory
+/**/*.css
   Content-Type: text/css
 
-/*.ico
+# Icon files
+/**/*.ico
   Content-Type: image/x-icon
+
+/**/*.png
+  Content-Type: image/png
+
+/**/*.svg
+  Content-Type: image/svg+xml
