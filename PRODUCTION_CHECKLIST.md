@@ -39,115 +39,57 @@ RLS: Users can read and update only their own profile row.
 
 Feature data: Create normal app tables for your product (e.g., events, projects, etc.). All reads/writes persist via Supabase with RLS so users only see their own data.
 
-
 5) Environment & deployment (Netlify)
-
 Server-only env vars: Stripe Secret Key, Stripe Webhook Secret, Supabase Service Role Key, App URL.
-
 Client env vars: Stripe Publishable Key, Supabase URL, Supabase Anon Key.
-
-Maintain separate staging (test keys) and production (live keys). Create distinct Stripe webhooks for each. Redeploy after setting env.
+Redeploy after setting env.
 
 6) Server endpoints (what each should do)
-
 Create Checkout Session (POST /api/create-checkout-session)
-
 For sign-up trials: Create a subscription Checkout Session with a 7-day trial for the selected price. Set success URL to /dashboard and cancel URL to /get-started. Return the Stripe URL to redirect the user.
-
 For plan changes: Create a subscription Checkout Session without a trial that changes the plan immediately (use your proration policy). Return the Stripe URL.
-
 Create Portal Session (POST /api/create-portal-session)
-
 Look up the user’s Stripe customer_id (and, if you support many products, the exact subscription_id to manage).
-
 Create a Stripe Billing Portal session that does not allow plan switching. Return the portal URL.
-
 Stripe Webhook (POST /api/stripe-webhook)
-
 Verify the signature.
-
 On checkout.session.completed: store customer_id and subscription_id on the user’s profile.
-
 On customer.subscription.created/updated: update plan, subscription_status, trial_ends_at, and current_period_end. If payment recovered, clear payment_issue_since.
-
 On invoice.payment_failed: set status to past_due and, if not already set, record payment_issue_since.
-
 On customer.subscription.deleted: set status to canceled.
 
 Ensure idempotency so events are processed once.
 
 7) Client logic (what the app should do)
-
 Route guard (everywhere users enter the app):
-
 If not signed in → send to /signup.
-
 If status is trialing or active → send to /dashboard.
-
 If past_due and the first failure was within 30 days → allow /dashboard but show a payment-issue banner.
-
 Otherwise → send to /get-started.
-
 Grace helper: Determine whether a user is in the 30-day grace window by comparing the current time to payment_issue_since.
 
 Feature gating:
-
 If status is trialing, allow all features.
-
 Otherwise, gate actions based on plan. Keep Pro actions visible but disabled on Basic with a small inline “Upgrade” prompt (copy can still say “Upgrade” even though the card is already on file).
-
 Trial banner (on /dashboard during trial): Show “Trial ends in X days. Your card will be charged on [date]. Manage in Settings.”
 
-8) Multiple products (tool suite)
-
-Keep plan switching out of the portal. Use the portal only for cancel/payment.
-
-If you have many products, create either:
-
-Portal configurations that only list the intended product’s prices, or
-
-Always pass the specific subscription to manage when creating the portal session so the user can’t switch to unrelated products in the portal.
-
-If adopting a subscriptions table, store product_key, customer_id, subscription_id, plan, status, and period/trial dates per product.
-
-9) Analytics & notifications (nice to have)
+8) Analytics & notifications (nice to have)
 
 Events to track: landing CTA click, sign-up completed, Get Started viewed, Checkout started, Checkout completed, trial started, trial ends soon, trial converted/charged, payment failed, grace started, grace resolved, subscription canceled, plan changed.
-
 Attribution: carry ?src= and UTM params from landing to sign-up and store on profile or in an analytics system.
-
 Emails (via Stripe or your tool): trial started, trial ending soon, payment failed, grace ending, cancellation confirmation.
 
-10) QA checklist (condensed)
-
+9) QA checklist (condensed)
 Sign-up → Get Started → Checkout (trial) → Dashboard works.
-
 Trial banner shows correct days left and charge date.
-
 Webhooks set trialing, then flip to active automatically.
-
 Basic vs Pro gates behave; trial overrides gating.
-
 Payment failure shows banner and starts 30-day grace; after 30 days, the app routes to Get Started.
-
 Settings → Portal handles cancel/payment only.
-
 Plan change triggers a Checkout without a trial and charges immediately per proration rules.
-
 Feature data persists via Supabase with correct RLS.
 
-11) Security
-
-Keep all secrets server-side. Verify Stripe webhook signatures. Enforce RLS on all tables. Use HTTPS. Sanitize any custom inputs to queries or RPCs.
-
-Final “don’t forgets”
-
-Turn on email verification in Supabase (recommended).
-
+10) Final “don’t forgets”
 Show dates in the user’s timezone when displaying trial_ends_at.
-
-Add idempotency to the webhook handler.
-
 If a user signs up but never finishes Checkout, the next visit should route them to /get-started.
-
 Decide and document your proration policy for plan changes (and reflect it in Settings copy).
