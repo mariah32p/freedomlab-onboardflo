@@ -1,9 +1,23 @@
 import React from 'react';
 import { Check, Zap, Building } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
-import { useStripe } from '../hooks/useStripe';
+// import { useAuth } from '../contexts/AuthContext';
+// import { useStripe } from '../hooks/useStripe';
 import { stripeProducts } from '../stripe-config';
 import { Link } from 'react-router-dom';
+
+// Mock hooks for now
+const useAuth = () => ({
+  user: null
+});
+
+const useStripe = () => ({
+  createCheckoutSession: async (priceId: string) => {
+    // Mock redirect to get started page
+    window.location.href = '/get-started';
+  },
+  loading: false,
+  error: null
+});
 
 const planIcons = {
   'Basic': Zap,

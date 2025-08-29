@@ -1,6 +1,11 @@
 import React from 'react';
-import { useAuth } from '../contexts/AuthContext';
+// import { useAuth } from '../contexts/AuthContext';
 import { BarChart3, Users, CheckCircle, Clock, Plus, Settings } from 'lucide-react';
+
+// Mock auth hook for now
+const useAuth = () => ({
+  user: { email: 'demo@example.com' }
+});
 
 export default function DashboardPage() {
   const { user } = useAuth();
