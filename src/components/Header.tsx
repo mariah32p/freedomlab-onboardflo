@@ -11,9 +11,9 @@ export default function Header() {
           {/* Logo */}
           <div className="flex items-center">
             <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center mr-3">
-              <span className="text-white font-bold text-sm">S</span>
+              <span className="text-white font-bold text-sm">O</span>
             </div>
-            <span className="text-xl font-semibold text-gray-900">StageCue</span>
+            <span className="text-xl font-semibold text-gray-900">OnboardFlo</span>
           </div>
 
           {/* Desktop Navigation */}
