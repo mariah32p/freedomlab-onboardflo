@@ -1,167 +1,162 @@
-# OnboardFlo Production Checklist
+Overview: Subscription + App MVP (Supabase + Stripe on Netlify)
+1) Core flow (happy path)
+Landing page: Every button is a single CTA (“Start Free Trial”). All of them open the sign-up flow (no plan-specific buttons on the landing page).
+Sign-up: Create the user in Supabase Auth (email confirmation is turned off), then send them to /get-started.
+Get Started: User chooses Basic or Pro. When they click “Start 7-day trial,” the server creates a Stripe Checkout Session with a trial and redirects them to Stripe.
+Return: After Checkout, Stripe sends the user back to /dashboard. Your webhook marks the subscription as “trialing” and stores the trial end date.
+Dashboard: Shows the product’s real sections (e.g., Dashboard, My Events) plus Settings. A small banner shows trial days left and charge date. All features work during the trial.
+Auto-upgrade: At the end of the trial, Stripe automatically charges the card and the subscription becomes “active.”
 
-## Overview
-This checklist will guide you through deploying OnboardFlo from demo mode to a fully functional production application with real authentication and payments.
+2) App structure
+Routes
+/landing
+/signup: email/password sign-up
+/get-started: plan selection + start trial (go to Checkout)
+/dashboard: protected app with product sections + Settings
+Sections are tailored to the product (no generic “Features” tab). Settings is always the last tab.
 
-## 🔧 Configuration Changes
+3) Plans, trials, and portal
+Trial: 7 days; card is collected at start; everything is unlocked during the trial.
 
-### 1. Enable Real Authentication
-- [ ] Change `ENABLE_REAL_AUTH: false` to `ENABLE_REAL_AUTH: true` in `src/config/app.ts`
+After trial:
+If active and Pro → full access.
+If active and Basic → same UI, but Basic-gated actions remain disabled.
 
-### 2. Environment Variables Setup
-- [ ] Create `.env` file with your actual Supabase credentials:
-  ```
-  VITE_SUPABASE_URL=your_actual_supabase_url
-  VITE_SUPABASE_ANON_KEY=your_actual_supabase_anon_key
-  ```
+If past_due or other payment issues → show a “Payment issue” banner and allow a 30-day grace window; after 30 days, treat as no active subscription.
+If no active subscription (canceled, >30-day payment issue, or sign-up abandoned before payment) → route to /get-started.
+Settings → Manage Subscription: Opens Stripe Customer Portal for cancel and payment method updates only. Do not use the portal for plan switching.
+Upgrade/Downgrade (plan changes): Handled manually in-app. When the user changes plans, the server starts a new Checkout Session without a trial, and Stripe charges immediately based on your proration policy. (Plan changes do not create a new trial.)
 
-## 🗄️ Database Setup
+4) Data model (Supabase)
 
-### 1. Supabase Project
-- [ ] Create new Supabase project at https://supabase.com
-- [ ] Note down your project URL and anon key
-- [ ] Enable email authentication in Supabase Auth settings
+profiles (one row per user, keyed by auth.users.id) stores:
 
-### 2. Database Schema
-- [ ] Run the existing migration in `supabase/migrations/` to create:
-  - `stripe_customers` table
-  - `stripe_subscriptions` table  
-  - `stripe_orders` table
-  - Required RLS policies
+email
 
-### 3. Authentication Settings
-- [ ] Configure email templates in Supabase Auth
-- [ ] Set up redirect URLs for your domain
-- [ ] Disable email confirmation if desired (for faster signup)
+plan (basic | pro)
 
-## 💳 Stripe Integration
+subscription_status (trialing, active, past_due, canceled, etc.)
 
-### 1. Stripe Account Setup
-- [ ] Create Stripe account at https://stripe.com
-- [ ] Get your publishable and secret keys
-- [ ] Create your actual products and pricing in Stripe Dashboard
+trial_ends_at, current_period_end
 
-### 2. Update Stripe Configuration
-- [ ] Replace placeholder price IDs in `src/stripe-config.ts` with real ones:
-  ```typescript
-  priceId: 'price_1234567890', // Replace with actual Basic plan price ID
-  priceId: 'price_0987654321', // Replace with actual Pro plan price ID
-  ```
+customer_id, subscription_id
 
-### 3. Webhook Setup
-- [ ] Deploy your Supabase Edge functions (they auto-deploy when connected)
-- [ ] Add webhook endpoint in Stripe Dashboard: `your-supabase-url/functions/v1/stripe-webhook`
-- [ ] Configure webhook to listen for these events:
-  - `checkout.session.completed`
-  - `customer.subscription.created`
-  - `customer.subscription.updated`
-  - `customer.subscription.deleted`
-  - `invoice.payment_succeeded`
-  - `invoice.payment_failed`
+payment_issue_since (timestamp set on first payment failure; cleared on recovery)
 
-### 4. Environment Variables for Edge Functions
-Add these to your Supabase project settings:
-- [ ] `STRIPE_SECRET_KEY` - Your Stripe secret key
-- [ ] `STRIPE_WEBHOOK_SECRET` - Your webhook signing secret from Stripe
+RLS: Users can read and update only their own profile row.
 
-## 🚀 Deployment
+Feature data: Create normal app tables for your product (e.g., events, projects, etc.). All reads/writes persist via Supabase with RLS so users only see their own data.
 
-### 1. Build and Deploy
-- [ ] Test locally with real auth: `npm run dev`
-- [ ] Build for production: `npm run build`
-- [ ] Deploy to your hosting provider (Netlify, Vercel, etc.)
+If you’ll support multiple products per user, consider a separate subscriptions table (one row per product per user) instead of packing everything into profiles.
 
-### 2. Domain and SSL
-- [ ] Configure custom domain
-- [ ] Ensure SSL certificate is active
-- [ ] Update Stripe webhook URLs to use production domain
+5) Environment & deployment (Netlify)
 
-## ✅ Testing Checklist
+Server-only env vars: Stripe Secret Key, Stripe Webhook Secret, Supabase Service Role Key, App URL.
 
-### Authentication Flow
-- [ ] User can sign up with email/password
-- [ ] User receives confirmation email (if enabled)
-- [ ] User can sign in successfully
-- [ ] User can sign out
-- [ ] Protected routes redirect to sign in
+Client env vars: Stripe Publishable Key, Supabase URL, Supabase Anon Key.
 
-### Payment Flow
-- [ ] Pricing page loads correctly
-- [ ] Stripe checkout opens when clicking subscribe
-- [ ] Test payment with Stripe test cards
-- [ ] User redirects to dashboard after successful payment
-- [ ] Subscription data appears in database
-- [ ] Webhook processes payment events
+Maintain separate staging (test keys) and production (live keys). Create distinct Stripe webhooks for each. Redeploy after setting env.
 
-### Dashboard
-- [ ] User sees their actual data (not demo data)
-- [ ] Real-time updates work
-- [ ] All features function as expected
+6) Server endpoints (what each should do)
 
-## 🔒 Security Review
+Create Checkout Session (POST /api/create-checkout-session)
 
-### Database Security
-- [ ] All tables have RLS enabled
-- [ ] RLS policies are properly configured
-- [ ] No sensitive data exposed to client
-- [ ] Database backups configured
+For sign-up trials: Create a subscription Checkout Session with a 7-day trial for the selected price. Set success URL to /dashboard and cancel URL to /get-started. Return the Stripe URL to redirect the user.
 
-### API Security
-- [ ] Supabase service role key is secure
-- [ ] Stripe webhook secret is properly set
-- [ ] No API keys exposed in client code
-- [ ] CORS properly configured
+For plan changes: Create a subscription Checkout Session without a trial that changes the plan immediately (use your proration policy). Return the Stripe URL.
 
-## 📊 Monitoring Setup
+Create Portal Session (POST /api/create-portal-session)
 
-### Analytics
-- [ ] Set up error monitoring (Sentry, LogRocket, etc.)
-- [ ] Configure performance monitoring
-- [ ] Set up user analytics (PostHog, Mixpanel, etc.)
+Look up the user’s Stripe customer_id (and, if you support many products, the exact subscription_id to manage).
 
-### Business Metrics
-- [ ] Track signup conversion rates
-- [ ] Monitor subscription metrics in Stripe
-- [ ] Set up alerts for failed payments
-- [ ] Track customer onboarding completion rates
+Create a Stripe Billing Portal session that does not allow plan switching. Return the portal URL.
 
-## 🎯 Go-Live Steps
+Stripe Webhook (POST /api/stripe-webhook)
 
-1. [ ] Complete all items above
-2. [ ] Run final tests in staging environment
-3. [ ] Switch `ENABLE_REAL_AUTH` to `true`
-4. [ ] Deploy to production
-5. [ ] Test complete user flow end-to-end
-6. [ ] Monitor for any issues in first 24 hours
+Verify the signature.
 
-## 📝 Post-Launch
+On checkout.session.completed: store customer_id and subscription_id on the user’s profile.
 
-### Week 1
-- [ ] Monitor error rates and user feedback
-- [ ] Check payment processing is working smoothly
-- [ ] Verify email deliverability
-- [ ] Review performance metrics
+On customer.subscription.created/updated: update plan, subscription_status, trial_ends_at, and current_period_end. If payment recovered, clear payment_issue_since.
 
-### Month 1
-- [ ] Analyze user onboarding data
-- [ ] Optimize based on real usage patterns
-- [ ] Plan feature improvements based on feedback
+On invoice.payment_failed: set status to past_due and, if not already set, record payment_issue_since.
 
----
+On customer.subscription.deleted: set status to canceled.
 
-## 🆘 Troubleshooting
+Ensure idempotency so events are processed once.
 
-### Common Issues
-- **Auth not working**: Check Supabase URL and keys in `.env`
-- **Payments failing**: Verify Stripe keys and webhook configuration
-- **Database errors**: Check RLS policies and table permissions
-- **Email issues**: Verify Supabase email settings and templates
+7) Client logic (what the app should do)
 
-### Support Resources
-- Supabase Documentation: https://supabase.com/docs
-- Stripe Documentation: https://stripe.com/docs
-- Your codebase includes comprehensive error handling and logging
+Route guard (everywhere users enter the app):
 
----
+If not signed in → send to /signup.
 
-*Last updated: [Date when you complete setup]*
+If status is trialing or active → send to /dashboard.
+
+If past_due and the first failure was within 30 days → allow /dashboard but show a payment-issue banner.
+
+Otherwise → send to /get-started.
+
+Grace helper: Determine whether a user is in the 30-day grace window by comparing the current time to payment_issue_since.
+
+Feature gating:
+
+If status is trialing, allow all features.
+
+Otherwise, gate actions based on plan. Keep Pro actions visible but disabled on Basic with a small inline “Upgrade” prompt (copy can still say “Upgrade” even though the card is already on file).
+
+Trial banner (on /dashboard during trial): Show “Trial ends in X days. Your card will be charged on [date]. Manage in Settings.”
+
+8) Multiple products (tool suite)
+
+Keep plan switching out of the portal. Use the portal only for cancel/payment.
+
+If you have many products, create either:
+
+Portal configurations that only list the intended product’s prices, or
+
+Always pass the specific subscription to manage when creating the portal session so the user can’t switch to unrelated products in the portal.
+
+If adopting a subscriptions table, store product_key, customer_id, subscription_id, plan, status, and period/trial dates per product.
+
+9) Analytics & notifications (nice to have)
+
+Events to track: landing CTA click, sign-up completed, Get Started viewed, Checkout started, Checkout completed, trial started, trial ends soon, trial converted/charged, payment failed, grace started, grace resolved, subscription canceled, plan changed.
+
+Attribution: carry ?src= and UTM params from landing to sign-up and store on profile or in an analytics system.
+
+Emails (via Stripe or your tool): trial started, trial ending soon, payment failed, grace ending, cancellation confirmation.
+
+10) QA checklist (condensed)
+
+Sign-up → Get Started → Checkout (trial) → Dashboard works.
+
+Trial banner shows correct days left and charge date.
+
+Webhooks set trialing, then flip to active automatically.
+
+Basic vs Pro gates behave; trial overrides gating.
+
+Payment failure shows banner and starts 30-day grace; after 30 days, the app routes to Get Started.
+
+Settings → Portal handles cancel/payment only.
+
+Plan change triggers a Checkout without a trial and charges immediately per proration rules.
+
+Feature data persists via Supabase with correct RLS.
+
+11) Security
+
+Keep all secrets server-side. Verify Stripe webhook signatures. Enforce RLS on all tables. Use HTTPS. Sanitize any custom inputs to queries or RPCs.
+
+Final “don’t forgets”
+
+Turn on email verification in Supabase (recommended).
+
+Show dates in the user’s timezone when displaying trial_ends_at.
+
+Add idempotency to the webhook handler.
+
+If a user signs up but never finishes Checkout, the next visit should route them to /get-started.
+
+Decide and document your proration policy for plan changes (and reflect it in Settings copy).
