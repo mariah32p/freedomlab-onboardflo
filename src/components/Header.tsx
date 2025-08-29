@@ -109,9 +109,17 @@ export default function Header() {
                 Pricing
               </Link>
               {showUserMenu && (
-                <Link to="/settings" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
-                  Settings
-                </Link>
+                <>
+                  <Link to="/dashboard?tab=checklists" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
+                    Checklists
+                  </Link>
+                  <Link to="/dashboard?tab=submissions" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
+                    Submissions
+                  </Link>
+                  <Link to="/settings" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
+                    Settings
+                  </Link>
+                </>
               )}
               <div className="pt-4 border-t border-gray-100 flex flex-col space-y-2">
                 {showUserMenu ? (
@@ -128,17 +136,10 @@ export default function Header() {
                   </>
                 ) : (
                   <>
+                    <Link to="/signin" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
+                      Sign In
+                    </Link>
                     <Link to="/signup" className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-lg font-medium transition-colors text-left font-sans">
-                  <>
-                    <Link to="/dashboard?tab=checklists" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
-                      Checklists
-                    </Link>
-                    <Link to="/dashboard?tab=submissions" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
-                      Submissions
-                    </Link>
-                  </>
-                )}
-                {showUserMenu && (
                       Start Free Trial
                     </Link>
                   </>
