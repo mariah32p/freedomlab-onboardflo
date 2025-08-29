@@ -1,5 +1,6 @@
 import React from 'react';
 import { Menu, X, Workflow } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
@@ -10,24 +11,26 @@ export default function Header() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center flex-shrink-0">
+            <Link to="/" className="flex items-center">
             <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center mr-3">
               <Workflow className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-gray-900">OnboardFlo</span>
+              <span className="text-xl font-bold text-gray-900 font-sans">OnboardFlo</span>
+            </Link>
           </div>
 
           {/* Desktop Navigation and CTA */}
           <div className="hidden md:flex items-center space-x-8">
             <nav className="flex items-center space-x-8">
-              <a href="#pricing" className="text-gray-600 hover:text-gray-900 transition-colors font-medium">
+              <Link to="/pricing" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
                 Pricing
-              </a>
+              </Link>
             </nav>
             <div className="flex items-center space-x-4">
-              <button className="text-gray-600 hover:text-gray-900 transition-colors font-medium">
+              <button className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
                 Sign In
               </button>
-              <button className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+              <button className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium transition-colors font-sans">
                 Get Started
               </button>
             </div>
@@ -50,14 +53,14 @@ export default function Header() {
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t border-gray-100">
             <div className="flex flex-col space-y-4">
-              <a href="#pricing" className="text-gray-600 hover:text-gray-900 transition-colors font-medium">
+              <Link to="/pricing" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
                 Pricing
-              </a>
+              </Link>
               <div className="pt-4 border-t border-gray-100 flex flex-col space-y-2">
-                <button className="text-gray-600 hover:text-gray-900 transition-colors text-left font-medium">
+                <button className="text-gray-600 hover:text-gray-900 transition-colors text-left font-medium font-sans">
                   Sign In
                 </button>
-                <button className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-lg font-medium transition-colors">
+                <button className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-lg font-medium transition-colors font-sans">
                   Get Started
                 </button>
               </div>
