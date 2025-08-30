@@ -79,18 +79,6 @@ function ChecklistCard({ checklist, onEdit, onDelete, onPreview, onCopyLink, cop
               <ExternalLink className="w-4 h-4" />
             </button>
             <button
-              onClick={() => onCopyLink(checklist)}
-              disabled={needsSetup}
-              className="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              title={needsSetup ? "Add steps before sharing" : "Copy share link"}
-            >
-              {copiedId === checklist.id ? (
-                <Check className="w-4 h-4 text-emerald-600" />
-              ) : (
-                <Copy className="w-4 h-4" />
-              )}
-            </button>
-            <button
               onClick={() => onEdit(checklist)}
               className="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
               title="Edit checklist"
@@ -106,6 +94,32 @@ function ChecklistCard({ checklist, onEdit, onDelete, onPreview, onCopyLink, cop
               <Trash2 className="w-4 h-4" />
             </button>
           </div>
+          
+          <button
+            onClick={() => onCopyLink(checklist)}
+            disabled={needsSetup}
+            className="w-full mt-4 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-4 py-3 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed border border-emerald-200 font-sans"
+          >
+            {copiedId === checklist.id ? (
+              <div className="flex items-center justify-center space-x-2">
+                <Check className="w-4 h-4" />
+                <span>Link Copied!</span>
+              </div>
+            ) : needsSetup ? (
+              'Add steps before sharing'
+            ) : (
+              <div className="flex items-center justify-center space-x-2">
+                <Copy className="w-4 h-4" />
+                <span>Create Unique Customer Link</span>
+              </div>
+            )}
+          </button>
+          
+          {!needsSetup && (
+            <p className="text-xs text-gray-500 mt-2 text-center font-sans">
+              Each link creates a unique session for individual customer progress tracking
+            </p>
+          )}
           
           <div className="text-xs text-gray-500 font-sans">
             {new Date(checklist.created_at).toLocaleDateString()}
