@@ -22,7 +22,8 @@ import {
   AlertCircle,
   TrendingUp,
   Calendar,
-  RotateCcw
+  RotateCcw,
+  Upload
 } from 'lucide-react';
 import SimpleHeader from '../components/SimpleHeader';
 
