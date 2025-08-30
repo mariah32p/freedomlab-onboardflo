@@ -167,10 +167,16 @@ function ShareLinkModal({ checklist, onClose }: ShareLinkModalProps) {
               <Info className="w-4 h-4 text-blue-600" />
               <span className="font-medium text-blue-900 font-sans">How it works</span>
             </div>
-            <p className="text-sm text-blue-800 font-sans">
-              Each link creates a trackable submission that appears in your dashboard immediately. 
-              Send the link to your customer and monitor their progress in real-time.
-            </p>
+            <div className="text-sm text-blue-800 space-y-2 font-sans">
+              <p>
+                Each link creates a trackable submission that appears in your dashboard immediately. 
+                Send the link to your customer and monitor their progress in real-time.
+              </p>
+              <p>
+                You can send this link to multiple people on your client team - they'll see each other's 
+                activity and get notified when someone else is editing to prevent conflicts.
+              </p>
+            </div>
           </div>
         </div>
 
