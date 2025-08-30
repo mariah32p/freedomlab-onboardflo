@@ -610,13 +610,6 @@ export default function ChecklistBuilder({ checklist, template, onSave, onClose,
                       >
                         → Go to Steps ({steps.length} configured)
                       </button>
-                      <a 
-                        href="/branding" 
-                        target="_blank" 
-                        className="block w-full text-left px-3 py-2 bg-white border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors text-sm font-sans"
-                      >
-                        → Update Global Branding
-                      </a>
                     </div>
                   </div>
                 </div>
