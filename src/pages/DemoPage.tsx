@@ -515,12 +515,13 @@ export default function DemoPage() {
                         }`}>
                           {session.status === 'completed' ? 'Completed' : 'In Progress'}
                         </div>
-                        <div className="text-xs text-gray-500 mt-1 font-sans">
-                          {animatedProgress[session.name.split(' ')[0].toLowerCase()] || 0}% complete
-                        </div>
-                        {session.status === 'completed' && (
+                        {session.status === 'completed' ? (
                           <div className="text-xs text-emerald-600 mt-1 font-sans font-medium">
                             100% complete
+                          </div>
+                        ) : (
+                          <div className="text-xs text-gray-500 mt-1 font-sans">
+                            {animatedProgress[session.name.split(' ')[0].toLowerCase()] || 0}% complete
                           </div>
                         )}
                       </div>
