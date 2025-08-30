@@ -201,6 +201,8 @@ export function useChecklistSteps(checklistId: string | null) {
           checklist_id: checklistId,
           title: stepData.title,
           description: stepData.description,
+          step_type: stepData.step_type,
+          options: stepData.options,
           is_required: stepData.is_required,
           order_index: maxOrder + 1,
         })
