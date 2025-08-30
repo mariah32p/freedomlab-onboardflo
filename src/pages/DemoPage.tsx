@@ -21,7 +21,8 @@ import {
   Check,
   AlertCircle,
   TrendingUp,
-  Calendar
+  Calendar,
+  RotateCcw
 } from 'lucide-react';
 import SimpleHeader from '../components/SimpleHeader';
 
