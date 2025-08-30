@@ -840,8 +840,8 @@ export default function DemoPage() {
                 <div className="px-6 py-8 text-center bg-emerald-50">
                   <div className="flex justify-center mb-4">
                     <img 
-                      src="https://images.pexels.com/photos/1779487/pexels-photo-1779487.jpeg?auto=compress&cs=tinysrgb&w=120&h=60&fit=crop" 
-                      alt="DesignStudio Pro Logo" 
+                      src="/Freedom Lab Logos (3).png" 
+                      alt="Freedom Lab Logo" 
                       className="h-12 w-24 object-cover rounded-lg shadow-sm"
                     />
                   </div>
