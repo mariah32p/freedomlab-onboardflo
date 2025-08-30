@@ -37,7 +37,7 @@ export interface CreateChecklistData {
   is_public: boolean;
   password?: string;
   brand_color: string;
-  logo_url?: string;
+  logo_url: string;
   completion_page_content: string;
 }
 
