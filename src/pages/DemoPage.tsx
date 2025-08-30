@@ -593,8 +593,12 @@ export default function DemoPage() {
         <div className="h-2 bg-emerald-500"></div>
         
         <div className="px-6 py-8 text-center bg-emerald-50">
-          <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
-            <span className="text-2xl">🚀</span>
+          <div className="flex justify-center mb-4">
+            <img 
+              src="/Freedom Lab Logos (3).png" 
+              alt="Freedom Lab Logo" 
+              className="h-8 object-contain"
+            />
           </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2 font-sans">Website Design Project</h1>
           <p className="text-gray-600 text-lg font-sans">Complete these steps to start your website design project</p>
@@ -842,7 +846,7 @@ export default function DemoPage() {
                     <img 
                       src="/Freedom Lab Logos (3).png" 
                       alt="Freedom Lab Logo" 
-                      className="h-12 w-24 object-cover rounded-lg shadow-sm"
+                      className="h-6 object-contain"
                     />
                   </div>
                   <h1 className="text-2xl font-bold mb-2 text-gray-900 font-sans">SaaS Onboarding Checklist</h1>
