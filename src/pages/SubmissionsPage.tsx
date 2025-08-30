@@ -26,7 +26,7 @@ import {
 export default function SubmissionsPage() {
   const { user } = useAuth();
   const { subscription, getAccessStatus } = useSubscription();
-  const { sessions, loading, error, deleteSession, getSessionStats } = useCustomerSessions();
+  const { sessions, loading, error, deleteSession, getSessionStats, getSessionProgress } = useCustomerSessions();
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [copiedSessionId, setCopiedSessionId] = useState<string | null>(null);
