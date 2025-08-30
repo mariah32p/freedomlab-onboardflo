@@ -15,18 +15,45 @@ interface ChecklistListProps {
 interface ShareLinkModalProps {
   checklist: Checklist;
   onClose: () => void;
-  onCopyLink: () => void;
-  copied: boolean;
 }
 
-function ShareLinkModal({ checklist, onClose, onCopyLink, copied }: ShareLinkModalProps) {
+function ShareLinkModal({ checklist, onClose }: ShareLinkModalProps) {
+  const [linkName, setLinkName] = useState('');
+  const [copied, setCopied] = useState(false);
+
   const getChecklistUrl = () => {
     const sessionToken = Math.random().toString(36).substring(2, 10);
     return `${window.location.origin}/c/${checklist.id}/${sessionToken}`;
   };
 
+  const handleCopyLink = async () => {
+    const url = getChecklistUrl();
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      
+      // TODO: Save link name and session token for tracking
+      if (linkName.trim()) {
+        console.log('Link created:', { name: linkName, url, checklistId: checklist.id });
+      }
+      
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy link:', err);
+    }
+  };
+
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      onClick={handleBackdropClick}
+    >
       <div className="bg-white rounded-xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
@@ -67,6 +94,23 @@ function ShareLinkModal({ checklist, onClose, onCopyLink, copied }: ShareLinkMod
             </div>
           </div>
 
+          {/* Link Name */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-3 font-sans">
+              Link Name (Optional)
+            </label>
+            <input
+              type="text"
+              value={linkName}
+              onChange={(e) => setLinkName(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
+              placeholder="e.g., Sarah from TechCorp, Q1 Onboarding Batch"
+            />
+            <p className="text-xs text-gray-600 mt-1 font-sans">
+              Add a name to help you track this link in your submissions dashboard
+            </p>
+          </div>
+
           {/* Link generation */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-3 font-sans">
@@ -88,7 +132,7 @@ function ShareLinkModal({ checklist, onClose, onCopyLink, copied }: ShareLinkMod
                     {getChecklistUrl()}
                   </div>
                   <button
-                    onClick={onCopyLink}
+                    onClick={handleCopyLink}
                     className="flex-shrink-0 bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center font-sans"
                   >
                     {copied ? (
@@ -112,10 +156,11 @@ function ShareLinkModal({ checklist, onClose, onCopyLink, copied }: ShareLinkMod
           <div className="bg-gray-50 rounded-lg p-4">
             <h4 className="font-medium text-gray-900 mb-2 font-sans">Sharing Instructions</h4>
             <ol className="text-sm text-gray-700 space-y-1 font-sans">
-              <li>1. Click "Copy Link" to get a unique customer link</li>
-              <li>2. Send this link to your customer via email or message</li>
-              <li>3. Each customer gets their own progress tracking</li>
-              <li>4. Monitor progress from your Submissions page</li>
+              <li>1. Add an optional name to help you track this link</li>
+              <li>2. Click "Copy Link" to get a unique customer link</li>
+              <li>3. Send this link to your customer via email or message</li>
+              <li>4. Each customer gets their own progress tracking</li>
+              <li>5. Monitor all progress from your Submissions page</li>
             </ol>
           </div>
         </div>
@@ -244,7 +289,6 @@ export default function ChecklistList({ onEditChecklist, onCreateNew }: Checklis
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
   const [shareModalChecklist, setShareModalChecklist] = useState<Checklist | null>(null);
-  const [copiedId, setCopiedId] = useState<string | null>(null);
   const accessStatus = getAccessStatus();
 
   const handleDelete = async (id: string) => {
@@ -274,27 +318,9 @@ export default function ChecklistList({ onEditChecklist, onCreateNew }: Checklis
     onCreateNew();
   };
 
-  const getChecklistUrl = (checklist: Checklist) => {
-    const sessionToken = Math.random().toString(36).substring(2, 10);
-    return `${window.location.origin}/c/${checklist.id}/${sessionToken}`;
-  };
-
-  const handleCopyLink = async (checklist: Checklist) => {
-    const url = getChecklistUrl(checklist);
-    try {
-      await navigator.clipboard.writeText(url);
-      setCopiedId(checklist.id);
-      setTimeout(() => {
-        setCopiedId(null);
-        setShareModalChecklist(null);
-      }, 2000);
-    } catch (err) {
-      console.error('Failed to copy link:', err);
-    }
-  };
-
   const handlePreview = (checklist: Checklist) => {
-    const url = getChecklistUrl(checklist);
+    const sessionToken = Math.random().toString(36).substring(2, 10);
+    const url = `${window.location.origin}/c/${checklist.id}/${sessionToken}`;
     window.open(url, '_blank');
   };
 
@@ -402,10 +428,7 @@ export default function ChecklistList({ onEditChecklist, onCreateNew }: Checklis
           checklist={shareModalChecklist}
           onClose={() => {
             setShareModalChecklist(null);
-            setCopiedId(null);
           }}
-          onCopyLink={() => handleCopyLink(shareModalChecklist)}
-          copied={copiedId === shareModalChecklist.id}
         />
       )}
     </div>
