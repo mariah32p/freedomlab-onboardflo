@@ -30,10 +30,6 @@ export default function SubmissionsPage() {
   const stats = getSessionStats();
 
   const handleDeleteSession = async (sessionId: string) => {
-    if (!confirm('Are you sure you want to delete this session? This will remove all progress data and cannot be undone.')) {
-      return;
-    }
-
     setDeletingId(sessionId);
     const success = await deleteSession(sessionId);
     setDeletingId(null);
@@ -41,7 +37,14 @@ export default function SubmissionsPage() {
 
   const handlePreviewSession = (session: any) => {
     const url = `${window.location.origin}/c/${session.checklist_id}/${session.session_token}`;
-    window.open(url, '_blank');
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
+  const handleSendReminder = (session: any) => {
+    // TODO: Implement email notification via Resend
+    // API Key: re_HuAgNbtA_NUGsRpLZK4t4WdXFFBrxSZGg
+    // From: info@freedomlab.ai - OnboardFlo by Freedom Lab
+    alert('Email reminder feature coming soon! Will use Resend API to send reminder emails.');
   };
 
   const getStatusColor = (session: any) => {
@@ -269,23 +272,17 @@ export default function SubmissionsPage() {
                     <div className="flex items-center space-x-2 ml-4">
                       <button 
                         onClick={() => handlePreviewSession(session)}
-                        disabled={session.submission_status === 'pending'}
                         className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" 
-                        title={session.submission_status === 'pending' ? 'Customer hasn\'t accessed yet' : 'View session'}
+                        title="View customer session"
                       >
                         <Eye className="w-4 h-4" />
                       </button>
                       <button 
+                        onClick={() => handleSendReminder(session)}
                         className="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors" 
                         title="Send reminder"
                       >
                         <Send className="w-4 h-4" />
-                      </button>
-                      <button 
-                        className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" 
-                        title="Schedule call"
-                      >
-                        <Calendar className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleDeleteSession(session.id)}
