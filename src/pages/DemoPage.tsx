@@ -25,7 +25,7 @@ import {
   RotateCcw,
   Upload
 } from 'lucide-react';
-import SimpleHeader from '../components/SimpleHeader';
+import DemoHeader from '../components/DemoHeader';
 
 interface DemoStep {
   id: string;
@@ -890,7 +890,9 @@ export default function DemoPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-20">
+    <div className="min-h-screen bg-gray-50">
+      <DemoHeader />
+      <div className="pt-20">
       {/* Small refresh button */}
       <div className="fixed top-24 right-4 z-50">
         <button
@@ -912,6 +914,7 @@ export default function DemoPage() {
       {/* Demo Content */}
       <div className="px-4 sm:px-6 lg:px-8 py-8">
         {renderCurrentStep()}
+      </div>
       </div>
     </div>
   );
