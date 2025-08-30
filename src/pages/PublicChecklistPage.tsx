@@ -553,6 +553,10 @@ export default function PublicChecklistPage() {
   const fontFamily = branding?.font_family || 'Montserrat';
   const completionPercentage = getCompletionPercentage(steps.length);
   const completedCount = progress.length;
+  
+  // Check if all required steps are completed
+  const requiredSteps = steps.filter(step => step.is_required);
+  const allRequiredCompleted = requiredSteps.every(step => isStepCompleted(step.id));
 
   return (
     <div className="min-h-screen bg-gray-50" style={{ fontFamily }}>
@@ -822,7 +826,7 @@ export default function PublicChecklistPage() {
                     ) : (
                       <button
                         onClick={handleComplete}
-                        disabled={saving}
+                        disabled={saving || !allRequiredCompleted}
                         className="flex items-center space-x-2 px-6 py-2 text-white rounded-lg font-medium transition-colors disabled:opacity-50 font-sans"
                         style={{ backgroundColor: secondaryColor }}
                       >
@@ -834,7 +838,9 @@ export default function PublicChecklistPage() {
                         ) : (
                           <>
                             <CheckCircle className="w-4 h-4" />
-                            <span>Complete Checklist</span>
+                            <span>
+                              {allRequiredCompleted ? 'Complete Checklist' : 'Complete Required Steps'}
+                            </span>
                           </>
                         )}
                       </button>

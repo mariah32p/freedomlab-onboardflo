@@ -4,6 +4,7 @@ import { useSubscription } from '../hooks/useSubscription';
 import { useCustomerSessions } from '../hooks/useCustomerSessions';
 import PaymentBanner from '../components/PaymentBanner';
 import TrialBanner from '../components/TrialBanner';
+import { supabase } from '../lib/supabase';
 import { 
   Users, 
   CheckCircle, 
@@ -30,6 +31,40 @@ export default function SubmissionsPage() {
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [copiedSessionId, setCopiedSessionId] = useState<string | null>(null);
   const accessStatus = getAccessStatus();
+
+  // Track progress for each session
+  const [sessionProgress, setSessionProgress] = useState<Record<string, number>>({});
+
+  // Load progress for all sessions
+  useEffect(() => {
+    const loadAllProgress = async () => {
+      const progressData: Record<string, number> = {};
+      
+      for (const session of sessions) {
+        if (session.submission_status === 'started' || session.submission_status === 'completed') {
+          const progress = await getSessionProgress(session.id);
+          
+          // Get total steps for this checklist
+          const { data: steps } = await supabase
+            .from('checklist_steps')
+            .select('id')
+            .eq('checklist_id', session.checklist_id);
+          
+          const totalSteps = steps?.length || 0;
+          const completedSteps = progress.length;
+          const percentage = totalSteps > 0 ? Math.round((completedSteps / totalSteps) * 100) : 0;
+          
+          progressData[session.id] = percentage;
+        }
+      }
+      
+      setSessionProgress(progressData);
+    };
+
+    if (sessions.length > 0) {
+      loadAllProgress();
+    }
+  }, [sessions, getSessionProgress]);
 
   const stats = getSessionStats();
 
@@ -279,9 +314,9 @@ export default function SubmissionsPage() {
                             <div className={`text-sm font-medium font-sans ${getStatusColor(session)}`}>
                               {getStatusText(session)}
                             </div>
-                            {session.submission_status === 'started' && (
+                            {(session.submission_status === 'started' || session.submission_status === 'completed') && (
                               <div className="text-xs text-gray-500 mt-1 font-sans">
-                                Progress tracking available
+                                {sessionProgress[session.id] !== undefined ? `${sessionProgress[session.id]}% complete` : 'Loading progress...'}
                               </div>
                             )}
                             {session.submission_status === 'started' && session.is_active && (
