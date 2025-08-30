@@ -59,14 +59,15 @@ export default function PublicChecklistPage() {
         .from('checklists')
         .select('*')
         .eq('id', checklistId)
-        .single();
+        .maybeSingle();
 
       if (checklistError) {
-        if (checklistError.code === 'PGRST116') {
-          setError('Checklist not found');
-        } else {
-          throw checklistError;
-        }
+        throw checklistError;
+        return;
+      }
+
+      if (!checklistData) {
+        setError('Checklist not found');
         return;
       }
 
