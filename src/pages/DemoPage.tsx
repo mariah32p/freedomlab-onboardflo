@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  CheckCircle, 
-  Users, 
-  BarChart3, 
-  Clock, 
-  ArrowRight, 
+import {
+  CheckCircle,
+  Users,
+  BarChart3,
+  Clock,
+  ArrowRight,
   Sparkles,
   Eye,
   Send,
@@ -72,7 +72,7 @@ export default function DemoPage() {
       id: 'customer-view',
       title: 'Customer Experience',
       description: 'Beautiful, mobile-friendly checklist interface',
-      duration: 4000,
+      duration: 11000, // MODIFIED: Increased duration to accommodate slower animation
     },
     {
       id: 'branding',
@@ -152,8 +152,8 @@ export default function DemoPage() {
       // Dashboard animations
       setTimeout(() => {
         setAnimatedStats({ users: 247, completed: 215, rate: 87, days: 2.3 });
-      }, 500);
-      
+      }, 200); // MODIFIED: Changed from 500ms to 200ms
+
       setTimeout(() => {
         setShowNewActivity(true);
         setTimeout(() => {
@@ -180,7 +180,7 @@ export default function DemoPage() {
       steps.forEach((step, index) => {
         setTimeout(() => {
           setCompletedSteps(prev => [...prev, step]);
-        }, (index + 1) * 800);
+        }, (index + 1) * 1500); // MODIFIED: Changed from 800ms to 1500ms
       });
     }
   }, [currentStep]);
@@ -274,8 +274,8 @@ export default function DemoPage() {
               </div>
             )}
             {activityItems.map((activity, index) => (
-              <div 
-                key={index} 
+              <div
+                key={index}
                 className="flex items-start"
               >
                 <div className={`w-2 h-2 rounded-full mt-2 mr-3 ${
@@ -345,11 +345,11 @@ export default function DemoPage() {
           }
         ].map((checklist, index) => (
           <div key={index} className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all duration-200 hover:-translate-y-0.5">
-            <div 
+            <div
               className="h-2 rounded-t-xl"
               style={{ backgroundColor: checklist.color }}
             ></div>
-            
+
             <div className="p-6">
               <div className="mb-6">
                 <h3 className="text-xl font-semibold text-gray-900 font-sans mb-3">
@@ -469,46 +469,46 @@ export default function DemoPage() {
         <div className="p-6">
           <div className="space-y-4">
             {[
-              { 
-                name: 'Sarah Mitchell', 
-                email: 'sarah@techflow.com', 
-                company: 'TechFlow Inc', 
+              {
+                name: 'Sarah Mitchell',
+                email: 'sarah@techflow.com',
+                company: 'TechFlow Inc',
                 checklist: 'Website Design Onboarding',
-                status: 'started', 
-                progress: 85, 
+                status: 'started',
+                progress: 85,
                 linkName: 'Corporate Website Redesign',
                 created: 'Jan 15, 2025 2:14 PM',
                 lastActivity: '5 min ago'
               },
-              { 
-                name: 'Michael Rodriguez', 
-                email: 'mike@datavault.io', 
-                company: 'DataVault', 
+              {
+                name: 'Michael Rodriguez',
+                email: 'mike@datavault.io',
+                company: 'DataVault',
                 checklist: 'Website Design Feedback & Approval',
-                status: 'completed', 
-                progress: 100, 
+                status: 'completed',
+                progress: 100,
                 linkName: 'Homepage Feedback Round 2',
                 created: 'Jan 14, 2025 10:30 AM',
                 lastActivity: '2 hours ago'
               },
-              { 
-                name: 'Lisa Chen', 
-                email: 'lisa@growthco.com', 
-                company: 'GrowthCo', 
+              {
+                name: 'Lisa Chen',
+                email: 'lisa@growthco.com',
+                company: 'GrowthCo',
                 checklist: 'Website Design Offboarding',
-                status: 'started', 
-                progress: 45, 
+                status: 'started',
+                progress: 45,
                 linkName: 'Final Deliverables & Training',
                 created: 'Jan 14, 2025 4:22 PM',
                 lastActivity: '1 hour ago'
               },
-              { 
-                name: 'David Thompson', 
-                email: 'david@scaletech.ai', 
-                company: 'ScaleTech AI', 
+              {
+                name: 'David Thompson',
+                email: 'david@scaletech.ai',
+                company: 'ScaleTech AI',
                 checklist: 'Website Design Onboarding',
-                status: 'started', 
-                progress: 70, 
+                status: 'started',
+                progress: 70,
                 linkName: 'E-commerce Platform Setup',
                 created: 'Jan 13, 2025 11:45 AM',
                 lastActivity: '30 min ago'
@@ -591,18 +591,18 @@ export default function DemoPage() {
     <div className="max-w-2xl mx-auto">
       <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
         <div className="h-2 bg-emerald-500"></div>
-        
+
         <div className="px-6 py-8 text-center bg-emerald-50">
           <div className="flex justify-center mb-4">
-            <img 
-              src="/Freedom Lab Logos (3).png" 
-              alt="Freedom Lab Logo" 
+            <img
+              src="/Freedom Lab Logos (3).png"
+              alt="Freedom Lab Logo"
               className="h-8 object-contain"
             />
           </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2 font-sans">Website Design Project</h1>
           <p className="text-gray-600 text-lg font-sans">Complete these steps to start your website design project</p>
-          
+
           <div className="mt-6 max-w-md mx-auto">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium text-gray-700 font-sans">Progress</span>
@@ -611,7 +611,7 @@ export default function DemoPage() {
               </span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-3">
-              <div 
+              <div
                 className="h-3 bg-emerald-500 rounded-full transition-all duration-500"
                 style={{ width: `${(completedSteps.length / 7) * 100}%` }}
               ></div>
@@ -626,64 +626,64 @@ export default function DemoPage() {
 
         <div className="p-6 space-y-4">
           {[
-            { 
-              id: 'slack', 
-              title: 'Join Project Slack', 
+            {
+              id: 'slack',
+              title: 'Join Project Slack',
               desc: 'Accept invitation to our design team workspace',
               type: 'checkbox'
             },
-            { 
-              id: 'logo', 
-              title: 'Upload Logo & Brand Assets', 
+            {
+              id: 'logo',
+              title: 'Upload Logo & Brand Assets',
               desc: 'Share your current logo, brand guidelines, and any existing materials',
               type: 'file_upload'
             },
-            { 
-              id: 'brand', 
-              title: 'Brand Requirements & Vision', 
+            {
+              id: 'brand',
+              title: 'Brand Requirements & Vision',
               desc: 'Tell us about your brand personality, target audience, and design preferences',
               type: 'textarea'
             },
-            { 
-              id: 'contact', 
-              title: 'Primary Contact Information', 
+            {
+              id: 'contact',
+              title: 'Primary Contact Information',
               desc: 'Who should we contact for design feedback and approvals?',
               type: 'email'
             },
-            { 
-              id: 'inspiration', 
-              title: 'Design Inspiration Links', 
+            {
+              id: 'inspiration',
+              title: 'Design Inspiration Links',
               desc: 'Share websites or designs you love for style reference',
               type: 'url'
             },
-            { 
-              id: 'timeline', 
-              title: 'Project Timeline', 
+            {
+              id: 'timeline',
+              title: 'Project Timeline',
               desc: 'When do you need the website completed?',
               type: 'text'
             },
-            { 
-              id: 'kickoff', 
-              title: 'Schedule Kickoff Meeting', 
+            {
+              id: 'kickoff',
+              title: 'Schedule Kickoff Meeting',
               desc: 'Book a 60-minute strategy session to discuss your project in detail',
               type: 'checkbox'
             }
           ].map((step, index) => {
             const isCompleted = completedSteps.includes(step.id);
             const isActive = index === completedSteps.length && !isCompleted;
-            
+
             return (
-              <div 
-                key={step.id} 
+              <div
+                key={step.id}
                 className={`flex items-start space-x-3 p-4 rounded-lg transition-all duration-300 ${
-                  isActive ? 'bg-blue-50 border border-blue-200' : 
+                  isActive ? 'bg-blue-50 border border-blue-200' :
                   isCompleted ? 'bg-emerald-50 border border-emerald-200' : 'bg-gray-50'
                 }`}
               >
-                <div 
+                <div
                   className={`w-6 h-6 rounded border-2 flex items-center justify-center mt-0.5 transition-all duration-300 ${
-                    isCompleted 
-                      ? 'bg-emerald-500 border-emerald-500 text-white' 
+                    isCompleted
+                      ? 'bg-emerald-500 border-emerald-500 text-white'
                       : isActive
                       ? 'border-blue-500 bg-blue-50'
                       : 'border-gray-300'
@@ -699,15 +699,15 @@ export default function DemoPage() {
                   <h4 className="font-medium text-gray-900 font-sans">{step.title}</h4>
                   <p className="text-sm text-gray-600 mt-1 font-sans">{step.desc}</p>
                   {isActive && step.type === 'textarea' && (
-                    <textarea 
+                    <textarea
                       placeholder="Tell us about your brand vision, target audience, and design style preferences..."
                       className="w-full mt-3 px-3 py-3 border border-blue-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-sans"
                       rows={3}
                     />
                   )}
                   {isActive && step.type === 'text' && (
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       placeholder="e.g., March 15, 2025"
                       className="w-full mt-3 px-3 py-3 border border-blue-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-sans"
                     />
@@ -717,8 +717,8 @@ export default function DemoPage() {
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <Mail className="h-4 w-4 text-gray-400" />
                       </div>
-                      <input 
-                        type="email" 
+                      <input
+                        type="email"
                         placeholder="contact@yourcompany.com"
                         className="w-full pl-10 pr-3 py-3 border border-blue-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-sans"
                       />
@@ -729,8 +729,8 @@ export default function DemoPage() {
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <LinkIcon className="h-4 w-4 text-gray-400" />
                       </div>
-                      <input 
-                        type="url" 
+                      <input
+                        type="url"
                         placeholder="https://example.com/inspiration"
                         className="w-full pl-10 pr-3 py-3 border border-blue-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-sans"
                       />
@@ -805,11 +805,11 @@ export default function DemoPage() {
                       }`}
                     >
                       <div className="flex space-x-1">
-                        <div 
+                        <div
                           className="w-4 h-4 rounded-full border border-gray-300"
                           style={{ backgroundColor: preset.primary }}
                         ></div>
-                        <div 
+                        <div
                           className="w-4 h-4 rounded-full border border-gray-300"
                           style={{ backgroundColor: preset.secondary }}
                         ></div>
@@ -845,10 +845,10 @@ export default function DemoPage() {
 
               <div className="border border-gray-200 rounded-xl overflow-hidden shadow-lg">
                 <div className="h-3 w-full bg-emerald-500"></div>
-                
+
                 <div className="px-6 py-8 text-center bg-emerald-50">
                   <div className="flex justify-center mb-4">
-                    <img 
+                    <img
                       src="/Freedom Lab Logos (3).png"
                       alt="Freedom Lab Logo"
                       className="h-4 object-contain"
