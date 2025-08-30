@@ -375,9 +375,18 @@ export default function BrandingPage() {
 
               {/* Live Preview */}
               <div className="space-y-6">
-                <div className="flex items-center space-x-2 mb-4">
-                  <Eye className="h-5 w-5 text-gray-400" />
-                  <h3 className="text-lg font-medium text-gray-900 font-sans">Live Preview</h3>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center space-x-2">
+                    <Eye className="h-5 w-5 text-gray-400" />
+                    <h3 className="text-lg font-medium text-gray-900 font-sans">Live Preview</h3>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => window.open(`${window.location.origin}/c/preview`, '_blank')}
+                    className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors font-sans"
+                  >
+                    Open Full Preview
+                  </button>
                 </div>
 
                 {/* Checklist Preview */}
