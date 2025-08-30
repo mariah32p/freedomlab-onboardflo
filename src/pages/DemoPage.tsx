@@ -767,102 +767,28 @@ export default function DemoPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 pt-20">
-      {/* Demo Header */}
-      <div className="bg-white border-b border-gray-200 sticky top-20 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <div className="text-center mb-3">
-            <div className="inline-flex items-center bg-emerald-100 rounded-full px-3 py-1 mb-2">
-              <Sparkles className="w-4 h-4 text-emerald-600 mr-2" />
-              <span className="text-emerald-700 font-medium font-sans text-sm">Interactive Product Demo</span>
-            </div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1 font-sans">
-              See OnboardFlo in Action
-            </h1>
-            <p className="text-base text-gray-600 font-sans">
-              Experience the complete customer onboarding platform
-            </p>
-          </div>
-
-          {/* Demo Controls */}
-          <div className="bg-gray-50 rounded-xl p-3">
-            <div className="flex items-center justify-between mb-3">
-              <div>
-                <h2 className="text-base font-semibold text-gray-900 font-sans">
-                  {demoSteps[currentStep].title}
-                </h2>
-                <p className="text-sm text-gray-600 font-sans">{demoSteps[currentStep].description}</p>
-              </div>
-              <button
-                onClick={togglePlayPause}
-                className="bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-lg font-medium transition-colors font-sans text-sm"
-              >
-                {isPlaying ? 'Pause' : 'Play'}
-              </button>
-            </div>
-
-            {/* Progress Bar */}
-            <div className="w-full bg-gray-200 rounded-full h-1.5 mb-3">
-              <div 
-                className="h-1.5 bg-emerald-500 rounded-full transition-all duration-100"
-                style={{ width: `${progress}%` }}
-              ></div>
-            </div>
-
-            {/* Step Navigation */}
-            <div className="flex space-x-1 overflow-x-auto">
-              {demoSteps.map((step, index) => (
-                <button
-                  key={step.id}
-                  onClick={() => handleStepClick(index)}
-                  className={`flex-shrink-0 px-3 py-1.5 rounded-lg font-medium transition-colors font-sans text-sm ${
-                    currentStep === index
-                      ? 'bg-emerald-500 text-white'
-                      : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
-                  }`}
-                >
-                  {index + 1}. {step.title}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
+      {/* Small refresh button */}
+      <div className="fixed top-24 right-4 z-50">
+        <button
+          onClick={() => {
+            setCurrentStep(0);
+            setProgress(0);
+            setAnimatedStats({ users: 0, completed: 0, rate: 0, days: 0 });
+            setAnimatedProgress({});
+            setShowNotifications([]);
+            setCompletedSteps([]);
+            setIsPlaying(true);
+          }}
+          className="bg-white hover:bg-gray-50 text-gray-600 p-2 rounded-lg shadow-sm border border-gray-200 transition-colors"
+          title="Restart demo"
+        >
+          <RotateCcw className="w-4 h-4" />
+        </button>
       </div>
 
       {/* Demo Content */}
-      <div className="py-4">
-        <div className="px-4 sm:px-6 lg:px-8">
-          {renderCurrentStep()}
-        </div>
-      </div>
-
-      {/* CTA Section */}
-      <div className="bg-white border-t border-gray-200 py-16">
-        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4 font-sans">
-            Ready to transform your onboarding?
-          </h2>
-          <p className="text-xl text-gray-600 mb-8 font-sans">
-            Start your 7-day free trial and see the difference organized onboarding makes
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button 
-              onClick={() => window.location.href = '/signup'}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-colors flex items-center justify-center font-sans"
-            >
-              Start Free Trial
-              <ArrowRight className="ml-2 w-5 h-5" />
-            </button>
-            <button 
-              onClick={() => window.location.href = '/pricing'}
-              className="bg-white hover:bg-gray-50 text-gray-700 px-8 py-4 rounded-lg font-semibold text-lg border border-gray-300 transition-colors font-sans"
-            >
-              View Pricing
-            </button>
-          </div>
-          <p className="text-gray-500 text-sm mt-6 font-sans">
-            ✓ Setup in 5 minutes • ✓ Cancel anytime • ✓ 30-day money back guarantee
-          </p>
-        </div>
+      <div className="px-4 sm:px-6 lg:px-8 py-8">
+        {renderCurrentStep()}
       </div>
     </div>
   );
