@@ -138,18 +138,9 @@ export default function ChecklistList({ onEditChecklist, onCreateNew }: Checklis
               <div className="p-6">
                 {/* Title and description */}
                 <div className="mb-4">
-                  <div className="flex items-start justify-between mb-2">
-                    <h3 className="text-lg font-semibold text-gray-900 font-sans line-clamp-2">
-                      {checklist.title}
-                    </h3>
-                    <div className="flex items-center ml-2">
-                      {checklist.is_public ? (
-                        <Eye className="w-4 h-4 text-emerald-500" />
-                      ) : (
-                        <Lock className="w-4 h-4 text-gray-400" />
-                      )}
-                    </div>
-                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 font-sans line-clamp-2 mb-2">
+                    {checklist.title}
+                  </h3>
                   <p className="text-gray-600 text-sm font-sans line-clamp-3">
                     {checklist.description}
                   </p>
