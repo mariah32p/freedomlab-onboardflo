@@ -175,12 +175,12 @@ export default function DemoPage() {
         });
       }, 1000);
     } else if (currentStep === 3) {
-      // Customer view animations
-      const steps = ['slack', 'logo', 'brand'];
+      // Customer view animations - slower progression through all steps
+      const steps = ['slack', 'logo', 'brand', 'contact', 'inspiration', 'timeline', 'kickoff'];
       steps.forEach((step, index) => {
         setTimeout(() => {
           setCompletedSteps(prev => [...prev, step]);
-        }, (index + 1) * 1000);
+        }, (index + 1) * 500);
       });
     }
   }, [currentStep]);
@@ -791,7 +791,12 @@ export default function DemoPage() {
                   {[
                     { name: 'OnboardFlo Default', primary: '#10b981', secondary: '#059669' },
                     { name: 'Ocean Blue', primary: '#0066cc', secondary: '#00a8ff' },
-                    { name: 'Forest Green', primary: '#2d5a27', secondary: '#4caf50' }
+                    { name: 'Forest Green', primary: '#2d5a27', secondary: '#4caf50' },
+                    { name: 'Sunset Orange', primary: '#e65100', secondary: '#ff9800' },
+                    { name: 'Royal Purple', primary: '#4a148c', secondary: '#9c27b0' },
+                    { name: 'Crimson Red', primary: '#b71c1c', secondary: '#f44336' },
+                    { name: 'Deep Teal', primary: '#004d40', secondary: '#00695c' },
+                    { name: 'Warm Pink', primary: '#c2185b', secondary: '#e91e63' }
                   ].map((preset, index) => (
                     <button
                       key={preset.name}
@@ -844,9 +849,9 @@ export default function DemoPage() {
                 <div className="px-6 py-8 text-center bg-emerald-50">
                   <div className="flex justify-center mb-4">
                     <img 
-                      src="/Freedom Lab Logos (3).png" 
-                      alt="Freedom Lab Logo" 
-                      className="h-6 object-contain"
+                      src="/Freedom Lab Logos (3).png"
+                      alt="Freedom Lab Logo"
+                      className="h-4 object-contain"
                     />
                   </div>
                   <h1 className="text-2xl font-bold mb-2 text-gray-900 font-sans">SaaS Onboarding Checklist</h1>
