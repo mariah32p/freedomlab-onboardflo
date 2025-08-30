@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useSubscription } from '../hooks/useSubscription';
+import { useCustomerSessions } from '../hooks/useCustomerSessions';
 import PaymentBanner from '../components/PaymentBanner';
 import TrialBanner from '../components/TrialBanner';
 import { 
@@ -9,13 +10,84 @@ import {
   Clock, 
   AlertCircle,
   Calendar,
-  Send
+  Send,
+  Trash2,
+  ExternalLink,
+  Mail,
+  Building,
+  User,
+  Link as LinkIcon,
+  Eye
 } from 'lucide-react';
 
 export default function SubmissionsPage() {
   const { user } = useAuth();
   const { subscription, getAccessStatus } = useSubscription();
+  const { sessions, loading, error, deleteSession, getSessionStats } = useCustomerSessions();
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const accessStatus = getAccessStatus();
+
+  const stats = getSessionStats();
+
+  const handleDeleteSession = async (sessionId: string) => {
+    if (!confirm('Are you sure you want to delete this session? This will remove all progress data and cannot be undone.')) {
+      return;
+    }
+
+    setDeletingId(sessionId);
+    const success = await deleteSession(sessionId);
+    setDeletingId(null);
+  };
+
+  const handlePreviewSession = (session: any) => {
+    const url = `${window.location.origin}/c/${session.checklist_id}/${session.session_token}`;
+    window.open(url, '_blank');
+  };
+
+  const getStatusColor = (session: any) => {
+    if (session.completed_at) return 'text-emerald-600';
+    if (session.is_active) return 'text-blue-600';
+    return 'text-gray-600';
+  };
+
+  const getStatusText = (session: any) => {
+    if (session.completed_at) return 'Completed';
+    if (session.is_active) return 'In Progress';
+    return 'Inactive';
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const getTimeSince = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
+    
+    if (diffInHours < 1) return 'Just now';
+    if (diffInHours < 24) return `${diffInHours}h ago`;
+    const diffInDays = Math.floor(diffInHours / 24);
+    if (diffInDays < 7) return `${diffInDays}d ago`;
+    return formatDate(dateString);
+  };
+
+  if (loading) {
+    return (
+      <div className="pt-20 min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
+          <p className="text-gray-600 font-sans">Loading submissions...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="pt-20 min-h-screen bg-gray-50">
@@ -30,9 +102,15 @@ export default function SubmissionsPage() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2 font-sans">Customer Submissions</h1>
           <p className="text-gray-600 font-sans">
-            Track customer progress and submissions across all your checklists
+            Track customer progress across all your onboarding checklists
           </p>
         </div>
+
+        {error && (
+          <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+            <p className="text-red-600 text-sm font-sans">{error}</p>
+          </div>
+        )}
 
         {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
@@ -42,8 +120,8 @@ export default function SubmissionsPage() {
                 <Users className="w-6 h-6 text-blue-600" />
               </div>
               <div className="ml-4">
-                <div className="text-2xl font-bold text-gray-900 font-sans">247</div>
-                <div className="text-sm text-gray-600 font-sans">Active Customers</div>
+                <div className="text-2xl font-bold text-gray-900 font-sans">{stats.totalSessions}</div>
+                <div className="text-sm text-gray-600 font-sans">Total Sessions</div>
               </div>
             </div>
           </div>
@@ -54,8 +132,8 @@ export default function SubmissionsPage() {
                 <CheckCircle className="w-6 h-6 text-emerald-600" />
               </div>
               <div className="ml-4">
-                <div className="text-2xl font-bold text-gray-900 font-sans">87%</div>
-                <div className="text-sm text-gray-600 font-sans">Completion Rate</div>
+                <div className="text-2xl font-bold text-gray-900 font-sans">{stats.completedSessions}</div>
+                <div className="text-sm text-gray-600 font-sans">Completed</div>
               </div>
             </div>
           </div>
@@ -66,8 +144,8 @@ export default function SubmissionsPage() {
                 <Clock className="w-6 h-6 text-orange-600" />
               </div>
               <div className="ml-4">
-                <div className="text-2xl font-bold text-gray-900 font-sans">2.3</div>
-                <div className="text-sm text-gray-600 font-sans">Avg Days</div>
+                <div className="text-2xl font-bold text-gray-900 font-sans">{stats.activeSessions}</div>
+                <div className="text-sm text-gray-600 font-sans">In Progress</div>
               </div>
             </div>
           </div>
@@ -78,76 +156,140 @@ export default function SubmissionsPage() {
                 <AlertCircle className="w-6 h-6 text-purple-600" />
               </div>
               <div className="ml-4">
-                <div className="text-2xl font-bold text-gray-900 font-sans">12</div>
-                <div className="text-sm text-gray-600 font-sans">Need Help</div>
+                <div className="text-2xl font-bold text-gray-900 font-sans">{stats.completionRate}%</div>
+                <div className="text-sm text-gray-600 font-sans">Completion Rate</div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Customer Submissions Table */}
+        {/* Customer Sessions Table */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200">
           <div className="p-6 border-b border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-900 font-sans">Recent Submissions</h2>
+            <h2 className="text-xl font-semibold text-gray-900 font-sans">Customer Sessions</h2>
           </div>
-          <div className="p-6">
-            <div className="space-y-4">
-              {[
-                { customer: 'Sarah M.', email: 'sarah@techcorp.com', company: 'TechCorp', checklist: 'SaaS Setup', progress: 85, status: 'in_progress', lastUpdate: '2 hours ago' },
-                { customer: 'Mike R.', email: 'mike@startupxyz.com', company: 'StartupXYZ', checklist: 'Quick Start', progress: 100, status: 'completed', lastUpdate: '1 day ago' },
-                { customer: 'Lisa K.', email: 'lisa@growthco.com', company: 'GrowthCo', checklist: 'Enterprise Setup', progress: 45, status: 'stuck', lastUpdate: '3 days ago' },
-                { customer: 'David L.', email: 'david@scaletech.com', company: 'ScaleTech', checklist: 'SaaS Setup', progress: 70, status: 'in_progress', lastUpdate: '5 hours ago' }
-              ].map((submission, index) => (
-                <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                  <div className="flex items-center flex-1">
-                    <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center mr-4">
-                      <span className="text-white text-sm font-bold font-sans">
-                        {submission.customer.split(' ').map(n => n[0]).join('')}
-                      </span>
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h3 className="font-medium text-gray-900 font-sans">{submission.customer}</h3>
-                          <p className="text-sm text-gray-600 font-sans">{submission.email} • {submission.company}</p>
-                          <p className="text-xs text-gray-500 font-sans">{submission.checklist} • Last updated {submission.lastUpdate}</p>
-                        </div>
-                        <div className="text-right ml-4">
-                          <div className="flex items-center mb-1">
-                            <div className="w-20 bg-gray-200 rounded-full h-2 mr-3">
-                              <div 
-                                className={`h-2 rounded-full transition-all duration-300 ${
-                                  submission.status === 'completed' ? 'bg-emerald-500' :
-                                  submission.status === 'stuck' ? 'bg-red-500' : 'bg-blue-500'
-                                }`}
-                                style={{ width: `${submission.progress}%` }}
-                              ></div>
+          
+          {sessions.length === 0 ? (
+            <div className="p-12 text-center">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Users className="w-8 h-8 text-gray-400" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2 font-sans">No submissions yet</h3>
+              <p className="text-gray-600 mb-6 font-sans">
+                Create customer links from your checklists to start tracking submissions
+              </p>
+              <button
+                onClick={() => window.location.href = '/checklists'}
+                className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-lg font-medium transition-colors font-sans"
+              >
+                Go to Checklists
+              </button>
+            </div>
+          ) : (
+            <div className="p-6">
+              <div className="space-y-4">
+                {sessions.map((session) => (
+                  <div key={session.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                    <div className="flex items-center flex-1">
+                      <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center mr-4">
+                        <span className="text-white text-sm font-bold font-sans">
+                          {(session.name || session.email).charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <div className="flex items-center space-x-2 mb-1">
+                              <h3 className="font-medium text-gray-900 font-sans">
+                                {session.name || 'Anonymous'}
+                              </h3>
+                              {session.link_name && (
+                                <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium font-sans">
+                                  {session.link_name}
+                                </span>
+                              )}
                             </div>
-                            <span className="text-sm font-medium text-gray-700 font-sans">{submission.progress}%</span>
+                            <div className="flex items-center space-x-4 text-sm text-gray-600 mb-1">
+                              <div className="flex items-center">
+                                <Mail className="w-3 h-3 mr-1" />
+                                <span className="font-sans">{session.email}</span>
+                              </div>
+                              {session.company && (
+                                <div className="flex items-center">
+                                  <Building className="w-3 h-3 mr-1" />
+                                  <span className="font-sans">{session.company}</span>
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex items-center space-x-4 text-xs text-gray-500">
+                              <span className="font-sans">
+                                Checklist: {(session as any).checklists?.title || 'Unknown'}
+                              </span>
+                              <span className="font-sans">
+                                Started: {formatDate(session.started_at)}
+                              </span>
+                              {session.completed_at && (
+                                <span className="font-sans">
+                                  Completed: {formatDate(session.completed_at)}
+                                </span>
+                              )}
+                              <span className="font-sans">
+                                Last activity: {getTimeSince(session.last_activity)}
+                              </span>
+                            </div>
                           </div>
-                          <div className={`text-xs font-sans ${
-                            submission.status === 'completed' ? 'text-emerald-600' :
-                            submission.status === 'stuck' ? 'text-red-600' : 'text-blue-600'
-                          }`}>
-                            {submission.status === 'completed' ? 'Completed' :
-                             submission.status === 'stuck' ? 'Needs Help' : 'In Progress'}
+                          <div className="text-right ml-4">
+                            <div className={`text-sm font-medium font-sans ${getStatusColor(session)}`}>
+                              {getStatusText(session)}
+                            </div>
+                            {session.is_active && !session.completed_at && (
+                              <div className="flex items-center mt-1">
+                                <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+                                <span className="text-xs text-green-600 font-sans">Active now</span>
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>
                     </div>
+                    <div className="flex items-center space-x-2 ml-4">
+                      <button 
+                        onClick={() => handlePreviewSession(session)}
+                        className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" 
+                        title="View session"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </button>
+                      <button 
+                        className="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors" 
+                        title="Send reminder"
+                      >
+                        <Send className="w-4 h-4" />
+                      </button>
+                      <button 
+                        className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" 
+                        title="Schedule call"
+                      >
+                        <Calendar className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteSession(session.id)}
+                        disabled={deletingId === session.id}
+                        className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+                        title="Delete session"
+                      >
+                        {deletingId === session.id ? (
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-600"></div>
+                        ) : (
+                          <Trash2 className="w-4 h-4" />
+                        )}
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-2 ml-4">
-                    <button className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Send reminder">
-                      <Send className="w-4 h-4" />
-                    </button>
-                    <button className="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors" title="Schedule call">
-                      <Calendar className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
