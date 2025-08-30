@@ -14,7 +14,8 @@ import {
   RotateCcw,
   Save,
   User,
-  Building
+  Building,
+  X
 } from 'lucide-react';
 import { Checklist, ChecklistStep, StepType } from '../types/checklist';
 
