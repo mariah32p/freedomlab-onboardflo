@@ -83,6 +83,10 @@ export function useSessionProgress({ checklistId, sessionToken }: UseSessionProg
     try {
       setError(null);
 
+      // Get link name from URL params if available
+      const urlParams = new URLSearchParams(window.location.search);
+      const linkName = urlParams.get('link_name') || '';
+
       const { data: newSession, error: createError } = await supabase
         .from('customer_sessions')
         .insert({
@@ -91,6 +95,7 @@ export function useSessionProgress({ checklistId, sessionToken }: UseSessionProg
           email: customerData.email,
           name: customerData.name,
           company: customerData.company,
+          link_name: linkName,
           is_active: true,
         })
         .select()

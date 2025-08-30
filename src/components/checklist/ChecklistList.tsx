@@ -23,7 +23,10 @@ function ShareLinkModal({ checklist, onClose }: ShareLinkModalProps) {
 
   const getChecklistUrl = () => {
     const sessionToken = Math.random().toString(36).substring(2, 10);
-    return `${window.location.origin}/c/${checklist.id}/${sessionToken}`;
+    const baseUrl = `${window.location.origin}/c/${checklist.id}/${sessionToken}`;
+    return linkName.trim() 
+      ? `${baseUrl}?link_name=${encodeURIComponent(linkName.trim())}`
+      : baseUrl;
   };
 
   const handleCopyLink = async () => {

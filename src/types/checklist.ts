@@ -75,6 +75,7 @@ export interface CustomerSession {
   email: string;
   name: string;
   company: string;
+  link_name: string;
   started_at: string;
   completed_at: string | null;
   last_activity: string;
