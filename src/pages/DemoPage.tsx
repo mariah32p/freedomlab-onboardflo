@@ -320,27 +320,27 @@ export default function DemoPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {[
           {
-            title: 'SaaS Onboarding Checklist',
-            description: 'Complete onboarding flow for new SaaS customers including account setup, project requirements, and timeline confirmation.',
-            steps: 6,
-            sessions: 24,
-            completion: 87,
-            color: '#10b981'
-          },
-          {
-            title: 'Web Development Project',
-            description: 'Comprehensive onboarding for web development clients covering requirements, design, and technical specifications.',
+            title: 'Website Design Onboarding',
+            description: 'Initial client onboarding for new website design projects including requirements gathering and asset collection.',
             steps: 8,
             sessions: 12,
             completion: 92,
+            color: '#10b981'
+          },
+          {
+            title: 'Website Design Feedback & Approval',
+            description: 'Structured feedback collection and approval process for design iterations and revisions.',
+            steps: 5,
+            sessions: 18,
+            completion: 88,
             color: '#3b82f6'
           },
           {
-            title: 'Marketing Strategy Engagement',
-            description: 'Structured onboarding for marketing consulting projects with business analysis and goal setting.',
-            steps: 5,
-            sessions: 8,
-            completion: 75,
+            title: 'Website Design Offboarding',
+            description: 'Project completion checklist including final deliverables, training, and handover documentation.',
+            steps: 6,
+            sessions: 9,
+            completion: 94,
             color: '#8b5cf6'
           }
         ].map((checklist, index) => (
@@ -473,10 +473,10 @@ export default function DemoPage() {
                 name: 'Sarah Mitchell', 
                 email: 'sarah@techflow.com', 
                 company: 'TechFlow Inc', 
-                checklist: 'SaaS Onboarding Checklist',
+                checklist: 'Website Design Onboarding',
                 status: 'started', 
                 progress: 85, 
-                linkName: 'Q1 Enterprise Client',
+                linkName: 'Corporate Website Redesign',
                 created: 'Jan 15, 2025 2:14 PM',
                 lastActivity: '5 min ago'
               },
@@ -484,10 +484,10 @@ export default function DemoPage() {
                 name: 'Michael Rodriguez', 
                 email: 'mike@datavault.io', 
                 company: 'DataVault', 
-                checklist: 'Web Development Project',
+                checklist: 'Website Design Feedback & Approval',
                 status: 'completed', 
                 progress: 100, 
-                linkName: 'Website Redesign',
+                linkName: 'Homepage Feedback Round 2',
                 created: 'Jan 14, 2025 10:30 AM',
                 lastActivity: '2 hours ago'
               },
@@ -495,10 +495,10 @@ export default function DemoPage() {
                 name: 'Lisa Chen', 
                 email: 'lisa@growthco.com', 
                 company: 'GrowthCo', 
-                checklist: 'Marketing Strategy Engagement',
+                checklist: 'Website Design Offboarding',
                 status: 'started', 
                 progress: 45, 
-                linkName: 'Marketing Audit Project',
+                linkName: 'Final Deliverables & Training',
                 created: 'Jan 14, 2025 4:22 PM',
                 lastActivity: '1 hour ago'
               },
@@ -506,10 +506,10 @@ export default function DemoPage() {
                 name: 'David Thompson', 
                 email: 'david@scaletech.ai', 
                 company: 'ScaleTech AI', 
-                checklist: 'SaaS Onboarding Checklist',
+                checklist: 'Website Design Onboarding',
                 status: 'started', 
                 progress: 70, 
-                linkName: 'Enterprise Setup',
+                linkName: 'E-commerce Platform Setup',
                 created: 'Jan 13, 2025 11:45 AM',
                 lastActivity: '30 min ago'
               }
