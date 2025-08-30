@@ -37,16 +37,19 @@ export default function ChecklistsPage() {
         const success = await updateChecklist(editingChecklist.id, data);
         if (success) {
           await refetch();
+          setShowChecklistBuilder(false);
+          setEditingChecklist(null);
+          setSelectedTemplate(null);
         }
       } else {
         const newChecklist = await createChecklist(data);
         if (newChecklist) {
           await refetch();
+          setShowChecklistBuilder(false);
+          setEditingChecklist(null);
+          setSelectedTemplate(null);
         }
       }
-      setShowChecklistBuilder(false);
-      setEditingChecklist(null);
-      setSelectedTemplate(null);
     } catch (err) {
       console.error('Error saving checklist:', err);
     }
