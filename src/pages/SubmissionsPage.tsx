@@ -314,9 +314,14 @@ export default function SubmissionsPage() {
                             <div className={`text-sm font-medium font-sans ${getStatusColor(session)}`}>
                               {getStatusText(session)}
                             </div>
-                            {(session.submission_status === 'started' || session.submission_status === 'completed') && (
+                            {session.submission_status === 'started' && (
                               <div className="text-xs text-gray-500 mt-1 font-sans">
-                                {sessionProgress[session.id] !== undefined ? `${sessionProgress[session.id]}% complete` : 'Loading progress...'}
+                                {sessionProgress[session.id] !== undefined ? `${sessionProgress[session.id]}% complete` : 'Calculating...'}
+                              </div>
+                            )}
+                            {session.submission_status === 'completed' && (
+                              <div className="text-xs text-emerald-600 mt-1 font-sans font-medium">
+                                100% complete
                               </div>
                             )}
                             {session.submission_status === 'started' && session.is_active && (
