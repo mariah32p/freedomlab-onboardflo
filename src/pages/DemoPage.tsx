@@ -716,35 +716,127 @@ export default function DemoPage() {
                 
                 <div className="px-6 py-8 text-center bg-emerald-50">
                   <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center mx-auto mb-4 shadow-sm">
-                    <span className="text-xl">🚀</span>
+                    <span className="text-xl">🎨</span>
                   </div>
-                  <h1 className="text-2xl font-bold mb-2 text-gray-900 font-sans">SaaS Onboarding Checklist</h1>
-                  <p className="text-gray-600 font-sans">Complete these steps to get started with our platform</p>
+                  <h1 className="text-2xl font-bold mb-2 text-gray-900 font-sans">Website Design Project</h1>
+                  <p className="text-gray-600 font-sans">Complete these steps to start your website design project</p>
                 </div>
 
                 <div className="p-6 space-y-4">
-                  <div className="flex items-start space-x-3 p-4 bg-emerald-50 rounded-lg border border-emerald-200">
+                  <div className={`flex items-start space-x-3 p-4 rounded-lg transition-all duration-300 ${
+                    completedSteps.includes('slack') ? 'bg-emerald-50 border border-emerald-200' : 'bg-gray-50'
+                  }`}>
                     <div className="w-5 h-5 rounded border-2 border-emerald-500 bg-emerald-500 flex items-center justify-center mt-0.5">
-                      <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
+                      {completedSteps.includes('slack') && (
+                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      )}
                     </div>
                     <div className="flex-1">
-                      <h4 className="font-medium text-gray-900 font-sans">Account Setup</h4>
-                      <p className="text-sm text-gray-600 mt-1 font-sans">Complete your profile and verify your email</p>
+                      <h4 className="font-medium text-gray-900 font-sans">Join Project Slack</h4>
+                      <p className="text-sm text-gray-600 mt-1 font-sans">Accept invitation to our design team Slack workspace</p>
                     </div>
                   </div>
 
-                  <div className="flex items-start space-x-3 p-4 border border-gray-200 rounded-lg">
+                  <div className={`flex items-start space-x-3 p-4 rounded-lg transition-all duration-300 ${
+                    completedSteps.includes('logo') ? 'bg-emerald-50 border border-emerald-200' : 'bg-gray-50 border border-gray-200'
+                  }`}>
+                    <div className={`w-5 h-5 rounded border-2 mt-0.5 flex items-center justify-center ${
+                      completedSteps.includes('logo') ? 'border-emerald-500 bg-emerald-500' : 'border-emerald-500'
+                    }`}>
+                      {completedSteps.includes('logo') && (
+                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-medium text-gray-900 font-sans">Upload Logo & Brand Assets</h4>
+                      <p className="text-sm text-gray-600 mt-1 font-sans">Share your current logo, brand guidelines, and visual references</p>
+                      {!completedSteps.includes('logo') && (
+                        <div className="mt-2 border-2 border-dashed border-gray-300 rounded-lg p-3 text-center">
+                          <p className="text-sm text-gray-500 font-sans">Drop files here or click to upload</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className={`flex items-start space-x-3 p-4 rounded-lg transition-all duration-300 ${
+                    completedSteps.includes('brand') ? 'bg-emerald-50 border border-emerald-200' : 'bg-gray-50 border border-gray-200'
+                  }`}>
+                    <div className={`w-5 h-5 rounded border-2 mt-0.5 flex items-center justify-center ${
+                      completedSteps.includes('brand') ? 'border-emerald-500 bg-emerald-500' : 'border-emerald-500'
+                    }`}>
+                      {completedSteps.includes('brand') && (
+                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-medium text-gray-900 font-sans">Brand Requirements & Vision</h4>
+                      <p className="text-sm text-gray-600 mt-1 font-sans">Describe your brand personality, target audience, and design preferences</p>
+                      {!completedSteps.includes('brand') && (
+                        <textarea 
+                          placeholder="Tell us about your brand vision, target audience, and design style preferences..."
+                          className="w-full mt-2 px-3 py-2 border border-gray-300 rounded-md text-sm"
+                          rows={3}
+                          disabled
+                        />
+                      )}
+                    </div>
+                  </div>
+
+                  <div className={`flex items-start space-x-3 p-4 rounded-lg transition-all duration-300 ${
+                    completedSteps.includes('schedule') ? 'bg-emerald-50 border border-emerald-200' : 'bg-gray-50 border border-gray-200'
+                  }`}>
+                    <div className={`w-5 h-5 rounded border-2 mt-0.5 flex items-center justify-center ${
+                      completedSteps.includes('schedule') ? 'border-emerald-500 bg-emerald-500' : 'border-emerald-500'
+                    }`}>
+                      {completedSteps.includes('schedule') && (
+                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-medium text-gray-900 font-sans">Schedule Working Sessions</h4>
+                      <p className="text-sm text-gray-600 mt-1 font-sans">Book initial consultation and design review meetings</p>
+                      {!completedSteps.includes('schedule') && (
+                        <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                          <p className="text-sm text-blue-700 font-sans">📅 Available slots: Jan 20-22, 2025</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-start space-x-3 p-4 bg-gray-50 border border-gray-200 rounded-lg">
                     <div className="w-5 h-5 rounded border-2 border-emerald-500 mt-0.5"></div>
                     <div className="flex-1">
-                      <h4 className="font-medium text-gray-900 font-sans">Project Requirements</h4>
-                      <p className="text-sm text-gray-600 mt-1 font-sans">Tell us about your project goals and requirements</p>
+                      <h4 className="font-medium text-gray-900 font-sans">Website Content & Copy</h4>
+                      <p className="text-sm text-gray-600 mt-1 font-sans">Provide website text, images, and content structure</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start space-x-3 p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                    <div className="w-5 h-5 rounded border-2 border-emerald-500 mt-0.5"></div>
+                    <div className="flex-1">
+                      <h4 className="font-medium text-gray-900 font-sans">Technical Requirements</h4>
+                      <p className="text-sm text-gray-600 mt-1 font-sans">Specify hosting, integrations, and technical needs</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start space-x-3 p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                    <div className="w-5 h-5 rounded border-2 border-emerald-500 mt-0.5"></div>
+                    <div className="flex-1">
+                      <h4 className="font-medium text-gray-900 font-sans">Project Timeline Approval</h4>
+                      <p className="text-sm text-gray-600 mt-1 font-sans">Review and approve project milestones and delivery dates</p>
                     </div>
                   </div>
 
                   <button className="w-full py-3 px-6 rounded-lg font-semibold text-white transition-colors mt-6 bg-emerald-600 font-sans">
-                    Submit Onboarding Info
+                    Submit Project Details
                   </button>
                 </div>
               </div>
