@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Edit, Trash2, Eye, Lock, Users, BarChart3, ExternalLink, Sparkles } from 'lucide-react';
+import { Plus, Edit, Trash2, Sparkles } from 'lucide-react';
 import { useChecklists } from '../../hooks/useChecklists';
 import { useSubscription } from '../../hooks/useSubscription';
 import { Checklist } from '../../types/checklist';
@@ -29,19 +29,6 @@ export default function ChecklistList({ onEditChecklist, onCreateNew }: Checklis
       // Error is handled by the hook
     }
     setDeletingId(null);
-  };
-
-  const getPublicUrl = (checklistId: string) => {
-    return `${window.location.origin}/c/${checklistId}`;
-  };
-
-  const copyToClipboard = async (text: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      // You could add a toast notification here
-    } catch (err) {
-      console.error('Failed to copy to clipboard:', err);
-    }
   };
 
   const handleCreateFromTemplate = () => {
@@ -167,13 +154,6 @@ export default function ChecklistList({ onEditChecklist, onCreateNew }: Checklis
                       title="Edit checklist"
                     >
                       <Edit className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => copyToClipboard(getPublicUrl(checklist.id))}
-                      className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                      title="Copy public link"
-                    >
-                      <ExternalLink className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleDelete(checklist.id)}
