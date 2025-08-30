@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Edit, Trash2, Sparkles } from 'lucide-react';
+import { Plus, Edit, Trash2, Sparkles, ExternalLink, Copy, Check } from 'lucide-react';
 import { useChecklists } from '../../hooks/useChecklists';
 import { useSubscription } from '../../hooks/useSubscription';
 import { Checklist } from '../../types/checklist';
@@ -16,6 +16,7 @@ export default function ChecklistList({ onEditChecklist, onCreateNew }: Checklis
   const { getAccessStatus } = useSubscription();
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const accessStatus = getAccessStatus();
 
   const handleDelete = async (id: string) => {
@@ -43,6 +44,26 @@ export default function ChecklistList({ onEditChecklist, onCreateNew }: Checklis
   const handleCreateBlank = () => {
     setShowTemplateSelector(false);
     onCreateNew();
+  };
+
+  const getChecklistUrl = (checklist: Checklist) => {
+    return `${window.location.origin}/c/${checklist.id}`;
+  };
+
+  const handleCopyLink = async (checklist: Checklist) => {
+    const url = getChecklistUrl(checklist);
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopiedId(checklist.id);
+      setTimeout(() => setCopiedId(null), 2000);
+    } catch (err) {
+      console.error('Failed to copy link:', err);
+    }
+  };
+
+  const handlePreview = (checklist: Checklist) => {
+    const url = getChecklistUrl(checklist);
+    window.open(url, '_blank', 'noopener,noreferrer');
   };
 
   if (loading) {
@@ -148,6 +169,24 @@ export default function ChecklistList({ onEditChecklist, onCreateNew }: Checklis
                 {/* Actions */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() => handlePreview(checklist)}
+                      className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      title="Preview checklist"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleCopyLink(checklist)}
+                      className="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
+                      title="Copy share link"
+                    >
+                      {copiedId === checklist.id ? (
+                        <Check className="w-4 h-4 text-emerald-600" />
+                      ) : (
+                        <Copy className="w-4 h-4" />
+                      )}
+                    </button>
                     <button
                       onClick={() => onEditChecklist(checklist)}
                       className="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
