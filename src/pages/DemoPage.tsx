@@ -871,7 +871,6 @@ export default function DemoPage() {
             setProgress(0);
             setAnimatedStats({ users: 0, completed: 0, rate: 0, days: 0 });
             setAnimatedProgress({});
-            setShowNotifications([]);
             setCompletedSteps([]);
             setIsPlaying(true);
           }}
