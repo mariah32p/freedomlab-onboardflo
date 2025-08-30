@@ -136,7 +136,6 @@ export function useCustomerSessions() {
       return null;
     }
   };
-        .single();
   return {
     sessions,
     loading,
