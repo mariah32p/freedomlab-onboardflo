@@ -19,6 +19,7 @@ import SubmissionsPage from './pages/SubmissionsPage';
 import SettingsPage from './pages/SettingsPage';
 import BrandingPage from './pages/BrandingPage';
 import PublicChecklistPage from './pages/PublicChecklistPage';
+import DemoPage from './pages/DemoPage';
 
 // Simple landing page component that combines all sections
 function LandingPage() {
@@ -49,6 +50,7 @@ function App() {
                   <Routes>
                     <Route path="/" element={<LandingPage />} />
                     <Route path="/pricing" element={<PricingPage />} />
+                    <Route path="/demo" element={<DemoPage />} />
                     <Route path="/signup" element={<SignUpPage />} />
                     <Route path="/get-started" element={<GetStartedPage />} />
                     <Route path="/signin" element={<SignInPage />} />
