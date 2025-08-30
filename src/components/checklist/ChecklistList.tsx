@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Edit, Trash2, Sparkles, ExternalLink, Copy, Check } from 'lucide-react';
+import { Plus, Edit, Trash2, Sparkles, ExternalLink, Copy, Check, X, Users, Link as LinkIcon, Info } from 'lucide-react';
 import { useChecklists } from '../../hooks/useChecklists';
 import { useChecklistSteps } from '../../hooks/useChecklists';
 import { useSubscription } from '../../hooks/useSubscription';
@@ -12,13 +12,130 @@ interface ChecklistListProps {
   onCreateNew: (template?: ChecklistTemplate) => void;
 }
 
-function ChecklistCard({ checklist, onEdit, onDelete, onPreview, onCopyLink, copiedId, deletingId }: {
+interface ShareLinkModalProps {
+  checklist: Checklist;
+  onClose: () => void;
+  onCopyLink: () => void;
+  copied: boolean;
+}
+
+function ShareLinkModal({ checklist, onClose, onCopyLink, copied }: ShareLinkModalProps) {
+  const getChecklistUrl = () => {
+    const sessionToken = Math.random().toString(36).substring(2, 10);
+    return `${window.location.origin}/c/${checklist.id}/${sessionToken}`;
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl shadow-xl max-w-lg w-full">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
+              <LinkIcon className="w-5 h-5 text-emerald-600" />
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 font-sans">Share Checklist</h3>
+              <p className="text-sm text-gray-600 font-sans">{checklist.title}</p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="p-6 space-y-6">
+          {/* How it works */}
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="flex items-start space-x-3">
+              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <Info className="w-4 h-4 text-blue-600" />
+              </div>
+              <div>
+                <h4 className="font-medium text-blue-900 mb-2 font-sans">How Customer Links Work</h4>
+                <ul className="text-sm text-blue-800 space-y-1 font-sans">
+                  <li>• Each link creates a unique session for one customer</li>
+                  <li>• Multiple customers can work simultaneously</li>
+                  <li>• Progress is saved automatically and persists</li>
+                  <li>• You can see real-time activity from your dashboard</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Link generation */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-3 font-sans">
+              Customer Link
+            </label>
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+              <div className="flex items-center space-x-3 mb-3">
+                <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">
+                  <Users className="w-4 h-4 text-emerald-600" />
+                </div>
+                <div className="flex-1">
+                  <div className="font-medium text-gray-900 text-sm font-sans">Unique Session Link</div>
+                  <div className="text-xs text-gray-600 font-sans">Each click generates a new customer session</div>
+                </div>
+              </div>
+              <div className="bg-white border border-gray-200 rounded-lg p-3 font-mono text-sm text-gray-600 break-all">
+                {getChecklistUrl()}
+              </div>
+            </div>
+          </div>
+
+          {/* Instructions */}
+          <div className="bg-gray-50 rounded-lg p-4">
+            <h4 className="font-medium text-gray-900 mb-2 font-sans">Sharing Instructions</h4>
+            <ol className="text-sm text-gray-700 space-y-1 font-sans">
+              <li>1. Click "Copy Link" to get a unique customer link</li>
+              <li>2. Send this link to your customer via email or message</li>
+              <li>3. Each customer gets their own progress tracking</li>
+              <li>4. Monitor progress from your Submissions page</li>
+            </ol>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium transition-colors font-sans"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onCopyLink}
+            className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-lg font-medium transition-colors flex items-center font-sans"
+          >
+            {copied ? (
+              <>
+                <Check className="w-4 h-4 mr-2" />
+                Link Copied!
+              </>
+            ) : (
+              <>
+                <Copy className="w-4 h-4 mr-2" />
+                Copy Link
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ChecklistCard({ checklist, onEdit, onDelete, onPreview, onShare, deletingId }: {
   checklist: Checklist;
   onEdit: (checklist: Checklist) => void;
   onDelete: (id: string) => void;
   onPreview: (checklist: Checklist) => void;
-  onCopyLink: (checklist: Checklist) => void;
-  copiedId: string | null;
+  onShare: (checklist: Checklist) => void;
   deletingId: string | null;
 }) {
   const { steps, loading: stepsLoading } = useChecklistSteps(checklist.id);
@@ -26,7 +143,7 @@ function ChecklistCard({ checklist, onEdit, onDelete, onPreview, onCopyLink, cop
   const needsSetup = stepCount === 0;
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all duration-200 hover:-translate-y-0.5">
       {/* Header with brand color */}
       <div 
         className="h-2 rounded-t-xl"
@@ -35,25 +152,25 @@ function ChecklistCard({ checklist, onEdit, onDelete, onPreview, onCopyLink, cop
       
       <div className="p-6">
         {/* Title and description */}
-        <div className="mb-4">
-          <div className="flex items-start justify-between mb-2">
-            <h3 className="text-lg font-semibold text-gray-900 font-sans line-clamp-2 flex-1">
+        <div className="mb-6">
+          <div className="flex items-start justify-between mb-3">
+            <h3 className="text-xl font-semibold text-gray-900 font-sans line-clamp-2 flex-1">
               {checklist.title}
             </h3>
             {needsSetup && (
-              <span className="ml-2 px-2 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-medium font-sans whitespace-nowrap">
-                Needs Setup
+              <span className="ml-3 px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-medium font-sans whitespace-nowrap">
+                Setup Required
               </span>
             )}
           </div>
-          <p className="text-gray-600 text-sm font-sans line-clamp-3">
+          <p className="text-gray-600 font-sans line-clamp-2 leading-relaxed">
             {checklist.description}
           </p>
         </div>
 
-        {/* Step count and stats */}
-        <div className="grid grid-cols-2 gap-4 mb-4 p-3 bg-gray-50 rounded-lg">
-          <div className="text-center">
+        {/* Stats */}
+        <div className="grid grid-cols-3 gap-4 mb-6">
+          <div className="text-center p-3 bg-gray-50 rounded-lg">
             <div className="text-lg font-bold text-gray-900 font-sans">
               {stepsLoading ? '...' : stepCount}
             </div>
@@ -61,15 +178,28 @@ function ChecklistCard({ checklist, onEdit, onDelete, onPreview, onCopyLink, cop
               {stepCount === 1 ? 'Step' : 'Steps'}
             </div>
           </div>
-          <div className="text-center">
+          <div className="text-center p-3 bg-gray-50 rounded-lg">
             <div className="text-lg font-bold text-gray-900 font-sans">0</div>
-            <div className="text-xs text-gray-600 font-sans">Customers</div>
+            <div className="text-xs text-gray-600 font-sans">Sessions</div>
+          </div>
+          <div className="text-center p-3 bg-gray-50 rounded-lg">
+            <div className="text-lg font-bold text-gray-900 font-sans">0%</div>
+            <div className="text-xs text-gray-600 font-sans">Completed</div>
           </div>
         </div>
 
-        {/* Actions */}
+        {/* Primary Action */}
+        <button
+          onClick={() => onShare(checklist)}
+          disabled={needsSetup}
+          className="w-full bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-3 rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed mb-4 font-sans"
+        >
+          {needsSetup ? 'Add Steps to Share' : 'Create Customer Link'}
+        </button>
+
+        {/* Secondary Actions */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1">
             <button
               onClick={() => onPreview(checklist)}
               disabled={needsSetup}
@@ -95,32 +225,6 @@ function ChecklistCard({ checklist, onEdit, onDelete, onPreview, onCopyLink, cop
             </button>
           </div>
           
-          <button
-            onClick={() => onCopyLink(checklist)}
-            disabled={needsSetup}
-            className="w-full mt-4 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-4 py-3 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed border border-emerald-200 font-sans"
-          >
-            {copiedId === checklist.id ? (
-              <div className="flex items-center justify-center space-x-2">
-                <Check className="w-4 h-4" />
-                <span>Link Copied!</span>
-              </div>
-            ) : needsSetup ? (
-              'Add steps before sharing'
-            ) : (
-              <div className="flex items-center justify-center space-x-2">
-                <Copy className="w-4 h-4" />
-                <span>Create Unique Customer Link</span>
-              </div>
-            )}
-          </button>
-          
-          {!needsSetup && (
-            <p className="text-xs text-gray-500 mt-2 text-center font-sans">
-              Each link creates a unique session for individual customer progress tracking
-            </p>
-          )}
-          
           <div className="text-xs text-gray-500 font-sans">
             {new Date(checklist.created_at).toLocaleDateString()}
           </div>
@@ -135,6 +239,7 @@ export default function ChecklistList({ onEditChecklist, onCreateNew }: Checklis
   const { getAccessStatus } = useSubscription();
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
+  const [shareModalChecklist, setShareModalChecklist] = useState<Checklist | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const accessStatus = getAccessStatus();
 
@@ -166,7 +271,6 @@ export default function ChecklistList({ onEditChecklist, onCreateNew }: Checklis
   };
 
   const getChecklistUrl = (checklist: Checklist) => {
-    // Generate a new session token for sharing
     const sessionToken = Math.random().toString(36).substring(2, 10);
     return `${window.location.origin}/c/${checklist.id}/${sessionToken}`;
   };
@@ -176,7 +280,10 @@ export default function ChecklistList({ onEditChecklist, onCreateNew }: Checklis
     try {
       await navigator.clipboard.writeText(url);
       setCopiedId(checklist.id);
-      setTimeout(() => setCopiedId(null), 2000);
+      setTimeout(() => {
+        setCopiedId(null);
+        setShareModalChecklist(null);
+      }, 2000);
     } catch (err) {
       console.error('Failed to copy link:', err);
     }
@@ -185,6 +292,10 @@ export default function ChecklistList({ onEditChecklist, onCreateNew }: Checklis
   const handlePreview = (checklist: Checklist) => {
     const url = getChecklistUrl(checklist);
     window.open(url, '_blank');
+  };
+
+  const handleShare = (checklist: Checklist) => {
+    setShareModalChecklist(checklist);
   };
 
   if (loading) {
@@ -204,24 +315,26 @@ export default function ChecklistList({ onEditChecklist, onCreateNew }: Checklis
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
+          <h2 className="text-2xl font-bold text-gray-900 font-sans">Your Checklists</h2>
+          <p className="text-gray-600 font-sans">Create and manage onboarding flows for your customers</p>
         </div>
         <div className="flex items-center space-x-3">
           <button
             onClick={handleCreateFromTemplate}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center font-sans"
+            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center shadow-sm hover:shadow-md font-sans"
           >
-            <Sparkles className="w-4 h-4 mr-2" />
+            <Sparkles className="w-5 h-5 mr-2" />
             Use Template
           </button>
           <button
             onClick={() => onCreateNew()}
-            className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center font-sans"
+            className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center shadow-sm hover:shadow-md font-sans"
           >
-            <Plus className="w-4 h-4 mr-2" />
+            <Plus className="w-5 h-5 mr-2" />
             Create Custom
           </button>
         </div>
@@ -229,33 +342,33 @@ export default function ChecklistList({ onEditChecklist, onCreateNew }: Checklis
 
       {/* Checklists Grid */}
       {checklists.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
-          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Plus className="w-8 h-8 text-gray-400" />
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-16 text-center">
+          <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Plus className="w-10 h-10 text-emerald-600" />
           </div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2 font-sans">No checklists yet</h3>
-          <p className="text-gray-600 mb-6 font-sans">
-            Create your first onboarding checklist to get started
+          <h3 className="text-2xl font-bold text-gray-900 mb-3 font-sans">Create Your First Checklist</h3>
+          <p className="text-gray-600 mb-8 max-w-md mx-auto font-sans">
+            Start with a proven template or build a custom onboarding flow from scratch
           </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
               onClick={handleCreateFromTemplate}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center font-sans"
+              className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-4 rounded-lg font-semibold transition-colors flex items-center justify-center shadow-sm hover:shadow-md font-sans"
             >
               <Sparkles className="w-5 h-5 mr-2" />
-              Use Template
+              Browse Templates
             </button>
             <button
               onClick={() => onCreateNew()}
-              className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center font-sans"
+              className="bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-4 rounded-lg font-semibold transition-colors flex items-center justify-center shadow-sm hover:shadow-md font-sans"
             >
               <Plus className="w-5 h-5 mr-2" />
-              Create Custom
+              Start from Scratch
             </button>
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {checklists.map((checklist) => (
             <ChecklistCard
               key={checklist.id}
@@ -263,8 +376,7 @@ export default function ChecklistList({ onEditChecklist, onCreateNew }: Checklis
               onEdit={onEditChecklist}
               onDelete={handleDelete}
               onPreview={handlePreview}
-              onCopyLink={handleCopyLink}
-              copiedId={copiedId}
+              onShare={handleShare}
               deletingId={deletingId}
             />
           ))}
@@ -277,6 +389,19 @@ export default function ChecklistList({ onEditChecklist, onCreateNew }: Checklis
           onSelectTemplate={handleSelectTemplate}
           onClose={() => setShowTemplateSelector(false)}
           onCreateBlank={handleCreateBlank}
+        />
+      )}
+
+      {/* Share Link Modal */}
+      {shareModalChecklist && (
+        <ShareLinkModal
+          checklist={shareModalChecklist}
+          onClose={() => {
+            setShareModalChecklist(null);
+            setCopiedId(null);
+          }}
+          onCopyLink={() => handleCopyLink(shareModalChecklist)}
+          copied={copiedId === shareModalChecklist.id}
         />
       )}
     </div>
