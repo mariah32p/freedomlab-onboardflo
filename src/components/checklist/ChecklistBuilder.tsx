@@ -754,7 +754,7 @@ export default function ChecklistBuilder({ checklist, template, onSave, onClose,
               className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 flex items-center font-sans"
             >
               <Save className="w-4 h-4 mr-2" />
-              {loading ? 'Saving...' : (editingChecklist ? 'Save Changes' : 'Create Checklist')}
+              {loading ? 'Saving...' : (isCreating ? 'Create Checklist' : 'Save Changes')}
             </button>
           </div>
         </div>
