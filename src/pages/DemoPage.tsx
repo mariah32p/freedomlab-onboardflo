@@ -41,11 +41,13 @@ export default function DemoPage() {
   const [animatedStats, setAnimatedStats] = useState({ users: 0, completed: 0, rate: 0, days: 0 });
   const [animatedProgress, setAnimatedProgress] = useState<Record<string, number>>({});
   const [activityItems, setActivityItems] = useState([
+    { user: 'Emma W.', action: 'uploaded brand assets', time: '5 min ago', type: 'success' },
+    { user: 'Alex P.', action: 'completed requirements', time: '12 min ago', type: 'success' },
     { user: 'Mike R.', action: 'started onboarding', time: '15 min ago', type: 'info' },
-    { user: 'Lisa K.', action: 'needs assistance', time: '1 hour ago', type: 'warning' },
-    { user: 'David L.', action: 'completed step 3', time: '2 hours ago', type: 'success' }
+    { user: 'Lisa K.', action: 'needs assistance', time: '1 hour ago', type: 'warning' }
   ]);
   const [completedSteps, setCompletedSteps] = useState<string[]>([]);
+  const [showNewActivity, setShowNewActivity] = useState(false);
 
   const demoSteps: DemoStep[] = [
     {
@@ -94,6 +96,7 @@ export default function DemoPage() {
         setProgress(0);
         setAnimatedStats({ users: 0, completed: 0, rate: 0, days: 0 });
         setAnimatedProgress({});
+        setShowNewActivity(false);
         setActivityItems([
           { user: 'Mike R.', action: 'started onboarding', time: '15 min ago', type: 'info' },
           { user: 'Lisa K.', action: 'needs assistance', time: '1 hour ago', type: 'warning' },
@@ -130,11 +133,13 @@ export default function DemoPage() {
     setAnimatedStats({ users: 0, completed: 0, rate: 0, days: 0 });
     setAnimatedProgress({});
     setActivityItems([
+      { user: 'Emma W.', action: 'uploaded brand assets', time: '5 min ago', type: 'success' },
+      { user: 'Alex P.', action: 'completed requirements', time: '12 min ago', type: 'success' },
       { user: 'Mike R.', action: 'started onboarding', time: '15 min ago', type: 'info' },
-      { user: 'Lisa K.', action: 'needs assistance', time: '1 hour ago', type: 'warning' },
-      { user: 'David L.', action: 'completed step 3', time: '2 hours ago', type: 'success' }
+      { user: 'Lisa K.', action: 'needs assistance', time: '1 hour ago', type: 'warning' }
     ]);
     setCompletedSteps([]);
+    setShowNewActivity(false);
 
     if (currentStep === 0) {
       // Dashboard animations
@@ -143,10 +148,14 @@ export default function DemoPage() {
       }, 500);
       
       setTimeout(() => {
-        setActivityItems(prev => [
-          { user: 'Sarah M.', action: 'completed setup', time: '2 min ago', type: 'success' },
-          ...prev
-        ]);
+        setShowNewActivity(true);
+        setTimeout(() => {
+          setActivityItems(prev => [
+            { user: 'Sarah M.', action: 'completed setup', time: '2 min ago', type: 'success' },
+            ...prev
+          ]);
+          setShowNewActivity(false);
+        }, 500);
       }, 2000);
     } else if (currentStep === 2) {
       // Submissions page animations
@@ -245,10 +254,22 @@ export default function DemoPage() {
         </div>
         <div className="p-6">
           <div className="space-y-4">
+            {/* New activity notification sliding in from right */}
+            {showNewActivity && (
+              <div className="flex items-start animate-slide-in">
+                <div className="w-2 h-2 rounded-full mt-2 mr-3 bg-emerald-500"></div>
+                <div className="flex-1">
+                  <p className="text-sm text-gray-900 font-sans">
+                    <span className="font-medium">Sarah M.</span> completed setup
+                  </p>
+                  <p className="text-xs text-gray-500 font-sans">2 min ago</p>
+                </div>
+              </div>
+            )}
             {activityItems.map((activity, index) => (
               <div 
                 key={index} 
-                className="flex items-start animate-slide-in"
+                className="flex items-start"
               >
                 <div className={`w-2 h-2 rounded-full mt-2 mr-3 ${
                   activity.type === 'success' ? 'bg-emerald-500' :
