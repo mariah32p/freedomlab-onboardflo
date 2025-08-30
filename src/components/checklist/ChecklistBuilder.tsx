@@ -95,7 +95,13 @@ export default function ChecklistBuilder({ checklist, template, onSave, onClose,
     if (template && checklist && !templateStepsAdded && steps.length === 0) {
       const addTemplateSteps = async () => {
         for (const stepData of template.steps) {
-          await createStep(stepData);
+          await createStep({
+            title: stepData.title,
+            description: stepData.description,
+            step_type: stepData.step_type,
+            options: stepData.options,
+            is_required: stepData.isRequired, // Map isRequired to is_required
+          });
         }
         setTemplateStepsAdded(true);
       };
