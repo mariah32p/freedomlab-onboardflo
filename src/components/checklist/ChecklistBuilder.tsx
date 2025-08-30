@@ -270,76 +270,21 @@ export default function ChecklistBuilder({ checklist, template, onSave, onClose,
                 />
               </div>
 
-              {/* Branding Section */}
+              {/* Branding Note */}
               <div className="border-t border-gray-200 pt-6">
-                <h4 className="text-lg font-medium text-gray-900 mb-4 font-sans">Branding</h4>
-                
-                <div className="space-y-4">
-                  {/* Brand Color */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">
-                      Brand Color
-                    </label>
-                    <div className="flex items-center space-x-3">
-                      <input
-                        type="color"
-                        value={formData.brand_color}
-                        onChange={(e) => setFormData(prev => ({ ...prev, brand_color: e.target.value }))}
-                        className="w-12 h-10 border border-gray-300 rounded-lg cursor-pointer"
-                      />
-                      <input
-                        type="text"
-                        value={formData.brand_color}
-                        onChange={(e) => setFormData(prev => ({ ...prev, brand_color: e.target.value }))}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
-                        placeholder="#10b981"
-                      />
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0">
+                      <Palette className="h-5 w-5 text-blue-400 mt-0.5" />
                     </div>
-                  </div>
-
-                  {/* Logo URL */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">
-                      Logo URL (optional)
-                    </label>
-                    <input
-                      type="url"
-                      value={formData.logo_url}
-                      onChange={(e) => setFormData(prev => ({ ...prev, logo_url: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
-                      placeholder="https://example.com/logo.png"
-                    />
-                    <p className="text-xs text-gray-500 mt-1 font-sans">
-                      Add your logo to appear at the top of the checklist
-                    </p>
-                  </div>
-
-                  {/* Brand Preview */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">
-                      Preview
-                    </label>
-                    <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                      <div 
-                        className="h-2 rounded-t-lg mb-3"
-                        style={{ backgroundColor: formData.brand_color }}
-                      ></div>
-                      <div className="flex items-center">
-                        {formData.logo_url && (
-                          <img 
-                            src={formData.logo_url} 
-                            alt="Logo preview" 
-                            className="w-8 h-8 object-contain mr-3"
-                            onError={(e) => {
-                              e.currentTarget.style.display = 'none';
-                            }}
-                          />
-                        )}
-                        <div>
-                          <h5 className="font-medium text-gray-900 font-sans">{formData.title || 'Your Checklist Title'}</h5>
-                          <p className="text-sm text-gray-600 font-sans">{formData.description || 'Checklist description'}</p>
-                        </div>
-                      </div>
+                    <div className="ml-3">
+                      <h4 className="text-sm font-medium text-blue-800 font-sans">Branding Settings</h4>
+                      <p className="text-sm text-blue-700 mt-1 font-sans">
+                        Your checklists will use your global brand settings (logo, colors, fonts). 
+                        <a href="/branding" className="underline hover:no-underline ml-1">
+                          Update branding →
+                        </a>
+                      </p>
                     </div>
                   </div>
                 </div>

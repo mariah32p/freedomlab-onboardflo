@@ -54,6 +54,9 @@ export default function Header() {
                   <Link to="/submissions" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
                     Submissions
                   </Link>
+                  <Link to="/branding" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
+                    Branding
+                  </Link>
                 </>
               )}
               {showUserMenu && (
@@ -115,6 +118,9 @@ export default function Header() {
                   </Link>
                   <Link to="/submissions" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
                     Submissions
+                  </Link>
+                  <Link to="/branding" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
+                    Branding
                   </Link>
                   <Link to="/settings" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
                     Settings

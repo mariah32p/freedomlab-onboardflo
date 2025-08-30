@@ -17,6 +17,7 @@ import DashboardPage from './pages/DashboardPage';
 import ChecklistsPage from './pages/ChecklistsPage';
 import SubmissionsPage from './pages/SubmissionsPage';
 import SettingsPage from './pages/SettingsPage';
+import BrandingPage from './pages/BrandingPage';
 
 // Simple landing page component that combines all sections
 function LandingPage() {
@@ -50,6 +51,7 @@ function App() {
               <Route path="/checklists" element={<ChecklistsPage />} />
               <Route path="/submissions" element={<SubmissionsPage />} />
               <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/branding" element={<BrandingPage />} />
             </Routes>
           </main>
         </div>
