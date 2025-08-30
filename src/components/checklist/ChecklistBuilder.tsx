@@ -556,26 +556,27 @@ export default function ChecklistBuilder({ checklist, template, onSave, onClose,
                         </div>
                       </div>
                     </div>
-                  ))}
+                  </div>
+                ))}
 
-                  {steps.length === 0 && !showStepForm && (
-                    <div className="text-center py-12 border-2 border-dashed border-gray-300 rounded-lg">
-                      <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <Plus className="w-8 h-8 text-gray-400" />
-                      </div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2 font-sans">No steps added yet</h3>
-                      <p className="text-gray-600 mb-6 font-sans">
-                        Add steps to create your onboarding checklist
-                      </p>
-                      <button
-                        onClick={() => setShowStepForm(true)}
-                        className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-lg font-medium transition-colors font-sans"
-                      >
-                        Add First Step
-                      </button>
+                {steps.length === 0 && !showStepForm && (
+                  <div className="text-center py-12 border-2 border-dashed border-gray-300 rounded-lg">
+                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Plus className="w-8 h-8 text-gray-400" />
                     </div>
-                  )}
-                </div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2 font-sans">No steps added yet</h3>
+                    <p className="text-gray-600 mb-6 font-sans">
+                      Add steps to create your onboarding checklist
+                    </p>
+                    <button
+                      onClick={() => setShowStepForm(true)}
+                      className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-lg font-medium transition-colors font-sans"
+                    >
+                      Add First Step
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>
