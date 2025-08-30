@@ -61,9 +61,10 @@ export default function PublicChecklistPage() {
         .eq('id', checklistId)
         .maybeSingle();
 
+      console.log('Checklist query result:', { checklistData, checklistError, checklistId });
+
       if (checklistError) {
         throw checklistError;
-        return;
       }
 
       if (!checklistData) {
