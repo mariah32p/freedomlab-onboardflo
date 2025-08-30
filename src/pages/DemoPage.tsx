@@ -97,6 +97,13 @@ export default function DemoPage() {
         setAnimatedStats({ users: 0, completed: 0, rate: 0, days: 0 });
         setAnimatedProgress({});
         setShowNewActivity(false);
+        // Move to next slide more quickly after new activity appears
+        setTimeout(() => {
+          if (currentStep < demoSteps.length - 1) {
+            setCurrentStep(prev => prev + 1);
+            setProgress(0);
+          }
+        }, 800);
         setActivityItems([
           { user: 'Mike R.', action: 'started onboarding', time: '15 min ago', type: 'info' },
           { user: 'Lisa K.', action: 'needs assistance', time: '1 hour ago', type: 'warning' },
@@ -304,7 +311,7 @@ export default function DemoPage() {
           </button>
           <button className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center shadow-sm hover:shadow-md font-sans">
             <Plus className="w-5 h-5 mr-2" />
-            Submit Project Information
+            Create Custom
           </button>
         </div>
       </div>
