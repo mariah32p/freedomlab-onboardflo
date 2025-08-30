@@ -25,11 +25,17 @@ export default function SubmissionsPage() {
   const { subscription, getAccessStatus } = useSubscription();
   const { sessions, loading, error, deleteSession, getSessionStats } = useCustomerSessions();
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const accessStatus = getAccessStatus();
 
   const stats = getSessionStats();
 
   const handleDeleteSession = async (sessionId: string) => {
+    // Show confirmation dialog
+    if (!confirm('Are you sure you want to delete this session? This will remove all progress data and cannot be undone.')) {
+      return;
+    }
+    
     setDeletingId(sessionId);
     const success = await deleteSession(sessionId);
     setDeletingId(null);

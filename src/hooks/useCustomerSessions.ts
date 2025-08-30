@@ -50,12 +50,6 @@ export function useCustomerSessions() {
   const deleteSession = async (sessionId: string): Promise<boolean> => {
     try {
       setError(null);
-      
-      // Show confirmation dialog
-      const confirmed = confirm('Are you sure you want to delete this session? This will remove all progress data and cannot be undone.');
-      if (!confirmed) {
-        return false;
-      }
 
       const { error: deleteError } = await supabase
         .from('customer_sessions')
