@@ -40,7 +40,11 @@ export default function DemoPage() {
   const [progress, setProgress] = useState(0);
   const [animatedStats, setAnimatedStats] = useState({ users: 0, completed: 0, rate: 0, days: 0 });
   const [animatedProgress, setAnimatedProgress] = useState<Record<string, number>>({});
-  const [showNotifications, setShowNotifications] = useState<string[]>([]);
+  const [activityItems, setActivityItems] = useState([
+    { user: 'Mike R.', action: 'started onboarding', time: '15 min ago', type: 'info' },
+    { user: 'Lisa K.', action: 'needs assistance', time: '1 hour ago', type: 'warning' },
+    { user: 'David L.', action: 'completed step 3', time: '2 hours ago', type: 'success' }
+  ]);
   const [completedSteps, setCompletedSteps] = useState<string[]>([]);
 
   const demoSteps: DemoStep[] = [
@@ -90,7 +94,11 @@ export default function DemoPage() {
         setProgress(0);
         setAnimatedStats({ users: 0, completed: 0, rate: 0, days: 0 });
         setAnimatedProgress({});
-        setShowNotifications([]);
+        setActivityItems([
+          { user: 'Mike R.', action: 'started onboarding', time: '15 min ago', type: 'info' },
+          { user: 'Lisa K.', action: 'needs assistance', time: '1 hour ago', type: 'warning' },
+          { user: 'David L.', action: 'completed step 3', time: '2 hours ago', type: 'success' }
+        ]);
         setCompletedSteps([]);
       }
     }, demoSteps[currentStep].duration);
@@ -121,7 +129,11 @@ export default function DemoPage() {
     // Reset animations when step changes
     setAnimatedStats({ users: 0, completed: 0, rate: 0, days: 0 });
     setAnimatedProgress({});
-    setShowNotifications([]);
+    setActivityItems([
+      { user: 'Mike R.', action: 'started onboarding', time: '15 min ago', type: 'info' },
+      { user: 'Lisa K.', action: 'needs assistance', time: '1 hour ago', type: 'warning' },
+      { user: 'David L.', action: 'completed step 3', time: '2 hours ago', type: 'success' }
+    ]);
     setCompletedSteps([]);
 
     if (currentStep === 0) {
@@ -131,7 +143,10 @@ export default function DemoPage() {
       }, 500);
       
       setTimeout(() => {
-        setShowNotifications(['sarah-completed']);
+        setActivityItems(prev => [
+          { user: 'Sarah M.', action: 'completed setup', time: '2 min ago', type: 'success' },
+          ...prev
+        ]);
       }, 2000);
     } else if (currentStep === 2) {
       // Submissions page animations
@@ -230,17 +245,10 @@ export default function DemoPage() {
         </div>
         <div className="p-6">
           <div className="space-y-4">
-            {[
-              { user: 'Sarah M.', action: 'completed setup', time: '2 min ago', type: 'success', show: showNotifications.includes('sarah-completed') },
-              { user: 'Mike R.', action: 'started onboarding', time: '15 min ago', type: 'info', show: true },
-              { user: 'Lisa K.', action: 'needs assistance', time: '1 hour ago', type: 'warning', show: true },
-              { user: 'David L.', action: 'completed step 3', time: '2 hours ago', type: 'success', show: true }
-            ].map((activity, index) => (
+            {activityItems.map((activity, index) => (
               <div 
                 key={index} 
-                className={`flex items-start transition-all duration-500 ${
-                  activity.show ? 'opacity-100 transform translate-x-0' : 'opacity-0 transform translate-x-4'
-                }`}
+                className="flex items-start animate-slide-in"
               >
                 <div className={`w-2 h-2 rounded-full mt-2 mr-3 ${
                   activity.type === 'success' ? 'bg-emerald-500' :
