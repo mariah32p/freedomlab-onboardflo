@@ -17,7 +17,9 @@ import {
   Building,
   User,
   Link as LinkIcon,
-  Eye
+  Eye,
+  Copy,
+  Check
 } from 'lucide-react';
 
 export default function SubmissionsPage() {
