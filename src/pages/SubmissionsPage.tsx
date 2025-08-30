@@ -265,6 +265,11 @@ export default function SubmissionsPage() {
                             <div className={`text-sm font-medium font-sans ${getStatusColor(session)}`}>
                               {getStatusText(session)}
                             </div>
+                            {session.submission_status === 'started' && (
+                              <div className="text-xs text-gray-500 mt-1 font-sans">
+                                Progress tracking available
+                              </div>
+                            )}
                             {session.submission_status === 'started' && session.is_active && (
                               <div className="flex items-center mt-1">
                                 <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
