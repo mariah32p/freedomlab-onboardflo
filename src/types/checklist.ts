@@ -76,6 +76,9 @@ export interface CustomerSession {
   name: string;
   company: string;
   link_name: string;
+  submission_status: 'pending' | 'started' | 'completed' | 'abandoned';
+  link_created_at: string;
+  link_created_by: string | null;
   started_at: string;
   completed_at: string | null;
   last_activity: string;

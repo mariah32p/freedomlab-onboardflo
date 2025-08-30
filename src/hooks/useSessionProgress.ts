@@ -89,15 +89,16 @@ export function useSessionProgress({ checklistId, sessionToken }: UseSessionProg
 
       const { data: newSession, error: createError } = await supabase
         .from('customer_sessions')
-        .insert({
-          checklist_id: checklistId,
-          session_token: sessionToken,
+        .update({
           email: customerData.email,
           name: customerData.name,
           company: customerData.company,
-          link_name: linkName,
-          is_active: true,
+          submission_status: 'started',
+          started_at: new Date().toISOString(),
+          is_active: true
         })
+        .eq('session_token', sessionToken)
+        .eq('checklist_id', checklistId)
         .select()
         .single();
 

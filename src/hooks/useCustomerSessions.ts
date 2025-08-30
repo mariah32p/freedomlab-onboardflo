@@ -34,7 +34,7 @@ export function useCustomerSessions() {
           )
         `)
         .eq('checklists.user_id', user.id)
-        .order('started_at', { ascending: false });
+        .order('link_created_at', { ascending: false });
 
       if (fetchError) throw fetchError;
 
@@ -85,18 +85,56 @@ export function useCustomerSessions() {
 
   const getSessionStats = () => {
     const totalSessions = sessions.length;
-    const completedSessions = sessions.filter(s => s.completed_at).length;
-    const activeSessions = sessions.filter(s => s.is_active && !s.completed_at).length;
+    const completedSessions = sessions.filter(s => s.submission_status === 'completed').length;
+    const activeSessions = sessions.filter(s => s.submission_status === 'started').length;
+    const pendingSessions = sessions.filter(s => s.submission_status === 'pending').length;
     const completionRate = totalSessions > 0 ? Math.round((completedSessions / totalSessions) * 100) : 0;
 
     return {
       totalSessions,
       completedSessions,
       activeSessions,
+      pendingSessions,
       completionRate,
     };
   };
 
+  const createPendingSubmission = async (checklistId: string, linkName: string = ''): Promise<string | null> => {
+    if (!user) return null;
+
+    try {
+      setError(null);
+
+      // Generate unique session token
+      const sessionToken = Math.random().toString(36).substring(2, 10);
+
+      const { data, error } = await supabase
+        .from('customer_sessions')
+        .insert({
+          checklist_id: checklistId,
+          session_token: sessionToken,
+          email: '', // Will be filled when customer accesses
+          name: '',
+          company: '',
+          link_name: linkName,
+          submission_status: 'pending',
+          link_created_by: user.id,
+          link_created_at: new Date().toISOString(),
+          is_active: false,
+        })
+      if (error) throw error;
+        .select()
+      // Add to local state
+      setSessions(prev => [data, ...prev]);
+      
+      return sessionToken;
+    } catch (err) {
+      console.error('Error creating pending submission:', err);
+      setError(err instanceof Error ? err.message : 'Failed to create customer link');
+      return null;
+    }
+  };
+        .single();
   return {
     sessions,
     loading,
@@ -104,6 +142,7 @@ export function useCustomerSessions() {
     deleteSession,
     getSessionProgress,
     getSessionStats,
+    createPendingSubmission,
     refetch: fetchSessions,
   };
 }

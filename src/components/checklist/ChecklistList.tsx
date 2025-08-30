@@ -20,29 +20,34 @@ interface ShareLinkModalProps {
 function ShareLinkModal({ checklist, onClose }: ShareLinkModalProps) {
   const [linkName, setLinkName] = useState('');
   const [copied, setCopied] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const { createPendingSubmission } = useCustomerSessions();
 
-  const getChecklistUrl = () => {
-    const sessionToken = Math.random().toString(36).substring(2, 10);
-    const baseUrl = `${window.location.origin}/c/${checklist.id}/${sessionToken}`;
-    return linkName.trim() 
-      ? `${baseUrl}?link_name=${encodeURIComponent(linkName.trim())}`
-      : baseUrl;
-  };
+  const [generatedUrl, setGeneratedUrl] = useState<string>('');
 
-  const handleCopyLink = async () => {
-    const url = getChecklistUrl();
+  const handleCreateAndCopyLink = async () => {
+    setCreating(true);
     try {
+      // Create pending submission in database
+      const sessionToken = await createPendingSubmission(checklist.id, linkName.trim());
+      
+      if (!sessionToken) {
+        throw new Error('Failed to create customer link');
+      }
+
+      // Generate the URL
+      const url = `${window.location.origin}/c/${checklist.id}/${sessionToken}`;
+      setGeneratedUrl(url);
+      
+      // Copy to clipboard
       await navigator.clipboard.writeText(url);
       setCopied(true);
-      
-      // TODO: Save link name and session token for tracking
-      if (linkName.trim()) {
-        console.log('Link created:', { name: linkName, url, checklistId: checklist.id });
-      }
       
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error('Failed to copy link:', err);
+    } finally {
+      setCreating(false);
     }
   };
 
@@ -117,23 +122,86 @@ function ShareLinkModal({ checklist, onClose }: ShareLinkModalProps) {
           {/* Link generation */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-3 font-sans">
-              Customer Link
+              Generate Customer Link
             </label>
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-              <div className="flex items-center space-x-3 mb-3">
-                <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">
-                  <Users className="w-4 h-4 text-emerald-600" />
+            
+            {!generatedUrl ? (
+              <div className="text-center">
+                <button
+                  onClick={handleCreateAndCopyLink}
+                  disabled={creating}
+                  className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors disabled:opacity-50 font-sans"
+                >
+                  {creating ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white inline-block mr-2"></div>
+                      Creating Link...
+                    </>
+                  ) : (
+                    'Create & Copy Customer Link'
+                  )}
+                </button>
+                <p className="text-xs text-gray-600 mt-2 font-sans">
+                  This will create a trackable submission in your dashboard
+                </p>
+              </div>
+            ) : (
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                <div className="flex items-center space-x-3 mb-3">
+                  <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">
+                    <Users className="w-4 h-4 text-emerald-600" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-medium text-gray-900 text-sm font-sans">Customer Link Created!</div>
+                    <div className="text-xs text-gray-600 font-sans">Link saved to your submissions dashboard</div>
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <div className="font-medium text-gray-900 text-sm font-sans">Unique Session Link</div>
-                  <div className="text-xs text-gray-600 font-sans">Each click generates a new customer session</div>
+                <div className="bg-white border border-gray-200 rounded-lg p-3">
+                  <div className="flex items-center space-x-2">
+                    <div className="flex-1 font-mono text-sm text-gray-600 break-all">
+                      {generatedUrl}
+                    </div>
+                    <button
+                      onClick={async () => {
+                        try {
+                          await navigator.clipboard.writeText(generatedUrl);
+                          setCopied(true);
+                          setTimeout(() => setCopied(false), 2000);
+                        } catch (err) {
+                          console.error('Failed to copy:', err);
+                        }
+                      }}
+                      className="flex-shrink-0 bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center font-sans"
+                    >
+                      {copied ? (
+                        <>
+                          <Check className="w-3 h-3 mr-1" />
+                          Copied!
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3 h-3 mr-1" />
+                          Copy
+                        </>
+                      )}
+                    </button>
+                  </div>
                 </div>
               </div>
-              <div className="bg-white border border-gray-200 rounded-lg p-3">
-                <div className="flex items-center space-x-2">
-                  <div className="flex-1 font-mono text-sm text-gray-600 break-all">
-                    {getChecklistUrl()}
-                  </div>
+            )}
+          </div>
+
+          {generatedUrl && (
+            <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
+              <div className="flex items-center space-x-2 mb-2">
+                <Check className="w-5 h-5 text-emerald-600" />
+                <span className="font-medium text-emerald-800 font-sans">Link Created Successfully!</span>
+              </div>
+              <p className="text-sm text-emerald-700 font-sans">
+                This submission now appears in your dashboard. You can track when the customer accesses and completes it.
+              </p>
+            </div>
+          )}
                   <button
                     onClick={handleCopyLink}
                     className="flex-shrink-0 bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center font-sans"
@@ -156,16 +224,18 @@ function ShareLinkModal({ checklist, onClose }: ShareLinkModalProps) {
           </div>
 
           {/* Instructions */}
-          <div className="bg-gray-50 rounded-lg p-4">
+          {!generatedUrl && (
+            <div className="bg-gray-50 rounded-lg p-4">
             <h4 className="font-medium text-gray-900 mb-2 font-sans">Sharing Instructions</h4>
             <ol className="text-sm text-gray-700 space-y-1 font-sans">
-              <li>1. Add an optional name to help you track this link</li>
-              <li>2. Click "Copy Link" to get a unique customer link</li>
-              <li>3. Send this link to your customer via email or message</li>
-              <li>4. Each customer gets their own progress tracking</li>
-              <li>5. Monitor all progress from your Submissions page</li>
+              <li>1. Add an optional name to identify this customer/batch</li>
+              <li>2. Click "Create & Copy" to generate a unique tracking link</li>
+              <li>3. A pending submission appears in your dashboard immediately</li>
+              <li>4. Send the link to your customer via email or message</li>
+              <li>5. Track their progress in real-time from Submissions</li>
             </ol>
-          </div>
+            </div>
+          )}
         </div>
 
         {/* Footer */}
@@ -288,6 +358,7 @@ function ChecklistCard({ checklist, onEdit, onDelete, onPreview, onShare, deleti
 
 export default function ChecklistList({ onEditChecklist, onCreateNew }: ChecklistListProps) {
   const { checklists, loading, error, deleteChecklist } = useChecklists();
+  const { createPendingSubmission } = useCustomerSessions();
   const { getAccessStatus } = useSubscription();
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);

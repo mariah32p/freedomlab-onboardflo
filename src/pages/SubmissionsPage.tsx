@@ -45,15 +45,23 @@ export default function SubmissionsPage() {
   };
 
   const getStatusColor = (session: any) => {
-    if (session.completed_at) return 'text-emerald-600';
-    if (session.is_active) return 'text-blue-600';
-    return 'text-gray-600';
+    switch (session.submission_status) {
+      case 'completed': return 'text-emerald-600';
+      case 'started': return 'text-blue-600';
+      case 'pending': return 'text-orange-600';
+      case 'abandoned': return 'text-red-600';
+      default: return 'text-gray-600';
+    }
   };
 
   const getStatusText = (session: any) => {
-    if (session.completed_at) return 'Completed';
-    if (session.is_active) return 'In Progress';
-    return 'Inactive';
+    switch (session.submission_status) {
+      case 'completed': return 'Completed';
+      case 'started': return 'In Progress';
+      case 'pending': return 'Pending';
+      case 'abandoned': return 'Abandoned';
+      default: return 'Unknown';
+    }
   };
 
   const formatDate = (dateString: string) => {
@@ -121,7 +129,31 @@ export default function SubmissionsPage() {
               </div>
               <div className="ml-4">
                 <div className="text-2xl font-bold text-gray-900 font-sans">{stats.totalSessions}</div>
-                <div className="text-sm text-gray-600 font-sans">Total Sessions</div>
+                <div className="text-sm text-gray-600 font-sans">Total Links</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+            <div className="flex items-center">
+              <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                <Clock className="w-6 h-6 text-orange-600" />
+              </div>
+              <div className="ml-4">
+                <div className="text-2xl font-bold text-gray-900 font-sans">{stats.pendingSessions}</div>
+                <div className="text-sm text-gray-600 font-sans">Pending</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+            <div className="flex items-center">
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                <AlertCircle className="w-6 h-6 text-blue-600" />
+              </div>
+              <div className="ml-4">
+                <div className="text-2xl font-bold text-gray-900 font-sans">{stats.activeSessions}</div>
+                <div className="text-sm text-gray-600 font-sans">Active</div>
               </div>
             </div>
           </div>
@@ -138,29 +170,6 @@ export default function SubmissionsPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-            <div className="flex items-center">
-              <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                <Clock className="w-6 h-6 text-orange-600" />
-              </div>
-              <div className="ml-4">
-                <div className="text-2xl font-bold text-gray-900 font-sans">{stats.activeSessions}</div>
-                <div className="text-sm text-gray-600 font-sans">In Progress</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-            <div className="flex items-center">
-              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                <AlertCircle className="w-6 h-6 text-purple-600" />
-              </div>
-              <div className="ml-4">
-                <div className="text-2xl font-bold text-gray-900 font-sans">{stats.completionRate}%</div>
-                <div className="text-sm text-gray-600 font-sans">Completion Rate</div>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Customer Sessions Table */}
@@ -176,7 +185,7 @@ export default function SubmissionsPage() {
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2 font-sans">No submissions yet</h3>
               <p className="text-gray-600 mb-6 font-sans">
-                Create customer links from your checklists to start tracking submissions
+                Create customer links from your checklists to start tracking submissions. Each link you create will appear here immediately.
               </p>
               <button
                 onClick={() => window.location.href = '/checklists'}
@@ -201,7 +210,7 @@ export default function SubmissionsPage() {
                           <div>
                             <div className="flex items-center space-x-2 mb-1">
                               <h3 className="font-medium text-gray-900 font-sans">
-                                {session.name || 'Anonymous'}
+                                {session.name || (session.submission_status === 'pending' ? 'Pending Customer' : 'Anonymous')}
                               </h3>
                               {session.link_name && (
                                 <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium font-sans">
@@ -212,7 +221,7 @@ export default function SubmissionsPage() {
                             <div className="flex items-center space-x-4 text-sm text-gray-600 mb-1">
                               <div className="flex items-center">
                                 <Mail className="w-3 h-3 mr-1" />
-                                <span className="font-sans">{session.email}</span>
+                                <span className="font-sans">{session.email || 'Not provided yet'}</span>
                               </div>
                               {session.company && (
                                 <div className="flex items-center">
@@ -226,8 +235,13 @@ export default function SubmissionsPage() {
                                 Checklist: {(session as any).checklists?.title || 'Unknown'}
                               </span>
                               <span className="font-sans">
-                                Started: {formatDate(session.started_at)}
+                                Created: {formatDate(session.link_created_at || session.created_at)}
                               </span>
+                              {session.started_at && session.submission_status !== 'pending' && (
+                                <span className="font-sans">
+                                  Started: {formatDate(session.started_at)}
+                                </span>
+                              )}
                               {session.completed_at && (
                                 <span className="font-sans">
                                   Completed: {formatDate(session.completed_at)}
@@ -242,7 +256,7 @@ export default function SubmissionsPage() {
                             <div className={`text-sm font-medium font-sans ${getStatusColor(session)}`}>
                               {getStatusText(session)}
                             </div>
-                            {session.is_active && !session.completed_at && (
+                            {session.submission_status === 'started' && session.is_active && (
                               <div className="flex items-center mt-1">
                                 <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
                                 <span className="text-xs text-green-600 font-sans">Active now</span>
@@ -255,8 +269,9 @@ export default function SubmissionsPage() {
                     <div className="flex items-center space-x-2 ml-4">
                       <button 
                         onClick={() => handlePreviewSession(session)}
+                        disabled={session.submission_status === 'pending'}
                         className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" 
-                        title="View session"
+                        title={session.submission_status === 'pending' ? 'Customer hasn\'t accessed yet' : 'View session'}
                       >
                         <Eye className="w-4 h-4" />
                       </button>
