@@ -28,6 +28,7 @@ export default function SubmissionsPage() {
   const { sessions, loading, error, deleteSession, getSessionStats } = useCustomerSessions();
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [copiedSessionId, setCopiedSessionId] = useState<string | null>(null);
   const accessStatus = getAccessStatus();
 
   const stats = getSessionStats();
@@ -53,6 +54,17 @@ export default function SubmissionsPage() {
     // API Key: re_HuAgNbtA_NUGsRpLZK4t4WdXFFBrxSZGg
     // From: info@freedomlab.ai - OnboardFlo by Freedom Lab
     alert('Email reminder feature coming soon! Will use Resend API to send reminder emails.');
+  };
+
+  const handleCopyUrl = async (session: any) => {
+    const url = `${window.location.origin}/c/${session.checklist_id}/${session.session_token}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopiedSessionId(session.id);
+      setTimeout(() => setCopiedSessionId(null), 2000);
+    } catch (err) {
+      console.error('Failed to copy URL:', err);
+    }
   };
 
   const getStatusColor = (session: any) => {
