@@ -274,7 +274,7 @@ export default function DemoPage() {
           </button>
           <button className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center shadow-sm hover:shadow-md font-sans">
             <Plus className="w-5 h-5 mr-2" />
-            Create Custom
+            Submit Project Information
           </button>
         </div>
       </div>
@@ -559,25 +559,25 @@ export default function DemoPage() {
           <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
             <span className="text-2xl">🚀</span>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2 font-sans">SaaS Onboarding Checklist</h1>
-          <p className="text-gray-600 text-lg font-sans">Complete these steps to get started with our platform</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2 font-sans">Website Design Project</h1>
+          <p className="text-gray-600 text-lg font-sans">Complete these steps to start your website design project</p>
           
           <div className="mt-6 max-w-md mx-auto">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium text-gray-700 font-sans">Progress</span>
               <span className="text-sm font-medium text-gray-700 font-sans">
-                {completedSteps.length}/6 completed
+                {completedSteps.length}/7 completed
               </span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-3">
               <div 
                 className="h-3 bg-emerald-500 rounded-full transition-all duration-500"
-                style={{ width: `${(completedSteps.length / 6) * 100}%` }}
+                style={{ width: `${(completedSteps.length / 7) * 100}%` }}
               ></div>
             </div>
             <div className="text-center mt-2">
               <span className="text-lg font-bold text-emerald-600 font-sans">
-                {Math.round((completedSteps.length / 6) * 100)}%
+                {Math.round((completedSteps.length / 7) * 100)}%
               </span>
             </div>
           </div>
@@ -585,12 +585,48 @@ export default function DemoPage() {
 
         <div className="p-6 space-y-4">
           {[
-            { id: 'account', title: 'Account Setup', desc: 'Complete your profile and verify your email address' },
-            { id: 'project', title: 'Project Requirements', desc: 'Tell us about your project goals and requirements' },
-            { id: 'assets', title: 'Upload Brand Assets', desc: 'Share your logo and brand guidelines with our team' },
-            { id: 'timeline', title: 'Timeline Confirmation', desc: 'Review and confirm project timeline and milestones' },
-            { id: 'payment', title: 'Payment Setup', desc: 'Configure billing and payment preferences' },
-            { id: 'kickoff', title: 'Kickoff Meeting', desc: 'Schedule initial project kickoff call' }
+            { 
+              id: 'slack', 
+              title: 'Join Project Slack', 
+              desc: 'Accept invitation to our design team workspace',
+              type: 'checkbox'
+            },
+            { 
+              id: 'logo', 
+              title: 'Upload Logo & Brand Assets', 
+              desc: 'Share your current logo, brand guidelines, and any existing materials',
+              type: 'file_upload'
+            },
+            { 
+              id: 'brand', 
+              title: 'Brand Requirements & Vision', 
+              desc: 'Tell us about your brand personality, target audience, and design preferences',
+              type: 'textarea'
+            },
+            { 
+              id: 'contact', 
+              title: 'Primary Contact Information', 
+              desc: 'Who should we contact for design feedback and approvals?',
+              type: 'email'
+            },
+            { 
+              id: 'inspiration', 
+              title: 'Design Inspiration Links', 
+              desc: 'Share websites or designs you love for style reference',
+              type: 'url'
+            },
+            { 
+              id: 'timeline', 
+              title: 'Project Timeline', 
+              desc: 'When do you need the website completed?',
+              type: 'text'
+            },
+            { 
+              id: 'kickoff', 
+              title: 'Schedule Kickoff Meeting', 
+              desc: 'Book a 60-minute strategy session to discuss your project in detail',
+              type: 'checkbox'
+            }
           ].map((step, index) => {
             const isCompleted = completedSteps.includes(step.id);
             const isActive = index === completedSteps.length && !isCompleted;
@@ -621,12 +657,54 @@ export default function DemoPage() {
                 <div className="flex-1">
                   <h4 className="font-medium text-gray-900 font-sans">{step.title}</h4>
                   <p className="text-sm text-gray-600 mt-1 font-sans">{step.desc}</p>
-                  {isActive && (
+                  {isActive && step.type === 'textarea' && (
+                    <textarea 
+                      placeholder="Tell us about your brand vision, target audience, and design style preferences..."
+                      className="w-full mt-3 px-3 py-3 border border-blue-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-sans"
+                      rows={3}
+                    />
+                  )}
+                  {isActive && step.type === 'text' && (
                     <input 
                       type="text" 
-                      placeholder="Enter your response..."
-                      className="w-full mt-2 px-3 py-2 border border-blue-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="e.g., March 15, 2025"
+                      className="w-full mt-3 px-3 py-3 border border-blue-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-sans"
                     />
+                  )}
+                  {isActive && step.type === 'email' && (
+                    <div className="mt-3 relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <Mail className="h-4 w-4 text-gray-400" />
+                      </div>
+                      <input 
+                        type="email" 
+                        placeholder="contact@yourcompany.com"
+                        className="w-full pl-10 pr-3 py-3 border border-blue-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-sans"
+                      />
+                    </div>
+                  )}
+                  {isActive && step.type === 'url' && (
+                    <div className="mt-3 relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <LinkIcon className="h-4 w-4 text-gray-400" />
+                      </div>
+                      <input 
+                        type="url" 
+                        placeholder="https://example.com/inspiration"
+                        className="w-full pl-10 pr-3 py-3 border border-blue-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-sans"
+                      />
+                    </div>
+                  )}
+                  {isActive && step.type === 'file_upload' && (
+                    <div className="mt-3 border-2 border-dashed border-blue-300 rounded-lg p-4 text-center bg-blue-50">
+                      <Upload className="h-6 w-6 text-blue-400 mx-auto mb-2" />
+                      <div className="text-blue-600 text-sm font-medium font-sans mb-1">
+                        Drop files here or click to upload
+                      </div>
+                      <div className="text-xs text-blue-500 font-sans">
+                        PNG, JPG, PDF, AI files accepted
+                      </div>
+                    </div>
                   )}
                 </div>
               </div>
@@ -650,13 +728,20 @@ export default function DemoPage() {
             {/* Settings Panel */}
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">Logo URL</label>
-                <input
-                  type="url"
-                  value="https://example.com/logo.png"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
-                  readOnly
-                />
+                <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">Logo</label>
+                <div className="flex space-x-2">
+                  <input
+                    type="url"
+                    value="https://example.com/logo.png"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
+                    placeholder="https://example.com/logo.png"
+                    readOnly
+                  />
+                  <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center space-x-2 font-sans">
+                    <Upload className="h-4 w-4" />
+                    <span>Upload</span>
+                  </button>
+                </div>
               </div>
 
               <div>
