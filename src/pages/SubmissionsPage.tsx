@@ -41,7 +41,8 @@ export default function SubmissionsPage() {
       const progressData: Record<string, number> = {};
       
       for (const session of sessions) {
-        if (session.submission_status === 'started' || session.submission_status === 'completed') {
+        // Calculate progress for all sessions that might have progress data
+        if (session.submission_status !== 'pending' || session.started_at) {
           const progress = await getSessionProgress(session.id);
           
           // Get total steps for this checklist
@@ -316,7 +317,12 @@ export default function SubmissionsPage() {
                             </div>
                             {session.submission_status === 'started' && (
                               <div className="text-xs text-gray-500 mt-1 font-sans">
-                                {sessionProgress[session.id] !== undefined ? `${sessionProgress[session.id]}% complete` : 'Calculating...'}
+                                {sessionProgress[session.id] !== undefined ? `${sessionProgress[session.id]}% complete` : 'Loading progress...'}
+                              </div>
+                            )}
+                            {session.submission_status === 'pending' && sessionProgress[session.id] > 0 && (
+                              <div className="text-xs text-blue-600 mt-1 font-sans">
+                                {sessionProgress[session.id]}% complete
                               </div>
                             )}
                             {session.submission_status === 'completed' && (
