@@ -9,6 +9,8 @@ export interface ChecklistTemplate {
   steps: {
     title: string;
     description: string;
+    step_type: 'checkbox' | 'text' | 'textarea' | 'file_upload' | 'url' | 'email';
+    options?: string;
     isRequired: boolean;
   }[];
 }
@@ -26,31 +28,41 @@ export const checklistTemplates: ChecklistTemplate[] = [
       {
         title: 'Project Requirements & Goals',
         description: 'Share your project vision, target audience, and key objectives',
+        step_type: 'textarea',
+        options: 'Describe your project goals, target audience, and key requirements...',
         isRequired: true,
       },
       {
         title: 'Design Preferences & Branding',
         description: 'Upload your logo, brand guidelines, and design inspiration',
+        step_type: 'file_upload',
+        options: '.pdf,.jpg,.png,.zip',
         isRequired: true,
       },
       {
         title: 'Technical Requirements',
         description: 'Specify hosting preferences, integrations, and technical needs',
+        step_type: 'textarea',
+        options: 'List any specific technical requirements, integrations, or hosting preferences...',
         isRequired: true,
       },
       {
         title: 'Content & Assets',
         description: 'Provide website copy, images, and other content materials',
+        step_type: 'file_upload',
+        options: '.pdf,.doc,.docx,.jpg,.png,.zip',
         isRequired: false,
       },
       {
         title: 'Timeline & Budget Confirmation',
         description: 'Review and confirm project timeline and payment schedule',
+        step_type: 'checkbox',
         isRequired: true,
       },
       {
         title: 'Communication Setup',
         description: 'Join project Slack/Discord and schedule kickoff call',
+        step_type: 'checkbox',
         isRequired: true,
       }
     ]
@@ -67,31 +79,41 @@ export const checklistTemplates: ChecklistTemplate[] = [
       {
         title: 'Brand Discovery Session',
         description: 'Complete our brand questionnaire and share your vision',
+        step_type: 'textarea',
+        options: 'Tell us about your brand, values, and design vision...',
         isRequired: true,
       },
       {
         title: 'Design Brief & Objectives',
         description: 'Define project scope, deliverables, and success metrics',
+        step_type: 'textarea',
+        options: 'Describe what you need designed and how success will be measured...',
         isRequired: true,
       },
       {
         title: 'Visual References',
         description: 'Share inspiration, competitor examples, and style preferences',
+        step_type: 'file_upload',
+        options: '.jpg,.png,.pdf',
         isRequired: true,
       },
       {
         title: 'Brand Assets & Guidelines',
         description: 'Upload existing logos, fonts, and brand materials',
+        step_type: 'file_upload',
+        options: '.pdf,.ai,.eps,.jpg,.png,.zip',
         isRequired: false,
       },
       {
         title: 'Review Process Setup',
         description: 'Establish feedback workflow and approval process',
+        step_type: 'checkbox',
         isRequired: true,
       },
       {
         title: 'Project Timeline Confirmation',
         description: 'Confirm milestones, deadlines, and delivery schedule',
+        step_type: 'checkbox',
         isRequired: true,
       }
     ]
@@ -108,31 +130,42 @@ export const checklistTemplates: ChecklistTemplate[] = [
       {
         title: 'Business Analysis',
         description: 'Share your business model, target market, and current challenges',
+        step_type: 'textarea',
+        options: 'Describe your business model, target customers, and main challenges...',
         isRequired: true,
       },
       {
         title: 'Current Marketing Audit',
         description: 'Provide access to existing marketing channels and analytics',
+        step_type: 'url',
+        options: 'Google Analytics, social media profiles, website URL...',
         isRequired: true,
       },
       {
         title: 'Goals & KPIs Definition',
         description: 'Define success metrics and marketing objectives',
+        step_type: 'textarea',
+        options: 'What are your marketing goals and how will you measure success?',
         isRequired: true,
       },
       {
         title: 'Budget & Resource Planning',
         description: 'Discuss marketing budget and available team resources',
+        step_type: 'text',
+        options: 'Monthly marketing budget and team availability...',
         isRequired: true,
       },
       {
         title: 'Competitor Research',
         description: 'Share competitor information and market positioning',
+        step_type: 'textarea',
+        options: 'List your main competitors and their marketing strategies...',
         isRequired: false,
       },
       {
         title: 'Strategy Kickoff Meeting',
         description: 'Schedule initial strategy session and tool access setup',
+        step_type: 'checkbox',
         isRequired: true,
       }
     ]
@@ -149,26 +182,35 @@ export const checklistTemplates: ChecklistTemplate[] = [
       {
         title: 'Brand Voice & Tone',
         description: 'Define your brand personality and communication style',
+        step_type: 'textarea',
+        options: 'How should your brand sound? Professional, friendly, authoritative?',
         isRequired: true,
       },
       {
         title: 'Target Audience Profile',
         description: 'Share detailed customer personas and pain points',
+        step_type: 'textarea',
+        options: 'Describe your ideal customers, their challenges, and motivations...',
         isRequired: true,
       },
       {
         title: 'Project Scope & Deliverables',
         description: 'Confirm copy requirements, word counts, and formats',
+        step_type: 'textarea',
+        options: 'What copy do you need? Website pages, emails, ads, etc.',
         isRequired: true,
       },
       {
         title: 'Reference Materials',
         description: 'Provide existing copy, competitor examples, and guidelines',
+        step_type: 'file_upload',
+        options: '.pdf,.doc,.docx,.txt',
         isRequired: false,
       },
       {
         title: 'Review & Approval Process',
         description: 'Establish revision workflow and feedback timeline',
+        step_type: 'checkbox',
         isRequired: true,
       }
     ]
@@ -185,31 +227,41 @@ export const checklistTemplates: ChecklistTemplate[] = [
       {
         title: 'Social Media Audit',
         description: 'Provide access to current social media accounts and analytics',
+        step_type: 'url',
+        options: 'Links to your social media profiles and analytics...',
         isRequired: true,
       },
       {
         title: 'Content Strategy Planning',
         description: 'Define content themes, posting frequency, and brand guidelines',
+        step_type: 'textarea',
+        options: 'What topics should we cover? How often should we post?',
         isRequired: true,
       },
       {
         title: 'Visual Brand Assets',
         description: 'Upload logos, brand colors, fonts, and image templates',
+        step_type: 'file_upload',
+        options: '.jpg,.png,.pdf,.ai,.psd,.zip',
         isRequired: true,
       },
       {
         title: 'Content Calendar Setup',
         description: 'Review and approve initial content calendar and posting schedule',
+        step_type: 'checkbox',
         isRequired: true,
       },
       {
         title: 'Engagement Guidelines',
         description: 'Establish community management and response protocols',
+        step_type: 'textarea',
+        options: 'How should we respond to comments and messages?',
         isRequired: false,
       },
       {
         title: 'Reporting & Analytics',
         description: 'Set up tracking and monthly reporting preferences',
+        step_type: 'checkbox',
         isRequired: true,
       }
     ]
@@ -226,31 +278,42 @@ export const checklistTemplates: ChecklistTemplate[] = [
       {
         title: 'Business Assessment',
         description: 'Complete comprehensive business health questionnaire',
+        step_type: 'textarea',
+        options: 'Tell us about your business structure, revenue, and key challenges...',
         isRequired: true,
       },
       {
         title: 'Financial Data Sharing',
         description: 'Provide relevant financial statements and key metrics',
+        step_type: 'file_upload',
+        options: '.pdf,.xlsx,.csv',
         isRequired: true,
       },
       {
         title: 'Stakeholder Interviews',
         description: 'Schedule meetings with key team members and decision makers',
+        step_type: 'text',
+        options: 'List key stakeholders and their availability...',
         isRequired: true,
       },
       {
         title: 'Market & Competitive Analysis',
         description: 'Share market research and competitive landscape information',
+        step_type: 'file_upload',
+        options: '.pdf,.doc,.docx,.xlsx',
         isRequired: false,
       },
       {
         title: 'Goal Setting & Success Metrics',
         description: 'Define project objectives and measurable outcomes',
+        step_type: 'textarea',
+        options: 'What are your business goals and how will you measure success?',
         isRequired: true,
       },
       {
         title: 'Engagement Framework',
         description: 'Establish communication cadence and project management approach',
+        step_type: 'checkbox',
         isRequired: true,
       }
     ]

@@ -12,11 +12,15 @@ export interface Checklist {
   updated_at: string;
 }
 
+export type StepType = 'checkbox' | 'text' | 'textarea' | 'file_upload' | 'url' | 'email';
+
 export interface ChecklistStep {
   id: string;
   checklist_id: string;
   title: string;
   description: string;
+  step_type: StepType;
+  options?: string; // JSON string for step-specific options
   order_index: number;
   is_required: boolean;
   created_at: string;
@@ -40,6 +44,8 @@ export interface CreateChecklistData {
 export interface CreateStepData {
   title: string;
   description: string;
+  step_type: StepType;
+  options?: string;
   is_required: boolean;
 }
 

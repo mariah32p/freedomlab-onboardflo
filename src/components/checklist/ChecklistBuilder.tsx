@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Save, Plus, GripVertical, Trash2, Eye, Lock, Palette } from 'lucide-react';
 import { useChecklistSteps } from '../../hooks/useChecklists';
 import { Checklist, ChecklistStep, CreateChecklistData, CreateStepData } from '../../types/checklist';
+import { StepType } from '../../types/checklist';
 import { ChecklistTemplate } from '../../data/checklistTemplates';
 
 interface ChecklistBuilderProps {
@@ -11,6 +12,30 @@ interface ChecklistBuilderProps {
   onClose: () => void;
   isCreating: boolean;
 }
+
+const getStepTypeIcon = (stepType: StepType) => {
+  switch (stepType) {
+    case 'checkbox': return '☑️';
+    case 'text': return '📝';
+    case 'textarea': return '📄';
+    case 'file_upload': return '📎';
+    case 'url': return '🔗';
+    case 'email': return '📧';
+    default: return '☑️';
+  }
+};
+
+const getStepTypeLabel = (stepType: StepType) => {
+  switch (stepType) {
+    case 'checkbox': return 'Checkbox';
+    case 'text': return 'Text Input';
+    case 'textarea': return 'Long Text';
+    case 'file_upload': return 'File Upload';
+    case 'url': return 'Website URL';
+    case 'email': return 'Email';
+    default: return 'Checkbox';
+  }
+};
 
 export default function ChecklistBuilder({ checklist, template, onSave, onClose, isCreating }: ChecklistBuilderProps) {
   const { steps, createStep, updateStep, deleteStep, reorderSteps } = useChecklistSteps(checklist?.id || null);
@@ -31,6 +56,8 @@ export default function ChecklistBuilder({ checklist, template, onSave, onClose,
   const [newStep, setNewStep] = useState<CreateStepData>({
     title: '',
     description: '',
+    step_type: 'checkbox',
+    options: '',
     is_required: true,
   });
 
@@ -92,7 +119,7 @@ export default function ChecklistBuilder({ checklist, template, onSave, onClose,
 
     const step = await createStep(newStep);
     if (step) {
-      setNewStep({ title: '', description: '', is_required: true });
+      setNewStep({ title: '', description: '', step_type: 'checkbox', options: '', is_required: true });
       setShowStepForm(false);
     }
   };
@@ -228,42 +255,6 @@ export default function ChecklistBuilder({ checklist, template, onSave, onClose,
                 </div>
               )}
 
-              {/* Branding */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3 font-sans">
-                  Branding
-                </label>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-xs text-gray-600 mb-2 font-sans">Brand Color</label>
-                    <div className="flex items-center space-x-3">
-                      <input
-                        type="color"
-                        value={formData.brand_color}
-                        onChange={(e) => setFormData(prev => ({ ...prev, brand_color: e.target.value }))}
-                        className="w-12 h-10 border border-gray-300 rounded-lg cursor-pointer"
-                      />
-                      <input
-                        type="text"
-                        value={formData.brand_color}
-                        onChange={(e) => setFormData(prev => ({ ...prev, brand_color: e.target.value }))}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-mono text-sm"
-                        placeholder="#10b981"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-xs text-gray-600 mb-2 font-sans">Logo URL (optional)</label>
-                    <input
-                      type="url"
-                      value={formData.logo_url}
-                      onChange={(e) => setFormData(prev => ({ ...prev, logo_url: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
-                      placeholder="https://example.com/logo.png"
-                    />
-                  </div>
-                </div>
-              </div>
 
               {/* Completion Page */}
               <div>
@@ -334,6 +325,51 @@ export default function ChecklistBuilder({ checklist, template, onSave, onClose,
                           rows={2}
                         />
                       </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">
+                          Step Type
+                        </label>
+                        <select
+                          value={newStep.step_type}
+                          onChange={(e) => setNewStep(prev => ({ ...prev, step_type: e.target.value as StepType }))}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
+                        >
+                          <option value="checkbox">Simple Checkbox</option>
+                          <option value="text">Text Input</option>
+                          <option value="textarea">Long Text</option>
+                          <option value="file_upload">File Upload</option>
+                          <option value="url">Website URL</option>
+                          <option value="email">Email Address</option>
+                        </select>
+                      </div>
+                      {(newStep.step_type === 'text' || newStep.step_type === 'textarea') && (
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">
+                            Placeholder Text (optional)
+                          </label>
+                          <input
+                            type="text"
+                            value={newStep.options || ''}
+                            onChange={(e) => setNewStep(prev => ({ ...prev, options: e.target.value }))}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
+                            placeholder="Enter placeholder text..."
+                          />
+                        </div>
+                      )}
+                      {newStep.step_type === 'file_upload' && (
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">
+                            Accepted File Types (optional)
+                          </label>
+                          <input
+                            type="text"
+                            value={newStep.options || ''}
+                            onChange={(e) => setNewStep(prev => ({ ...prev, options: e.target.value }))}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
+                            placeholder="e.g., .pdf,.doc,.jpg (leave blank for all types)"
+                          />
+                        </div>
+                      )}
                       <div className="flex items-center justify-between">
                         <label className="flex items-center">
                           <input
@@ -382,11 +418,17 @@ export default function ChecklistBuilder({ checklist, template, onSave, onClose,
                           <div className="flex-1">
                             <div className="flex items-start justify-between">
                               <div className="flex-1">
-                                <h4 className="font-medium text-gray-900 font-sans">{step.title}</h4>
+                                <div className="flex items-center mb-1">
+                                  <span className="text-sm mr-2">{getStepTypeIcon(step.step_type)}</span>
+                                  <h4 className="font-medium text-gray-900 font-sans">{step.title}</h4>
+                                </div>
                                 {step.description && (
                                   <p className="text-sm text-gray-600 mt-1 font-sans">{step.description}</p>
                                 )}
                                 <div className="flex items-center mt-2">
+                                  <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium font-sans mr-2">
+                                    {getStepTypeLabel(step.step_type)}
+                                  </span>
                                   {step.is_required && (
                                     <span className="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium font-sans">
                                       Required
