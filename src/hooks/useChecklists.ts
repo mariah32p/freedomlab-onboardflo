@@ -92,6 +92,10 @@ export function useChecklists() {
 
       // Add to local state
       setChecklists(prev => [data, ...prev]);
+      
+      // Refresh the list to ensure we have the latest data
+      await fetchChecklists();
+      
       return data;
     } catch (err) {
       console.error('Error creating checklist:', err);
