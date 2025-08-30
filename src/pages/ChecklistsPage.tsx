@@ -40,6 +40,9 @@ export default function ChecklistsPage() {
       }
       setShowChecklistBuilder(false);
       setEditingChecklist(null);
+      setSelectedTemplate(null);
+      // The useChecklists hook automatically updates the local state,
+      // so the list will refresh automatically
     } catch (err) {
       console.error('Error saving checklist:', err);
     }
