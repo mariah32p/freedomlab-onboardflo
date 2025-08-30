@@ -39,7 +39,7 @@ function App() {
         <RouteGuard>
           <Routes>
             {/* Public checklist submission - no navbar */}
-            <Route path="/c/:checklistId" element={<PublicChecklistPage />} />
+            <Route path="/c/:checklistId/:sessionToken" element={<PublicChecklistPage />} />
             
             {/* All other routes with navbar */}
             <Route path="/*" element={

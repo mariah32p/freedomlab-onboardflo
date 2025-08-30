@@ -152,7 +152,9 @@ export default function ChecklistList({ onEditChecklist, onCreateNew }: Checklis
   };
 
   const getChecklistUrl = (checklist: Checklist) => {
-    return `${window.location.origin}/c/${checklist.id}`;
+    // Generate a new session token for sharing
+    const sessionToken = Math.random().toString(36).substring(2, 10);
+    return `${window.location.origin}/c/${checklist.id}/${sessionToken}`;
   };
 
   const handleCopyLink = async (checklist: Checklist) => {

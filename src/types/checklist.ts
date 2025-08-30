@@ -67,3 +67,26 @@ export interface CustomerProgress {
   notes: string;
   created_at: string;
 }
+
+export interface CustomerSession {
+  id: string;
+  checklist_id: string;
+  session_token: string;
+  email: string;
+  name: string;
+  company: string;
+  started_at: string;
+  completed_at: string | null;
+  last_activity: string;
+  is_active: boolean;
+  created_at: string;
+}
+
+export interface SessionProgress {
+  id: string;
+  session_id: string;
+  step_id: string;
+  completed_at: string;
+  notes: string;
+  created_at: string;
+}
