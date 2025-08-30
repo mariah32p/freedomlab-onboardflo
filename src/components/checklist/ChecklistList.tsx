@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Plus, Edit, Trash2, Sparkles, ExternalLink, Copy, Check, X, Users, Link as LinkIcon, Info } from 'lucide-react';
 import { useChecklists } from '../../hooks/useChecklists';
 import { useChecklistSteps } from '../../hooks/useChecklists';
+import { useCustomerSessions } from '../../hooks/useCustomerSessions';
 import { useSubscription } from '../../hooks/useSubscription';
 import { Checklist } from '../../types/checklist';
 import TemplateSelector from './TemplateSelector';
