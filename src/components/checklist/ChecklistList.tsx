@@ -200,8 +200,20 @@ function ChecklistCard({ checklist, onEdit, onDelete, onPreview, onShare, deleti
   deletingId: string | null;
 }) {
   const { steps, loading: stepsLoading } = useChecklistSteps(checklist.id);
+  const { sessions } = useCustomerSessions();
   const stepCount = steps.length;
   const needsSetup = stepCount === 0;
+  
+  // Filter sessions for this specific checklist
+  const checklistSessions = sessions.filter(session => 
+    (session as any).checklist_id === checklist.id
+  );
+  const completedSessions = checklistSessions.filter(session => 
+    session.submission_status === 'completed'
+  );
+  const completionRate = checklistSessions.length > 0 
+    ? Math.round((completedSessions.length / checklistSessions.length) * 100)
+    : 0;
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all duration-200 hover:-translate-y-0.5">
@@ -240,11 +252,11 @@ function ChecklistCard({ checklist, onEdit, onDelete, onPreview, onShare, deleti
             </div>
           </div>
           <div className="text-center p-3 bg-gray-50 rounded-lg">
-            <div className="text-lg font-bold text-gray-900 font-sans">0</div>
+            <div className="text-lg font-bold text-gray-900 font-sans">{checklistSessions.length}</div>
             <div className="text-xs text-gray-600 font-sans">Sessions</div>
           </div>
           <div className="text-center p-3 bg-gray-50 rounded-lg">
-            <div className="text-lg font-bold text-gray-900 font-sans">0%</div>
+            <div className="text-lg font-bold text-gray-900 font-sans">{completionRate}%</div>
             <div className="text-xs text-gray-600 font-sans">Completed</div>
           </div>
         </div>
