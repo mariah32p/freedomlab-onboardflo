@@ -40,6 +40,7 @@ export function useChecklists() {
   };
 
   const createChecklist = async (checklistData: CreateChecklistData): Promise<Checklist | null> => {
+  const createChecklist = async (checklistData: CreateChecklistData & { steps?: any[] }): Promise<Checklist | null> => {
     if (!user) return null;
 
     try {
@@ -60,14 +61,35 @@ export function useChecklists() {
           description: checklistData.description,
           is_public: checklistData.is_public,
           password_hash: passwordHash,
-          brand_color: checklistData.brand_color,
-          logo_url: checklistData.logo_url || null,
+          brand_color: '#10b981', // Use default brand color
           completion_page_content: checklistData.completion_page_content,
         })
         .select()
         .single();
 
       if (createError) throw createError;
+
+      // Create steps if provided
+      if (checklistData.steps && checklistData.steps.length > 0) {
+        const stepsToInsert = checklistData.steps.map((step, index) => ({
+          checklist_id: data.id,
+          title: step.title,
+          description: step.description,
+          step_type: step.step_type,
+          options: step.options || null,
+          is_required: step.is_required,
+          order_index: index,
+        }));
+
+        const { error: stepsError } = await supabase
+          .from('checklist_steps')
+          .insert(stepsToInsert);
+
+        if (stepsError) {
+          console.error('Error creating steps:', stepsError);
+          // Don't fail the whole operation, just log the error
+        }
+      }
 
       // Add to local state
       setChecklists(prev => [data, ...prev]);
