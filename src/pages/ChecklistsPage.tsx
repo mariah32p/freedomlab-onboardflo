@@ -70,14 +70,6 @@ export default function ChecklistsPage() {
         {/* Payment Issue Banner */}
         <PaymentBanner />
 
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2 font-sans">Checklists</h1>
-          <p className="text-gray-600 font-sans">
-            Create and manage your onboarding flows
-          </p>
-        </div>
-
         {/* Content */}
         <ChecklistList 
           onEditChecklist={handleEditChecklist}
