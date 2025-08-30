@@ -23,6 +23,7 @@ import {
   TrendingUp,
   Calendar
 } from 'lucide-react';
+import SimpleHeader from '../components/SimpleHeader';
 
 interface DemoStep {
   id: string;
