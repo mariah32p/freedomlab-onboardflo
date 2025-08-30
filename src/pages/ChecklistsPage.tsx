@@ -36,18 +36,18 @@ export default function ChecklistsPage() {
       if (editingChecklist) {
         const success = await updateChecklist(editingChecklist.id, data);
         if (success) {
-          await refetch();
           setShowChecklistBuilder(false);
           setEditingChecklist(null);
           setSelectedTemplate(null);
+          window.location.href = '/checklists';
         }
       } else {
         const newChecklist = await createChecklist(data);
         if (newChecklist) {
-          await refetch();
           setShowChecklistBuilder(false);
           setEditingChecklist(null);
           setSelectedTemplate(null);
+          window.location.href = '/checklists';
         }
       }
     } catch (err) {
