@@ -844,10 +844,6 @@ export default function DemoPage() {
                       alt="DesignStudio Pro Logo" 
                       className="h-12 w-24 object-cover rounded-lg shadow-sm"
                     />
-                      src="https://images.pexels.com/photos/1779487/pexels-photo-1779487.jpeg?auto=compress&cs=tinysrgb&w=120&h=60&fit=crop" 
-                      alt="DesignStudio Pro Logo" 
-                      className="h-12 w-24 object-cover rounded-lg shadow-sm"
-                    />
                   </div>
                   <h1 className="text-2xl font-bold mb-2 text-gray-900 font-sans">SaaS Onboarding Checklist</h1>
                   <p className="text-gray-600 font-sans">Complete these steps to get started with our platform</p>
