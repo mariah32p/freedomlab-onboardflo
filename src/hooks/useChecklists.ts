@@ -39,8 +39,6 @@ export function useChecklists() {
     }
   };
 
-  const createChecklist = async (checklistData: CreateChecklistData): Promise<Checklist | null> => {
-  }
   const createChecklist = async (checklistData: CreateChecklistData & { steps?: any[] }): Promise<Checklist | null> => {
     if (!user) return null;
 
