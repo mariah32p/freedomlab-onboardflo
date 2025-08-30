@@ -18,7 +18,7 @@ export default function RouteGuard({ children }: RouteGuardProps) {
     if (authLoading || subscriptionLoading) return;
 
     // Public routes that don't need authentication (when not logged in)
-    const publicRoutes = ['/pricing', '/signup', '/signin', '/forgot-password'];
+    const publicRoutes = ['/pricing', '/signup', '/signin', '/forgot-password', '/demo'];
     const isPublicRoute = publicRoutes.includes(location.pathname);
 
     // Handle landing page - redirect logged in users
