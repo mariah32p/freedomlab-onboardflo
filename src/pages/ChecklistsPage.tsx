@@ -7,6 +7,7 @@ import ChecklistList from '../components/checklist/ChecklistList';
 import ChecklistBuilder from '../components/checklist/ChecklistBuilder';
 import { useChecklists } from '../hooks/useChecklists';
 import { Checklist, CreateChecklistData } from '../types/checklist';
+import { ChecklistTemplate } from '../data/checklistTemplates';
 
 export default function ChecklistsPage() {
   const { user } = useAuth();
@@ -17,9 +18,11 @@ export default function ChecklistsPage() {
   // Checklist builder state
   const [showChecklistBuilder, setShowChecklistBuilder] = useState(false);
   const [editingChecklist, setEditingChecklist] = useState<Checklist | null>(null);
+  const [selectedTemplate, setSelectedTemplate] = useState<ChecklistTemplate | null>(null);
 
-  const handleCreateChecklist = () => {
+  const handleCreateChecklist = (template?: ChecklistTemplate) => {
     setEditingChecklist(null);
+    setSelectedTemplate(template || null);
     setShowChecklistBuilder(true);
   };
 
@@ -45,6 +48,7 @@ export default function ChecklistsPage() {
   const handleCloseBuilder = () => {
     setShowChecklistBuilder(false);
     setEditingChecklist(null);
+    setSelectedTemplate(null);
   };
 
   return (
@@ -74,6 +78,7 @@ export default function ChecklistsPage() {
         {showChecklistBuilder && (
           <ChecklistBuilder
             checklist={editingChecklist}
+            template={selectedTemplate}
             onSave={handleSaveChecklist}
             onClose={handleCloseBuilder}
             isCreating={!editingChecklist}

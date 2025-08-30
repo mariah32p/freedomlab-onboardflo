@@ -2,18 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { X, Save, Plus, GripVertical, Trash2, Eye, Lock, Palette } from 'lucide-react';
 import { useChecklistSteps } from '../../hooks/useChecklists';
 import { Checklist, ChecklistStep, CreateChecklistData, CreateStepData } from '../../types/checklist';
+import { ChecklistTemplate } from '../../data/checklistTemplates';
 
 interface ChecklistBuilderProps {
   checklist: Checklist | null;
+  template?: ChecklistTemplate | null;
   onSave: (data: CreateChecklistData) => Promise<void>;
   onClose: () => void;
   isCreating: boolean;
 }
 
-export default function ChecklistBuilder({ checklist, onSave, onClose, isCreating }: ChecklistBuilderProps) {
+export default function ChecklistBuilder({ checklist, template, onSave, onClose, isCreating }: ChecklistBuilderProps) {
   const { steps, createStep, updateStep, deleteStep, reorderSteps } = useChecklistSteps(checklist?.id || null);
   const [loading, setLoading] = useState(false);
   const [draggedStep, setDraggedStep] = useState<ChecklistStep | null>(null);
+  const [templateStepsAdded, setTemplateStepsAdded] = useState(false);
   
   const [formData, setFormData] = useState<CreateChecklistData>({
     title: '',
@@ -36,6 +39,7 @@ export default function ChecklistBuilder({ checklist, onSave, onClose, isCreatin
   // Initialize form data when editing
   useEffect(() => {
     if (checklist) {
+      // Editing existing checklist
       setFormData({
         title: checklist.title,
         description: checklist.description,
@@ -45,8 +49,32 @@ export default function ChecklistBuilder({ checklist, onSave, onClose, isCreatin
         logo_url: checklist.logo_url || '',
         completion_page_content: checklist.completion_page_content,
       });
+    } else if (template && !templateStepsAdded) {
+      // Creating from template
+      setFormData({
+        title: template.name,
+        description: template.description,
+        is_public: true,
+        password: '',
+        brand_color: template.brandColor,
+        logo_url: '',
+        completion_page_content: template.completionMessage,
+      });
     }
-  }, [checklist]);
+  }, [checklist, template, templateStepsAdded]);
+
+  // Add template steps after checklist is created
+  useEffect(() => {
+    if (template && checklist && !templateStepsAdded && steps.length === 0) {
+      const addTemplateSteps = async () => {
+        for (const stepData of template.steps) {
+          await createStep(stepData);
+        }
+        setTemplateStepsAdded(true);
+      };
+      addTemplateSteps();
+    }
+  }, [template, checklist, templateStepsAdded, steps.length, createStep]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -107,7 +135,7 @@ export default function ChecklistBuilder({ checklist, onSave, onClose, isCreatin
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 className="text-2xl font-bold text-gray-900 font-sans">
-            {isCreating ? 'Create New Checklist' : 'Edit Checklist'}
+            {isCreating ? (template ? `Create from Template: ${template.name}` : 'Create New Checklist') : 'Edit Checklist'}
           </h2>
           <button
             onClick={onClose}

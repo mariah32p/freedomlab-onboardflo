@@ -1,18 +1,21 @@
 import React, { useState } from 'react';
-import { Plus, Edit, Trash2, Eye, Lock, Users, BarChart3, ExternalLink } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, Lock, Users, BarChart3, ExternalLink, Sparkles } from 'lucide-react';
 import { useChecklists } from '../../hooks/useChecklists';
 import { useSubscription } from '../../hooks/useSubscription';
 import { Checklist } from '../../types/checklist';
+import TemplateSelector from './TemplateSelector';
+import { ChecklistTemplate } from '../../data/checklistTemplates';
 
 interface ChecklistListProps {
   onEditChecklist: (checklist: Checklist) => void;
-  onCreateNew: () => void;
+  onCreateNew: (template?: ChecklistTemplate) => void;
 }
 
 export default function ChecklistList({ onEditChecklist, onCreateNew }: ChecklistListProps) {
   const { checklists, loading, error, deleteChecklist } = useChecklists();
   const { getAccessStatus } = useSubscription();
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [showTemplateSelector, setShowTemplateSelector] = useState(false);
   const accessStatus = getAccessStatus();
 
   const handleDelete = async (id: string) => {
@@ -41,6 +44,20 @@ export default function ChecklistList({ onEditChecklist, onCreateNew }: Checklis
     }
   };
 
+  const handleCreateFromTemplate = () => {
+    setShowTemplateSelector(true);
+  };
+
+  const handleSelectTemplate = (template: ChecklistTemplate) => {
+    setShowTemplateSelector(false);
+    onCreateNew(template);
+  };
+
+  const handleCreateBlank = () => {
+    setShowTemplateSelector(false);
+    onCreateNew();
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -63,13 +80,22 @@ export default function ChecklistList({ onEditChecklist, onCreateNew }: Checklis
       <div className="flex items-center justify-between">
         <div>
         </div>
-        <button
-          onClick={onCreateNew}
-          className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center font-sans"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          New Checklist
-        </button>
+        <div className="flex items-center space-x-3">
+          <button
+            onClick={handleCreateFromTemplate}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center font-sans"
+          >
+            <Sparkles className="w-4 h-4 mr-2" />
+            Use Template
+          </button>
+          <button
+            onClick={() => onCreateNew()}
+            className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center font-sans"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Create Custom
+          </button>
+        </div>
       </div>
 
       {/* Checklists Grid */}
@@ -82,12 +108,22 @@ export default function ChecklistList({ onEditChecklist, onCreateNew }: Checklis
           <p className="text-gray-600 mb-6 font-sans">
             Create your first onboarding checklist to get started
           </p>
-          <button
-            onClick={onCreateNew}
-            className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-lg font-medium transition-colors font-sans"
-          >
-            Create Your First Checklist
-          </button>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <button
+              onClick={handleCreateFromTemplate}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center font-sans"
+            >
+              <Sparkles className="w-5 h-5 mr-2" />
+              Use Template
+            </button>
+            <button
+              onClick={() => onCreateNew()}
+              className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center font-sans"
+            >
+              <Plus className="w-5 h-5 mr-2" />
+              Create Custom
+            </button>
+          </div>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -166,6 +202,15 @@ export default function ChecklistList({ onEditChecklist, onCreateNew }: Checklis
             </div>
           ))}
         </div>
+      )}
+
+      {/* Template Selector Modal */}
+      {showTemplateSelector && (
+        <TemplateSelector
+          onSelectTemplate={handleSelectTemplate}
+          onClose={() => setShowTemplateSelector(false)}
+          onCreateBlank={handleCreateBlank}
+        />
       )}
     </div>
   );
