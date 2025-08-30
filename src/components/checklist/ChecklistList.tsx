@@ -202,26 +202,6 @@ function ShareLinkModal({ checklist, onClose }: ShareLinkModalProps) {
               </p>
             </div>
           )}
-                  <button
-                    onClick={handleCopyLink}
-                    className="flex-shrink-0 bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center font-sans"
-                  >
-                    {copied ? (
-                      <>
-                        <Check className="w-3 h-3 mr-1" />
-                        Copied!
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-3 h-3 mr-1" />
-                        Copy
-                      </>
-                    )}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
 
           {/* Instructions */}
           {!generatedUrl && (

@@ -122,8 +122,10 @@ export function useCustomerSessions() {
           link_created_at: new Date().toISOString(),
           is_active: false,
         })
-      if (error) throw error;
         .select()
+        .single();
+
+      if (error) throw error;
       // Add to local state
       setSessions(prev => [data, ...prev]);
       
