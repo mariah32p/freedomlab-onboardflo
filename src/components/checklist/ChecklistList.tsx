@@ -23,7 +23,6 @@ function ShareLinkModal({ checklist, onClose }: ShareLinkModalProps) {
   const [copied, setCopied] = useState(false);
   const [creating, setCreating] = useState(false);
   const { createPendingSubmission } = useCustomerSessions();
-
   const [generatedUrl, setGeneratedUrl] = useState<string>('');
 
   const handleCreateAndCopyLink = async () => {
@@ -66,14 +65,9 @@ function ShareLinkModal({ checklist, onClose }: ShareLinkModalProps) {
       <div className="bg-white rounded-xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
-              <LinkIcon className="w-5 h-5 text-emerald-600" />
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 font-sans">Share Checklist</h3>
-              <p className="text-sm text-gray-600 font-sans">{checklist.title}</p>
-            </div>
+          <div>
+            <h3 className="text-xl font-semibold text-gray-900 font-sans">Create Customer Link</h3>
+            <p className="text-sm text-gray-600 font-sans">{checklist.title}</p>
           </div>
           <button
             onClick={onClose}
@@ -85,28 +79,10 @@ function ShareLinkModal({ checklist, onClose }: ShareLinkModalProps) {
 
         {/* Content */}
         <div className="p-6 space-y-6">
-          {/* How it works */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <div className="flex items-start space-x-3">
-              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <Info className="w-4 h-4 text-blue-600" />
-              </div>
-              <div>
-                <h4 className="font-medium text-blue-900 mb-2 font-sans">How Customer Links Work</h4>
-                <ul className="text-sm text-blue-800 space-y-1 font-sans">
-                  <li>• Each link creates a unique session for one customer</li>
-                  <li>• Multiple customers can work simultaneously</li>
-                  <li>• Progress is saved automatically and persists</li>
-                  <li>• You can see real-time activity from your dashboard</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
           {/* Link Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3 font-sans">
-              Link Name (Optional)
+            <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">
+              Link Name <span className="text-gray-500">(Optional)</span>
             </label>
             <input
               type="text"
@@ -115,23 +91,19 @@ function ShareLinkModal({ checklist, onClose }: ShareLinkModalProps) {
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
               placeholder="e.g., Sarah from TechCorp, Q1 Onboarding Batch"
             />
-            <p className="text-xs text-gray-600 mt-1 font-sans">
+            <p className="text-xs text-gray-500 mt-1 font-sans">
               Add a name to help you track this link in your submissions dashboard
             </p>
           </div>
 
           {/* Link generation */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3 font-sans">
-              Generate Customer Link
-            </label>
-            
             {!generatedUrl ? (
               <div className="text-center">
                 <button
                   onClick={handleCreateAndCopyLink}
                   disabled={creating}
-                  className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors disabled:opacity-50 font-sans"
+                  className="w-full bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-4 rounded-lg font-semibold transition-colors disabled:opacity-50 font-sans"
                 >
                   {creating ? (
                     <>
@@ -142,9 +114,6 @@ function ShareLinkModal({ checklist, onClose }: ShareLinkModalProps) {
                     'Create & Copy Customer Link'
                   )}
                 </button>
-                <p className="text-xs text-gray-600 mt-2 font-sans">
-                  This will create a trackable submission in your dashboard
-                </p>
               </div>
             ) : (
               <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
@@ -154,7 +123,7 @@ function ShareLinkModal({ checklist, onClose }: ShareLinkModalProps) {
                   </div>
                   <div className="flex-1">
                     <div className="font-medium text-gray-900 text-sm font-sans">Customer Link Created!</div>
-                    <div className="text-xs text-gray-600 font-sans">Link saved to your submissions dashboard</div>
+                    <div className="text-xs text-gray-600 font-sans">Ready to send to your customer</div>
                   </div>
                 </div>
                 <div className="bg-white border border-gray-200 rounded-lg p-3">
@@ -192,40 +161,29 @@ function ShareLinkModal({ checklist, onClose }: ShareLinkModalProps) {
             )}
           </div>
 
-          {generatedUrl && (
-            <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
-              <div className="flex items-center space-x-2 mb-2">
-                <Check className="w-5 h-5 text-emerald-600" />
-                <span className="font-medium text-emerald-800 font-sans">Link Created Successfully!</span>
-              </div>
-              <p className="text-sm text-emerald-700 font-sans">
-                This submission now appears in your dashboard. You can track when the customer accesses and completes it.
-              </p>
+          {/* Simple info */}
+          <div className="bg-blue-50 rounded-lg p-4">
+            <div className="flex items-center space-x-2 mb-2">
+              <Info className="w-4 h-4 text-blue-600" />
+              <span className="font-medium text-blue-900 font-sans">How it works</span>
             </div>
-          )}
-
-          {/* Instructions */}
-          {!generatedUrl && (
-            <div className="bg-gray-50 rounded-lg p-4">
-            <h4 className="font-medium text-gray-900 mb-2 font-sans">Sharing Instructions</h4>
-            <ol className="text-sm text-gray-700 space-y-1 font-sans">
-              <li>1. Add an optional name to identify this customer/batch</li>
-              <li>2. Click "Create & Copy" to generate a unique tracking link</li>
-              <li>3. A pending submission appears in your dashboard immediately</li>
-              <li>4. Send the link to your customer via email or message</li>
-              <li>5. Track their progress in real-time from Submissions</li>
-            </ol>
-            </div>
-          )}
+            <p className="text-sm text-blue-800 font-sans">
+              Each link creates a trackable submission that appears in your dashboard immediately. 
+              Send the link to your customer and monitor their progress in real-time.
+            </p>
+          </div>
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end p-6 border-t border-gray-200 bg-gray-50">
+        <div className="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50">
+          <div className="text-sm text-gray-600 font-sans">
+            {generatedUrl ? 'Link ready to share' : 'Create a unique tracking link'}
+          </div>
           <button
             onClick={onClose}
             className="px-6 py-2 text-gray-600 hover:text-gray-800 font-medium transition-colors font-sans"
           >
-            Close
+            {generatedUrl ? 'Done' : 'Cancel'}
           </button>
         </div>
       </div>
