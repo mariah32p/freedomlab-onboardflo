@@ -59,6 +59,7 @@ export default function PublicChecklistPage() {
         .from('checklists')
         .select('*')
         .eq('id', checklistId)
+        .eq('is_public', true)
         .maybeSingle();
 
       console.log('Checklist query result:', { checklistData, checklistError, checklistId });
