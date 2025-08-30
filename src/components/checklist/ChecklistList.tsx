@@ -63,7 +63,7 @@ export default function ChecklistList({ onEditChecklist, onCreateNew }: Checklis
 
   const handlePreview = (checklist: Checklist) => {
     const url = getChecklistUrl(checklist);
-    window.open(url, '_blank', 'noopener,noreferrer');
+    window.open(url, '_blank');
   };
 
   if (loading) {

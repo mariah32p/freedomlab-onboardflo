@@ -18,6 +18,7 @@ import ChecklistsPage from './pages/ChecklistsPage';
 import SubmissionsPage from './pages/SubmissionsPage';
 import SettingsPage from './pages/SettingsPage';
 import BrandingPage from './pages/BrandingPage';
+import PublicChecklistPage from './pages/PublicChecklistPage';
 
 // Simple landing page component that combines all sections
 function LandingPage() {
@@ -36,25 +37,33 @@ function App() {
     <AuthProvider>
       <Router>
         <RouteGuard>
-        <div className="min-h-screen">
-          <Header />
-          <main>
-            <Routes>
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/pricing" element={<PricingPage />} />
-              <Route path="/signup" element={<SignUpPage />} />
-              <Route path="/get-started" element={<GetStartedPage />} />
-              <Route path="/signin" element={<SignInPage />} />
-              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-              <Route path="/reset-password" element={<ResetPasswordPage />} />
-              <Route path="/dashboard" element={<DashboardPage />} />
-              <Route path="/checklists" element={<ChecklistsPage />} />
-              <Route path="/submissions" element={<SubmissionsPage />} />
-              <Route path="/settings" element={<SettingsPage />} />
-              <Route path="/branding" element={<BrandingPage />} />
-            </Routes>
-          </main>
-        </div>
+          <Routes>
+            {/* Public checklist submission - no navbar */}
+            <Route path="/c/:checklistId" element={<PublicChecklistPage />} />
+            
+            {/* All other routes with navbar */}
+            <Route path="/*" element={
+              <div className="min-h-screen">
+                <Header />
+                <main>
+                  <Routes>
+                    <Route path="/" element={<LandingPage />} />
+                    <Route path="/pricing" element={<PricingPage />} />
+                    <Route path="/signup" element={<SignUpPage />} />
+                    <Route path="/get-started" element={<GetStartedPage />} />
+                    <Route path="/signin" element={<SignInPage />} />
+                    <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                    <Route path="/reset-password" element={<ResetPasswordPage />} />
+                    <Route path="/dashboard" element={<DashboardPage />} />
+                    <Route path="/checklists" element={<ChecklistsPage />} />
+                    <Route path="/submissions" element={<SubmissionsPage />} />
+                    <Route path="/settings" element={<SettingsPage />} />
+                    <Route path="/branding" element={<BrandingPage />} />
+                  </Routes>
+                </main>
+              </div>
+            } />
+          </Routes>
         </RouteGuard>
       </Router>
     </AuthProvider>
