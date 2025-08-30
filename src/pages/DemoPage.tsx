@@ -180,7 +180,7 @@ export default function DemoPage() {
       steps.forEach((step, index) => {
         setTimeout(() => {
           setCompletedSteps(prev => [...prev, step]);
-        }, (index + 1) * 500);
+        }, (index + 1) * 800);
       });
     }
   }, [currentStep]);
