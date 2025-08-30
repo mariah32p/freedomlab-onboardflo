@@ -44,13 +44,6 @@ function App() {
             <Route path="/c/:checklistId/:sessionToken" element={<PublicChecklistPage />} />
             
             {/* Demo page with simple header */}
-            <Route path="/demo" element={
-              <div className="min-h-screen">
-                <SimpleHeader />
-                <DemoPage />
-              </div>
-            } />
-            
             {/* All other routes with navbar */}
             <Route path="/*" element={
               <div className="min-h-screen">
@@ -58,6 +51,7 @@ function App() {
                 <main>
                   <Routes>
                     <Route path="/" element={<LandingPage />} />
+                    <Route path="/demo" element={<DemoPage />} />
                     <Route path="/pricing" element={<PricingPage />} />
                     <Route path="/signup" element={<SignUpPage />} />
                     <Route path="/get-started" element={<GetStartedPage />} />

@@ -26,13 +26,6 @@ export default function Hero() {
             {/* CTA buttons */}
             <div className="flex flex-col sm:flex-row gap-4 mb-8">
               <Link 
-                to="/demo" 
-                className="group bg-blue-500 hover:bg-blue-600 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-sans"
-              >
-                <Eye className="mr-2 w-5 h-5" />
-                Watch Demo
-              </Link>
-              <Link 
                 to="/signup" 
                 className="group bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-sans"
               >

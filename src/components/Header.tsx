@@ -47,8 +47,8 @@ export default function Header() {
           <div className="hidden md:flex items-center space-x-8">
             <nav className="flex items-center space-x-8">
               {!showUserMenu && (
-                <Link to="/demo" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
-                  Demo
+                <Link to="/pricing" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans" onClick={scrollToTop}>
+                  Pricing
                 </Link>
               )}
               {showUserMenu && (
@@ -113,11 +113,6 @@ export default function Header() {
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t border-gray-100">
             <div className="flex flex-col space-y-4">
-              {!showUserMenu && (
-                <Link to="/demo" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
-                  Demo
-                </Link>
-              )}
               <Link to="/pricing" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans" onClick={scrollToTop}>
                 Pricing
               </Link>
