@@ -49,6 +49,7 @@ export default function PublicChecklistPage() {
   const [completed, setCompleted] = useState(false);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [showCustomerForm, setShowCustomerForm] = useState(true);
+  const [customerId, setCustomerId] = useState<string | null>(null);
   
   const [customerData, setCustomerData] = useState<CustomerData>({
     email: '',
@@ -61,6 +62,7 @@ export default function PublicChecklistPage() {
   useEffect(() => {
     if (checklistId) {
       fetchChecklistData();
+      loadExistingProgress();
     }
   }, [checklistId]);
 
@@ -128,6 +130,73 @@ export default function PublicChecklistPage() {
     }
   };
 
+  const loadExistingProgress = async () => {
+    if (!checklistId) return;
+
+    // Check URL for customer ID or email
+    const urlParams = new URLSearchParams(window.location.search);
+    const customerEmail = urlParams.get('email');
+    const customerIdParam = urlParams.get('customer');
+
+    if (customerEmail || customerIdParam) {
+      try {
+        let customer;
+        
+        if (customerIdParam) {
+          const { data } = await supabase
+            .from('customers')
+            .select('*')
+            .eq('id', customerIdParam)
+            .eq('checklist_id', checklistId)
+            .maybeSingle();
+          customer = data;
+        } else if (customerEmail) {
+          const { data } = await supabase
+            .from('customers')
+            .select('*')
+            .eq('email', customerEmail)
+            .eq('checklist_id', checklistId)
+            .maybeSingle();
+          customer = data;
+        }
+
+        if (customer) {
+          setCustomerId(customer.id);
+          setCustomerData({
+            email: customer.email,
+            name: customer.name || '',
+            company: customer.company || '',
+          });
+          setShowCustomerForm(false);
+
+          // Load existing progress
+          const { data: progressData } = await supabase
+            .from('customer_progress')
+            .select('*')
+            .eq('customer_id', customer.id);
+
+          if (progressData) {
+            const progress: StepProgress = {};
+            progressData.forEach(p => {
+              progress[p.step_id] = {
+                completed: true,
+                value: p.notes || '',
+              };
+            });
+            setStepProgress(progress);
+          }
+
+          // Check if already completed
+          if (customer.completed_at) {
+            setCompleted(true);
+          }
+        }
+      } catch (err) {
+        console.error('Error loading existing progress:', err);
+      }
+    }
+  };
+
   const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (checklist && password === checklist.password_hash) {
@@ -172,21 +241,40 @@ export default function PublicChecklistPage() {
 
     try {
       // Create or update customer record
-      const { data: customer, error: customerError } = await supabase
+      const customerRecord = customerId ? { id: customerId } : null;
+      
+      const { data: customer, error: customerError } = customerRecord ? 
+        await supabase
+          .from('customers')
+          .update({
+            name: customerData.name,
+            company: customerData.company,
+            last_activity: new Date().toISOString(),
+          })
+          .eq('id', customerRecord.id)
+          .select()
+          .single() :
+        await supabase
         .from('customers')
-        .upsert({
+        .insert({
           checklist_id: checklistId,
           email: customerData.email,
           name: customerData.name,
           company: customerData.company,
           last_activity: new Date().toISOString(),
-        }, {
-          onConflict: 'checklist_id,email'
         })
         .select()
         .single();
 
       if (customerError) throw customerError;
+
+      if (!customerId) {
+        setCustomerId(customer.id);
+        // Update URL to include customer ID for future visits
+        const newUrl = new URL(window.location.href);
+        newUrl.searchParams.set('customer', customer.id);
+        window.history.replaceState({}, '', newUrl.toString());
+      }
 
       // Save progress for completed steps
       const progressRecords = Object.entries(stepProgress)
@@ -247,17 +335,29 @@ export default function PublicChecklistPage() {
 
     try {
       // Create customer record with completion
-      const { data: customer, error: customerError } = await supabase
+      const customerRecord = customerId ? { id: customerId } : null;
+      
+      const { data: customer, error: customerError } = customerRecord ?
+        await supabase
+          .from('customers')
+          .update({
+            name: customerData.name,
+            company: customerData.company,
+            completed_at: new Date().toISOString(),
+            last_activity: new Date().toISOString(),
+          })
+          .eq('id', customerRecord.id)
+          .select()
+          .single() :
+        await supabase
         .from('customers')
-        .upsert({
+        .insert({
           checklist_id: checklistId,
           email: customerData.email,
           name: customerData.name,
           company: customerData.company,
           completed_at: new Date().toISOString(),
           last_activity: new Date().toISOString(),
-        }, {
-          onConflict: 'checklist_id,email'
         })
         .select()
         .single();

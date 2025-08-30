@@ -735,7 +735,7 @@ export default function ChecklistBuilder({ checklist, template, onSave, onClose,
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50">
+        <div className="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50 sticky bottom-0">
           <div className="text-sm text-gray-600 font-sans">
             {hasUnsavedChanges && (
               <span className="text-orange-600 font-medium">● Unsaved changes</span>
@@ -754,7 +754,7 @@ export default function ChecklistBuilder({ checklist, template, onSave, onClose,
               className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 flex items-center font-sans"
             >
               <Save className="w-4 h-4 mr-2" />
-              {loading ? 'Saving...' : (isCreating ? 'Create Checklist' : 'Save Checklist')}
+              {loading ? 'Saving...' : (editingChecklist ? 'Save Changes' : 'Create Checklist')}
             </button>
           </div>
         </div>

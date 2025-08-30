@@ -12,7 +12,7 @@ import { ChecklistTemplate } from '../data/checklistTemplates';
 export default function ChecklistsPage() {
   const { user } = useAuth();
   const { subscription, getAccessStatus } = useSubscription();
-  const { createChecklist, updateChecklist } = useChecklists();
+  const { createChecklist, updateChecklist, refetch } = useChecklists();
   const accessStatus = getAccessStatus();
   
   // Checklist builder state
@@ -34,15 +34,19 @@ export default function ChecklistsPage() {
   const handleSaveChecklist = async (data: CreateChecklistData) => {
     try {
       if (editingChecklist) {
-        await updateChecklist(editingChecklist.id, data);
+        const success = await updateChecklist(editingChecklist.id, data);
+        if (success) {
+          await refetch();
+        }
       } else {
-        await createChecklist(data);
+        const newChecklist = await createChecklist(data);
+        if (newChecklist) {
+          await refetch();
+        }
       }
       setShowChecklistBuilder(false);
       setEditingChecklist(null);
       setSelectedTemplate(null);
-      // The useChecklists hook automatically updates the local state,
-      // so the list will refresh automatically
     } catch (err) {
       console.error('Error saving checklist:', err);
     }
