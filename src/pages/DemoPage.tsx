@@ -82,7 +82,6 @@ export default function DemoPage() {
     'completion'
   ];
 
-  // ... (templates data remains the same)
   const templates = [
     {
       id: 'website-design',
@@ -187,7 +186,6 @@ export default function DemoPage() {
       required: true,
       content: "Technical requirements: React/Next.js preferred, AWS hosting for HIPAA compliance, Salesforce integration for lead capture, and a headless CMS for the blog."
     },
-    // ... (The rest of the steps exist but are not used in the demo flow)
   ];
 
   const demoChecklistSteps = websiteDesignSteps.slice(0, 5);
@@ -292,7 +290,7 @@ export default function DemoPage() {
                   setTimeout(() => processCustomerStep(index + 1), 1500);
                 }, 500);
               }
-            }, 15); // MODIFIED: Typing speed is now much faster (was 40)
+            }, 15);
           }, 1000);
         };
 
@@ -300,6 +298,7 @@ export default function DemoPage() {
         break;
       }
 
+      // THE FIX: The 'case' for 'completion' was missing its own section, causing a fall-through bug.
       case 'completion':
         viewTimeout = setTimeout(advanceView, 8000);
         break;
@@ -324,7 +323,6 @@ export default function DemoPage() {
   }, [steps]);
 
   const renderDashboard = () => (
-    // ... (This component's JSX remains the same)
     <div className="space-y-8 pt-8">
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -481,7 +479,6 @@ export default function DemoPage() {
   );
 
   const renderTemplateSelection = () => (
-    // ... (This component's JSX remains the same)
     <div className="max-w-6xl mx-auto pt-8">
       <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden">
         {/* Header */}
@@ -602,10 +599,9 @@ export default function DemoPage() {
   );
 
   const renderChecklistBuilder = () => (
-    // ... (This component's JSX remains the same, but the logic feeding it has changed)
     <div className="max-w-7xl mx-auto pt-8">
       <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden">
-        {/* ... (Header remains the same) ... */}
+        {/* Header */}
         <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6 text-white">
           <div className="flex items-center justify-between">
             <div>
@@ -626,7 +622,7 @@ export default function DemoPage() {
 
         <div className="p-8">
           <div className="grid lg:grid-cols-2 gap-8">
-            {/* ... (Left column remains the same) ... */}
+            {/* Left Column */}
             <div className="space-y-6">
               <div className="bg-gray-50 rounded-xl p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4 font-sans">Checklist Settings</h3>
@@ -674,7 +670,7 @@ export default function DemoPage() {
               )}
             </div>
 
-            {/* Right Column - Steps Preview */}
+            {/* Right Column */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-gray-900 font-sans">Checklist Steps ({steps.length})</h3>
@@ -687,7 +683,6 @@ export default function DemoPage() {
               <div ref={stepsContainerRef} className="space-y-3 max-h-96 overflow-y-auto pr-2">
                 {steps.map((step, index) => (
                   <div key={step.id} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200 animate-fade-in">
-                    {/* ... (step card JSX remains the same) ... */}
                     <div className="flex items-start justify-between">
                       <div className="flex items-start">
                         <span className="text-lg mr-3 mt-1">
@@ -744,7 +739,6 @@ export default function DemoPage() {
     <div className="max-w-4xl mx-auto pt-8">
       {showCustomerForm && (
         <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-8 mb-8">
-          {/* ... (Welcome form remains the same) ... */}
           <div className="text-center mb-6">
             <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
               <User className="w-8 h-8 text-white" />
@@ -806,19 +800,16 @@ export default function DemoPage() {
               <div className="mt-6">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium text-blue-100 font-sans">Progress</span>
-                  {/* MODIFIED: Dynamic step count */}
                   <span className="text-sm font-medium text-blue-100 font-sans">{completedSteps.length}/{demoChecklistSteps.length} completed</span>
                 </div>
                 <div className="w-full bg-blue-400/30 rounded-full h-3">
                   <div 
                     className="bg-white h-3 rounded-full transition-all duration-1000 ease-out"
-                    // MODIFIED: Dynamic progress calculation
                     style={{ width: `${(completedSteps.length / demoChecklistSteps.length) * 100}%` }}
                   ></div>
                 </div>
                 <div className="text-center mt-2">
                   <span className="text-lg font-bold text-white font-sans">
-                    {/* MODIFIED: Dynamic percentage calculation */}
                     {Math.round((completedSteps.length / demoChecklistSteps.length) * 100)}%
                   </span>
                 </div>
@@ -827,7 +818,6 @@ export default function DemoPage() {
           </div>
 
           <div className="p-8">
-            {/* MODIFIED: Current step now uses demoChecklistSteps */}
             {currentCustomerStep < demoChecklistSteps.length && (
               <div className="bg-blue-50 rounded-xl p-8 mb-8 border-2 border-blue-200">
                 <div className="flex items-center mb-6">
@@ -848,7 +838,6 @@ export default function DemoPage() {
                 </div>
                 <p className="text-gray-700 mb-6 font-sans leading-relaxed text-lg">{demoChecklistSteps[currentCustomerStep].description}</p>
                 
-                {/* All logic below now correctly refers to demoChecklistSteps */}
                 {demoChecklistSteps[currentCustomerStep].type === 'textarea' && (
                   <div className="bg-white rounded-lg border-2 border-gray-200 p-4">
                     <textarea
@@ -931,7 +920,6 @@ export default function DemoPage() {
     <div className="max-w-3xl mx-auto text-center pt-8">
       <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden border border-white/20">
         <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 p-8 text-white relative overflow-hidden">
-          {/* ... (Confetti remains the same) ... */}
           <div className="absolute inset-0 pointer-events-none">
             {[...Array(20)].map((_, i) => (
               <div
@@ -961,7 +949,6 @@ export default function DemoPage() {
         <div className="p-8">
           <div className="grid grid-cols-3 gap-6 mb-8">
             <div className="text-center">
-              {/* MODIFIED: Dynamic step count */}
               <div className="text-3xl font-bold text-emerald-600 font-sans">{demoChecklistSteps.length}/{demoChecklistSteps.length}</div>
               <div className="text-sm text-gray-600 font-sans">Steps Completed</div>
             </div>
@@ -974,7 +961,6 @@ export default function DemoPage() {
               <div className="text-sm text-gray-600 font-sans">Success Rate</div>
             </div>
           </div>
-          {/* ... (Rest of completion JSX remains the same) ... */}
           <div className="bg-gradient-to-r from-emerald-50 to-blue-50 rounded-xl p-6 mb-8">
             <h3 className="font-semibold text-gray-900 mb-4 font-sans">🚀 What happens next?</h3>
             <div className="space-y-3 text-sm text-gray-700">
@@ -1019,7 +1005,6 @@ export default function DemoPage() {
   );
 
   return (
-    // ... (This component's JSX remains the same)
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <DemoHeader />
       
