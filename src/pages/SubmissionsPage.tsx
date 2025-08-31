@@ -259,11 +259,6 @@ export default function SubmissionsPage() {
                 {sessions.map((session) => (
                   <div key={session.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                     <div className="flex items-center flex-1">
-                      <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center mr-4">
-                        <span className="text-white text-sm font-bold font-sans">
-                          {(session.name || session.email).charAt(0).toUpperCase()}
-                        </span>
-                      </div>
                       <div className="flex-1">
                         <div className="flex items-start justify-between">
                           <div>
