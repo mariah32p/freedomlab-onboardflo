@@ -3,7 +3,6 @@ import {
   Users, 
   CheckCircle, 
   Clock, 
-  AlertCircle,
   TrendingUp,
   Plus,
   Edit,
@@ -14,7 +13,6 @@ import {
   Sparkles,
   BarChart3,
   Target,
-  Zap,
   Mail,
   Building,
   User,
@@ -25,11 +23,9 @@ import {
   Palette,
   Globe,
   FileText,
-  CreditCard,
   Phone,
   MessageSquare,
   Camera,
-  Layers,
   Monitor,
   Smartphone,
   Save,
@@ -55,25 +51,17 @@ import DemoHeader from '../components/DemoHeader';
 
 export default function DemoPage() {
   const [currentView, setCurrentView] = useState(0);
-  const [currentStep, setCurrentStep] = useState(0);
+  const [autoPlay, setAutoPlay] = useState(true);
   
   // Template selection state
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
   
   // Checklist building state
   const [checklistTitle, setChecklistTitle] = useState('');
   const [checklistDescription, setChecklistDescription] = useState('');
   const [steps, setSteps] = useState<any[]>([]);
-  const [currentStepForm, setCurrentStepForm] = useState({
-    title: '',
-    description: '',
-    type: 'textarea',
-    required: true,
-    placeholder: ''
-  });
-  const [showAddStepForm, setShowAddStepForm] = useState(false);
+  const [buildingStep, setBuildingStep] = useState(0);
   
   // Customer experience state
   const [customerData, setCustomerData] = useState({
@@ -163,85 +151,96 @@ export default function DemoPage() {
       description: 'Share your project vision, target audience, and key business objectives',
       type: 'textarea',
       placeholder: 'Describe your project goals, target audience, and key requirements...',
-      required: true
+      required: true,
+      content: "We're a B2B SaaS company targeting enterprise clients in the healthcare industry. We need a modern, professional website that showcases our AI-powered patient data analytics platform. Our target audience is CTOs and data scientists at hospitals and healthcare systems with 500+ beds. The site should emphasize trust, security, HIPAA compliance, and technical expertise while being approachable for non-technical decision makers."
     },
     {
       title: 'Brand Assets & Style Guide',
       description: 'Upload your logo, brand guidelines, color palette, and existing design materials',
       type: 'file_upload',
       placeholder: 'Accepted formats: .pdf, .ai, .jpg, .png, .zip',
-      required: true
+      required: true,
+      content: "HealthTech_Logo_Package.zip, Brand_Guidelines_2024.pdf, Color_Palette.ai, Typography_Guide.pdf"
     },
     {
       title: 'Website Content & Copy',
       description: 'Provide all text content including page copy, product descriptions, and company information',
       type: 'file_upload',
       placeholder: 'Accepted formats: .pdf, .doc, .docx, .txt',
-      required: true
+      required: true,
+      content: "Website_Copy_Draft.docx, Product_Descriptions.pdf, Team_Bios.docx, Case_Studies.pdf, Compliance_Documentation.pdf"
     },
     {
       title: 'Design Inspiration & References',
       description: 'Share websites you love, describe your preferred style, and provide visual inspiration',
       type: 'textarea',
       placeholder: 'Share website URLs you like and describe your preferred design style...',
-      required: true
+      required: true,
+      content: "Design inspiration: We love the clean, technical aesthetic of Stripe (stripe.com), the trust-building approach of Salesforce Health Cloud, and the data visualization style of Tableau. We want something modern but not too flashy - professional, trustworthy, and emphasizing security. Think 'enterprise healthcare' meets 'Silicon Valley innovation'. Reference sites: stripe.com, salesforce.com/products/health-cloud, tableau.com"
     },
     {
       title: 'Technical Requirements & Integrations',
       description: 'Specify hosting preferences, CMS requirements, third-party integrations, and special functionality',
       type: 'textarea',
       placeholder: 'List any specific technical requirements, integrations, or hosting preferences...',
-      required: false
+      required: true,
+      content: "Technical requirements: React/Next.js preferred, AWS hosting for HIPAA compliance, integrate with our existing API (REST + GraphQL), need headless CMS for blog and resources, Salesforce integration for lead capture, Google Analytics + Mixpanel for tracking, must support SSO (SAML), need patient data demo environment, mobile-responsive with offline capability for trade shows."
     },
     {
       title: 'Contact Information & Team Access',
       description: 'Provide team member details, social media profiles, and communication preferences',
       type: 'textarea',
       placeholder: 'List team members who need access and their contact information...',
-      required: true
+      required: true,
+      content: "Team contacts: sarah@healthtech.com (Project Lead), mike@healthtech.com (CTO), lisa@healthtech.com (VP Marketing), david@healthtech.com (Head of Sales). Social: @healthtechAI on Twitter/LinkedIn. Slack workspace: healthtech-team.slack.com. Preferred communication: Slack for daily updates, email for formal approvals, weekly video calls on Fridays 2 PM EST."
     },
     {
       title: 'Budget & Timeline Confirmation',
       description: 'Review and confirm project budget, payment schedule, and timeline expectations',
       type: 'checkbox',
       placeholder: '',
-      required: true
+      required: true,
+      content: "Budget confirmed: $25,000 for full website redesign and development. Timeline: 8-10 weeks including 2 weeks for compliance review. Payment: 40% upfront, 40% at design approval, 20% on launch. Additional $5K allocated for ongoing maintenance and updates."
     },
     {
       title: 'Project Kickoff Call Scheduling',
       description: 'Schedule our initial strategy session and project planning meeting',
       type: 'checkbox',
       placeholder: '',
-      required: true
+      required: true,
+      content: "Kickoff call scheduled for next Tuesday at 2 PM EST. Attendees: Sarah (client), Mike (CTO), our design team lead, and project manager. Agenda: technical requirements review, design direction alignment, compliance requirements discussion, project timeline finalization. Follow-up: weekly check-ins every Friday, design reviews via Figma, development updates via project portal."
     }
   ];
 
   // Auto-advance through views
   useEffect(() => {
+    if (!autoPlay) return;
+    
     const timer = setInterval(() => {
       setCurrentView(prev => (prev + 1) % views.length);
-    }, 15000); // 15 seconds per view
+    }, 12000); // 12 seconds per view
 
     return () => clearInterval(timer);
-  }, []);
+  }, [autoPlay]);
 
   // Reset state when view changes and simulate interactions
   useEffect(() => {
-    setCurrentStep(0);
-    
     if (views[currentView] === 'template-selection') {
+      // Reset template selection
+      setSelectedTemplate(null);
+      setSearchTerm('');
+      
       // Simulate searching and selecting template
       setTimeout(() => setSearchTerm('website'), 1000);
-      setTimeout(() => setSelectedCategory('Design'), 1500);
       setTimeout(() => setSelectedTemplate('website-design'), 2500);
     }
     
     if (views[currentView] === 'checklist-builder') {
-      // Reset and build checklist
+      // Reset checklist builder
       setSteps([]);
       setChecklistTitle('');
       setChecklistDescription('');
-      setShowAddStepForm(false);
+      setBuildingStep(0);
       
       // Simulate building the checklist
       setTimeout(() => {
@@ -249,17 +248,12 @@ export default function DemoPage() {
         setChecklistDescription('Complete onboarding process for new website design clients');
       }, 1000);
       
-      // Add steps progressively
+      // Add steps one by one
       websiteDesignSteps.forEach((step, index) => {
         setTimeout(() => {
-          setCurrentStepForm(step);
-          setShowAddStepForm(true);
-        }, 2000 + (index * 1000));
-        
-        setTimeout(() => {
+          setBuildingStep(index + 1);
           setSteps(prev => [...prev, { ...step, id: `step-${index}` }]);
-          setShowAddStepForm(false);
-        }, 2500 + (index * 1000));
+        }, 2000 + (index * 600));
       });
     }
     
@@ -271,49 +265,37 @@ export default function DemoPage() {
       setShowCustomerForm(true);
       setCustomerStepContent({});
       
-      // Simulate customer filling out form
+      // Simulate customer filling out form - SLOWER
       setTimeout(() => {
         setCustomerData({
           name: 'Sarah Martinez',
-          email: 'sarah@techcorp.com',
-          company: 'TechCorp Solutions'
+          email: 'sarah@healthtech.com',
+          company: 'HealthTech Solutions'
         });
-      }, 3000);
+      }, 2000);
       
       setTimeout(() => {
         setShowCustomerForm(false);
         setCurrentCustomerStep(0);
-      }, 5000);
+      }, 3500);
       
-      // Simulate completing ALL steps with realistic content - MUCH SLOWER
-      const stepContents = [
-        "We're a B2B SaaS company targeting enterprise clients. We need a modern, professional website that showcases our AI-powered analytics platform. Our target audience is CTOs and data scientists at companies with 100+ employees. The site should emphasize trust, security, and technical expertise.",
-        "Brand assets uploaded: TechCorp_Logo_Package.zip, Brand_Guidelines_2024.pdf, Color_Palette.ai",
-        "Content package uploaded: Website_Copy_Draft.docx, Product_Descriptions.pdf, Team_Bios.docx, Case_Studies.pdf",
-        "Design inspiration: We love the clean, technical aesthetic of Stripe, Linear, and Vercel. We want something modern but not too flashy - professional and trustworthy.",
-        "Technical requirements: React/Next.js preferred, Vercel hosting, integrate with our existing API, need CMS for blog, analytics tracking, and lead capture forms.",
-        "Team contacts: sarah@techcorp.com (Project Lead), mike@techcorp.com (CTO), lisa@techcorp.com (Marketing). Social: @techcorp on Twitter/LinkedIn.",
-        "Budget confirmed: $15,000 for full website redesign. Timeline: 6-8 weeks. Payment: 50% upfront, 50% on completion.",
-        "Kickoff call scheduled for next Tuesday at 2 PM EST. Project management via Slack channel #website-redesign.",
-        "Design inspiration: We love the clean, technical aesthetic of Stripe, Linear, and Vercel. We want something modern but not too flashy - professional and trustworthy. Reference sites: stripe.com, linear.app, vercel.com"
-      ];
-      
-      stepContents.forEach((content, index) => {
+      // Simulate completing steps with realistic content - MUCH SLOWER
+      websiteDesignSteps.forEach((step, index) => {
+        // Show step
         setTimeout(() => {
           setCurrentCustomerStep(index);
-        }, 6000 + (index * 2500)); // MUCH slower - 2.5 seconds per step
+        }, 4000 + (index * 3000)); // 3 seconds per step
+        
+        // Show content being filled
         setTimeout(() => {
-          setCustomerStepContent(prev => ({ ...prev, [`step-${index}`]: content }));
-        }, 6000 + (index * 2500) + 800); // Show content after 0.8s
+          setCustomerStepContent(prev => ({ ...prev, [`step-${index}`]: step.content }));
+        }, 4000 + (index * 3000) + 1500); // Content appears after 1.5s
+        
+        // Complete step
         setTimeout(() => {
           setCompletedSteps(prev => [...prev, `step-${index}`]);
-        }, 6000 + (index * 2500) + 1800); // Complete step after 1.8s
+        }, 4000 + (index * 3000) + 2500); // Complete after 2.5s
       });
-      
-      // Mark as completed after all steps
-      setTimeout(() => {
-        setCurrentView(4); // Move to completion view
-      }, 6000 + (stepContents.length * 2500) + 2000);
     }
   }, [currentView]);
 
@@ -390,7 +372,7 @@ export default function DemoPage() {
                 </div>
                 <div>
                   <div className="font-semibold text-gray-900 font-sans">Sarah Martinez</div>
-                  <div className="text-sm text-gray-600 font-sans">TechCorp Solutions • Website Redesign</div>
+                  <div className="text-sm text-gray-600 font-sans">HealthTech Solutions • Website Redesign</div>
                   <div className="text-xs text-emerald-700 font-sans">✓ Just uploaded brand assets • 3 min ago</div>
                 </div>
               </div>
@@ -502,10 +484,7 @@ export default function DemoPage() {
                 readOnly
               />
             </div>
-            <select
-              value={selectedCategory}
-              className="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
-            >
+            <select className="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans">
               <option value="All">All Categories</option>
               <option value="Design">Design</option>
               <option value="Development">Development</option>
@@ -533,7 +512,7 @@ export default function DemoPage() {
             {templates.map((template) => (
               <div
                 key={template.id}
-                className={`bg-white border-2 rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-lg ${
+                className={`bg-white border-2 rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-lg relative ${
                   selectedTemplate === template.id 
                     ? 'border-emerald-500 ring-4 ring-emerald-500/20 scale-105' 
                     : 'border-gray-200 hover:border-emerald-300'
@@ -547,49 +526,47 @@ export default function DemoPage() {
                   </div>
                 )}
                 
-                <div className="relative">
-                  <div className="flex items-center mb-4">
-                    <div 
-                      className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl mr-4 shadow-sm"
-                      style={{ backgroundColor: `${template.color}20` }}
-                    >
-                      {template.icon}
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900 font-sans">{template.name}</h3>
-                      <span 
-                        className="inline-block px-2 py-1 rounded-full text-xs font-medium text-white"
-                        style={{ backgroundColor: template.color }}
-                      >
-                        {template.category}
-                      </span>
-                    </div>
-                  </div>
-
-                  <p className="text-gray-600 text-sm mb-4 font-sans leading-relaxed">{template.description}</p>
-
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="text-sm text-gray-500 font-sans">
-                      {template.steps} steps included
-                    </div>
-                    <div className="flex items-center">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-3 h-3 text-yellow-400 fill-current" />
-                      ))}
-                      <span className="text-xs text-gray-500 ml-1 font-sans">(4.9)</span>
-                    </div>
-                  </div>
-
-                  <button 
-                    className={`w-full py-3 rounded-lg font-semibold transition-all duration-200 font-sans ${
-                      selectedTemplate === template.id
-                        ? 'bg-emerald-500 text-white shadow-lg'
-                        : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                    }`}
+                <div className="flex items-center mb-4">
+                  <div 
+                    className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl mr-4 shadow-sm"
+                    style={{ backgroundColor: `${template.color}20` }}
                   >
-                    {selectedTemplate === template.id ? 'Selected ✓' : 'Use This Template'}
-                  </button>
+                    {template.icon}
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 font-sans">{template.name}</h3>
+                    <span 
+                      className="inline-block px-2 py-1 rounded-full text-xs font-medium text-white"
+                      style={{ backgroundColor: template.color }}
+                    >
+                      {template.category}
+                    </span>
+                  </div>
                 </div>
+
+                <p className="text-gray-600 text-sm mb-4 font-sans leading-relaxed">{template.description}</p>
+
+                <div className="flex items-center justify-between mb-4">
+                  <div className="text-sm text-gray-500 font-sans">
+                    {template.steps} steps included
+                  </div>
+                  <div className="flex items-center">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-3 h-3 text-yellow-400 fill-current" />
+                    ))}
+                    <span className="text-xs text-gray-500 ml-1 font-sans">(4.9)</span>
+                  </div>
+                </div>
+
+                <button 
+                  className={`w-full py-3 rounded-lg font-semibold transition-all duration-200 font-sans ${
+                    selectedTemplate === template.id
+                      ? 'bg-emerald-500 text-white shadow-lg'
+                      : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                  }`}
+                >
+                  {selectedTemplate === template.id ? 'Selected ✓' : 'Use This Template'}
+                </button>
               </div>
             ))}
           </div>
@@ -648,44 +625,22 @@ export default function DemoPage() {
                 </div>
               </div>
 
-              {/* Add Step Form */}
-              {showAddStepForm && (
-                <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-6 animate-pulse">
-                  <h4 className="font-semibold text-emerald-900 mb-4 font-sans">Adding Step {steps.length + 1}</h4>
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-emerald-800 mb-2 font-sans">Step Title</label>
-                      <input
-                        type="text"
-                        value={currentStepForm.title}
-                        className="w-full px-3 py-2 border border-emerald-300 rounded-lg font-sans"
-                        readOnly
-                      />
+              {/* Building indicator */}
+              {buildingStep > 0 && buildingStep <= websiteDesignSteps.length && (
+                <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-6">
+                  <h4 className="font-semibold text-emerald-900 mb-4 font-sans">
+                    Adding Step {buildingStep}: {websiteDesignSteps[buildingStep - 1]?.title}
+                  </h4>
+                  <div className="space-y-3">
+                    <div className="flex items-center">
+                      <div className="w-2 h-2 bg-emerald-500 rounded-full mr-3 animate-pulse"></div>
+                      <span className="text-sm text-emerald-800 font-sans">Configuring step settings...</span>
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium text-emerald-800 mb-2 font-sans">Description</label>
-                      <textarea
-                        value={currentStepForm.description}
-                        className="w-full px-3 py-2 border border-emerald-300 rounded-lg font-sans"
-                        rows={2}
-                        readOnly
-                      />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <select className="px-3 py-2 border border-emerald-300 rounded-lg text-sm font-sans" value={currentStepForm.type}>
-                          <option value="textarea">Long Text</option>
-                          <option value="file_upload">File Upload</option>
-                          <option value="checkbox">Checkbox</option>
-                        </select>
-                        <label className="flex items-center text-sm text-emerald-800 font-sans">
-                          <input type="checkbox" checked={currentStepForm.required} className="mr-2" readOnly />
-                          Required
-                        </label>
-                      </div>
-                      <button className="bg-emerald-600 text-white px-4 py-2 rounded-lg font-semibold font-sans">
-                        Add Step
-                      </button>
+                    <div className="w-full bg-emerald-200 rounded-full h-2">
+                      <div 
+                        className="bg-emerald-500 h-2 rounded-full transition-all duration-500"
+                        style={{ width: `${(buildingStep / websiteDesignSteps.length) * 100}%` }}
+                      ></div>
                     </div>
                   </div>
                 </div>
@@ -704,7 +659,7 @@ export default function DemoPage() {
               
               <div className="space-y-3 max-h-96 overflow-y-auto">
                 {steps.map((step, index) => (
-                  <div key={step.id} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200">
+                  <div key={step.id} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200 animate-fade-in">
                     <div className="flex items-start justify-between">
                       <div className="flex items-start">
                         <span className="text-lg mr-3 mt-1">
@@ -867,7 +822,7 @@ export default function DemoPage() {
                     value={customerStepContent[`step-${currentCustomerStep}`] || ''}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-sans"
                     placeholder={websiteDesignSteps[currentCustomerStep].placeholder}
-                    rows={4}
+                    rows={6}
                     readOnly
                   />
                 )}
@@ -1010,7 +965,7 @@ export default function DemoPage() {
                 <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
                   <Target className="w-3 h-3 text-white" />
                 </div>
-                <p className="font-sans">Expected project completion: 4-6 weeks</p>
+                <p className="font-sans">Expected project completion: 8-10 weeks</p>
               </div>
             </div>
           </div>
@@ -1031,6 +986,35 @@ export default function DemoPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <DemoHeader />
+      
+      {/* Demo Controls */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 p-4">
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={() => setAutoPlay(!autoPlay)}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors font-sans ${
+                autoPlay 
+                  ? 'bg-emerald-500 text-white' 
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {autoPlay ? 'Pause Demo' : 'Play Demo'}
+            </button>
+            <div className="flex space-x-1">
+              {views.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentView(index)}
+                  className={`w-3 h-3 rounded-full transition-colors ${
+                    currentView === index ? 'bg-emerald-500' : 'bg-gray-300 hover:bg-gray-400'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
       
       <div className="pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
