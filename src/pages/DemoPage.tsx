@@ -190,7 +190,6 @@ export default function DemoPage() {
     // ... (The rest of the steps exist but are not used in the demo flow)
   ];
 
-  // NEW: A single source of truth for the steps used in this demo flow.
   const demoChecklistSteps = websiteDesignSteps.slice(0, 5);
 
   const advanceView = useCallback(() => {
@@ -228,7 +227,6 @@ export default function DemoPage() {
           setChecklistDescription('Complete onboarding process for new website design clients');
         }, 1000);
         
-        // MODIFIED: Uses the shared demoChecklistSteps constant
         demoChecklistSteps.forEach((step, index) => {
           setTimeout(() => {
             setBuildingStep(index + 1);
@@ -260,16 +258,15 @@ export default function DemoPage() {
           setCurrentCustomerStep(0);
         }, 3000);
         
-        // MODIFIED: This entire function now operates on demoChecklistSteps
         const processCustomerStep = (index: number) => {
-          if (index >= demoChecklistSteps.length) { // Use length of our demo checklist
+          if (index >= demoChecklistSteps.length) {
             setTimeout(advanceView, 2000);
             return;
           }
           
           if (!autoPlay) return;
 
-          const step = demoChecklistSteps[index]; // Get step from our demo checklist
+          const step = demoChecklistSteps[index];
           setCurrentCustomerStep(index);
           
           setTimeout(() => {
@@ -295,7 +292,7 @@ export default function DemoPage() {
                   setTimeout(() => processCustomerStep(index + 1), 1500);
                 }, 500);
               }
-            }, 40);
+            }, 15); // MODIFIED: Typing speed is now much faster (was 40)
           }, 1000);
         };
 
