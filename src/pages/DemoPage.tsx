@@ -74,7 +74,6 @@ export default function DemoPage() {
   const [isTypingStep, setIsTypingStep] = useState(false);
   const [typingStepId, setTypingStepId] = useState<string>('');
 
-  // Use a ref for autoplay to get the latest value inside async functions
   const autoPlayRef = useRef(autoPlay);
   autoPlayRef.current = autoPlay;
 
@@ -203,7 +202,7 @@ export default function DemoPage() {
 
     const view = views[currentView];
     let viewTimeout: NodeJS.Timeout;
-    let isCancelled = false; // Flag to prevent state updates after component unmounts or effect re-runs
+    let isCancelled = false;
 
     switch (view) {
       case 'dashboard':
@@ -232,6 +231,7 @@ export default function DemoPage() {
         
         demoChecklistSteps.forEach((step, index) => {
           setTimeout(() => {
+            if (isCancelled) return;
             setBuildingStep(index + 1);
             setSteps(prev => [...prev, { ...step, id: `step-${index}` }]);
           }, 2000 + (index * 1200));
@@ -242,11 +242,9 @@ export default function DemoPage() {
         break;
 
       case 'customer-experience': {
-        // REFACTORED: Using async/await for a more robust and readable animation sequence.
         const sleep = (ms: number) => new Promise(res => setTimeout(res, ms));
 
         const runCustomerFlow = async () => {
-          // Reset state for this view
           if (isCancelled) return;
           setCustomerData({ name: '', email: '', company: '' });
           setCompletedSteps([]);
@@ -270,7 +268,6 @@ export default function DemoPage() {
           
           await sleep(500);
 
-          // Loop through each step sequentially
           for (let i = 0; i < demoChecklistSteps.length; i++) {
             if (isCancelled || !autoPlayRef.current) return;
             
@@ -278,7 +275,6 @@ export default function DemoPage() {
             setCurrentCustomerStep(i);
             await sleep(1000);
 
-            // Typing animation as a promise
             if (isCancelled || !autoPlayRef.current) return;
             await new Promise<void>(resolve => {
               setIsTypingStep(true);
@@ -286,12 +282,12 @@ export default function DemoPage() {
               const content = step.content;
               let charIndex = 0;
               const typeInterval = setInterval(() => {
-                if (charIndex < content.length) {
-                  setCustomerStepContent(prev => ({...prev, [`step-${i}`]: content.slice(0, charIndex + 1)}));
-                  charIndex++;
-                } else {
+                if (isCancelled || charIndex >= content.length) {
                   clearInterval(typeInterval);
                   resolve();
+                } else {
+                  setCustomerStepContent(prev => ({...prev, [`step-${i}`]: content.slice(0, charIndex + 1)}));
+                  charIndex++;
                 }
               }, 15);
             });
@@ -338,7 +334,6 @@ export default function DemoPage() {
 
   const renderDashboard = () => (
     <div className="space-y-8 pt-8">
-      {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300">
           <div className="flex items-center">
@@ -351,7 +346,6 @@ export default function DemoPage() {
             </div>
           </div>
         </div>
-
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300">
           <div className="flex items-center">
             <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
@@ -363,7 +357,6 @@ export default function DemoPage() {
             </div>
           </div>
         </div>
-
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300">
           <div className="flex items-center">
             <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
@@ -375,7 +368,6 @@ export default function DemoPage() {
             </div>
           </div>
         </div>
-
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300">
           <div className="flex items-center">
             <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
@@ -388,8 +380,6 @@ export default function DemoPage() {
           </div>
         </div>
       </div>
-
-      {/* Live Activity */}
       <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20">
         <div className="p-6 border-b border-gray-100">
           <div className="flex items-center justify-between">
@@ -423,7 +413,6 @@ export default function DemoPage() {
                 <div className="text-xs text-emerald-600 font-sans">7/8 steps • 2.3 days</div>
               </div>
             </div>
-
             <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200">
               <div className="flex items-center">
                 <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-500 rounded-full flex items-center justify-center mr-4 shadow-lg">
@@ -445,7 +434,6 @@ export default function DemoPage() {
                 <div className="text-xs text-blue-600 font-sans">6/10 steps • 1.8 days</div>
               </div>
             </div>
-
             <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-purple-50 to-purple-100 border border-purple-200">
               <div className="flex items-center">
                 <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-purple-500 rounded-full flex items-center justify-center mr-4 shadow-lg">
@@ -470,8 +458,6 @@ export default function DemoPage() {
           </div>
         </div>
       </div>
-
-      {/* Quick Actions */}
       <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4 font-sans">Quick Actions</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -495,7 +481,6 @@ export default function DemoPage() {
   const renderTemplateSelection = () => (
     <div className="max-w-6xl mx-auto pt-8">
       <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden">
-        {/* Header */}
         <div className="bg-gradient-to-r from-emerald-500 to-blue-600 p-8 text-white">
           <div className="text-center">
             <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-4">
@@ -505,8 +490,6 @@ export default function DemoPage() {
             <p className="text-blue-100 text-lg font-sans">Start with a proven template or create from scratch</p>
           </div>
         </div>
-
-        {/* Search and Filters */}
         <div className="p-6 border-b border-gray-200 bg-gray-50">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1 relative">
@@ -530,11 +513,8 @@ export default function DemoPage() {
             </select>
           </div>
         </div>
-
-        {/* Templates Grid */}
         <div className="p-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Create from Scratch */}
             <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 hover:border-emerald-400 hover:bg-emerald-50 transition-all cursor-pointer group">
               <div className="text-center">
                 <div className="w-12 h-12 bg-gray-100 group-hover:bg-emerald-100 rounded-lg flex items-center justify-center mx-auto mb-4 transition-colors">
@@ -544,8 +524,6 @@ export default function DemoPage() {
                 <p className="text-gray-600 text-sm font-sans">Create a completely custom checklist</p>
               </div>
             </div>
-
-            {/* Template Cards */}
             {templates.map((template) => (
               <div
                 key={template.id}
@@ -615,7 +593,6 @@ export default function DemoPage() {
   const renderChecklistBuilder = () => (
     <div className="max-w-7xl mx-auto pt-8">
       <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden">
-        {/* Header */}
         <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6 text-white">
           <div className="flex items-center justify-between">
             <div>
@@ -633,10 +610,8 @@ export default function DemoPage() {
             </div>
           </div>
         </div>
-
         <div className="p-8">
           <div className="grid lg:grid-cols-2 gap-8">
-            {/* Left Column */}
             <div className="space-y-6">
               <div className="bg-gray-50 rounded-xl p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4 font-sans">Checklist Settings</h3>
@@ -661,8 +636,6 @@ export default function DemoPage() {
                   </div>
                 </div>
               </div>
-
-              {/* Building indicator */}
               {buildingStep > 0 && buildingStep <= demoChecklistSteps.length && (
                 <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-6">
                   <h4 className="font-semibold text-emerald-900 mb-4 font-sans">
@@ -683,8 +656,6 @@ export default function DemoPage() {
                 </div>
               )}
             </div>
-
-            {/* Right Column */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-gray-900 font-sans">Checklist Steps ({steps.length})</h3>
@@ -700,9 +671,7 @@ export default function DemoPage() {
                     <div className="flex items-start justify-between">
                       <div className="flex items-start">
                         <span className="text-lg mr-3 mt-1">
-                          {step.type === 'textarea' ? '📝' : 
-                           step.type === 'file_upload' ? '📎' : 
-                           '☑️'}
+                          {step.type === 'textarea' ? '📝' : '📎'}
                         </span>
                         <div className="flex-1">
                           <div className="flex items-center mb-2">
@@ -716,9 +685,7 @@ export default function DemoPage() {
                           <p className="text-sm text-gray-600 font-sans leading-relaxed">{step.description}</p>
                           <div className="mt-2 flex items-center">
                             <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium font-sans">
-                              {step.type === 'textarea' ? 'Long Text' : 
-                               step.type === 'file_upload' ? 'File Upload' : 
-                               'Checkbox'}
+                              {step.type === 'textarea' ? 'Long Text' : 'File Upload'}
                             </span>
                           </div>
                         </div>
@@ -760,7 +727,6 @@ export default function DemoPage() {
             <h2 className="text-2xl font-bold text-gray-900 mb-2 font-sans">Welcome to Your Website Project!</h2>
             <p className="text-gray-600 font-sans">Let's get started with some basic information</p>
           </div>
-          
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">Full Name *</label>
@@ -772,7 +738,6 @@ export default function DemoPage() {
                 readOnly
               />
             </div>
-            
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">Email Address *</label>
               <input
@@ -783,7 +748,6 @@ export default function DemoPage() {
                 readOnly
               />
             </div>
-
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">Company</label>
               <input
@@ -795,7 +759,6 @@ export default function DemoPage() {
               />
             </div>
           </div>
-          
           <div className="flex justify-center mt-6">
             <button className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl font-sans">
               Continue to Checklist
@@ -810,7 +773,6 @@ export default function DemoPage() {
             <div className="text-center">
               <h1 className="text-3xl font-bold font-sans mb-2">Website Design Project Onboarding</h1>
               <p className="text-blue-100 font-sans">Complete these steps to get your project started</p>
-              
               <div className="mt-6">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium text-blue-100 font-sans">Progress</span>
@@ -830,7 +792,6 @@ export default function DemoPage() {
               </div>
             </div>
           </div>
-
           <div className="p-8">
             {currentCustomerStep < demoChecklistSteps.length && (
               <div className="bg-blue-50 rounded-xl p-8 mb-8 border-2 border-blue-200">
@@ -850,7 +811,6 @@ export default function DemoPage() {
                   </div>
                 </div>
                 <p className="text-gray-700 mb-6 font-sans leading-relaxed text-lg">{demoChecklistSteps[currentCustomerStep].description}</p>
-                
                 {demoChecklistSteps[currentCustomerStep].type === 'textarea' && (
                   <div className="bg-white rounded-lg border-2 border-gray-200 p-4">
                     <textarea
@@ -868,7 +828,6 @@ export default function DemoPage() {
                     )}
                   </div>
                 )}
-                
                 {demoChecklistSteps[currentCustomerStep].type === 'file_upload' && (
                   <div className="bg-white border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
                     <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
@@ -889,7 +848,6 @@ export default function DemoPage() {
                     </div>
                   </div>
                 )}
-                
                 {completedSteps.includes(`step-${currentCustomerStep}`) && (
                   <div className="mt-6 flex items-center text-emerald-600 font-medium font-sans">
                     <CheckCircle className="w-5 h-5 mr-2" />
@@ -933,23 +891,7 @@ export default function DemoPage() {
     <div className="max-w-3xl mx-auto text-center pt-8">
       <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden border border-white/20">
         <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 p-8 text-white relative overflow-hidden">
-          <div className="absolute inset-0 pointer-events-none">
-            {[...Array(20)].map((_, i) => (
-              <div
-                key={i}
-                className="absolute animate-bounce"
-                style={{
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
-                  animationDelay: `${Math.random() * 2}s`,
-                  animationDuration: `${2 + Math.random() * 2}s`
-                }}
-              >
-                {['🎉', '✨', '🎊', '⭐'][Math.floor(Math.random() * 4)]}
-              </div>
-            ))}
-          </div>
-          
+          {/* REMOVED: Confetti animation is gone */}
           <div className="relative z-10">
             <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle className="w-10 h-10" />
@@ -1003,7 +945,6 @@ export default function DemoPage() {
               </div>
             </div>
           </div>
-
           <div className="grid grid-cols-2 gap-4">
             <button className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white py-4 rounded-xl font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl font-sans">
               View Project Portal
@@ -1021,7 +962,6 @@ export default function DemoPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <DemoHeader />
       
-      {/* Demo Controls */}
       <div className="fixed bottom-6 right-6 z-50">
         <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 p-4">
           <div className="flex items-center space-x-4">
