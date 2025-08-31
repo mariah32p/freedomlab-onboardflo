@@ -1072,7 +1072,7 @@ export default function DemoPage() {
       </div>
       
       <div className="pb-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32">
           <div className="transition-all duration-500 ease-in-out">
             {views[currentView] === 'dashboard' && renderDashboard()}
             {views[currentView] === 'template-selection' && renderTemplateSelection()}
