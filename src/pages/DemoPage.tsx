@@ -47,6 +47,7 @@ import {
   Heart,
   Briefcase
 } from 'lucide-react';
+import DemoHeader from '../components/DemoHeader';
 
 export default function DemoPage() {
   const [currentView, setCurrentView] = useState(0);
@@ -242,6 +243,7 @@ export default function DemoPage() {
           setCustomerStepContent({});
           setIsTyping(false);
 
+          // Fill customer form quickly
           setTimeout(() => {
             if (!isCancelled && autoPlayRef.current) {
               setCustomerData({
@@ -250,61 +252,71 @@ export default function DemoPage() {
                 company: 'HealthTech Solutions'
               });
             }
-          }, 800);
+          }, 500);
 
+          // Hide form and start steps quickly
           setTimeout(() => {
             if (!isCancelled && autoPlayRef.current) {
               setShowCustomerForm(false);
             }
-          }, 2000);
+          }, 1200);
 
-          const processStep = async (stepIndex: number) => {
-            if (stepIndex >= demoSteps.length || !autoPlayRef.current) {
-              setTimeout(() => {
-                if (!isCancelled && autoPlayRef.current) advanceView();
-              }, 1000);
-              return;
-            }
-
-            const step = demoSteps[stepIndex];
-            setCurrentCustomerStep(stepIndex);
+          // Process all steps much faster
+          const processSteps = async () => {
+            await new Promise(resolve => setTimeout(resolve, 1500));
             
-            await new Promise(resolve => setTimeout(resolve, 600));
-            if (!autoPlayRef.current) return;
-
-            setIsTyping(true);
-            const content = step.content;
-            
-            for (let i = 0; i <= content.length; i++) {
+            for (let stepIndex = 0; stepIndex < demoSteps.length; stepIndex++) {
               if (!autoPlayRef.current) break;
-              setCustomerStepContent(prev => ({
-                ...prev,
-                [`step-${stepIndex}`]: content.slice(0, i)
-              }));
-              await new Promise(resolve => setTimeout(resolve, 20));
+              
+              const step = demoSteps[stepIndex];
+              setCurrentCustomerStep(stepIndex);
+              
+              // Quick pause before typing
+              await new Promise(resolve => setTimeout(resolve, 300));
+              if (!autoPlayRef.current) break;
+              
+              setIsTyping(true);
+              const content = step.content;
+              
+              // Much faster typing - show content in chunks
+              const chunks = Math.ceil(content.length / 20);
+              for (let i = 0; i <= chunks; i++) {
+                if (!autoPlayRef.current) break;
+                const chunkEnd = Math.min((i + 1) * 20, content.length);
+                setCustomerStepContent(prev => ({
+                  ...prev,
+                  [`step-${stepIndex}`]: content.slice(0, chunkEnd)
+                }));
+                await new Promise(resolve => setTimeout(resolve, 50));
+              }
+              
+              setIsTyping(false);
+              await new Promise(resolve => setTimeout(resolve, 200));
+              
+              if (!autoPlayRef.current) break;
+              setCompletedSteps(prev => [...prev, `step-${stepIndex}`]);
+              
+              // Quick pause before next step
+              await new Promise(resolve => setTimeout(resolve, 400));
             }
             
-            setIsTyping(false);
-            await new Promise(resolve => setTimeout(resolve, 300));
-            
-            if (!autoPlayRef.current) return;
-            setCompletedSteps(prev => [...prev, `step-${stepIndex}`]);
-            
-            await new Promise(resolve => setTimeout(resolve, 800));
-            processStep(stepIndex + 1);
+            // Advance to completion after all steps
+            setTimeout(() => {
+              if (autoPlayRef.current) advanceView();
+            }, 800);
           };
 
           setTimeout(() => {
             if (!isCancelled && autoPlayRef.current) {
-              processStep(0);
+              processSteps();
             }
-          }, 2400);
+          }, 1500);
           break;
 
         case 'completion':
           timeout = setTimeout(() => {
             if (!isCancelled && autoPlayRef.current) advanceView();
-          }, 6000);
+          }, 4000);
           break;
       }
     };
@@ -906,19 +918,9 @@ export default function DemoPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-      {/* Clean header without demo controls */}
-      <div className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-b border-gray-200 z-50">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center">
-            <div className="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center mr-3">
-              <Workflow className="w-6 h-6 text-white" />
-            </div>
-            <span className="text-xl font-bold text-gray-900 font-sans">OnboardFlo</span>
-          </div>
-        </div>
-      </div>
+      <DemoHeader />
       
-      <div className="pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+      <div className="pt-20 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="transition-all duration-500 ease-in-out">
           {views[currentView] === 'dashboard' && renderDashboard()}
           {views[currentView] === 'template-selection' && renderTemplateSelection()}
