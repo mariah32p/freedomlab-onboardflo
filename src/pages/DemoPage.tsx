@@ -171,10 +171,12 @@ export default function DemoPage() {
       const setupSequence = [
         { type: 'title', content: 'Website Design Onboarding' },
         { type: 'description', content: 'Complete onboarding checklist for new website design clients including requirements gathering and asset collection.' },
-        { type: 'step', content: { title: 'Project Requirements & Goals', description: 'Share your project vision, target audience, and key objectives', type: 'textarea' } },
-        { type: 'step', content: { title: 'Design Preferences & Branding', description: 'Upload your logo, brand guidelines, and design inspiration', type: 'file_upload' } },
-        { type: 'step', content: { title: 'Technical Requirements', description: 'Specify hosting preferences, integrations, and technical needs', type: 'textarea' } },
-        { type: 'step', content: { title: 'Timeline & Budget Confirmation', description: 'Review and confirm project timeline and payment schedule', type: 'checkbox' } },
+        { type: 'step', content: { title: 'Project Requirements & Goals', description: 'Share your project vision, target audience, and key objectives', step_type: 'textarea' } },
+        { type: 'step', content: { title: 'Design Preferences & Branding', description: 'Upload your logo, brand guidelines, and design inspiration', step_type: 'file_upload' } },
+        { type: 'step', content: { title: 'Technical Requirements', description: 'Specify hosting preferences, integrations, and technical needs', step_type: 'textarea' } },
+        { type: 'step', content: { title: 'Timeline & Budget Confirmation', description: 'Review and confirm project timeline and payment schedule', step_type: 'checkbox' } },
+        { type: 'step', content: { title: 'Content & Assets Collection', description: 'Provide website copy, images, and other content materials', step_type: 'file_upload' } },
+        { type: 'step', content: { title: 'Final Review & Approval', description: 'Review all requirements and approve project kickoff', step_type: 'checkbox' } },
       ];
       
       setSetupSteps([]);
@@ -187,7 +189,7 @@ export default function DemoPage() {
           } else {
             setSetupSteps(prev => [...prev, step.content]);
           }
-        }, index * 600);
+        }, index * 400); // Faster to fit more steps
       });
     } else if (currentStep === 3) {
       // Customer view animations - slower progression through all steps
@@ -421,9 +423,9 @@ export default function DemoPage() {
                         <div className="flex items-center mr-3 mt-1">
                           <span className="text-sm text-emerald-600 mr-2 font-sans font-medium">{index + 1}</span>
                           <span className="text-sm">
-                            {step.type === 'checkbox' ? '☑️' : 
-                             step.type === 'textarea' ? '📄' : 
-                             step.type === 'file_upload' ? '📎' : '📝'}
+                            {step.step_type === 'checkbox' ? '☑️' : 
+                             step.step_type === 'textarea' ? '📄' : 
+                             step.step_type === 'file_upload' ? '📎' : '📝'}
                           </span>
                         </div>
                         <div className="flex-1">
@@ -431,9 +433,9 @@ export default function DemoPage() {
                           <p className="text-sm text-gray-600 font-sans">{step.description}</p>
                           <div className="flex items-center mt-2">
                             <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium font-sans mr-2">
-                              {step.type === 'checkbox' ? 'Checkbox' :
-                               step.type === 'textarea' ? 'Long Text' :
-                               step.type === 'file_upload' ? 'File Upload' : 'Text Input'}
+                              {step.step_type === 'checkbox' ? 'Checkbox' :
+                               step.step_type === 'textarea' ? 'Long Text' :
+                               step.step_type === 'file_upload' ? 'File Upload' : 'Text Input'}
                             </span>
                             <span className="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium font-sans">
                               Required
@@ -449,7 +451,7 @@ export default function DemoPage() {
                       <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
                         <Plus className="w-6 h-6 text-gray-400" />
                       </div>
-                      <p className="text-gray-500 font-sans">Steps will appear here as they're added...</p>
+                      <p className="text-gray-500 font-sans">Watch as steps get added automatically...</p>
                     </div>
                   )}
                 </div>
