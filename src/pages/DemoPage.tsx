@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Users, 
-  CheckCircle, 
-  Clock, 
+import React, { useState, useEffect, useCallback } from 'react';
+import {
+  Users,
+  CheckCircle,
+  Clock,
   TrendingUp,
   Plus,
   Edit,
@@ -63,7 +63,7 @@ export default function DemoPage() {
   const [steps, setSteps] = useState<any[]>([]);
   const [buildingStep, setBuildingStep] = useState(0);
   
-  // Customer experience state - MUCH SLOWER
+  // Customer experience state
   const [customerData, setCustomerData] = useState({
     name: '',
     email: '',
@@ -214,116 +214,135 @@ export default function DemoPage() {
     }
   ];
 
-  // Auto-advance through views - MUCH SLOWER FOR CUSTOMER EXPERIENCE
+  const advanceView = useCallback(() => {
+    setCurrentView(prev => (prev + 1) % views.length);
+  }, [views.length]);
+
+  // Main effect to control the demo flow sequentially
   useEffect(() => {
     if (!autoPlay) return;
-    
-    const timer = setInterval(() => {
-      setCurrentView(prev => (prev + 1) % views.length);
-    }, 15000); // 15 seconds per view
 
-    return () => clearInterval(timer);
-  }, [autoPlay]);
+    const view = views[currentView];
+    let viewTimeout: NodeJS.Timeout;
 
-  // Reset state when view changes and simulate interactions
-  useEffect(() => {
-    if (views[currentView] === 'template-selection') {
-      // Reset template selection
-      setSelectedTemplate(null);
-      setSearchTerm('');
-      
-      // Simulate searching and selecting template
-      setTimeout(() => setSearchTerm('website'), 1500);
-      setTimeout(() => setSelectedTemplate('website-design'), 3500);
-    }
-    
-    if (views[currentView] === 'checklist-builder') {
-      // Reset checklist builder
-      setSteps([]);
-      setChecklistTitle('');
-      setChecklistDescription('');
-      setBuildingStep(0);
-      
-      // Simulate building the checklist
-      setTimeout(() => {
-        setChecklistTitle('Website Design Project Onboarding');
-        setChecklistDescription('Complete onboarding process for new website design clients');
-      }, 1500);
-      
-      // Add steps one by one
-      websiteDesignSteps.forEach((step, index) => {
+    switch (view) {
+      case 'dashboard':
+        // Spend 4 seconds on the dashboard
+        viewTimeout = setTimeout(advanceView, 4000);
+        break;
+
+      case 'template-selection':
+        setSelectedTemplate(null);
+        setSearchTerm('');
+        
+        setTimeout(() => setSearchTerm('website'), 1000);
+        setTimeout(() => setSelectedTemplate('website-design'), 2500);
+        viewTimeout = setTimeout(advanceView, 4500); // Total 4.5 seconds
+        break;
+
+      case 'checklist-builder':
+        setSteps([]);
+        setChecklistTitle('');
+        setChecklistDescription('');
+        setBuildingStep(0);
+        
         setTimeout(() => {
-          setBuildingStep(index + 1);
-          setSteps(prev => [...prev, { ...step, id: `step-${index}` }]);
-        }, 3000 + (index * 800));
-      });
-    }
-    
-    if (views[currentView] === 'customer-experience') {
-      // Reset customer state
-      setCustomerData({ name: '', email: '', company: '' });
-      setCompletedSteps([]);
-      setCurrentCustomerStep(0);
-      setShowCustomerForm(true);
-      setCustomerStepContent({});
-      setIsTypingStep(false);
-      setTypingStepId('');
-      
-      // Simulate customer filling out form
-      setTimeout(() => {
-        setCustomerData({
+          setChecklistTitle('Website Design Project Onboarding');
+          setChecklistDescription('Complete onboarding process for new website design clients');
+        }, 1000);
+        
+        websiteDesignSteps.forEach((step, index) => {
+          setTimeout(() => {
+            setBuildingStep(index + 1);
+            setSteps(prev => [...prev, { ...step, id: `step-${index}` }]);
+          }, 2000 + (index * 800));
+        });
+        
+        // Wait for all steps to be added, then advance
+        const builderDuration = 2000 + (websiteDesignSteps.length * 800) + 1500;
+        viewTimeout = setTimeout(advanceView, builderDuration); // ~9.9 seconds
+        break;
+
+      case 'customer-experience': {
+        setCustomerData({ name: '', email: '', company: '' });
+        setCompletedSteps([]);
+        setCurrentCustomerStep(0);
+        setShowCustomerForm(true);
+        setCustomerStepContent({});
+        setIsTypingStep(false);
+        setTypingStepId('');
+        
+        setTimeout(() => setCustomerData({
           name: 'Sarah Martinez',
           email: 'sarah@healthtech.com',
           company: 'HealthTech Solutions'
-        });
-      }, 2000);
-      
-      setTimeout(() => {
-        setShowCustomerForm(false);
-        setCurrentCustomerStep(0);
-      }, 4000);
-      
-      // THE MAIN EVENT - Customer going through ALL 8 steps with proper timing
-      websiteDesignSteps.forEach((step, index) => {
-        const baseDelay = 5000; // Start after form is hidden
-        const stepDuration = 6000; // 6 seconds per step - MUCH LONGER
+        }), 1000);
         
-        // Show step
         setTimeout(() => {
+          setShowCustomerForm(false);
+          setCurrentCustomerStep(0);
+        }, 3000);
+        
+        const processCustomerStep = (index: number) => {
+          if (index >= websiteDesignSteps.length) {
+            // All steps are done, advance to completion view
+            setTimeout(advanceView, 2000);
+            return;
+          }
+          
+          if (!autoPlay) return;
+
+          const step = websiteDesignSteps[index];
           setCurrentCustomerStep(index);
-        }, baseDelay + (index * stepDuration));
-        
-        // Start typing content
-        setTimeout(() => {
-          setIsTypingStep(true);
-          setTypingStepId(`step-${index}`);
           
-          // Simulate typing the content
-          const content = step.content;
-          let charIndex = 0;
-          
-          const typeInterval = setInterval(() => {
-            if (charIndex < content.length) {
-              setCustomerStepContent(prev => ({ 
-                ...prev, 
-                [`step-${index}`]: content.slice(0, charIndex + 1) 
-              }));
-              charIndex++;
-            } else {
-              clearInterval(typeInterval);
-              setIsTypingStep(false);
-              
-              // Complete the step after typing is done
-              setTimeout(() => {
-                setCompletedSteps(prev => [...prev, `step-${index}`]);
-              }, 500);
-            }
-          }, 30); // Typing speed
-          
-        }, baseDelay + (index * stepDuration) + 1000); // Start typing 1 second after step shows
-      });
+          setTimeout(() => {
+            setIsTypingStep(true);
+            setTypingStepId(`step-${index}`);
+            
+            const content = step.content;
+            let charIndex = 0;
+            
+            const typeInterval = setInterval(() => {
+              if (charIndex < content.length) {
+                setCustomerStepContent(prev => ({
+                  ...prev,
+                  [`step-${index}`]: content.slice(0, charIndex + 1)
+                }));
+                charIndex++;
+              } else {
+                clearInterval(typeInterval);
+                setIsTypingStep(false);
+                
+                setTimeout(() => {
+                  setCompletedSteps(prev => [...prev, `step-${index}`]);
+                  // Pause after completion, then move to the next step
+                  setTimeout(() => processCustomerStep(index + 1), 1500);
+                }, 500);
+              }
+            }, 40); // Slower, more realistic typing speed
+          }, 1000); // 1-second pause before typing starts
+        };
+
+        // Start the customer step-by-step process after the intro form hides
+        setTimeout(() => processCustomerStep(0), 3500);
+        break;
+      }
+
+      case 'completion':
+        // Stay on completion screen for 8 seconds before looping
+        viewTimeout = setTimeout(advanceView, 8000);
+        break;
+
+      default:
+        break;
     }
-  }, [currentView]);
+
+    return () => {
+      clearTimeout(viewTimeout);
+      // It's good practice to clear any long-running intervals if the component unmounts or effect re-runs
+    };
+  }, [currentView, autoPlay, advanceView]);
+
 
   const renderDashboard = () => (
     <div className="space-y-8 pt-8">
