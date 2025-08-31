@@ -63,7 +63,7 @@ export default function DemoPage() {
   const [steps, setSteps] = useState<any[]>([]);
   const [buildingStep, setBuildingStep] = useState(0);
   
-  // Customer experience state
+  // Customer experience state - MUCH SLOWER
   const [customerData, setCustomerData] = useState({
     name: '',
     email: '',
@@ -73,6 +73,8 @@ export default function DemoPage() {
   const [currentCustomerStep, setCurrentCustomerStep] = useState(0);
   const [showCustomerForm, setShowCustomerForm] = useState(true);
   const [customerStepContent, setCustomerStepContent] = useState<Record<string, string>>({});
+  const [isTypingStep, setIsTypingStep] = useState(false);
+  const [typingStepId, setTypingStepId] = useState<string>('');
 
   const views = [
     'dashboard',
@@ -212,13 +214,13 @@ export default function DemoPage() {
     }
   ];
 
-  // Auto-advance through views
+  // Auto-advance through views - MUCH SLOWER FOR CUSTOMER EXPERIENCE
   useEffect(() => {
     if (!autoPlay) return;
     
     const timer = setInterval(() => {
       setCurrentView(prev => (prev + 1) % views.length);
-    }, 12000); // 12 seconds per view
+    }, 15000); // 15 seconds per view
 
     return () => clearInterval(timer);
   }, [autoPlay]);
@@ -231,8 +233,8 @@ export default function DemoPage() {
       setSearchTerm('');
       
       // Simulate searching and selecting template
-      setTimeout(() => setSearchTerm('website'), 1000);
-      setTimeout(() => setSelectedTemplate('website-design'), 2500);
+      setTimeout(() => setSearchTerm('website'), 1500);
+      setTimeout(() => setSelectedTemplate('website-design'), 3500);
     }
     
     if (views[currentView] === 'checklist-builder') {
@@ -246,14 +248,14 @@ export default function DemoPage() {
       setTimeout(() => {
         setChecklistTitle('Website Design Project Onboarding');
         setChecklistDescription('Complete onboarding process for new website design clients');
-      }, 1000);
+      }, 1500);
       
       // Add steps one by one
       websiteDesignSteps.forEach((step, index) => {
         setTimeout(() => {
           setBuildingStep(index + 1);
           setSteps(prev => [...prev, { ...step, id: `step-${index}` }]);
-        }, 2000 + (index * 600));
+        }, 3000 + (index * 800));
       });
     }
     
@@ -264,8 +266,10 @@ export default function DemoPage() {
       setCurrentCustomerStep(0);
       setShowCustomerForm(true);
       setCustomerStepContent({});
+      setIsTypingStep(false);
+      setTypingStepId('');
       
-      // Simulate customer filling out form - SLOWER
+      // Simulate customer filling out form
       setTimeout(() => {
         setCustomerData({
           name: 'Sarah Martinez',
@@ -277,30 +281,52 @@ export default function DemoPage() {
       setTimeout(() => {
         setShowCustomerForm(false);
         setCurrentCustomerStep(0);
-      }, 3500);
+      }, 4000);
       
-      // Simulate completing steps with realistic content - MUCH SLOWER
+      // THE MAIN EVENT - Customer going through ALL 8 steps with proper timing
       websiteDesignSteps.forEach((step, index) => {
+        const baseDelay = 5000; // Start after form is hidden
+        const stepDuration = 6000; // 6 seconds per step - MUCH LONGER
+        
         // Show step
         setTimeout(() => {
           setCurrentCustomerStep(index);
-        }, 4000 + (index * 3000)); // 3 seconds per step
+        }, baseDelay + (index * stepDuration));
         
-        // Show content being filled
+        // Start typing content
         setTimeout(() => {
-          setCustomerStepContent(prev => ({ ...prev, [`step-${index}`]: step.content }));
-        }, 4000 + (index * 3000) + 1500); // Content appears after 1.5s
-        
-        // Complete step
-        setTimeout(() => {
-          setCompletedSteps(prev => [...prev, `step-${index}`]);
-        }, 4000 + (index * 3000) + 2500); // Complete after 2.5s
+          setIsTypingStep(true);
+          setTypingStepId(`step-${index}`);
+          
+          // Simulate typing the content
+          const content = step.content;
+          let charIndex = 0;
+          
+          const typeInterval = setInterval(() => {
+            if (charIndex < content.length) {
+              setCustomerStepContent(prev => ({ 
+                ...prev, 
+                [`step-${index}`]: content.slice(0, charIndex + 1) 
+              }));
+              charIndex++;
+            } else {
+              clearInterval(typeInterval);
+              setIsTypingStep(false);
+              
+              // Complete the step after typing is done
+              setTimeout(() => {
+                setCompletedSteps(prev => [...prev, `step-${index}`]);
+              }, 500);
+            }
+          }, 30); // Typing speed
+          
+        }, baseDelay + (index * stepDuration) + 1000); // Start typing 1 second after step shows
       });
     }
   }, [currentView]);
 
   const renderDashboard = () => (
-    <div className="space-y-8 pt-32">
+    <div className="space-y-8 pt-8">
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300">
@@ -456,7 +482,7 @@ export default function DemoPage() {
   );
 
   const renderTemplateSelection = () => (
-    <div className="max-w-6xl mx-auto pt-32">
+    <div className="max-w-6xl mx-auto pt-8">
       <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden">
         {/* Header */}
         <div className="bg-gradient-to-r from-emerald-500 to-blue-600 p-8 text-white">
@@ -576,7 +602,7 @@ export default function DemoPage() {
   );
 
   const renderChecklistBuilder = () => (
-    <div className="max-w-7xl mx-auto pt-32">
+    <div className="max-w-7xl mx-auto pt-8">
       <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden">
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6 text-white">
@@ -713,7 +739,7 @@ export default function DemoPage() {
   );
 
   const renderCustomerExperience = () => (
-    <div className="max-w-4xl mx-auto pt-32">
+    <div className="max-w-4xl mx-auto pt-8">
       {showCustomerForm && (
         <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-8 mb-8">
           <div className="text-center mb-6">
@@ -796,16 +822,16 @@ export default function DemoPage() {
           </div>
 
           <div className="p-8">
-            {/* Current Step */}
+            {/* Current Step - THE MAIN FOCUS */}
             {currentCustomerStep < websiteDesignSteps.length && (
-              <div className="bg-blue-50 rounded-xl p-6 mb-6">
-                <div className="flex items-center mb-4">
-                  <span className="text-2xl mr-4">
+              <div className="bg-blue-50 rounded-xl p-8 mb-8 border-2 border-blue-200">
+                <div className="flex items-center mb-6">
+                  <span className="text-3xl mr-4">
                     {websiteDesignSteps[currentCustomerStep].type === 'textarea' ? '📝' : 
                      websiteDesignSteps[currentCustomerStep].type === 'file_upload' ? '📎' : '☑️'}
                   </span>
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900 font-sans">
+                    <h3 className="text-2xl font-bold text-gray-900 font-sans">
                       Step {currentCustomerStep + 1}: {websiteDesignSteps[currentCustomerStep].title}
                     </h3>
                     {websiteDesignSteps[currentCustomerStep].required && (
@@ -815,57 +841,77 @@ export default function DemoPage() {
                     )}
                   </div>
                 </div>
-                <p className="text-gray-700 mb-4 font-sans leading-relaxed">{websiteDesignSteps[currentCustomerStep].description}</p>
+                <p className="text-gray-700 mb-6 font-sans leading-relaxed text-lg">{websiteDesignSteps[currentCustomerStep].description}</p>
                 
                 {websiteDesignSteps[currentCustomerStep].type === 'textarea' && (
-                  <textarea
-                    value={customerStepContent[`step-${currentCustomerStep}`] || ''}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-sans"
-                    placeholder={websiteDesignSteps[currentCustomerStep].placeholder}
-                    rows={6}
-                    readOnly
-                  />
+                  <div className="bg-white rounded-lg border-2 border-gray-200 p-4">
+                    <textarea
+                      value={customerStepContent[`step-${currentCustomerStep}`] || ''}
+                      className="w-full px-4 py-3 border-0 focus:outline-none focus:ring-0 font-sans text-gray-800 resize-none"
+                      placeholder={websiteDesignSteps[currentCustomerStep].placeholder}
+                      rows={8}
+                      readOnly
+                    />
+                    {isTypingStep && typingStepId === `step-${currentCustomerStep}` && (
+                      <div className="flex items-center mt-2 text-blue-600">
+                        <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-600 mr-2"></div>
+                        <span className="text-xs font-sans">Typing...</span>
+                      </div>
+                    )}
+                  </div>
                 )}
                 
                 {websiteDesignSteps[currentCustomerStep].type === 'file_upload' && (
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                    <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                    <div className="text-gray-600 mb-2 font-sans">
+                  <div className="bg-white border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                    <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <div className="text-gray-600 mb-4 font-sans text-lg">
                       {customerStepContent[`step-${currentCustomerStep}`] ? (
-                        <span className="text-emerald-600 font-medium">{customerStepContent[`step-${currentCustomerStep}`]}</span>
+                        <div className="space-y-2">
+                          <span className="text-emerald-600 font-medium">Files uploaded successfully!</span>
+                          <div className="text-sm text-gray-700 bg-emerald-50 rounded-lg p-3 border border-emerald-200">
+                            {customerStepContent[`step-${currentCustomerStep}`]}
+                          </div>
+                        </div>
                       ) : (
                         'Drop files here or click to upload'
                       )}
                     </div>
-                    <div className="text-xs text-gray-500 font-sans">
+                    <div className="text-sm text-gray-500 font-sans">
                       {websiteDesignSteps[currentCustomerStep].placeholder}
                     </div>
                   </div>
                 )}
                 
                 {websiteDesignSteps[currentCustomerStep].type === 'checkbox' && (
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <label className="flex items-center cursor-pointer">
-                      <div className={`w-6 h-6 rounded border-2 flex items-center justify-center mr-3 transition-colors ${
+                  <div className="bg-white rounded-lg p-6 border-2 border-gray-200">
+                    <label className="flex items-start cursor-pointer">
+                      <div className={`w-8 h-8 rounded border-2 flex items-center justify-center mr-4 mt-1 transition-colors ${
                         completedSteps.includes(`step-${currentCustomerStep}`) 
                           ? 'bg-blue-500 border-blue-500 text-white' 
                           : 'border-gray-300'
                       }`}>
                         {completedSteps.includes(`step-${currentCustomerStep}`) && (
-                          <Check className="w-4 h-4" />
+                          <Check className="w-5 h-5" />
                         )}
                       </div>
-                      <span className="text-lg font-medium text-gray-900 font-sans">
-                        I confirm and agree to proceed
-                      </span>
+                      <div className="flex-1">
+                        <span className="text-lg font-medium text-gray-900 font-sans block mb-2">
+                          I confirm and agree to proceed
+                        </span>
+                        {customerStepContent[`step-${currentCustomerStep}`] && (
+                          <div className="text-sm text-gray-700 bg-gray-50 rounded-lg p-3 border border-gray-200">
+                            {customerStepContent[`step-${currentCustomerStep}`]}
+                          </div>
+                        )}
+                      </div>
                     </label>
                   </div>
                 )}
                 
                 {completedSteps.includes(`step-${currentCustomerStep}`) && (
-                  <div className="mt-4 flex items-center text-emerald-600 font-medium text-sm font-sans">
-                    <CheckCircle className="w-4 h-4 mr-2" />
-                    Step completed
+                  <div className="mt-6 flex items-center text-emerald-600 font-medium font-sans">
+                    <CheckCircle className="w-5 h-5 mr-2" />
+                    Step completed successfully
                   </div>
                 )}
               </div>
@@ -873,8 +919,8 @@ export default function DemoPage() {
 
             {/* Completed Steps Summary */}
             {completedSteps.length > 0 && (
-              <div className="bg-emerald-50 rounded-xl p-6">
-                <h4 className="font-semibold text-emerald-900 mb-4 font-sans">Completed Steps</h4>
+              <div className="bg-emerald-50 rounded-xl p-6 border border-emerald-200">
+                <h4 className="font-semibold text-emerald-900 mb-4 font-sans">Completed Steps ({completedSteps.length}/8)</h4>
                 <div className="space-y-3">
                   {completedSteps.map((stepId, index) => (
                     <div key={stepId} className="flex items-center text-sm text-emerald-700">
@@ -885,6 +931,15 @@ export default function DemoPage() {
                     </div>
                   ))}
                 </div>
+                
+                {completedSteps.length === 8 && (
+                  <div className="mt-6 p-4 bg-emerald-100 rounded-lg border border-emerald-300">
+                    <div className="flex items-center text-emerald-800 font-medium font-sans">
+                      <CheckCircle className="w-5 h-5 mr-2" />
+                      All steps completed! Ready to submit.
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -894,7 +949,7 @@ export default function DemoPage() {
   );
 
   const renderCompletion = () => (
-    <div className="max-w-3xl mx-auto text-center pt-32">
+    <div className="max-w-3xl mx-auto text-center pt-8">
       <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden border border-white/20">
         <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 p-8 text-white relative overflow-hidden">
           {/* Confetti Animation */}
