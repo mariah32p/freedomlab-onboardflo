@@ -863,8 +863,8 @@ export default function DemoPage() {
               <div className="text-sm text-gray-600 font-sans">Days to Complete</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-purple-600 font-sans">100%</div>
-              <div className="text-sm text-gray-600 font-sans">Success Rate</div>
+              <div className="text-3xl font-bold text-purple-600 font-sans">5/5</div>
+              <div className="text-sm text-gray-600 font-sans">Steps Completed</div>
             </div>
           </div>
           <div className="bg-gradient-to-r from-emerald-50 to-blue-50 rounded-xl p-6 mb-8">
