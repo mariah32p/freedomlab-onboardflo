@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Play, CheckCircle, TrendingUp, Users, Clock, Target, AlertCircle, Calendar } from 'lucide-react';
+import { ArrowRight, Play, CheckCircle, TrendingUp, Users, Clock, Target, AlertCircle, Calendar, Eye } from 'lucide-react';
 
 export default function Hero() {
   return (
@@ -26,17 +26,10 @@ export default function Hero() {
             {/* CTA buttons */}
             <div className="flex flex-col sm:flex-row gap-4 mb-8">
               <Link 
-                to="/get-started" 
+                to="/signup" 
                 className="group bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-sans"
               >
                 Start Free Trial
-                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
-              <Link 
-                to="/pricing" 
-                className="group bg-white hover:bg-gray-50 text-gray-700 px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 flex items-center justify-center border border-gray-300 hover:border-gray-400 shadow-sm hover:shadow-md font-sans"
-              >
-                See Pricing
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>

@@ -10,6 +10,8 @@ interface AuthContextType {
   signUp: (email: string, password: string, userData?: any) => Promise<{ error: AuthError | null }>;
   signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>;
   signOut: () => Promise<{ error: AuthError | null }>;
+  resetPassword: (email: string) => Promise<{ error: AuthError | null }>;
+  updatePassword: (password: string) => Promise<{ error: AuthError | null }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -34,34 +36,73 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    // Real mode - use Supabase
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
+
+      if (event === 'PASSWORD_RECOVERY') {
+        window.location.replace('/reset-password');
+      }
     });
+
+    const initSession = async () => {
+      if (window.location.hash.includes('type=recovery')) {
+        const hash = window.location.hash.substring(1);
+        const params = new URLSearchParams(hash);
+        const access_token = params.get('access_token');
+        const refresh_token = params.get('refresh_token');
+
+        if (access_token && refresh_token) {
+          try {
+            const { error } = await supabase.auth.setSession({
+              access_token,
+              refresh_token,
+            });
+            if (error) {
+              console.error('Error recovering session from URL:', error);
+              setUser(null);
+              setSession(null);
+              setLoading(false);
+            } else {
+              window.location.replace('/reset-password');
+            }
+          } catch (error) {
+            console.error('Failed to recover session:', error);
+            console.error('This may indicate a Supabase connection issue. Please check your environment variables.');
+            setUser(null);
+            setSession(null);
+            setLoading(false);
+          }
+        } else {
+          setUser(null);
+          setSession(null);
+          setLoading(false);
+        }
+      } else {
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+          setSession(session);
+          setUser(session?.user ?? null);
+          setLoading(false);
+        } catch (error) {
+          console.error('Failed to get session:', error);
+          console.error('This may indicate a Supabase connection issue. Please check your environment variables.');
+          setUser(null);
+          setSession(null);
+          setLoading(false);
+        }
+      }
+    };
+
+    initSession();
 
     return () => subscription.unsubscribe();
   }, []);
 
   const signUp = async (email: string, password: string, userData?: any) => {
-    if (!APP_CONFIG.ENABLE_REAL_AUTH) {
-      // Mock mode - simulate successful signup
-      const mockUser = { ...APP_CONFIG.DEMO_USER, email } as User;
-      setUser(mockUser);
-      setSession({ user: mockUser } as Session);
-      return { error: null };
-    }
-
-    // Real mode - use Supabase
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -73,15 +114,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signIn = async (email: string, password: string) => {
-    if (!APP_CONFIG.ENABLE_REAL_AUTH) {
-      // Mock mode - simulate successful signin
-      const mockUser = { ...APP_CONFIG.DEMO_USER, email } as User;
-      setUser(mockUser);
-      setSession({ user: mockUser } as Session);
-      return { error: null };
-    }
-
-    // Real mode - use Supabase
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -90,18 +122,42 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signOut = async () => {
-    if (!APP_CONFIG.ENABLE_REAL_AUTH) {
-      // Mock mode - simulate signout
+    // Check if we have a valid session locally first
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (!session) {
+      // No session exists, just clear local state
       setUser(null);
       setSession(null);
       return { error: null };
     }
-
-    // Real mode - use Supabase
+    
     const { error } = await supabase.auth.signOut();
+    
+    // Handle case where session doesn't exist on server
+    if (error && error.message === 'Session from session_id claim in JWT does not exist') {
+      // Clear local state since session is already invalid
+      setUser(null);
+      setSession(null);
+      return { error: null };
+    }
+    
     return { error };
   };
 
+  const resetPassword = async (email: string) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin,
+    });
+    return { error };
+  };
+
+  const updatePassword = async (password: string) => {
+    const { error } = await supabase.auth.updateUser({
+      password: password,
+    });
+    return { error };
+  };
   const value = {
     user,
     session,
@@ -109,6 +165,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signUp,
     signIn,
     signOut,
+    resetPassword,
+    updatePassword,
   };
 
   return (
