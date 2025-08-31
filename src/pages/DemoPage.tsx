@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   CheckCircle,
   Users,
@@ -42,25 +42,26 @@ const demoSteps: DemoStep[] = [
       id: 'dashboard',
       title: 'Dashboard Overview',
       description: 'Real-time customer onboarding analytics and activity feed',
-      duration: 2500, // FASTER
+      duration: 2500,
     },
     {
       id: 'checklists',
       title: 'Checklist Management',
       description: 'Create and manage onboarding flows with templates',
-      duration: 2500, // FASTER
+      // FIX: Increased duration to allow the entire animation to play.
+      duration: 7000,
     },
     {
       id: 'submissions',
       title: 'Customer Submissions',
       description: 'Track customer progress and manage submissions',
-      duration: 2500, // FASTER
+      duration: 2500,
     },
     {
       id: 'customer-view',
       title: 'Customer Experience',
       description: 'Beautiful, mobile-friendly checklist interface',
-      duration: 11000, // REMAINS SLOW
+      duration: 11000,
     },
     {
       id: 'branding',
@@ -98,7 +99,8 @@ export default function DemoPage() {
   });
   const [activeChecklistTab, setActiveChecklistTab] = useState<'settings' | 'steps'>('settings');
 
-  // Customer checklist state
+  // FIX: Added a ref to control the scrolling of the checklist builder's step list.
+  const checklistStepsContainerRef = useRef<HTMLDivElement | null>(null);
 
   // Auto-advance steps
   useEffect(() => {
@@ -147,6 +149,9 @@ export default function DemoPage() {
 
   // Step-specific animations
   useEffect(() => {
+    // FIX: Automatically scroll to the top when the step changes for a better UX.
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
     // Reset animations when step changes
     setAnimatedStats({ users: 0, completed: 0, rate: 0, days: 0 });
     setAnimatedProgress({});
@@ -276,6 +281,19 @@ export default function DemoPage() {
       });
     }
   }, [currentStep]);
+
+  // FIX: Add a new useEffect to handle auto-scrolling in the checklist builder.
+  // This effect runs whenever the list of checklistSteps changes.
+  useEffect(() => {
+    if (checklistStepsContainerRef.current) {
+      const container = checklistStepsContainerRef.current;
+      // Scroll to the bottom of the container to show the newly added step.
+      container.scrollTo({
+        top: container.scrollHeight,
+        behavior: 'smooth',
+      });
+    }
+  }, [checklistSteps]);
 
   const handleStepClick = (index: number) => {
     setCurrentStep(index);
@@ -438,8 +456,8 @@ export default function DemoPage() {
 
         {/* Content */}
         <div className="p-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Left Column - Form */}
+          <div className="grid grid-cols-1">
+            {/* Form */}
             <div className="space-y-6">
               {activeChecklistTab === 'settings' && (
                 <div className="space-y-4">
@@ -520,7 +538,11 @@ export default function DemoPage() {
                       </p>
                     </div>
                   ) : (
-                    <div className="space-y-3">
+                    // FIX: Added ref and styling to make this container scrollable.
+                    <div
+                      ref={checklistStepsContainerRef}
+                      className="space-y-3 max-h-[400px] overflow-y-auto p-1 pr-2 rounded-lg border"
+                    >
                       {checklistSteps.map((step, index) => (
                         <div key={step.id} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-sm transition-shadow animate-slide-in">
                           <div className="flex items-start">
@@ -533,21 +555,21 @@ export default function DemoPage() {
                                   <div className="flex items-center mb-1">
                                     <span className="text-sm mr-2">
                                       {step.step_type === 'text' ? '📝' :
-                                       step.step_type === 'textarea' ? '📄' :
-                                       step.step_type === 'file_upload' ? '📎' :
-                                       step.step_type === 'url' ? '🔗' :
-                                       step.step_type === 'email' ? '📧' : '☑️'}
+                                        step.step_type === 'textarea' ? '📄' :
+                                        step.step_type === 'file_upload' ? '📎' :
+                                        step.step_type === 'url' ? '🔗' :
+                                        step.step_type === 'email' ? '📧' : '☑️'}
                                     </span>
                                     <h4 className="font-medium text-gray-900 font-sans">{step.title}</h4>
                                   </div>
                                   <div className="flex items-center mt-2">
                                     <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium font-sans mr-2">
                                       {step.step_type === 'checkbox' ? 'Checkbox' :
-                                       step.step_type === 'text' ? 'Text Input' :
-                                       step.step_type === 'textarea' ? 'Long Text' :
-                                       step.step_type === 'file_upload' ? 'File Upload' :
-                                       step.step_type === 'url' ? 'Website URL' :
-                                       step.step_type === 'email' ? 'Email' : 'Checkbox'}
+                                        step.step_type === 'text' ? 'Text Input' :
+                                        step.step_type === 'textarea' ? 'Long Text' :
+                                        step.step_type === 'file_upload' ? 'File Upload' :
+                                        step.step_type === 'url' ? 'Website URL' :
+                                        step.step_type === 'email' ? 'Email' : 'Checkbox'}
                                     </span>
                                     {step.is_required && (
                                       <span className="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium font-sans">
@@ -588,62 +610,13 @@ export default function DemoPage() {
                 </div>
               )}
             </div>
-
-            {/* Right Column - Steps Preview */}
-            <div className="space-y-6">
-              <div>
-                <h4 className="text-lg font-semibold text-gray-900 mb-4 font-sans">Steps Being Added</h4>
-                <div className="space-y-3 max-h-96 overflow-y-auto">
-                  {setupSteps.map((step, index) => (
-                    <div
-                      key={index}
-                      className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 animate-slide-in"
-                    >
-                      <div className="flex items-start">
-                        <div className="flex items-center mr-3 mt-1">
-                          <span className="text-sm text-emerald-600 mr-2 font-sans font-medium">{index + 1}</span>
-                          <span className="text-sm">
-                            {step.step_type === 'checkbox' ? '☑️' : 
-                             step.step_type === 'textarea' ? '📄' : 
-                             step.step_type === 'file_upload' ? '📎' : '📝'}
-                          </span>
-                        </div>
-                        <div className="flex-1">
-                          <h5 className="font-medium text-gray-900 font-sans mb-1">{step.title}</h5>
-                          <p className="text-sm text-gray-600 font-sans">{step.description}</p>
-                          <div className="flex items-center mt-2">
-                            <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium font-sans mr-2">
-                              {step.step_type === 'checkbox' ? 'Checkbox' :
-                               step.step_type === 'textarea' ? 'Long Text' :
-                               step.step_type === 'file_upload' ? 'File Upload' : 'Text Input'}
-                            </span>
-                            <span className="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium font-sans">
-                              Required
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                  
-                  {setupSteps.length === 0 && (
-                    <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
-                      <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <Plus className="w-6 h-6 text-gray-400" />
-                      </div>
-                      <p className="text-gray-500 font-sans">Watch as steps get added automatically...</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
         {/* Footer */}
         <div className="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50">
           <div className="text-sm text-gray-600 font-sans">
-            {setupSteps.length > 0 && (
+            {checklistSteps.length > 0 && activeChecklistTab === 'steps' && (
               <span className="text-emerald-600 font-medium">● Building checklist...</span>
             )}
           </div>
@@ -657,112 +630,6 @@ export default function DemoPage() {
             </button>
           </div>
         </div>
-      </div>
-    </div>
-  );
-
-  const renderChecklistsOld = () => (
-    <div className="max-w-7xl mx-auto space-y-8">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 font-sans">Your Checklists</h2>
-          <p className="text-gray-600 font-sans">Create and manage onboarding flows for your customers</p>
-        </div>
-        <div className="flex items-center space-x-3">
-          <button className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center shadow-sm hover:shadow-md font-sans">
-            <Sparkles className="w-5 h-5 mr-2" />
-            Use Template
-          </button>
-          <button className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center shadow-sm hover:shadow-md font-sans">
-            <Plus className="w-5 h-5 mr-2" />
-            Create Custom
-          </button>
-        </div>
-      </div>
-
-      {/* Checklists Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {[
-          {
-            title: 'Website Design Onboarding',
-            description: 'Initial client onboarding for new website design projects including requirements gathering and asset collection.',
-            steps: 8,
-            sessions: 12,
-            completion: 92,
-            color: '#10b981'
-          },
-          {
-            title: 'Website Design Feedback & Approval',
-            description: 'Structured feedback collection and approval process for design iterations and revisions.',
-            steps: 5,
-            sessions: 18,
-            completion: 88,
-            color: '#3b82f6'
-          },
-          {
-            title: 'Website Design Offboarding',
-            description: 'Project completion checklist including final deliverables, training, and handover documentation.',
-            steps: 6,
-            sessions: 9,
-            completion: 94,
-            color: '#8b5cf6'
-          }
-        ].map((checklist, index) => (
-          <div key={index} className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all duration-200 hover:-translate-y-0.5">
-            <div
-              className="h-2 rounded-t-xl"
-              style={{ backgroundColor: checklist.color }}
-            ></div>
-
-            <div className="p-6">
-              <div className="mb-6">
-                <h3 className="text-xl font-semibold text-gray-900 font-sans mb-3">
-                  {checklist.title}
-                </h3>
-                <p className="text-gray-600 font-sans leading-relaxed">
-                  {checklist.description}
-                </p>
-              </div>
-
-              <div className="grid grid-cols-3 gap-4 mb-6">
-                <div className="text-center p-3 bg-gray-50 rounded-lg">
-                  <div className="text-lg font-bold text-gray-900 font-sans">{checklist.steps}</div>
-                  <div className="text-xs text-gray-600 font-sans">Steps</div>
-                </div>
-                <div className="text-center p-3 bg-gray-50 rounded-lg">
-                  <div className="text-lg font-bold text-gray-900 font-sans">{checklist.sessions}</div>
-                  <div className="text-xs text-gray-600 font-sans">Sessions</div>
-                </div>
-                <div className="text-center p-3 bg-gray-50 rounded-lg">
-                  <div className="text-lg font-bold text-gray-900 font-sans">{checklist.completion}%</div>
-                  <div className="text-xs text-gray-600 font-sans">Completed</div>
-                </div>
-              </div>
-
-              <button className="w-full bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-3 rounded-lg font-semibold transition-colors mb-4 font-sans">
-                Create Customer Link
-              </button>
-
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-1">
-                  <button className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-                    <ExternalLink className="w-4 h-4" />
-                  </button>
-                  <button className="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors">
-                    <Edit className="w-4 h-4" />
-                  </button>
-                  <button className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-                <div className="text-xs text-gray-500 font-sans">
-                  Jan 15, 2025
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
       </div>
     </div>
   );
