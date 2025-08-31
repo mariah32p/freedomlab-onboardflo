@@ -167,29 +167,30 @@ export default function DemoPage() {
         }, 500);
       }, 1500); // Adjusted to fit new shorter slide duration
     } else if (currentStep === 2) {
-      // Checklist setup animation
-      const setupSequence = [
-        { type: 'title', content: 'Website Design Onboarding' },
-        { type: 'description', content: 'Complete onboarding checklist for new website design clients including requirements gathering and asset collection.' },
-        { type: 'step', content: { title: 'Project Requirements & Goals', description: 'Share your project vision, target audience, and key objectives', step_type: 'textarea' } },
-        { type: 'step', content: { title: 'Design Preferences & Branding', description: 'Upload your logo, brand guidelines, and design inspiration', step_type: 'file_upload' } },
-        { type: 'step', content: { title: 'Technical Requirements', description: 'Specify hosting preferences, integrations, and technical needs', step_type: 'textarea' } },
-        { type: 'step', content: { title: 'Timeline & Budget Confirmation', description: 'Review and confirm project timeline and payment schedule', step_type: 'checkbox' } },
-        { type: 'step', content: { title: 'Content & Assets Collection', description: 'Provide website copy, images, and other content materials', step_type: 'file_upload' } },
-        { type: 'step', content: { title: 'Final Review & Approval', description: 'Review all requirements and approve project kickoff', step_type: 'checkbox' } },
-      ];
-      
+      // Checklist setup animation - first settings, then steps
       setSetupSteps([]);
       setChecklistSetupStep(0);
       
-      setupSequence.forEach((step, index) => {
+      // Settings autofill sequence
+      setTimeout(() => setChecklistSetupStep(1), 300); // Title
+      setTimeout(() => setChecklistSetupStep(2), 800); // Description
+      setTimeout(() => setChecklistSetupStep(3), 1200); // Visibility
+      
+      // Then add steps that match the customer view
+      const steps = [
+        { title: 'Join Project Slack', description: 'Accept invitation to our design team workspace', step_type: 'checkbox' },
+        { title: 'Upload Logo & Brand Assets', description: 'Share your current logo, brand guidelines, and any existing materials', step_type: 'file_upload' },
+        { title: 'Brand Requirements & Vision', description: 'Tell us about your brand personality, target audience, and design preferences', step_type: 'textarea' },
+        { title: 'Primary Contact Information', description: 'Who should we contact for design feedback and approvals?', step_type: 'email' },
+        { title: 'Design Inspiration Links', description: 'Share websites or designs you love for style reference', step_type: 'url' },
+        { title: 'Project Timeline', description: 'When do you need the website completed?', step_type: 'text' },
+        { title: 'Schedule Kickoff Meeting', description: 'Book a 60-minute strategy session to discuss your project in detail', step_type: 'checkbox' }
+      ];
+      
+      steps.forEach((step, index) => {
         setTimeout(() => {
-          if (step.type === 'title' || step.type === 'description') {
-            setChecklistSetupStep(index + 1);
-          } else {
-            setSetupSteps(prev => [...prev, step.content]);
-          }
-        }, index * 400); // Faster to fit more steps
+          setSetupSteps(prev => [...prev, step]);
+        }, 1600 + (index * 300)); // Start after settings, then 300ms between steps
       });
     } else if (currentStep === 3) {
       // Customer view animations - slower progression through all steps
@@ -360,16 +361,13 @@ export default function DemoPage() {
                 </label>
                 <input
                   type="text"
-                  value={checklistSetupStep >= 1 ? "Website Design Onboarding" : ""}
+                  value={checklistSetupStep >= 1 ? "Website Design Project" : ""}
                   className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans transition-all duration-300 ${
                     checklistSetupStep >= 1 ? 'bg-white' : 'bg-gray-50'
                   }`}
                   placeholder="e.g., SaaS Onboarding Checklist"
                   readOnly
                 />
-                {checklistSetupStep >= 1 && (
-                  <div className="absolute right-2 top-2 w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-                )}
               </div>
 
               <div>
@@ -377,7 +375,7 @@ export default function DemoPage() {
                   Description
                 </label>
                 <textarea
-                  value={checklistSetupStep >= 2 ? "Complete onboarding checklist for new website design clients including requirements gathering and asset collection." : ""}
+                  value={checklistSetupStep >= 2 ? "Complete these steps to start your website design project" : ""}
                   className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans transition-all duration-300 ${
                     checklistSetupStep >= 2 ? 'bg-white' : 'bg-gray-50'
                   }`}
@@ -391,17 +389,19 @@ export default function DemoPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-3 font-sans">
                   Visibility
                 </label>
-                <div className="space-y-3">
+                <div className={`space-y-3 transition-all duration-300 ${
+                  checklistSetupStep >= 3 ? 'opacity-100' : 'opacity-50'
+                }`}>
                   <label className="flex items-center">
                     <input
                       type="radio"
                       name="visibility"
-                      checked={true}
+                      checked={checklistSetupStep >= 3}
                       className="mr-3 text-emerald-600 focus:ring-emerald-500"
                       readOnly
                     />
                     <div className="flex items-center">
-                      <Eye className="w-4 h-4 text-emerald-500 mr-2" />
+                      <Eye className={`w-4 h-4 mr-2 ${checklistSetupStep >= 3 ? 'text-emerald-500' : 'text-gray-400'}`} />
                       <span className="font-sans">Public - Anyone with the link can access</span>
                     </div>
                   </label>
