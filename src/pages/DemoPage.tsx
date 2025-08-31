@@ -51,7 +51,7 @@ import DemoHeader from '../components/DemoHeader';
 
 export default function DemoPage() {
   const [currentView, setCurrentView] = useState(0);
-  const [autoPlay, setAutoPlay] = useState(true); // Still managing autoplay state internally for animation logic
+  const [autoPlay, setAutoPlay] = useState(true);
   
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -945,35 +945,4 @@ export default function DemoPage() {
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <button className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white py-4 rounded-xl font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl font-sans">
-              View Project Portal
-            </button>
-            <button className="bg-white border-2 border-gray-200 text-gray-700 py-4 rounded-xl font-semibold text-lg transition-all duration-200 hover:border-gray-300 hover:shadow-md font-sans">
-              Schedule Strategy Call
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      <DemoHeader />
-      
-      {/* Removed: Demo Controls */}
-      
-      <div className="pb-8"> {/* Reduced padding-bottom */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16"> {/* Reduced padding-top */}
-          <div className="transition-all duration-500 ease-in-out">
-            {views[currentView] === 'dashboard' && renderDashboard()}
-            {views[currentView] === 'template-selection' && renderTemplateSelection()}
-            {views[currentView] === 'checklist-builder' && renderChecklistBuilder()}
-            {views[currentView] === 'customer-experience' && renderCustomerExperience()}
-            {views[currentView] === 'completion' && renderCompletion()}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+            <button className="bg-gradient-to-r from-emerald-500 to-emerald
