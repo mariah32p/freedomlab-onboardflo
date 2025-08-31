@@ -152,9 +152,12 @@ export default function DemoPage() {
       setTimeout(() => {
         setShowNewActivity(true);
         setTimeout(() => {
-          setActivityItems(prev => [
+          setActivityItems([
             { user: 'Sarah M.', action: 'completed setup', time: '2 min ago', type: 'success' },
-            ...prev
+            { user: 'Emma W.', action: 'uploaded brand assets', time: '5 min ago', type: 'success' },
+            { user: 'Alex P.', action: 'completed requirements', time: '12 min ago', type: 'success' },
+            { user: 'Mike R.', action: 'started onboarding', time: '15 min ago', type: 'info' },
+            { user: 'Lisa K.', action: 'needs assistance', time: '1 hour ago', type: 'warning' }
           ]);
           setShowNewActivity(false);
         }, 500);
