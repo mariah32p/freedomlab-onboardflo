@@ -278,32 +278,26 @@ export default function DemoPage() {
               setIsTyping(true);
               const content = step.content;
               
-              // Much faster typing - show content in chunks
-              const chunks = Math.ceil(content.length / 20);
-              for (let i = 0; i <= chunks; i++) {
-                if (!autoPlayRef.current) break;
-                const chunkEnd = Math.min((i + 1) * 20, content.length);
-                setCustomerStepContent(prev => ({
-                  ...prev,
-                  [`step-${stepIndex}`]: content.slice(0, chunkEnd)
-                }));
-                await new Promise(resolve => setTimeout(resolve, 5));
-              }
+              // Instantly show content
+              setCustomerStepContent(prev => ({
+                ...prev,
+                [`step-${stepIndex}`]: content
+              }));
               
               setIsTyping(false);
-              await new Promise(resolve => setTimeout(resolve, 20));
+              await new Promise(resolve => setTimeout(resolve, 300));
               
               if (!autoPlayRef.current) break;
               setCompletedSteps(prev => [...prev, `step-${stepIndex}`]);
               
               // Quick pause before next step
-              await new Promise(resolve => setTimeout(resolve, 50));
+              await new Promise(resolve => setTimeout(resolve, 200));
             }
             
             // Advance to completion after all steps
             setTimeout(() => {
               if (autoPlayRef.current) advanceView();
-            }, 100);
+            }, 500);
           };
 
           setTimeout(() => {
