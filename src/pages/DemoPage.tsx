@@ -287,30 +287,30 @@ export default function DemoPage() {
                   ...prev,
                   [`step-${stepIndex}`]: content.slice(0, chunkEnd)
                 }));
-                await new Promise(resolve => setTimeout(resolve, 50));
+                await new Promise(resolve => setTimeout(resolve, 15));
               }
               
               setIsTyping(false);
-              await new Promise(resolve => setTimeout(resolve, 200));
+              await new Promise(resolve => setTimeout(resolve, 100));
               
               if (!autoPlayRef.current) break;
               setCompletedSteps(prev => [...prev, `step-${stepIndex}`]);
               
               // Quick pause before next step
-              await new Promise(resolve => setTimeout(resolve, 400));
+              await new Promise(resolve => setTimeout(resolve, 200));
             }
             
             // Advance to completion after all steps
             setTimeout(() => {
               if (autoPlayRef.current) advanceView();
-            }, 800);
+            }, 400);
           };
 
           setTimeout(() => {
             if (!isCancelled && autoPlayRef.current) {
               processSteps();
             }
-          }, 1500);
+          }, 800);
           break;
 
         case 'completion':
