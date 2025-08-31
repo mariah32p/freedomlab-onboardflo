@@ -220,7 +220,7 @@ export default function DemoPage() {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentView(prev => (prev + 1) % views.length);
-    }, 12000); // 12 seconds per view to accommodate slower customer experience
+    }, 8000); // 8 seconds per view
 
     return () => clearInterval(timer);
   }, []);
