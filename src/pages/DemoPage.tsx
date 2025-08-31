@@ -23,7 +23,8 @@ import {
   TrendingUp,
   Calendar,
   RotateCcw,
-  Upload
+  Upload,
+  X
 } from 'lucide-react';
 import DemoHeader from '../components/DemoHeader';
 
