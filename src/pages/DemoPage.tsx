@@ -169,13 +169,60 @@ export default function DemoPage() {
           setShowNewActivity(false);
         }, 500);
       }, 1500); // Adjusted to fit new shorter slide duration
-    } else if (currentStep === 2) {
-      // Scroll back to top when entering branding
-      const container = document.querySelector('.demo-scroll-container');
-      if (container) {
-        container.scrollTo({ top: 0, behavior: 'smooth' });
-      }
+    } else if (currentStep === 1) { // Checklist setup step
+      // Reset checklist state
+      setBuilderActiveTab('settings');
+      setBuilderSteps([]);
       
+      const timer = setTimeout(() => {
+        // Phase 1: Settings autofill (2 seconds)
+        const settingsTimer = setTimeout(() => {
+          setChecklistData({
+            title: 'Website Design Project',
+            description: 'Complete these steps to start your website design project',
+            isPublic: true
+          });
+        }, 300);
+        
+        // Phase 2: Switch to steps tab (after 2.2 seconds)
+        const switchTabTimer = setTimeout(() => {
+          setBuilderActiveTab('steps');
+        }, 2200);
+        
+        // Phase 3: Add steps one by one (starting at 2.5 seconds)
+        const stepsToAdd = [
+          { title: 'Join Project Slack', type: 'checkbox', icon: '💬' },
+          { title: 'Upload Logo & Brand Assets', type: 'file_upload', icon: '📎' },
+          { title: 'Brand Requirements & Vision', type: 'textarea', icon: '📝' },
+          { title: 'Primary Contact Information', type: 'email', icon: '📧' },
+          { title: 'Design Inspiration Links', type: 'url', icon: '🔗' },
+          { title: 'Project Timeline', type: 'text', icon: '📅' },
+          { title: 'Schedule Kickoff Meeting', type: 'checkbox', icon: '📞' }
+        ];
+        
+        stepsToAdd.forEach((step, index) => {
+          const stepTimer = setTimeout(() => {
+            setBuilderSteps(prev => [...prev, step]);
+            
+            // Auto-scroll to show new step
+            setTimeout(() => {
+              const container = document.querySelector('.demo-scroll-container');
+              if (container) {
+                const stepElements = container.querySelectorAll('.builder-step-item');
+                const lastStep = stepElements[stepElements.length - 1];
+                if (lastStep) {
+                  lastStep.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+              }
+            }, 100);
+          }, 2500 + (index * 400));
+        });
+
+        return () => clearTimeout(settingsTimer);
+      }, 100);
+      
+      return () => clearTimeout(timer);
+    } else if (currentStep === 2) {
       // Checklist setup animation - first settings, then steps
       setSetupSteps([]);
       setChecklistSetupStep(0);
