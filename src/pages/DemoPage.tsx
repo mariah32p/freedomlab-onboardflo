@@ -324,7 +324,7 @@ export default function DemoPage() {
   }, [currentView, advanceView, autoPlay]);
 
   const renderDashboard = () => (
-    <div className="space-y-8">
+    <div className="max-w-4xl mx-auto space-y-8">
       {/* Header */}
       <div className="text-center mb-8">
         <h1 className="text-4xl font-bold text-gray-900 mb-4 font-sans">Dashboard</h1>
