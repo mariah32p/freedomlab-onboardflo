@@ -1,402 +1,313 @@
-import React, { useState, useEffect, useRef } from 'react';
-import {
-  CheckCircle,
-  Users,
-  BarChart3,
-  Clock,
-  ArrowRight,
-  Sparkles,
-  Eye,
-  Send,
-  Copy,
+import React, { useState, useEffect } from 'react';
+import { 
+  Users, 
+  CheckCircle, 
+  Clock, 
+  AlertCircle,
+  TrendingUp,
+  Bell,
   Plus,
   Edit,
-  Palette,
-  Link as LinkIcon,
-  Trash2,
   ExternalLink,
+  Copy,
+  Check,
+  ArrowRight,
+  Sparkles,
+  BarChart3,
+  Target,
+  Zap,
   Mail,
   Building,
   User,
-  Check,
-  AlertCircle,
-  TrendingUp,
-  Calendar,
-  RotateCcw,
   Upload,
-  X,
-  Save
+  Link as LinkIcon,
+  Calendar,
+  Star
 } from 'lucide-react';
 import DemoHeader from '../components/DemoHeader';
 
-interface DemoStep {
-  id: string;
-  title: string;
-  description: string;
-  duration: number;
-}
+// Demo data with authentic personas
+const demoCustomers = [
+  {
+    id: '1',
+    name: 'Sarah Martinez',
+    email: 'sarah@techcorp.com',
+    company: 'TechCorp',
+    checklist: 'SaaS Platform Onboarding',
+    progress: 85,
+    status: 'active',
+    lastActivity: '2 minutes ago',
+    stepsCompleted: 6,
+    totalSteps: 7,
+    currentStep: 'API Integration Setup',
+    avatar: 'SM',
+    timeSpent: '2.1 days',
+    startDate: '3 days ago'
+  },
+  {
+    id: '2',
+    name: 'Marcus Chen',
+    email: 'marcus@startupxyz.com',
+    company: 'StartupXYZ',
+    checklist: 'Agency Partnership Onboarding',
+    progress: 45,
+    status: 'active',
+    lastActivity: '15 minutes ago',
+    stepsCompleted: 4,
+    totalSteps: 9,
+    currentStep: 'Brand Asset Upload',
+    avatar: 'MC',
+    timeSpent: '1.2 days',
+    startDate: '2 days ago'
+  },
+  {
+    id: '3',
+    name: 'Emily Rodriguez',
+    email: 'emily@growthco.com',
+    company: 'GrowthCo',
+    checklist: 'Consulting Engagement Setup',
+    progress: 100,
+    status: 'completed',
+    lastActivity: '1 hour ago',
+    stepsCompleted: 8,
+    totalSteps: 8,
+    currentStep: 'Completed!',
+    avatar: 'ER',
+    timeSpent: '1.8 days',
+    startDate: '4 days ago'
+  },
+  {
+    id: '4',
+    name: 'David Kim',
+    email: 'david@scaletech.io',
+    company: 'ScaleTech',
+    checklist: 'Enterprise Implementation',
+    progress: 70,
+    status: 'needs_help',
+    lastActivity: '3 hours ago',
+    stepsCompleted: 7,
+    totalSteps: 10,
+    currentStep: 'Security Review',
+    avatar: 'DK',
+    timeSpent: '3.5 days',
+    startDate: '5 days ago'
+  }
+];
 
-// Defined outside the component for performance and stability.
-const demoSteps: DemoStep[] = [
-    {
-      id: 'dashboard',
-      title: 'Dashboard Overview',
-      description: 'Real-time customer onboarding analytics and activity feed',
-      duration: 2500,
-    },
-    {
-      id: 'checklists',
-      title: 'Checklist Management',
-      description: 'Create and manage onboarding flows with templates',
-      // FIX: Increased duration to allow the entire animation to play.
-      duration: 7000,
-    },
-    {
-      id: 'submissions',
-      title: 'Customer Submissions',
-      description: 'Track customer progress and manage submissions',
-      duration: 2500,
-    },
-    {
-      id: 'customer-view',
-      title: 'Customer Experience',
-      description: 'Beautiful, mobile-friendly checklist interface',
-      duration: 11000,
-    },
-    {
-      id: 'branding',
-      title: 'Brand Customization',
-      description: 'Customize colors, fonts, and logos to match your brand',
-      duration: 4000,
-    }
-  ];
+const demoChecklists = [
+  {
+    id: '1',
+    title: 'SaaS Platform Onboarding',
+    description: 'Complete setup flow for new SaaS customers',
+    steps: 7,
+    sessions: 12,
+    completionRate: 87,
+    avgTime: '2.3 days',
+    color: '#10b981'
+  },
+  {
+    id: '2',
+    title: 'Agency Partnership Onboarding',
+    description: 'Streamlined process for new agency partners',
+    steps: 9,
+    sessions: 8,
+    completionRate: 92,
+    avgTime: '1.8 days',
+    color: '#3b82f6'
+  },
+  {
+    id: '3',
+    title: 'Enterprise Implementation',
+    description: 'Comprehensive setup for enterprise clients',
+    steps: 10,
+    sessions: 5,
+    completionRate: 78,
+    avgTime: '4.2 days',
+    color: '#8b5cf6'
+  }
+];
 
+const demoSteps = [
+  { title: 'Account Setup & Profile', type: 'checkbox', required: true, completed: true },
+  { title: 'Team Member Invitations', type: 'email', required: true, completed: true },
+  { title: 'Project Requirements', type: 'textarea', required: true, completed: true },
+  { title: 'Brand Assets Upload', type: 'file_upload', required: true, completed: true },
+  { title: 'Integration Preferences', type: 'checkbox', required: true, completed: true },
+  { title: 'API Configuration', type: 'text', required: true, completed: true },
+  { title: 'Final Review & Launch', type: 'checkbox', required: true, completed: false }
+];
 
 export default function DemoPage() {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(true);
-  const [progress, setProgress] = useState(0);
-  const [builderActiveTab, setBuilderActiveTab] = useState<'settings' | 'steps'>('settings');
-  const [builderSteps, setBuilderSteps] = useState<any[]>([]);
-  const [animatedStats, setAnimatedStats] = useState({ users: 0, completed: 0, rate: 0, days: 0 });
-  const [animatedProgress, setAnimatedProgress] = useState<Record<string, number>>({});
-  const [activityItems, setActivityItems] = useState([
-    { user: 'Emma W.', action: 'uploaded brand assets', time: '5 min ago', type: 'success' },
-    { user: 'Alex P.', action: 'completed requirements', time: '12 min ago', type: 'success' },
-    { user: 'Mike R.', action: 'started onboarding', time: '15 min ago', type: 'info' },
-    { user: 'Lisa K.', action: 'needs assistance', time: '1 hour ago', type: 'warning' }
-  ]);
-  const [completedSteps, setCompletedSteps] = useState<string[]>([]);
-  const [showNewActivity, setShowNewActivity] = useState(false);
-  const [checklistSetupStep, setChecklistSetupStep] = useState(0);
-  const [setupSteps, setSetupSteps] = useState<any[]>([]);
-  const [currentActiveStep, setCurrentActiveStep] = useState<string | null>(null);
-  const [checklistSteps, setChecklistSteps] = useState<any[]>([]);
-  const [checklistSettings, setChecklistSettings] = useState({
-    title: '',
-    description: '',
-    visibility: ''
-  });
-  const [activeChecklistTab, setActiveChecklistTab] = useState<'settings' | 'steps'>('settings');
+  const [currentView, setCurrentView] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [showNotification, setShowNotification] = useState(false);
+  const [completingStep, setCompletingStep] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [typingText, setTypingText] = useState('');
 
-  // FIX: Added a ref to control the scrolling of the checklist builder's step list.
-  const checklistStepsContainerRef = useRef<HTMLDivElement | null>(null);
+  const views = [
+    'dashboard',
+    'customer-detail', 
+    'checklist-builder',
+    'customer-experience',
+    'completion-celebration',
+    'analytics'
+  ];
 
-  // Auto-advance steps
+  // Auto-advance demo
   useEffect(() => {
     if (!isPlaying) return;
 
     const timer = setTimeout(() => {
-      if (currentStep < demoSteps.length - 1) {
-        setCurrentStep(prev => prev + 1);
-        setProgress(0);
+      if (currentView < views.length - 1) {
+        setCurrentView(prev => prev + 1);
       } else {
-        // Simplified the reset logic to prevent stalling.
-        setCurrentStep(0);
-        setProgress(0);
-        setAnimatedStats({ users: 0, completed: 0, rate: 0, days: 0 });
-        setAnimatedProgress({});
-        setShowNewActivity(false);
-        setActivityItems([
-          { user: 'Mike R.', action: 'started onboarding', time: '15 min ago', type: 'info' },
-          { user: 'Lisa K.', action: 'needs assistance', time: '1 hour ago', type: 'warning' },
-          { user: 'David L.', action: 'completed step 3', time: '2 hours ago', type: 'success' }
-        ]);
-        setCompletedSteps([]);
+        setCurrentView(0); // Loop back to start
       }
-    }, demoSteps[currentStep].duration);
+    }, 8000);
 
     return () => clearTimeout(timer);
-  }, [currentStep, isPlaying]);
+  }, [currentView, isPlaying, views.length]);
 
-  // Progress bar animation
+  // Typing effect for notifications
   useEffect(() => {
-    const duration = demoSteps[currentStep].duration;
-    const interval = 50;
-    const increment = (interval / duration) * 100;
+    if (currentView === 1) {
+      const text = "Sarah just completed API setup! 🎉";
+      let i = 0;
+      setTypingText('');
+      
+      const typeTimer = setInterval(() => {
+        if (i < text.length) {
+          setTypingText(text.slice(0, i + 1));
+          i++;
+        } else {
+          clearInterval(typeTimer);
+          setTimeout(() => setShowNotification(true), 500);
+        }
+      }, 50);
 
-    const timer = setInterval(() => {
-      if (isPlaying) {
-        setProgress(prev => {
-          const newProgress = prev + increment;
-          return newProgress >= 100 ? 100 : newProgress;
-        });
-      }
-    }, interval);
+      return () => clearInterval(typeTimer);
+    }
+  }, [currentView]);
 
-    return () => clearInterval(timer);
-  }, [currentStep, isPlaying]);
-
-  // Step-specific animations
+  // Completion celebration effect
   useEffect(() => {
-    // FIX: Automatically scroll to the top when the step changes for a better UX.
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-
-    // Reset animations when step changes
-    setAnimatedStats({ users: 0, completed: 0, rate: 0, days: 0 });
-    setAnimatedProgress({});
-    setActivityItems([
-      { user: 'Emma W.', action: 'uploaded brand assets', time: '5 min ago', type: 'success' },
-      { user: 'Alex P.', action: 'completed requirements', time: '12 min ago', type: 'success' },
-      { user: 'Mike R.', action: 'started onboarding', time: '15 min ago', type: 'info' },
-      { user: 'Lisa K.', action: 'needs assistance', time: '1 hour ago', type: 'warning' }
-    ]);
-    setCompletedSteps([]);
-    setShowNewActivity(false);
-
-    if (currentStep === 0) {
-      // Dashboard animations
+    if (currentView === 4) {
       setTimeout(() => {
-        setAnimatedStats({ users: 247, completed: 215, rate: 87, days: 2.3 });
-      }, 200);
-
-      setTimeout(() => {
-        setShowNewActivity(true);
+        setCompletingStep(true);
         setTimeout(() => {
-          setActivityItems([
-            { user: 'Sarah M.', action: 'completed setup', time: '2 min ago', type: 'success' },
-            { user: 'Emma W.', action: 'uploaded brand assets', time: '5 min ago', type: 'success' },
-            { user: 'Alex P.', action: 'completed requirements', time: '12 min ago', type: 'success' },
-            { user: 'Mike R.', action: 'started onboarding', time: '15 min ago', type: 'info' },
-            { user: 'Lisa K.', action: 'needs assistance', time: '1 hour ago', type: 'warning' }
-          ]);
-          setShowNewActivity(false);
-        }, 500);
-      }, 1500); // Adjusted to fit new shorter slide duration
-    } else if (currentStep === 1) {
-      // Reset checklist builder state
-      setChecklistSteps([]);
-      setChecklistSettings({ title: '', description: '', visibility: '' });
-      setActiveChecklistTab('settings');
-      setChecklistSetupStep(0);
-
-      // Settings autofill sequence
-      setTimeout(() => {
-        setChecklistSetupStep(1);
-        setChecklistSettings(prev => ({ ...prev, title: 'Website Design Project' }));
-      }, 300);
-      
-      setTimeout(() => {
-        setChecklistSetupStep(2);
-        setChecklistSettings(prev => ({ ...prev, description: 'Complete these steps to start your website design project' }));
-      }, 800);
-      
-      setTimeout(() => {
-        setChecklistSetupStep(3);
-        setChecklistSettings(prev => ({ ...prev, visibility: 'Public - Anyone with the link can access' }));
+          setShowConfetti(true);
+          setTimeout(() => setShowConfetti(false), 3000);
+        }, 1000);
       }, 2000);
-
-      // Switch to steps tab
-      setTimeout(() => {
-        setActiveChecklistTab('steps');
-      }, 2200);
-
-      // Add steps one by one
-      const stepsToAdd = [
-        { title: 'Join Project Slack', step_type: 'checkbox', is_required: true },
-        { title: 'Upload Logo & Brand Assets', step_type: 'file_upload', is_required: true },
-        { title: 'Brand Requirements & Vision', step_type: 'textarea', is_required: true },
-        { title: 'Primary Contact Information', step_type: 'email', is_required: true },
-        { title: 'Design Inspiration Links', step_type: 'url', is_required: false },
-        { title: 'Project Timeline', step_type: 'text', is_required: true },
-        { title: 'Schedule Kickoff Meeting', step_type: 'checkbox', is_required: true }
-      ];
-
-      stepsToAdd.forEach((step, index) => {
-        setTimeout(() => {
-          setChecklistSteps(prev => [...prev, { ...step, id: `step-${index}` }]);
-        }, 2500 + (index * 400));
-      });
-    } else if (currentStep === 2) {
-      // Checklist setup animation - first settings, then steps
-      setSetupSteps([]);
-      setChecklistSetupStep(0);
-      
-      // Settings autofill sequence
-      setTimeout(() => setChecklistSetupStep(1), 300); // Title
-      setTimeout(() => setChecklistSetupStep(2), 800); // Description
-      setTimeout(() => setChecklistSetupStep(3), 1200); // Visibility
-      
-      // Then add steps that match the customer view
-      const steps = [
-        { title: 'Join Project Slack', description: 'Accept invitation to our design team workspace', step_type: 'checkbox' },
-        { title: 'Upload Logo & Brand Assets', description: 'Share your current logo, brand guidelines, and any existing materials', step_type: 'file_upload' },
-        { title: 'Brand Requirements & Vision', description: 'Tell us about your brand personality, target audience, and design preferences', step_type: 'textarea' },
-        { title: 'Primary Contact Information', description: 'Who should we contact for design feedback and approvals?', step_type: 'email' },
-        { title: 'Design Inspiration Links', description: 'Share websites or designs you love for style reference', step_type: 'url' },
-        { title: 'Project Timeline', description: 'When do you need the website completed?', step_type: 'text' },
-        { title: 'Schedule Kickoff Meeting', description: 'Book a 60-minute strategy session to discuss your project in detail', step_type: 'checkbox' }
-      ];
-      
-      steps.forEach((step, index) => {
-        setTimeout(() => {
-          setSetupSteps(prev => [...prev, step]);
-        }, 1600 + (index * 300)); // Start after settings, then 300ms between steps
-      });
-    } else if (currentStep === 3) {
-      // Customer view animations - slower progression through all steps
-      const steps = ['slack', 'logo', 'brand', 'contact', 'inspiration', 'timeline', 'kickoff'];
-      steps.forEach((step, index) => {
-        setTimeout(() => {
-          // Set as active step first
-          setCurrentActiveStep(step);
-          
-          // Scroll to the step
-          setTimeout(() => {
-            const stepElement = document.getElementById(`step-${step}`);
-            if (stepElement) {
-              stepElement.scrollIntoView({ 
-                behavior: 'smooth', 
-                block: 'center' 
-              });
-            }
-          }, 100);
-          
-          // Complete the step after showing it's active
-          setTimeout(() => {
-            setCompletedSteps(prev => [...prev, step]);
-            setCurrentActiveStep(null);
-          }, 800);
-        }, (index + 1) * 1500);
-      });
+    } else {
+      setCompletingStep(false);
+      setShowConfetti(false);
     }
-  }, [currentStep]);
-
-  // FIX: Add a new useEffect to handle auto-scrolling in the checklist builder.
-  // This effect runs whenever the list of checklistSteps changes.
-  useEffect(() => {
-    if (checklistStepsContainerRef.current) {
-      const container = checklistStepsContainerRef.current;
-      // Scroll to the bottom of the container to show the newly added step.
-      container.scrollTo({
-        top: container.scrollHeight,
-        behavior: 'smooth',
-      });
-    }
-  }, [checklistSteps]);
-
-  const handleStepClick = (index: number) => {
-    setCurrentStep(index);
-    setProgress(0);
-    setIsPlaying(false);
-  };
-
-  const togglePlayPause = () => {
-    setIsPlaying(!isPlaying);
-  };
+  }, [currentView]);
 
   const renderDashboard = () => (
-    <div className="max-w-7xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2 font-sans">Dashboard</h1>
-        <p className="text-gray-600 font-sans">Overview of your onboarding performance</p>
-      </div>
-
+    <div className="space-y-6">
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300">
           <div className="flex items-center">
-            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-              <Users className="w-6 h-6 text-blue-600" />
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+              <Users className="w-6 h-6 text-white" />
             </div>
             <div className="ml-4">
-              <div className="text-2xl font-bold text-gray-900 font-sans">{animatedStats.users}</div>
+              <div className="text-2xl font-bold text-gray-900 font-sans">247</div>
               <div className="text-sm text-gray-600 font-sans">Active Customers</div>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300">
           <div className="flex items-center">
-            <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center">
-              <CheckCircle className="w-6 h-6 text-emerald-600" />
+            <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
+              <CheckCircle className="w-6 h-6 text-white" />
             </div>
             <div className="ml-4">
-              <div className="text-2xl font-bold text-gray-900 font-sans">{animatedStats.rate}%</div>
+              <div className="text-2xl font-bold text-gray-900 font-sans">87%</div>
               <div className="text-sm text-gray-600 font-sans">Completion Rate</div>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300">
           <div className="flex items-center">
-            <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-              <Clock className="w-6 h-6 text-orange-600" />
+            <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
+              <Clock className="w-6 h-6 text-white" />
             </div>
             <div className="ml-4">
-              <div className="text-2xl font-bold text-gray-900 font-sans">{animatedStats.days}</div>
-              <div className="text-sm text-gray-600 font-sans">Avg Days</div>
+              <div className="text-2xl font-bold text-gray-900 font-sans">2.3d</div>
+              <div className="text-sm text-gray-600 font-sans">Avg. Time</div>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300">
           <div className="flex items-center">
-            <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-              <AlertCircle className="w-6 h-6 text-purple-600" />
+            <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+              <TrendingUp className="w-6 h-6 text-white" />
             </div>
             <div className="ml-4">
-              <div className="text-2xl font-bold text-gray-900 font-sans">12</div>
-              <div className="text-sm text-gray-600 font-sans">Need Help</div>
+              <div className="text-2xl font-bold text-gray-900 font-sans">↑60%</div>
+              <div className="text-sm text-gray-600 font-sans">vs Manual</div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Recent Activity */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-        <div className="p-6 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900 font-sans">Recent Activity</h2>
+      {/* Live Customer Activity */}
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20">
+        <div className="p-6 border-b border-gray-100">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-gray-900 font-sans">Live Customer Activity</h2>
+            <div className="flex items-center text-sm text-emerald-600">
+              <div className="w-2 h-2 bg-emerald-500 rounded-full mr-2 animate-pulse"></div>
+              <span className="font-sans">Live</span>
+            </div>
+          </div>
         </div>
         <div className="p-6">
           <div className="space-y-4">
-            {/* New activity notification sliding in from right */}
-            {showNewActivity && (
-              <div className="flex items-start animate-slide-in">
-                <div className="w-2 h-2 rounded-full mt-2 mr-3 bg-emerald-500"></div>
-                <div className="flex-1">
-                  <p className="text-sm text-gray-900 font-sans">
-                    <span className="font-medium">Sarah M.</span> completed setup
-                  </p>
-                  <p className="text-xs text-gray-500 font-sans">2 min ago</p>
+            {demoCustomers.map((customer, index) => (
+              <div key={customer.id} className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-gray-50 to-white hover:from-blue-50 hover:to-white transition-all duration-300 border border-gray-100 hover:border-blue-200 hover:shadow-md">
+                <div className="flex items-center">
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center mr-4 shadow-lg">
+                    <span className="text-white text-sm font-bold font-sans">{customer.avatar}</span>
+                  </div>
+                  <div>
+                    <div className="flex items-center space-x-2">
+                      <div className="font-semibold text-gray-900 font-sans">{customer.name}</div>
+                      <div className="text-sm text-gray-500 font-sans">from {customer.company}</div>
+                    </div>
+                    <div className="text-sm text-gray-600 font-sans">{customer.checklist}</div>
+                    <div className="text-xs text-gray-500 font-sans">
+                      {customer.currentStep} • {customer.lastActivity}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            )}
-            {activityItems.map((activity, index) => (
-              <div
-                key={index}
-                className="flex items-start"
-              >
-                <div className={`w-2 h-2 rounded-full mt-2 mr-3 ${
-                  activity.type === 'success' ? 'bg-emerald-500' :
-                  activity.type === 'warning' ? 'bg-orange-500' : 'bg-blue-500'
-                }`}></div>
-                <div className="flex-1">
-                  <p className="text-sm text-gray-900 font-sans">
-                    <span className="font-medium">{activity.user}</span> {activity.action}
-                  </p>
-                  <p className="text-xs text-gray-500 font-sans">{activity.time}</p>
+                <div className="text-right">
+                  <div className="flex items-center mb-2">
+                    <div className="w-20 bg-gray-200 rounded-full h-2 mr-3">
+                      <div 
+                        className={`h-2 rounded-full transition-all duration-500 ${
+                          customer.status === 'completed' ? 'bg-emerald-500' :
+                          customer.status === 'needs_help' ? 'bg-red-500' : 'bg-blue-500'
+                        }`}
+                        style={{ width: `${customer.progress}%` }}
+                      ></div>
+                    </div>
+                    <span className="text-sm font-bold text-gray-700 font-sans">{customer.progress}%</span>
+                  </div>
+                  <div className={`text-xs font-medium font-sans ${
+                    customer.status === 'completed' ? 'text-emerald-600' :
+                    customer.status === 'needs_help' ? 'text-red-600' : 'text-blue-600'
+                  }`}>
+                    {customer.stepsCompleted}/{customer.totalSteps} steps • {customer.timeSpent}
+                  </div>
                 </div>
               </div>
             ))}
@@ -406,408 +317,186 @@ export default function DemoPage() {
     </div>
   );
 
-  const renderChecklists = () => (
-    <div className="max-w-6xl mx-auto space-y-8">
-      {/* Header */}
-      <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-900 font-sans mb-2">Create New Checklist</h2>
-        <p className="text-gray-600 font-sans">Watch as we build a website design onboarding checklist</p>
+  const renderCustomerDetail = () => (
+    <div className="space-y-6">
+      {/* Customer Header */}
+      <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl p-8 text-white shadow-xl">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mr-6">
+              <span className="text-2xl font-bold">SM</span>
+            </div>
+            <div>
+              <h2 className="text-3xl font-bold font-sans">Sarah Martinez</h2>
+              <p className="text-blue-100 font-sans">Senior Developer at TechCorp</p>
+              <p className="text-blue-200 text-sm font-sans">sarah@techcorp.com • Started 3 days ago</p>
+            </div>
+          </div>
+          <div className="text-right">
+            <div className="text-4xl font-bold font-sans">85%</div>
+            <div className="text-blue-100 font-sans">Complete</div>
+          </div>
+        </div>
       </div>
 
-      {/* Checklist Builder Interface */}
-      <div className="bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden">
-        {/* Header */}
-        <div className="p-6 border-b border-gray-200 flex items-center justify-between">
-          <div>
-            <h3 className="text-xl font-semibold text-gray-900 font-sans">Checklist Builder</h3>
-            <p className="text-sm text-gray-600 mt-1 font-sans">Creating a professional onboarding flow</p>
+      {/* Progress Timeline */}
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-6">
+        <h3 className="text-xl font-semibold text-gray-900 mb-6 font-sans">SaaS Platform Onboarding Progress</h3>
+        <div className="space-y-4">
+          {demoSteps.map((step, index) => (
+            <div key={index} className={`flex items-center p-4 rounded-xl transition-all duration-300 ${
+              step.completed 
+                ? 'bg-gradient-to-r from-emerald-50 to-emerald-100 border border-emerald-200' 
+                : index === 6 
+                ? 'bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 shadow-md' 
+                : 'bg-gray-50 border border-gray-200'
+            }`}>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-4 ${
+                step.completed 
+                  ? 'bg-emerald-500 text-white' 
+                  : index === 6 
+                  ? 'bg-blue-500 text-white animate-pulse' 
+                  : 'bg-gray-300 text-gray-600'
+              }`}>
+                {step.completed ? (
+                  <CheckCircle className="w-5 h-5" />
+                ) : (
+                  <span className="text-sm font-bold font-sans">{index + 1}</span>
+                )}
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-semibold text-gray-900 font-sans">{step.title}</h4>
+                    <div className="flex items-center space-x-2 mt-1">
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium font-sans ${
+                        step.type === 'checkbox' ? 'bg-green-100 text-green-700' :
+                        step.type === 'email' ? 'bg-blue-100 text-blue-700' :
+                        step.type === 'textarea' ? 'bg-purple-100 text-purple-700' :
+                        step.type === 'file_upload' ? 'bg-orange-100 text-orange-700' :
+                        'bg-gray-100 text-gray-700'
+                      }`}>
+                        {step.type.replace('_', ' ')}
+                      </span>
+                      {step.required && (
+                        <span className="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium font-sans">
+                          Required
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    {step.completed ? (
+                      <div className="text-emerald-600 text-sm font-medium font-sans">✓ Completed</div>
+                    ) : index === 6 ? (
+                      <div className="text-blue-600 text-sm font-medium font-sans animate-pulse">In Progress</div>
+                    ) : (
+                      <div className="text-gray-400 text-sm font-sans">Pending</div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Real-time notification */}
+      {showNotification && (
+        <div className="fixed top-24 right-4 bg-white rounded-xl shadow-xl border border-emerald-200 p-4 max-w-sm animate-slide-in z-50">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">
+              <CheckCircle className="w-4 h-4 text-emerald-600" />
+            </div>
+            <div>
+              <div className="font-semibold text-gray-900 text-sm font-sans">Step Completed!</div>
+              <div className="text-xs text-gray-600 font-sans">{typingText}</div>
+            </div>
           </div>
-          <button className="p-2 text-gray-400 hover:text-gray-600">
-            <X className="w-5 h-5" />
+        </div>
+      )}
+    </div>
+  );
+
+  const renderChecklistBuilder = () => (
+    <div className="space-y-6">
+      {/* Builder Header */}
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 font-sans">Create New Checklist</h2>
+            <p className="text-gray-600 font-sans">Build your customer onboarding flow</p>
+          </div>
+          <button className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-sans">
+            Save Checklist
           </button>
         </div>
-
-        <div className="border-b border-gray-200 bg-gray-50">
-          <nav className="flex">
-            <button
-              className={`px-6 py-3 font-medium text-sm transition-colors font-sans relative ${
-                activeChecklistTab === 'settings'
-                  ? 'border-b-2 border-emerald-500 text-emerald-600 bg-white'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              Settings
-            </button>
-            <button
-              className={`px-6 py-3 font-medium text-sm transition-colors font-sans relative ${
-                activeChecklistTab === 'steps'
-                  ? 'border-b-2 border-emerald-500 text-emerald-600 bg-white'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              Steps
-              <span className="ml-2 px-2 py-0.5 bg-gray-200 text-gray-700 rounded-full text-xs">
-                {checklistSteps.length}
-              </span>
-            </button>
-          </nav>
-        </div>
-
-        {/* Content */}
-        <div className="p-6">
-          <div className="grid grid-cols-1">
-            {/* Form */}
-            <div className="space-y-6">
-              {activeChecklistTab === 'settings' && (
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">
-                      Checklist Title
-                    </label>
-                    <input
-                      type="text"
-                      value={checklistSetupStep >= 1 ? "Website Design Project" : ""}
-                      className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans transition-all duration-300 ${
-                        checklistSetupStep >= 1 ? 'bg-white' : 'bg-gray-50'
-                      }`}
-                      placeholder="e.g., SaaS Onboarding Checklist"
-                      readOnly
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">
-                      Description
-                    </label>
-                    <textarea
-                      value={checklistSetupStep >= 2 ? "Complete these steps to start your website design project" : ""}
-                      className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans transition-all duration-300 ${
-                        checklistSetupStep >= 2 ? 'bg-white' : 'bg-gray-50'
-                      }`}
-                      placeholder="Brief description of this onboarding flow"
-                      rows={3}
-                      readOnly
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-3 font-sans">
-                      Visibility
-                    </label>
-                    <div className={`space-y-3 transition-all duration-300 ${
-                      checklistSetupStep >= 3 ? 'opacity-100' : 'opacity-50'
-                    }`}>
-                      <label className="flex items-center">
-                        <input
-                          type="radio"
-                          name="visibility"
-                          checked={checklistSetupStep >= 3}
-                          className="mr-3 text-emerald-600 focus:ring-emerald-500"
-                          readOnly
-                        />
-                        <div className="flex items-center">
-                          <Eye className={`w-4 h-4 mr-2 ${checklistSetupStep >= 3 ? 'text-emerald-500' : 'text-gray-400'}`} />
-                          <span className="font-sans">Public - Anyone with the link can access</span>
-                        </div>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {activeChecklistTab === 'steps' && (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900 font-sans">Checklist Steps</h3>
-                      <p className="text-sm text-gray-600 font-sans">
-                        Add, edit, and reorder the steps customers will complete
-                      </p>
-                    </div>
-                  </div>
-
-                  {checklistSteps.length === 0 ? (
-                    <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
-                      <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <span className="text-gray-400 text-lg">+</span>
-                      </div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2 font-sans">No steps added yet</h3>
-                      <p className="text-gray-600 font-sans">
-                        Add steps to create your onboarding checklist
-                      </p>
-                    </div>
-                  ) : (
-                    // FIX: Added ref and styling to make this container scrollable.
-                    <div
-                      ref={checklistStepsContainerRef}
-                      className="space-y-3 max-h-[400px] overflow-y-auto p-1 pr-2 rounded-lg border"
-                    >
-                      {checklistSteps.map((step, index) => (
-                        <div key={step.id} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-sm transition-shadow animate-slide-in">
-                          <div className="flex items-start">
-                            <div className="flex items-center mr-3 mt-1">
-                              <span className="text-sm text-gray-500 mr-2 font-sans">{index + 1}</span>
-                            </div>
-                            <div className="flex-1">
-                              <div className="flex items-start justify-between">
-                                <div className="flex-1">
-                                  <div className="flex items-center mb-1">
-                                    <span className="text-sm mr-2">
-                                      {step.step_type === 'text' ? '📝' :
-                                        step.step_type === 'textarea' ? '📄' :
-                                        step.step_type === 'file_upload' ? '📎' :
-                                        step.step_type === 'url' ? '🔗' :
-                                        step.step_type === 'email' ? '📧' : '☑️'}
-                                    </span>
-                                    <h4 className="font-medium text-gray-900 font-sans">{step.title}</h4>
-                                  </div>
-                                  <div className="flex items-center mt-2">
-                                    <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium font-sans mr-2">
-                                      {step.step_type === 'checkbox' ? 'Checkbox' :
-                                        step.step_type === 'text' ? 'Text Input' :
-                                        step.step_type === 'textarea' ? 'Long Text' :
-                                        step.step_type === 'file_upload' ? 'File Upload' :
-                                        step.step_type === 'url' ? 'Website URL' :
-                                        step.step_type === 'email' ? 'Email' : 'Checkbox'}
-                                    </span>
-                                    {step.is_required && (
-                                      <span className="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium font-sans">
-                                        Required
-                                      </span>
-                                    )}
-                                  </div>
-                                </div>
-                                <div className="flex items-center space-x-1 ml-4">
-                                  <button className="p-1 text-gray-400 hover:text-gray-600">
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-                                    </svg>
-                                  </button>
-                                  <button className="p-1 text-gray-400 hover:text-gray-600">
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                    </svg>
-                                  </button>
-                                  <button className="p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors">
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                    </svg>
-                                  </button>
-                                  <button className="p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors">
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                    </svg>
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50">
-          <div className="text-sm text-gray-600 font-sans">
-            {checklistSteps.length > 0 && activeChecklistTab === 'steps' && (
-              <span className="text-emerald-600 font-medium">● Building checklist...</span>
-            )}
-          </div>
-          <div className="flex items-center space-x-3">
-            <button className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium transition-colors font-sans">
-              Cancel
-            </button>
-            <button className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-lg font-medium transition-colors flex items-center font-sans">
-              <Save className="w-4 h-4 mr-2" />
-              Create Checklist
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderSubmissions = () => (
-    <div className="max-w-7xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2 font-sans">Customer Submissions</h1>
-        <p className="text-gray-600 font-sans">Track customer progress across all your onboarding checklists</p>
       </div>
 
-      {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-          <div className="flex items-center">
-            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-              <Users className="w-6 h-6 text-blue-600" />
-            </div>
-            <div className="ml-4">
-              <div className="text-2xl font-bold text-gray-900 font-sans">44</div>
-              <div className="text-sm text-gray-600 font-sans">Total Links</div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-          <div className="flex items-center">
-            <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-              <Clock className="w-6 h-6 text-orange-600" />
-            </div>
-            <div className="ml-4">
-              <div className="text-2xl font-bold text-gray-900 font-sans">8</div>
-              <div className="text-sm text-gray-600 font-sans">Pending</div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-          <div className="flex items-center">
-            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-              <AlertCircle className="w-6 h-6 text-blue-600" />
-            </div>
-            <div className="ml-4">
-              <div className="text-2xl font-bold text-gray-900 font-sans">15</div>
-              <div className="text-sm text-gray-600 font-sans">Active</div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-          <div className="flex items-center">
-            <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center">
-              <CheckCircle className="w-6 h-6 text-emerald-600" />
-            </div>
-            <div className="ml-4">
-              <div className="text-2xl font-bold text-gray-900 font-sans">21</div>
-              <div className="text-sm text-gray-600 font-sans">Completed</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Customer Sessions */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-        <div className="p-6 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900 font-sans">Customer Sessions</h2>
-        </div>
-        <div className="p-6">
+      {/* Builder Interface */}
+      <div className="grid lg:grid-cols-2 gap-6">
+        {/* Settings Panel */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 font-sans">Checklist Settings</h3>
           <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">Title</label>
+              <input 
+                type="text" 
+                value="Enterprise Client Onboarding"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
+                readOnly
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">Description</label>
+              <textarea 
+                value="Comprehensive onboarding process for enterprise customers including security review, integration setup, and team training."
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
+                rows={3}
+                readOnly
+              />
+            </div>
+            <div className="flex items-center space-x-4">
+              <label className="flex items-center">
+                <input type="radio" checked className="mr-2 text-emerald-600" readOnly />
+                <span className="text-sm font-sans">Public</span>
+              </label>
+              <label className="flex items-center">
+                <input type="radio" className="mr-2 text-emerald-600" readOnly />
+                <span className="text-sm font-sans">Password Protected</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        {/* Steps Panel */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-900 font-sans">Checklist Steps</h3>
+            <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center font-sans">
+              <Plus className="w-4 h-4 mr-2" />
+              Add Step
+            </button>
+          </div>
+          <div className="space-y-3">
             {[
-              {
-                name: 'Sarah Mitchell',
-                email: 'sarah@techflow.com',
-                company: 'TechFlow Inc',
-                checklist: 'Website Design Onboarding',
-                status: 'started',
-                progress: 85,
-                linkName: 'Corporate Website Redesign',
-                created: 'Jan 15, 2025 2:14 PM',
-                lastActivity: '5 min ago'
-              },
-              {
-                name: 'Michael Rodriguez',
-                email: 'mike@datavault.io',
-                company: 'DataVault',
-                checklist: 'Website Design Feedback & Approval',
-                status: 'completed',
-                progress: 100,
-                linkName: 'Homepage Feedback Round 2',
-                created: 'Jan 14, 2025 10:30 AM',
-                lastActivity: '2 hours ago'
-              },
-              {
-                name: 'Lisa Chen',
-                email: 'lisa@growthco.com',
-                company: 'GrowthCo',
-                checklist: 'Website Design Offboarding',
-                status: 'started',
-                progress: 45,
-                linkName: 'Final Deliverables & Training',
-                created: 'Jan 14, 2025 4:22 PM',
-                lastActivity: '1 hour ago'
-              },
-              {
-                name: 'David Thompson',
-                email: 'david@scaletech.ai',
-                company: 'ScaleTech AI',
-                checklist: 'Website Design Onboarding',
-                status: 'started',
-                progress: 70,
-                linkName: 'E-commerce Platform Setup',
-                created: 'Jan 13, 2025 11:45 AM',
-                lastActivity: '30 min ago'
-              }
-            ].map((session, index) => (
-              <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                <div className="flex items-center flex-1">
-                  <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center mr-4">
-                    <span className="text-white text-sm font-bold font-sans">
-                      {session.name.split(' ').map(n => n[0]).join('')}
-                    </span>
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <div className="flex items-center space-x-2 mb-1">
-                          <h3 className="font-medium text-gray-900 font-sans">{session.name}</h3>
-                          <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium font-sans">
-                            {session.linkName}
-                          </span>
-                        </div>
-                        <div className="flex items-center space-x-4 text-sm text-gray-600 mb-1">
-                          <div className="flex items-center">
-                            <Mail className="w-3 h-3 mr-1" />
-                            <span className="font-sans">{session.email}</span>
-                          </div>
-                          <div className="flex items-center">
-                            <Building className="w-3 h-3 mr-1" />
-                            <span className="font-sans">{session.company}</span>
-                          </div>
-                        </div>
-                        <div className="flex items-center space-x-4 text-xs text-gray-500">
-                          <span className="font-sans">Checklist: {session.checklist}</span>
-                          <span className="font-sans">Created: {session.created}</span>
-                          <span className="font-sans">Last activity: {session.lastActivity}</span>
-                        </div>
-                      </div>
-                      <div className="text-right ml-4">
-                        <div className={`text-sm font-medium font-sans ${
-                          session.status === 'completed' ? 'text-emerald-600' : 'text-blue-600'
-                        }`}>
-                          {session.status === 'completed' ? 'Completed' : 'In Progress'}
-                        </div>
-                        {session.status === 'completed' ? (
-                          <div className="text-xs text-emerald-600 mt-1 font-sans font-medium">
-                            100% complete
-                          </div>
-                        ) : (
-                          <div className="text-xs text-gray-500 mt-1 font-sans">
-                            {animatedProgress[session.name.split(' ')[0].toLowerCase()] || 0}% complete
-                          </div>
-                        )}
-                      </div>
-                    </div>
+              { title: 'Security Assessment', type: 'file_upload', icon: '🔒' },
+              { title: 'Integration Requirements', type: 'textarea', icon: '🔧' },
+              { title: 'Team Training Schedule', type: 'checkbox', icon: '📅' },
+              { title: 'Go-Live Checklist', type: 'checkbox', icon: '🚀' }
+            ].map((step, index) => (
+              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                <div className="flex items-center">
+                  <span className="text-lg mr-3">{step.icon}</span>
+                  <div>
+                    <div className="font-medium text-gray-900 font-sans">{step.title}</div>
+                    <div className="text-xs text-gray-500 font-sans">{step.type.replace('_', ' ')}</div>
                   </div>
                 </div>
-                <div className="flex items-center space-x-2 ml-4">
-                  <button className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-                    <Eye className="w-4 h-4" />
-                  </button>
-                  <button className="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors">
-                    <Copy className="w-4 h-4" />
-                  </button>
-                  <button className="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors">
-                    <Send className="w-4 h-4" />
-                  </button>
-                  <button className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                    <Trash2 className="w-4 h-4" />
+                <div className="flex items-center space-x-2">
+                  <button className="p-1 text-gray-400 hover:text-blue-600 transition-colors">
+                    <Edit className="w-4 h-4" />
                   </button>
                 </div>
               </div>
@@ -818,329 +507,370 @@ export default function DemoPage() {
     </div>
   );
 
-  const renderCustomerView = () => (
+  const renderCustomerExperience = () => (
     <div className="max-w-2xl mx-auto">
-      <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-        <div className="h-2 bg-emerald-500"></div>
-
-        <div className="px-6 py-8 text-center bg-emerald-50">
-          <div className="flex justify-center mb-4">
-            <img
-              src="/Freedom Lab Logos (3).png"
-              alt="Freedom Lab Logo"
-              className="h-8 object-contain"
-            />
+      {/* Customer View Header */}
+      <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-t-2xl p-8 text-white shadow-xl">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-4">
+            <Sparkles className="w-8 h-8" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2 font-sans">Website Design Project</h1>
-          <p className="text-gray-600 text-lg font-sans">Complete these steps to start your website design project</p>
-
-          <div className="mt-6 max-w-md mx-auto">
+          <h1 className="text-3xl font-bold font-sans mb-2">Welcome to TechCorp!</h1>
+          <p className="text-emerald-100 font-sans">Complete your onboarding to get started</p>
+          
+          {/* Progress Bar */}
+          <div className="mt-6">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-700 font-sans">Progress</span>
-              <span className="text-sm font-medium text-gray-700 font-sans">
-                {completedSteps.length}/7 completed
-              </span>
+              <span className="text-sm font-medium text-emerald-100 font-sans">Progress</span>
+              <span className="text-sm font-medium text-emerald-100 font-sans">6/7 completed</span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-3">
-              <div
-                className="h-3 bg-emerald-500 rounded-full transition-all duration-500"
-                style={{ width: `${(completedSteps.length / 7) * 100}%` }}
+            <div className="w-full bg-emerald-400/30 rounded-full h-3">
+              <div 
+                className="bg-white h-3 rounded-full transition-all duration-500"
+                style={{ width: '85%' }}
               ></div>
             </div>
-            <div className="text-center mt-2">
-              <span className="text-lg font-bold text-emerald-600 font-sans">
-                {Math.round((completedSteps.length / 7) * 100)}%
-              </span>
-            </div>
           </div>
-        </div>
-
-        <div className="p-6 space-y-4">
-          {[
-            {
-              id: 'slack',
-              title: 'Join Project Slack',
-              desc: 'Accept invitation to our design team workspace',
-              type: 'checkbox'
-            },
-            {
-              id: 'logo',
-              title: 'Upload Logo & Brand Assets',
-              desc: 'Share your current logo, brand guidelines, and any existing materials',
-              type: 'file_upload'
-            },
-            {
-              id: 'brand',
-              title: 'Brand Requirements & Vision',
-              desc: 'Tell us about your brand personality, target audience, and design preferences',
-              type: 'textarea'
-            },
-            {
-              id: 'contact',
-              title: 'Primary Contact Information',
-              desc: 'Who should we contact for design feedback and approvals?',
-              type: 'email'
-            },
-            {
-              id: 'inspiration',
-              title: 'Design Inspiration Links',
-              desc: 'Share websites or designs you love for style reference',
-              type: 'url'
-            },
-            {
-              id: 'timeline',
-              title: 'Project Timeline',
-              desc: 'When do you need the website completed?',
-              type: 'text'
-            },
-            {
-              id: 'kickoff',
-              title: 'Schedule Kickoff Meeting',
-              desc: 'Book a 60-minute strategy session to discuss your project in detail',
-              type: 'checkbox'
-            }
-          ].map((step, index) => {
-            const isCompleted = completedSteps.includes(step.id);
-            const isActive = currentActiveStep === step.id || (index === completedSteps.length && !isCompleted && !currentActiveStep);
-
-            return (
-              <div
-                key={step.id}
-                id={`step-${step.id}`}
-                className={`flex items-start space-x-3 p-4 rounded-lg transition-all duration-300 ${
-                  isActive ? 'bg-blue-50 border border-blue-200' :
-                  isCompleted ? 'bg-emerald-50 border border-emerald-200' : 'bg-gray-50'
-                }`}
-              >
-                <div
-                  className={`w-6 h-6 rounded border-2 flex items-center justify-center mt-0.5 transition-all duration-300 ${
-                    isCompleted
-                      ? 'bg-emerald-500 border-emerald-500 text-white'
-                      : isActive
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-300'
-                  }`}
-                >
-                  {isCompleted && (
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                  )}
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-medium text-gray-900 font-sans">{step.title}</h4>
-                  <p className="text-sm text-gray-600 mt-1 font-sans">{step.desc}</p>
-                  {isActive && step.type === 'textarea' && (
-                    <textarea
-                      placeholder="Tell us about your brand vision, target audience, and design style preferences..."
-                      className="w-full mt-3 px-3 py-3 border border-blue-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-sans"
-                      rows={3}
-                    />
-                  )}
-                  {isActive && step.type === 'text' && (
-                    <input
-                      type="text"
-                      placeholder="e.g., March 15, 2025"
-                      className="w-full mt-3 px-3 py-3 border border-blue-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-sans"
-                    />
-                  )}
-                  {isActive && step.type === 'email' && (
-                    <div className="mt-3 relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Mail className="h-4 w-4 text-gray-400" />
-                      </div>
-                      <input
-                        type="email"
-                        placeholder="contact@yourcompany.com"
-                        className="w-full pl-10 pr-3 py-3 border border-blue-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-sans"
-                      />
-                    </div>
-                  )}
-                  {isActive && step.type === 'url' && (
-                    <div className="mt-3 relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <LinkIcon className="h-4 w-4 text-gray-400" />
-                      </div>
-                      <input
-                        type="url"
-                        placeholder="https://example.com/inspiration"
-                        className="w-full pl-10 pr-3 py-3 border border-blue-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-sans"
-                      />
-                    </div>
-                  )}
-                  {isActive && step.type === 'file_upload' && (
-                    <div className="mt-3 border-2 border-dashed border-blue-300 rounded-lg p-4 text-center bg-blue-50">
-                      <Upload className="h-6 w-6 text-blue-400 mx-auto mb-2" />
-                      <div className="text-blue-600 text-sm font-medium font-sans mb-1">
-                        Drop files here or click to upload
-                      </div>
-                      <div className="text-xs text-blue-500 font-sans">
-                        PNG, JPG, PDF, AI files accepted
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })}
         </div>
       </div>
-    </div>
-  );
 
-  const renderBranding = () => (
-    <div className="max-w-6xl mx-auto">
-      <div className="bg-white shadow-sm rounded-xl border border-gray-200">
-        <div className="px-6 py-8">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2 font-sans">Brand Settings</h1>
-            <p className="text-gray-600 font-sans">Customize the appearance of your onboarding checklists</p>
+      {/* Customer Steps */}
+      <div className="bg-white rounded-b-2xl shadow-xl p-6">
+        <div className="space-y-4">
+          <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
+            <div className="flex items-center">
+              <div className="w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center mr-3">
+                <CheckCircle className="w-4 h-4 text-white" />
+              </div>
+              <div className="flex-1">
+                <h4 className="font-semibold text-gray-900 font-sans">Account Setup Complete</h4>
+                <p className="text-sm text-emerald-700 font-sans">✓ Profile created and email verified</p>
+              </div>
+            </div>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-8">
-            {/* Settings Panel */}
-            <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">Logo</label>
-                <div className="flex space-x-2">
-                  <input
-                    type="url"
-                    value="https://example.com/logo.png"
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
-                    placeholder="https://example.com/logo.png"
-                    readOnly
-                  />
-                  <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center space-x-2 font-sans">
-                    <Upload className="h-4 w-4" />
-                    <span>Upload</span>
-                  </button>
-                </div>
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 shadow-md">
+            <div className="flex items-center">
+              <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center mr-3 animate-pulse">
+                <span className="text-white text-xs font-bold font-sans">7</span>
               </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3 font-sans">Color Presets</label>
-                <div className="grid grid-cols-1 gap-2">
-                  {[
-                    { name: 'OnboardFlo Default', primary: '#10b981', secondary: '#059669' },
-                    { name: 'Ocean Blue', primary: '#0066cc', secondary: '#00a8ff' },
-                    { name: 'Forest Green', primary: '#2d5a27', secondary: '#4caf50' },
-                    { name: 'Sunset Orange', primary: '#e65100', secondary: '#ff9800' },
-                    { name: 'Royal Purple', primary: '#4a148c', secondary: '#9c27b0' },
-                    { name: 'Crimson Red', primary: '#b71c1c', secondary: '#f44336' },
-                    { name: 'Deep Teal', primary: '#004d40', secondary: '#00695c' },
-                    { name: 'Warm Pink', primary: '#c2185b', secondary: '#e91e63' }
-                  ].map((preset, index) => (
-                    <button
-                      key={preset.name}
-                      className={`flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50 transition-colors text-left ${
-                        index === 0 ? 'border-emerald-300 bg-emerald-50' : 'border-gray-200'
-                      }`}
-                    >
-                      <div className="flex space-x-1">
-                        <div
-                          className="w-4 h-4 rounded-full border border-gray-300"
-                          style={{ backgroundColor: preset.primary }}
-                        ></div>
-                        <div
-                          className="w-4 h-4 rounded-full border border-gray-300"
-                          style={{ backgroundColor: preset.secondary }}
-                        ></div>
-                      </div>
-                      <span className="text-sm text-gray-700 font-sans">{preset.name}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">Primary Color</label>
-                <div className="flex space-x-3 items-center">
-                  <div className="w-12 h-10 bg-emerald-500 border border-gray-300 rounded-lg"></div>
-                  <input
-                    type="text"
-                    value="#10b981"
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg font-mono text-sm"
-                    readOnly
+              <div className="flex-1">
+                <h4 className="font-semibold text-gray-900 font-sans">API Integration Setup</h4>
+                <p className="text-sm text-blue-700 font-sans">Configure your API endpoints and authentication</p>
+                <div className="mt-3">
+                  <input 
+                    type="text" 
+                    placeholder="Enter your API endpoint URL..."
+                    className="w-full px-3 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 font-sans"
                   />
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Live Preview */}
-            <div className="space-y-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center space-x-2">
-                  <Eye className="h-5 w-5 text-gray-400" />
-                  <h3 className="text-lg font-medium text-gray-900 font-sans">Live Preview</h3>
-                </div>
-              </div>
-
-              <div className="border border-gray-200 rounded-xl overflow-hidden shadow-lg">
-                <div className="h-3 w-full bg-emerald-500"></div>
-
-                <div className="px-6 py-8 text-center bg-emerald-50">
-                  <div className="flex justify-center mb-4">
-                    <img
-                      src="/Freedom Lab Logos (3).png"
-                      alt="Freedom Lab Logo"
-                      className="h-4 object-contain"
-                    />
-                  </div>
-                  <h1 className="text-2xl font-bold mb-2 text-gray-900 font-sans">SaaS Onboarding Checklist</h1>
-                  <p className="text-gray-600 font-sans">Complete these steps to get started with our platform</p>
-                </div>
-
-                <div className="p-6 space-y-4">
-                  <div className="flex items-start space-x-3 p-4 bg-emerald-50 rounded-lg border border-emerald-200">
-                    <div className="w-5 h-5 rounded border-2 border-emerald-500 bg-emerald-500 flex items-center justify-center mt-0.5">
-                      <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-medium text-gray-900 font-sans">Account Setup</h4>
-                      <p className="text-sm text-gray-600 mt-1 font-sans">Complete your profile and verify your email</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start space-x-3 p-4 border border-gray-200 rounded-lg">
-                    <div className="w-5 h-5 rounded border-2 border-emerald-500 mt-0.5"></div>
-                    <div className="flex-1">
-                      <h4 className="font-medium text-gray-900 font-sans">Project Requirements</h4>
-                      <p className="text-sm text-gray-600 mt-1 font-sans">Tell us about your project goals and requirements</p>
-                    </div>
-                  </div>
-
-                  <button className="w-full py-3 px-6 rounded-lg font-semibold text-white transition-colors mt-6 bg-emerald-600 font-sans">
-                    Submit Onboarding Info
-                  </button>
-                </div>
-              </div>
-            </div>
+          <div className="text-center pt-4">
+            <button className="bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-sans">
+              Complete Final Step
+            </button>
           </div>
         </div>
       </div>
     </div>
   );
 
-  const renderCurrentStep = () => {
-    switch (currentStep) {
-      case 0: return renderDashboard();
-      case 1: return renderChecklists();
-      case 2: return renderSubmissions();
-      case 3: return renderCustomerView();
-      case 4: return renderBranding();
+  const renderCompletionCelebration = () => (
+    <div className="max-w-2xl mx-auto text-center">
+      {/* Confetti Effect */}
+      {showConfetti && (
+        <div className="fixed inset-0 pointer-events-none z-50">
+          {[...Array(50)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute animate-bounce"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 2}s`,
+                animationDuration: `${2 + Math.random() * 2}s`
+              }}
+            >
+              <div className={`w-2 h-2 rounded-full ${
+                ['bg-emerald-500', 'bg-blue-500', 'bg-purple-500', 'bg-yellow-500', 'bg-pink-500'][Math.floor(Math.random() * 5)]
+              }`}></div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+        <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 p-8 text-white">
+          <div className={`w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-6 transition-all duration-1000 ${
+            completingStep ? 'scale-110 rotate-12' : ''
+          }`}>
+            <CheckCircle className="w-10 h-10" />
+          </div>
+          <h1 className="text-4xl font-bold font-sans mb-4">Congratulations, Sarah! 🎉</h1>
+          <p className="text-emerald-100 text-lg font-sans">You've successfully completed your TechCorp onboarding!</p>
+        </div>
+
+        <div className="p-8">
+          <div className="grid grid-cols-3 gap-6 mb-8">
+            <div className="text-center">
+              <div className="text-3xl font-bold text-emerald-600 font-sans">7/7</div>
+              <div className="text-sm text-gray-600 font-sans">Steps Completed</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-blue-600 font-sans">2.1</div>
+              <div className="text-sm text-gray-600 font-sans">Days to Complete</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-purple-600 font-sans">100%</div>
+              <div className="text-sm text-gray-600 font-sans">Success Rate</div>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-r from-emerald-50 to-blue-50 rounded-xl p-6 mb-6">
+            <h3 className="font-semibold text-gray-900 mb-3 font-sans">What's Next?</h3>
+            <div className="space-y-2 text-sm text-gray-700">
+              <p className="font-sans">✓ Your account is fully configured and ready to use</p>
+              <p className="font-sans">✓ Our team will reach out within 24 hours for your kickoff call</p>
+              <p className="font-sans">✓ Access your dashboard and start exploring features</p>
+            </div>
+          </div>
+
+          <button className="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 text-white py-4 rounded-xl font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-sans">
+            Access Your Dashboard
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderAnalytics = () => (
+    <div className="space-y-6">
+      {/* Analytics Header */}
+      <div className="bg-gradient-to-r from-purple-500 to-blue-600 rounded-2xl p-8 text-white shadow-xl">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-3xl font-bold font-sans">Analytics Dashboard</h2>
+            <p className="text-purple-100 font-sans">Insights into your onboarding performance</p>
+          </div>
+          <div className="text-right">
+            <div className="text-4xl font-bold font-sans">↑60%</div>
+            <div className="text-purple-100 font-sans">Improvement</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Analytics Grid */}
+      <div className="grid lg:grid-cols-2 gap-6">
+        {/* Completion Trends */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 font-sans">Completion Trends</h3>
+          <div className="space-y-4">
+            {[
+              { period: 'This Week', rate: 92, change: '+8%', color: 'emerald' },
+              { period: 'Last Week', rate: 84, change: '+12%', color: 'blue' },
+              { period: 'This Month', rate: 87, change: '+15%', color: 'purple' }
+            ].map((stat, index) => (
+              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div>
+                  <div className="font-medium text-gray-900 font-sans">{stat.period}</div>
+                  <div className="text-sm text-gray-600 font-sans">{stat.rate}% completion rate</div>
+                </div>
+                <div className={`text-${stat.color}-600 font-semibold font-sans`}>
+                  {stat.change}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Top Performing Checklists */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 font-sans">Top Performing Checklists</h3>
+          <div className="space-y-3">
+            {demoChecklists.map((checklist, index) => (
+              <div key={checklist.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                <div className="flex items-center">
+                  <div 
+                    className="w-3 h-3 rounded-full mr-3"
+                    style={{ backgroundColor: checklist.color }}
+                  ></div>
+                  <div>
+                    <div className="font-medium text-gray-900 text-sm font-sans">{checklist.title}</div>
+                    <div className="text-xs text-gray-600 font-sans">{checklist.sessions} sessions</div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="font-semibold text-gray-900 text-sm font-sans">{checklist.completionRate}%</div>
+                  <div className="text-xs text-gray-600 font-sans">{checklist.avgTime}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Insights */}
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4 font-sans">Key Insights</h3>
+        <div className="grid md:grid-cols-3 gap-4">
+          <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
+            <div className="flex items-center mb-2">
+              <Target className="w-5 h-5 text-emerald-600 mr-2" />
+              <span className="font-medium text-emerald-800 font-sans">Best Practice</span>
+            </div>
+            <p className="text-sm text-emerald-700 font-sans">
+              Checklists with 5-8 steps have 23% higher completion rates
+            </p>
+          </div>
+          
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+            <div className="flex items-center mb-2">
+              <Clock className="w-5 h-5 text-blue-600 mr-2" />
+              <span className="font-medium text-blue-800 font-sans">Timing</span>
+            </div>
+            <p className="text-sm text-blue-700 font-sans">
+              Most customers complete onboarding within 2-3 business days
+            </p>
+          </div>
+          
+          <div className="bg-purple-50 border border-purple-200 rounded-xl p-4">
+            <div className="flex items-center mb-2">
+              <Zap className="w-5 h-5 text-purple-600 mr-2" />
+              <span className="font-medium text-purple-800 font-sans">Impact</span>
+            </div>
+            <p className="text-sm text-purple-700 font-sans">
+              Structured onboarding reduces support tickets by 60%
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const getCurrentViewTitle = () => {
+    switch (views[currentView]) {
+      case 'dashboard': return 'Customer Success Dashboard';
+      case 'customer-detail': return 'Live Customer Progress';
+      case 'checklist-builder': return 'Visual Checklist Builder';
+      case 'customer-experience': return 'Customer Experience';
+      case 'completion-celebration': return 'Success Celebration';
+      case 'analytics': return 'Performance Analytics';
+      default: return 'Demo';
+    }
+  };
+
+  const renderCurrentView = () => {
+    switch (views[currentView]) {
+      case 'dashboard': return renderDashboard();
+      case 'customer-detail': return renderCustomerDetail();
+      case 'checklist-builder': return renderChecklistBuilder();
+      case 'customer-experience': return renderCustomerExperience();
+      case 'completion-celebration': return renderCompletionCelebration();
+      case 'analytics': return renderAnalytics();
       default: return renderDashboard();
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <DemoHeader />
-      <div className="pt-20">
-        {/* Demo Content */}
-        <div className="px-4 sm:px-6 lg:px-8 py-8">
-          {renderCurrentStep()}
+      
+      <div className="pt-20 pb-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Demo Header */}
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center bg-emerald-100 text-emerald-800 px-4 py-2 rounded-full text-sm font-medium mb-6 font-sans">
+              <Sparkles className="w-4 h-4 mr-2" />
+              Interactive Demo Experience
+            </div>
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 font-sans">
+              See OnboardFlo in Action
+            </h1>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8 font-sans">
+              Watch how leading companies use OnboardFlo to transform their customer onboarding 
+              and achieve 87% completion rates.
+            </p>
+            
+            {/* Demo Controls */}
+            <div className="flex items-center justify-center space-x-4 mb-8">
+              <button
+                onClick={() => setIsPlaying(!isPlaying)}
+                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-sans ${
+                  isPlaying 
+                    ? 'bg-red-500 hover:bg-red-600 text-white' 
+                    : 'bg-emerald-500 hover:bg-emerald-600 text-white'
+                }`}
+              >
+                {isPlaying ? 'Pause Demo' : 'Start Demo'}
+              </button>
+              
+              <div className="flex items-center space-x-2">
+                {views.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentView(index)}
+                    className={`w-3 h-3 rounded-full transition-all duration-200 ${
+                      currentView === index 
+                        ? 'bg-emerald-500 scale-125' 
+                        : 'bg-gray-300 hover:bg-gray-400'
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Current View Title */}
+            <div className="bg-white/60 backdrop-blur-sm rounded-xl px-6 py-3 inline-block border border-white/20 shadow-lg">
+              <h2 className="text-lg font-semibold text-gray-900 font-sans">{getCurrentViewTitle()}</h2>
+            </div>
+          </div>
+
+          {/* Demo Content */}
+          <div className="transition-all duration-500 ease-in-out">
+            {renderCurrentView()}
+          </div>
+
+          {/* Demo Navigation */}
+          <div className="flex items-center justify-center space-x-4 mt-12">
+            <button
+              onClick={() => setCurrentView(Math.max(0, currentView - 1))}
+              disabled={currentView === 0}
+              className="px-4 py-2 text-gray-600 hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed font-sans"
+            >
+              ← Previous
+            </button>
+            
+            <span className="text-sm text-gray-600 font-sans">
+              {currentView + 1} of {views.length}
+            </span>
+            
+            <button
+              onClick={() => setCurrentView(Math.min(views.length - 1, currentView + 1))}
+              disabled={currentView === views.length - 1}
+              className="px-4 py-2 text-gray-600 hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed font-sans"
+            >
+              Next →
+            </button>
+          </div>
+
+          {/* CTA Section */}
+          <div className="text-center mt-16 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-2xl p-12 text-white shadow-2xl">
+            <h2 className="text-3xl font-bold font-sans mb-4">Ready to transform your onboarding?</h2>
+            <p className="text-xl text-emerald-100 mb-8 font-sans">
+              Join hundreds of companies achieving 87% completion rates with OnboardFlo
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button className="bg-white text-emerald-600 px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-sans">
+                Start 7-Day Free Trial
+              </button>
+              <button className="bg-emerald-400/20 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 border border-emerald-400/30 hover:bg-emerald-400/30 font-sans">
+                Schedule Demo Call
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

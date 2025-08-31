@@ -20,7 +20,6 @@ import SettingsPage from './pages/SettingsPage';
 import BrandingPage from './pages/BrandingPage';
 import PublicChecklistPage from './pages/PublicChecklistPage';
 import DemoPage from './pages/DemoPage';
-import SimpleHeader from './components/SimpleHeader';
 
 // Simple landing page component that combines all sections
 function LandingPage() {
@@ -43,7 +42,9 @@ function App() {
             {/* Public checklist submission - no navbar */}
             <Route path="/c/:checklistId/:sessionToken" element={<PublicChecklistPage />} />
             
-            {/* Demo page with simple header */}
+            {/* Demo page with its own header */}
+            <Route path="/demo" element={<DemoPage />} />
+            
             {/* All other routes with navbar */}
             <Route path="/*" element={
               <div className="min-h-screen">
@@ -51,7 +52,6 @@ function App() {
                 <main>
                   <Routes>
                     <Route path="/" element={<LandingPage />} />
-                    <Route path="/demo" element={<DemoPage />} />
                     <Route path="/pricing" element={<PricingPage />} />
                     <Route path="/signup" element={<SignUpPage />} />
                     <Route path="/get-started" element={<GetStartedPage />} />
