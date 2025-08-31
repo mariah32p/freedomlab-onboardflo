@@ -263,7 +263,7 @@ export default function DemoPage() {
 
           // Process all steps much faster
           const processSteps = async () => {
-            await new Promise(resolve => setTimeout(resolve, 1500));
+            await new Promise(resolve => setTimeout(resolve, 2000));
             
             for (let stepIndex = 0; stepIndex < demoSteps.length; stepIndex++) {
               if (!autoPlayRef.current) break;
@@ -272,7 +272,7 @@ export default function DemoPage() {
               setCurrentCustomerStep(stepIndex);
               
               // Quick pause before typing
-              await new Promise(resolve => setTimeout(resolve, 300));
+              await new Promise(resolve => setTimeout(resolve, 800));
               if (!autoPlayRef.current) break;
               
               setIsTyping(true);
@@ -285,32 +285,32 @@ export default function DemoPage() {
               }));
               
               setIsTyping(false);
-              await new Promise(resolve => setTimeout(resolve, 300));
+              await new Promise(resolve => setTimeout(resolve, 600));
               
               if (!autoPlayRef.current) break;
               setCompletedSteps(prev => [...prev, `step-${stepIndex}`]);
               
               // Quick pause before next step
-              await new Promise(resolve => setTimeout(resolve, 200));
+              await new Promise(resolve => setTimeout(resolve, 800));
             }
             
             // Advance to completion after all steps
             setTimeout(() => {
               if (autoPlayRef.current) advanceView();
-            }, 500);
+            }, 1200);
           };
 
           setTimeout(() => {
             if (!isCancelled && autoPlayRef.current) {
               processSteps();
             }
-          }, 200);
+          }, 400);
           break;
 
         case 'completion':
           timeout = setTimeout(() => {
             if (!isCancelled && autoPlayRef.current) advanceView();
-          }, 4000);
+          }, 6000);
           break;
       }
     };
@@ -853,7 +853,7 @@ export default function DemoPage() {
         </div>
 
         <div className="p-8">
-          <div className="grid grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-2 gap-8 mb-8 max-w-md mx-auto">
             <div className="text-center">
               <div className="text-3xl font-bold text-emerald-600 font-sans">{demoSteps.length}/{demoSteps.length}</div>
               <div className="text-sm text-gray-600 font-sans">Steps Completed</div>
