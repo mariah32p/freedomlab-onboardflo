@@ -327,8 +327,7 @@ export default function DemoPage() {
     <div className="space-y-8">
       {/* Header */}
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4 font-sans">OnboardFlo Dashboard</h1>
-        <p className="text-xl text-gray-600 font-sans">Real-time customer onboarding insights</p>
+        <h1 className="text-4xl font-bold text-gray-900 mb-4 font-sans">Dashboard</h1>
       </div>
 
       {/* Stats Grid */}
@@ -914,7 +913,7 @@ export default function DemoPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       <DemoHeader />
       
-      <div className="pt-20 pb-12 px-4 sm:px-6 lg:px-8">
+      <div className="pt-32 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="transition-all duration-500 ease-in-out">
           {views[currentView] === 'dashboard' && renderDashboard()}
           {views[currentView] === 'template-selection' && renderTemplateSelection()}
