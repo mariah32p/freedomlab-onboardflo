@@ -532,7 +532,8 @@ export default function DemoPage() {
                                 <div className="flex-1">
                                   <div className="flex items-center mb-1">
                                     <span className="text-sm mr-2">
-                                      {step.step_type === 'checkbox' ? '☑️' : 
+                    <div className="p-6 space-y-6 max-h-96 overflow-y-auto">
+                      {builderActiveTab === 'settings' && (
                                        step.step_type === 'text' ? '📝' :
                                        step.step_type === 'textarea' ? '📄' :
                                        step.step_type === 'file_upload' ? '📎' :
@@ -542,7 +543,7 @@ export default function DemoPage() {
                                     <h4 className="font-medium text-gray-900 font-sans">{step.title}</h4>
                                   </div>
                                   <div className="flex items-center mt-2">
-                                    <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium font-sans mr-2">
+                              value={builderTitle}
                                       {step.step_type === 'checkbox' ? 'Checkbox' :
                                        step.step_type === 'text' ? 'Text Input' :
                                        step.step_type === 'textarea' ? 'Long Text' :
@@ -554,7 +555,7 @@ export default function DemoPage() {
                                       <span className="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium font-sans">
                                         Required
                                       </span>
-                                    )}
+                              value={builderDescription}
                                   </div>
                                 </div>
                                 <div className="flex items-center space-x-1 ml-4">
@@ -571,7 +572,7 @@ export default function DemoPage() {
                                   <button className="p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors">
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                    </svg>
+                                  checked={builderVisibility}
                                   </button>
                                   <button className="p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors">
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -624,6 +625,99 @@ export default function DemoPage() {
                           </div>
                         </div>
                       </div>
+                      )}
+                      
+                      {builderActiveTab === 'steps' && (
+                        <div className="space-y-6">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <h3 className="text-lg font-semibold text-gray-900 font-sans">Checklist Steps</h3>
+                              <p className="text-sm text-gray-600 font-sans">
+                                Add, edit, and reorder the steps customers will complete
+                              </p>
+                            </div>
+                            <button className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center font-sans">
+                              <Plus className="w-4 h-4 mr-2" />
+                              Add Step
+                            </button>
+                          </div>
+                          
+                          {/* Steps List */}
+                          <div className="space-y-3">
+                            {builderSteps.map((step, index) => (
+                              <div 
+                                key={index} 
+                                data-step-index={index}
+                                className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-sm transition-shadow"
+                              >
+                                <div className="flex items-start">
+                                  <div className="flex items-center mr-3 mt-1">
+                                    <span className="text-sm text-gray-500 mr-2 font-sans">{index + 1}</span>
+                                  </div>
+                                  <div className="flex-1">
+                                    <div className="flex items-start justify-between">
+                                      <div className="flex-1">
+                                        <div className="flex items-center mb-1">
+                                          <span className="text-sm mr-2">
+                                            {step.type === 'checkbox' ? '☑️' : 
+                                             step.type === 'file_upload' ? '📎' :
+                                             step.type === 'textarea' ? '📄' :
+                                             step.type === 'email' ? '📧' :
+                                             step.type === 'url' ? '🔗' :
+                                             step.type === 'text' ? '📝' : '☑️'}
+                                          </span>
+                                          <h4 className="font-medium text-gray-900 font-sans">{step.title}</h4>
+                                        </div>
+                                        <div className="flex items-center mt-2">
+                                          <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium font-sans mr-2">
+                                            {step.type === 'checkbox' ? 'Checkbox' :
+                                             step.type === 'file_upload' ? 'File Upload' :
+                                             step.type === 'textarea' ? 'Long Text' :
+                                             step.type === 'email' ? 'Email' :
+                                             step.type === 'url' ? 'Website URL' :
+                                             step.type === 'text' ? 'Text Input' : 'Checkbox'}
+                                          </span>
+                                          {step.required && (
+                                            <span className="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium font-sans">
+                                              Required
+                                            </span>
+                                          )}
+                                        </div>
+                                      </div>
+                                      <div className="flex items-center space-x-1 ml-4">
+                                        <button className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed">
+                                          <ArrowUp className="w-4 h-4" />
+                                        </button>
+                                        <button className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed">
+                                          <ArrowDown className="w-4 h-4" />
+                                        </button>
+                                        <button className="p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors">
+                                          <Edit className="w-4 h-4" />
+                                        </button>
+                                        <button className="p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors">
+                                          <Trash2 className="w-4 h-4" />
+                                        </button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                            
+                            {builderSteps.length === 0 && !isAddingSteps && (
+                              <div className="text-center py-12 border-2 border-dashed border-gray-300 rounded-lg">
+                                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                  <Plus className="w-8 h-8 text-gray-400" />
+                                </div>
+                                <h3 className="text-lg font-semibold text-gray-900 mb-2 font-sans">No steps added yet</h3>
+                                <p className="text-gray-600 mb-6 font-sans">
+                                  Add steps to create your onboarding checklist
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ))}
                   
