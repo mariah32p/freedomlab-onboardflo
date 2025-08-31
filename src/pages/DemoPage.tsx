@@ -294,7 +294,7 @@ export default function DemoPage() {
         "Technical requirements: React/Next.js preferred, Vercel hosting, integrate with our existing API, need CMS for blog, analytics tracking, and lead capture forms.",
         "Team contacts: sarah@techcorp.com (Project Lead), mike@techcorp.com (CTO), lisa@techcorp.com (Marketing). Social: @techcorp on Twitter/LinkedIn.",
         "Budget confirmed: $15,000 for full website redesign. Timeline: 6-8 weeks. Payment: 50% upfront, 50% on completion.",
-        "Kickoff call scheduled for next Tuesday at 2 PM EST. Project management via Slack channel #website-redesign."
+        "Kickoff call scheduled for next Tuesday at 2 PM EST. Project management via Slack channel #website-redesign.",
         "Design inspiration: We love the clean, technical aesthetic of Stripe, Linear, and Vercel. We want something modern but not too flashy - professional and trustworthy. Reference sites: stripe.com, linear.app, vercel.com"
       ];
       
@@ -303,6 +303,8 @@ export default function DemoPage() {
           setCurrentCustomerStep(index);
           setCustomerStepContent(prev => ({ ...prev, [`step-${index}`]: content }));
         }, 1500 + (index * 400));
+        setTimeout(() => {
+          setCompletedSteps(prev => [...prev, `step-${index}`]);
         }, 3000 + (index * 600));
       });
       
