@@ -220,7 +220,7 @@ export default function DemoPage() {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentView(prev => (prev + 1) % views.length);
-    }, 12000); // 12 seconds per view for better pacing
+    }, 8000); // 8 seconds per view
 
     return () => clearInterval(timer);
   }, []);
@@ -232,8 +232,8 @@ export default function DemoPage() {
     if (views[currentView] === 'template-selection') {
       // Simulate searching and selecting template
       setTimeout(() => setSearchTerm('website'), 1000);
-      setTimeout(() => setSelectedCategory('Design'), 2000);
-      setTimeout(() => setSelectedTemplate('website-design'), 4000);
+      setTimeout(() => setSelectedCategory('Design'), 1500);
+      setTimeout(() => setSelectedTemplate('website-design'), 2500);
     }
     
     if (views[currentView] === 'checklist-builder') {
@@ -278,18 +278,23 @@ export default function DemoPage() {
           email: 'sarah@techcorp.com',
           company: 'TechCorp Solutions'
         });
-      }, 2000);
+      }, 1500);
       
       setTimeout(() => {
         setShowCustomerForm(false);
         setCurrentCustomerStep(0);
-      }, 4000);
+      }, 2500);
       
-      // Simulate completing steps with realistic content
+      // Simulate completing ALL steps with realistic content
       const stepContents = [
         "We're a B2B SaaS company targeting enterprise clients. We need a modern, professional website that showcases our AI-powered analytics platform. Our target audience is CTOs and data scientists at companies with 100+ employees. The site should emphasize trust, security, and technical expertise.",
         "Brand assets uploaded: TechCorp_Logo_Package.zip, Brand_Guidelines_2024.pdf, Color_Palette.ai",
         "Content package uploaded: Website_Copy_Draft.docx, Product_Descriptions.pdf, Team_Bios.docx, Case_Studies.pdf",
+        "Design inspiration: We love the clean, technical aesthetic of Stripe, Linear, and Vercel. We want something modern but not too flashy - professional and trustworthy.",
+        "Technical requirements: React/Next.js preferred, Vercel hosting, integrate with our existing API, need CMS for blog, analytics tracking, and lead capture forms.",
+        "Team contacts: sarah@techcorp.com (Project Lead), mike@techcorp.com (CTO), lisa@techcorp.com (Marketing). Social: @techcorp on Twitter/LinkedIn.",
+        "Budget confirmed: $15,000 for full website redesign. Timeline: 6-8 weeks. Payment: 50% upfront, 50% on completion.",
+        "Kickoff call scheduled for next Tuesday at 2 PM EST. Project management via Slack channel #website-redesign."
         "Design inspiration: We love the clean, technical aesthetic of Stripe, Linear, and Vercel. We want something modern but not too flashy - professional and trustworthy. Reference sites: stripe.com, linear.app, vercel.com"
       ];
       
@@ -297,9 +302,14 @@ export default function DemoPage() {
         setTimeout(() => {
           setCurrentCustomerStep(index);
           setCustomerStepContent(prev => ({ ...prev, [`step-${index}`]: content }));
-          setCompletedSteps(prev => [...prev, `step-${index}`]);
-        }, 5000 + (index * 1500));
+        }, 1500 + (index * 400));
+        }, 3000 + (index * 600));
       });
+      
+      // Mark as completed after all steps
+      setTimeout(() => {
+        setCurrentView(4); // Move to completion view
+      }, 3000 + (stepContents.length * 600) + 500);
     }
   }, [currentView]);
 
