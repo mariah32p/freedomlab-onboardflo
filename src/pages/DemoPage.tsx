@@ -74,6 +74,10 @@ export default function DemoPage() {
   const [isTypingStep, setIsTypingStep] = useState(false);
   const [typingStepId, setTypingStepId] = useState<string>('');
 
+  // Use a ref for autoplay to get the latest value inside async functions
+  const autoPlayRef = useRef(autoPlay);
+  autoPlayRef.current = autoPlay;
+
   const views = [
     'dashboard',
     'template-selection', 
@@ -199,6 +203,7 @@ export default function DemoPage() {
 
     const view = views[currentView];
     let viewTimeout: NodeJS.Timeout;
+    let isCancelled = false; // Flag to prevent state updates after component unmounts or effect re-runs
 
     switch (view) {
       case 'dashboard':
@@ -237,80 +242,89 @@ export default function DemoPage() {
         break;
 
       case 'customer-experience': {
-        setCustomerData({ name: '', email: '', company: '' });
-        setCompletedSteps([]);
-        setCurrentCustomerStep(0);
-        setShowCustomerForm(true);
-        setCustomerStepContent({});
-        setIsTypingStep(false);
-        setTypingStepId('');
-        
-        setTimeout(() => setCustomerData({
-          name: 'Sarah Martinez',
-          email: 'sarah@healthtech.com',
-          company: 'HealthTech Solutions'
-        }), 1000);
-        
-        setTimeout(() => {
-          setShowCustomerForm(false);
+        // REFACTORED: Using async/await for a more robust and readable animation sequence.
+        const sleep = (ms: number) => new Promise(res => setTimeout(res, ms));
+
+        const runCustomerFlow = async () => {
+          // Reset state for this view
+          if (isCancelled) return;
+          setCustomerData({ name: '', email: '', company: '' });
+          setCompletedSteps([]);
           setCurrentCustomerStep(0);
-        }, 3000);
-        
-        const processCustomerStep = (index: number) => {
-          if (index >= demoChecklistSteps.length) {
-            setTimeout(advanceView, 2000);
-            return;
+          setShowCustomerForm(true);
+          setCustomerStepContent({});
+          setIsTypingStep(false);
+          setTypingStepId('');
+
+          await sleep(1000);
+          if (isCancelled || !autoPlayRef.current) return;
+          setCustomerData({
+            name: 'Sarah Martinez',
+            email: 'sarah@healthtech.com',
+            company: 'HealthTech Solutions'
+          });
+
+          await sleep(2000);
+          if (isCancelled || !autoPlayRef.current) return;
+          setShowCustomerForm(false);
+          
+          await sleep(500);
+
+          // Loop through each step sequentially
+          for (let i = 0; i < demoChecklistSteps.length; i++) {
+            if (isCancelled || !autoPlayRef.current) return;
+            
+            const step = demoChecklistSteps[i];
+            setCurrentCustomerStep(i);
+            await sleep(1000);
+
+            // Typing animation as a promise
+            if (isCancelled || !autoPlayRef.current) return;
+            await new Promise<void>(resolve => {
+              setIsTypingStep(true);
+              setTypingStepId(`step-${i}`);
+              const content = step.content;
+              let charIndex = 0;
+              const typeInterval = setInterval(() => {
+                if (charIndex < content.length) {
+                  setCustomerStepContent(prev => ({...prev, [`step-${i}`]: content.slice(0, charIndex + 1)}));
+                  charIndex++;
+                } else {
+                  clearInterval(typeInterval);
+                  resolve();
+                }
+              }, 15);
+            });
+
+            if (isCancelled || !autoPlayRef.current) return;
+            setIsTypingStep(false);
+            await sleep(500);
+
+            if (isCancelled || !autoPlayRef.current) return;
+            setCompletedSteps(prev => [...prev, `step-${i}`]);
+            await sleep(1500);
           }
           
-          if (!autoPlay) return;
-
-          const step = demoChecklistSteps[index];
-          setCurrentCustomerStep(index);
-          
-          setTimeout(() => {
-            setIsTypingStep(true);
-            setTypingStepId(`step-${index}`);
-            
-            const content = step.content;
-            let charIndex = 0;
-            
-            const typeInterval = setInterval(() => {
-              if (charIndex < content.length) {
-                setCustomerStepContent(prev => ({
-                  ...prev,
-                  [`step-${index}`]: content.slice(0, charIndex + 1)
-                }));
-                charIndex++;
-              } else {
-                clearInterval(typeInterval);
-                setIsTypingStep(false);
-                
-                setTimeout(() => {
-                  setCompletedSteps(prev => [...prev, `step-${index}`]);
-                  setTimeout(() => processCustomerStep(index + 1), 1500);
-                }, 500);
-              }
-            }, 15);
-          }, 1000);
+          if (isCancelled || !autoPlayRef.current) return;
+          await sleep(500);
+          advanceView();
         };
 
-        setTimeout(() => processCustomerStep(0), 3500);
+        runCustomerFlow();
         break;
       }
-
-      // THE FIX: The 'case' for 'completion' was missing its own section, causing a fall-through bug.
       case 'completion':
         viewTimeout = setTimeout(advanceView, 8000);
         break;
-
       default:
         break;
     }
 
     return () => {
+      isCancelled = true;
       clearTimeout(viewTimeout);
     };
-  }, [currentView, autoPlay, advanceView]);
+  }, [currentView, advanceView]);
   
   useEffect(() => {
     if (stepsContainerRef.current) {
@@ -681,14 +695,14 @@ export default function DemoPage() {
               </div>
               
               <div ref={stepsContainerRef} className="space-y-3 max-h-96 overflow-y-auto pr-2">
-                {steps.map((step, index) => (
+                {steps.map((step) => (
                   <div key={step.id} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200 animate-fade-in">
                     <div className="flex items-start justify-between">
                       <div className="flex items-start">
                         <span className="text-lg mr-3 mt-1">
                           {step.type === 'textarea' ? '📝' : 
                            step.type === 'file_upload' ? '📎' : 
-                           step.type === 'checkbox' ? '☑️' : '📝'}
+                           '☑️'}
                         </span>
                         <div className="flex-1">
                           <div className="flex items-center mb-2">
@@ -704,7 +718,7 @@ export default function DemoPage() {
                             <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium font-sans">
                               {step.type === 'textarea' ? 'Long Text' : 
                                step.type === 'file_upload' ? 'File Upload' : 
-                               step.type === 'checkbox' ? 'Checkbox' : 'Text Input'}
+                               'Checkbox'}
                             </span>
                           </div>
                         </div>
@@ -822,8 +836,7 @@ export default function DemoPage() {
               <div className="bg-blue-50 rounded-xl p-8 mb-8 border-2 border-blue-200">
                 <div className="flex items-center mb-6">
                   <span className="text-3xl mr-4">
-                    {demoChecklistSteps[currentCustomerStep].type === 'textarea' ? '📝' : 
-                     demoChecklistSteps[currentCustomerStep].type === 'file_upload' ? '📎' : '☑️'}
+                    {demoChecklistSteps[currentCustomerStep].type === 'textarea' ? '📝' : '📎'}
                   </span>
                   <div>
                     <h3 className="text-2xl font-bold text-gray-900 font-sans">
