@@ -371,7 +371,11 @@ export default function DemoPage() {
             ].map((client, index) => (
               <div key={index} className={`flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-${client.color}-50 to-${client.color}-100 border border-${client.color}-200`}>
                 <div className="flex items-center">
-                  <div className={`w-10 h-10 bg-gradient-to-br from-${client.color}-400 to-${client.color}-500 rounded-full flex items-center justify-center mr-4 shadow-lg`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-4 shadow-lg text-white font-bold text-sm ${
+                    client.color === 'emerald' ? 'bg-emerald-500' :
+                    client.color === 'blue' ? 'bg-blue-500' :
+                    client.color === 'purple' ? 'bg-purple-500' : 'bg-gray-500'
+                  }`}>
                     <span className="text-white text-sm font-bold font-sans">{client.name.split(' ').map(n => n[0]).join('')}</span>
                   </div>
                   <div>
