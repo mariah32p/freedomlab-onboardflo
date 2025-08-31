@@ -38,13 +38,29 @@ import {
   X,
   Trash2,
   ArrowUp,
-  ArrowDown
+  ArrowDown,
+  Settings,
+  Search,
+  Filter,
+  ChevronRight,
+  Workflow,
+  Code,
+  PenTool,
+  Megaphone,
+  ShoppingCart,
+  Heart,
+  Briefcase
 } from 'lucide-react';
 import DemoHeader from '../components/DemoHeader';
 
 export default function DemoPage() {
   const [currentView, setCurrentView] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
+  
+  // Template selection state
+  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('All');
   
   // Checklist building state
   const [checklistTitle, setChecklistTitle] = useState('');
@@ -54,8 +70,10 @@ export default function DemoPage() {
     title: '',
     description: '',
     type: 'textarea',
-    required: true
+    required: true,
+    placeholder: ''
   });
+  const [showAddStepForm, setShowAddStepForm] = useState(false);
   
   // Customer experience state
   const [customerData, setCustomerData] = useState({
@@ -66,164 +84,227 @@ export default function DemoPage() {
   const [completedSteps, setCompletedSteps] = useState<string[]>([]);
   const [currentCustomerStep, setCurrentCustomerStep] = useState(0);
   const [showCustomerForm, setShowCustomerForm] = useState(true);
+  const [customerStepContent, setCustomerStepContent] = useState<Record<string, string>>({});
 
   const views = [
     'dashboard',
-    'create-checklist', 
-    'build-checklist',
+    'template-selection', 
+    'checklist-builder',
     'customer-experience',
     'completion'
+  ];
+
+  const templates = [
+    {
+      id: 'website-design',
+      name: 'Website Design Project',
+      category: 'Design',
+      icon: '🎨',
+      color: '#3b82f6',
+      description: 'Complete onboarding flow for website design clients including discovery, assets, and project setup',
+      steps: 8,
+      popular: true
+    },
+    {
+      id: 'web-development',
+      name: 'Web Development Project',
+      category: 'Development',
+      icon: '💻',
+      color: '#10b981',
+      description: 'Technical onboarding for web development projects with requirements gathering',
+      steps: 6,
+      popular: false
+    },
+    {
+      id: 'ecommerce-setup',
+      name: 'E-commerce Store Setup',
+      category: 'E-commerce',
+      icon: '🛒',
+      color: '#f59e0b',
+      description: 'Comprehensive onboarding for e-commerce website projects',
+      steps: 10,
+      popular: false
+    },
+    {
+      id: 'marketing-campaign',
+      name: 'Marketing Campaign Launch',
+      category: 'Marketing',
+      icon: '📈',
+      color: '#ef4444',
+      description: 'Strategic onboarding for marketing campaign development',
+      steps: 7,
+      popular: false
+    },
+    {
+      id: 'brand-identity',
+      name: 'Brand Identity Design',
+      category: 'Design',
+      icon: '✨',
+      color: '#8b5cf6',
+      description: 'Complete brand identity development process',
+      steps: 9,
+      popular: false
+    },
+    {
+      id: 'app-development',
+      name: 'Mobile App Development',
+      category: 'Development',
+      icon: '📱',
+      color: '#06b6d4',
+      description: 'Mobile app development project onboarding',
+      steps: 12,
+      popular: false
+    }
+  ];
+
+  const websiteDesignSteps = [
+    {
+      title: 'Project Discovery & Requirements',
+      description: 'Share your project vision, target audience, and key business objectives',
+      type: 'textarea',
+      placeholder: 'Describe your project goals, target audience, and key requirements...',
+      required: true
+    },
+    {
+      title: 'Brand Assets & Style Guide',
+      description: 'Upload your logo, brand guidelines, color palette, and existing design materials',
+      type: 'file_upload',
+      placeholder: 'Accepted formats: .pdf, .ai, .jpg, .png, .zip',
+      required: true
+    },
+    {
+      title: 'Website Content & Copy',
+      description: 'Provide all text content including page copy, product descriptions, and company information',
+      type: 'file_upload',
+      placeholder: 'Accepted formats: .pdf, .doc, .docx, .txt',
+      required: true
+    },
+    {
+      title: 'Design Inspiration & References',
+      description: 'Share websites you love, describe your preferred style, and provide visual inspiration',
+      type: 'textarea',
+      placeholder: 'Share website URLs you like and describe your preferred design style...',
+      required: true
+    },
+    {
+      title: 'Technical Requirements & Integrations',
+      description: 'Specify hosting preferences, CMS requirements, third-party integrations, and special functionality',
+      type: 'textarea',
+      placeholder: 'List any specific technical requirements, integrations, or hosting preferences...',
+      required: false
+    },
+    {
+      title: 'Contact Information & Team Access',
+      description: 'Provide team member details, social media profiles, and communication preferences',
+      type: 'textarea',
+      placeholder: 'List team members who need access and their contact information...',
+      required: true
+    },
+    {
+      title: 'Budget & Timeline Confirmation',
+      description: 'Review and confirm project budget, payment schedule, and timeline expectations',
+      type: 'checkbox',
+      placeholder: '',
+      required: true
+    },
+    {
+      title: 'Project Kickoff Call Scheduling',
+      description: 'Schedule our initial strategy session and project planning meeting',
+      type: 'checkbox',
+      placeholder: '',
+      required: true
+    }
   ];
 
   // Auto-advance through views
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentView(prev => (prev + 1) % views.length);
-    }, 15000); // 15 seconds per view
+    }, 12000); // 12 seconds per view for better pacing
 
     return () => clearInterval(timer);
   }, []);
 
-  // Reset state when view changes
+  // Reset state when view changes and simulate interactions
   useEffect(() => {
     setCurrentStep(0);
     
-    if (views[currentView] === 'create-checklist') {
-      setChecklistTitle('');
-      setChecklistDescription('');
+    if (views[currentView] === 'template-selection') {
+      // Simulate searching and selecting template
+      setTimeout(() => setSearchTerm('website'), 1000);
+      setTimeout(() => setSelectedCategory('Design'), 2000);
+      setTimeout(() => setSelectedTemplate('website-design'), 4000);
     }
     
-    if (views[currentView] === 'build-checklist') {
+    if (views[currentView] === 'checklist-builder') {
+      // Reset and build checklist
       setSteps([]);
-      setCurrentStepForm({
-        title: '',
-        description: '',
-        type: 'textarea',
-        required: true
+      setChecklistTitle('');
+      setChecklistDescription('');
+      setShowAddStepForm(false);
+      
+      // Simulate building the checklist
+      setTimeout(() => {
+        setChecklistTitle('Website Design Project Onboarding');
+        setChecklistDescription('Complete onboarding process for new website design clients');
+      }, 1000);
+      
+      // Add steps progressively
+      websiteDesignSteps.forEach((step, index) => {
+        setTimeout(() => {
+          setCurrentStepForm(step);
+          setShowAddStepForm(true);
+        }, 2000 + (index * 1000));
+        
+        setTimeout(() => {
+          setSteps(prev => [...prev, { ...step, id: `step-${index}` }]);
+          setShowAddStepForm(false);
+        }, 2500 + (index * 1000));
       });
     }
     
     if (views[currentView] === 'customer-experience') {
+      // Reset customer state
       setCustomerData({ name: '', email: '', company: '' });
       setCompletedSteps([]);
       setCurrentCustomerStep(0);
       setShowCustomerForm(true);
-    }
-  }, [currentView]);
-
-  // Simulate typing and interactions for each view
-  useEffect(() => {
-    let timeouts: NodeJS.Timeout[] = [];
-
-    if (views[currentView] === 'create-checklist') {
-      // Simulate selecting template
-      timeouts.push(setTimeout(() => setCurrentStep(1), 2000));
-    }
-    
-    if (views[currentView] === 'build-checklist') {
-      // Simulate building checklist step by step
-      timeouts.push(setTimeout(() => {
-        setChecklistTitle('Website Design Project Onboarding');
-        setChecklistDescription('Complete onboarding process for new website design clients');
-        setCurrentStep(1);
-      }, 1000));
+      setCustomerStepContent({});
       
-      // Add steps one by one
-      const stepData = [
-        {
-          title: 'Project Discovery & Requirements',
-          description: 'Share your project vision, target audience, and key objectives',
-          type: 'textarea',
-          required: true
-        },
-        {
-          title: 'Brand Assets & Style Guide',
-          description: 'Upload your logo, brand guidelines, and design inspiration',
-          type: 'file_upload',
-          required: true
-        },
-        {
-          title: 'Website Content & Copy',
-          description: 'Provide all text content, including page copy and descriptions',
-          type: 'file_upload',
-          required: true
-        },
-        {
-          title: 'Design Inspiration & References',
-          description: 'Share websites you love and describe your preferred style',
-          type: 'textarea',
-          required: true
-        },
-        {
-          title: 'Technical Requirements',
-          description: 'Specify hosting preferences, integrations, and special functionality',
-          type: 'textarea',
-          required: false
-        },
-        {
-          title: 'Contact Information & Team',
-          description: 'Provide team member details and social media profiles',
-          type: 'textarea',
-          required: true
-        },
-        {
-          title: 'Budget & Timeline Confirmation',
-          description: 'Confirm project budget and timeline expectations',
-          type: 'checkbox',
-          required: true
-        },
-        {
-          title: 'Project Kickoff Call',
-          description: 'Schedule our initial strategy session',
-          type: 'checkbox',
-          required: true
-        }
-      ];
-
-      stepData.forEach((step, index) => {
-        timeouts.push(setTimeout(() => {
-          setCurrentStepForm(step);
-          setCurrentStep(2 + index);
-        }, 2000 + (index * 1500)));
-        
-        timeouts.push(setTimeout(() => {
-          setSteps(prev => [...prev, { ...step, id: `step-${index}` }]);
-        }, 2500 + (index * 1500)));
-      });
-    }
-    
-    if (views[currentView] === 'customer-experience') {
       // Simulate customer filling out form
-      timeouts.push(setTimeout(() => {
+      setTimeout(() => {
         setCustomerData({
           name: 'Sarah Martinez',
           email: 'sarah@techcorp.com',
           company: 'TechCorp Solutions'
         });
-      }, 2000));
+      }, 2000);
       
-      timeouts.push(setTimeout(() => {
+      setTimeout(() => {
         setShowCustomerForm(false);
-        setCurrentStep(1);
-      }, 4000));
+        setCurrentCustomerStep(0);
+      }, 4000);
       
-      // Simulate completing steps
-      const stepIds = ['step-0', 'step-1', 'step-2', 'step-3'];
-      stepIds.forEach((stepId, index) => {
-        timeouts.push(setTimeout(() => {
-          setCompletedSteps(prev => [...prev, stepId]);
-          setCurrentCustomerStep(index + 1);
-        }, 5000 + (index * 2000)));
+      // Simulate completing steps with realistic content
+      const stepContents = [
+        "We're a B2B SaaS company targeting enterprise clients. We need a modern, professional website that showcases our AI-powered analytics platform. Our target audience is CTOs and data scientists at companies with 100+ employees. The site should emphasize trust, security, and technical expertise.",
+        "Brand assets uploaded: TechCorp_Logo_Package.zip, Brand_Guidelines_2024.pdf, Color_Palette.ai",
+        "Content package uploaded: Website_Copy_Draft.docx, Product_Descriptions.pdf, Team_Bios.docx, Case_Studies.pdf",
+        "Design inspiration: We love the clean, technical aesthetic of Stripe, Linear, and Vercel. We want something modern but not too flashy - professional and trustworthy. Reference sites: stripe.com, linear.app, vercel.com"
+      ];
+      
+      stepContents.forEach((content, index) => {
+        setTimeout(() => {
+          setCurrentCustomerStep(index);
+          setCustomerStepContent(prev => ({ ...prev, [`step-${index}`]: content }));
+          setCompletedSteps(prev => [...prev, `step-${index}`]);
+        }, 5000 + (index * 1500));
       });
     }
-
-    return () => {
-      timeouts.forEach(timeout => clearTimeout(timeout));
-    };
   }, [currentView]);
 
   const renderDashboard = () => (
-    <div className="space-y-8 pt-8">
+    <div className="space-y-8 pt-32">
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300">
@@ -232,7 +313,7 @@ export default function DemoPage() {
               <Users className="w-6 h-6 text-white" />
             </div>
             <div className="ml-4">
-              <div className="text-2xl font-bold text-gray-900 font-sans">89</div>
+              <div className="text-2xl font-bold text-gray-900 font-sans">127</div>
               <div className="text-sm text-gray-600 font-sans">Active Clients</div>
             </div>
           </div>
@@ -256,7 +337,7 @@ export default function DemoPage() {
               <Clock className="w-6 h-6 text-white" />
             </div>
             <div className="ml-4">
-              <div className="text-2xl font-bold text-gray-900 font-sans">3.2d</div>
+              <div className="text-2xl font-bold text-gray-900 font-sans">2.8d</div>
               <div className="text-sm text-gray-600 font-sans">Avg. Time</div>
             </div>
           </div>
@@ -268,7 +349,7 @@ export default function DemoPage() {
               <TrendingUp className="w-6 h-6 text-white" />
             </div>
             <div className="ml-4">
-              <div className="text-2xl font-bold text-gray-900 font-sans">↑73%</div>
+              <div className="text-2xl font-bold text-gray-900 font-sans">↑68%</div>
               <div className="text-sm text-gray-600 font-sans">vs Manual</div>
             </div>
           </div>
@@ -295,18 +376,18 @@ export default function DemoPage() {
                 </div>
                 <div>
                   <div className="font-semibold text-gray-900 font-sans">Sarah Martinez</div>
-                  <div className="text-sm text-gray-600 font-sans">Website Design Project</div>
-                  <div className="text-xs text-emerald-700 font-sans">✓ Just uploaded brand assets • 2 min ago</div>
+                  <div className="text-sm text-gray-600 font-sans">TechCorp Solutions • Website Redesign</div>
+                  <div className="text-xs text-emerald-700 font-sans">✓ Just uploaded brand assets • 3 min ago</div>
                 </div>
               </div>
               <div className="text-right">
                 <div className="flex items-center mb-2">
                   <div className="w-20 bg-emerald-200 rounded-full h-2 mr-3">
-                    <div className="bg-emerald-500 h-2 rounded-full" style={{ width: '75%' }}></div>
+                    <div className="bg-emerald-500 h-2 rounded-full transition-all duration-1000" style={{ width: '87%' }}></div>
                   </div>
-                  <span className="text-sm font-bold text-gray-700 font-sans">75%</span>
+                  <span className="text-sm font-bold text-gray-700 font-sans">87%</span>
                 </div>
-                <div className="text-xs text-emerald-600 font-sans">6/8 steps • 2.1 days</div>
+                <div className="text-xs text-emerald-600 font-sans">7/8 steps • 2.3 days</div>
               </div>
             </div>
 
@@ -317,169 +398,278 @@ export default function DemoPage() {
                 </div>
                 <div>
                   <div className="font-semibold text-gray-900 font-sans">Marcus Chen</div>
-                  <div className="text-sm text-gray-600 font-sans">E-commerce Website</div>
-                  <div className="text-xs text-blue-700 font-sans">Working on design inspiration • 15 min ago</div>
+                  <div className="text-sm text-gray-600 font-sans">StartupXYZ • E-commerce Platform</div>
+                  <div className="text-xs text-blue-700 font-sans">Working on technical requirements • 12 min ago</div>
                 </div>
               </div>
               <div className="text-right">
                 <div className="flex items-center mb-2">
                   <div className="w-20 bg-blue-200 rounded-full h-2 mr-3">
-                    <div className="bg-blue-500 h-2 rounded-full" style={{ width: '50%' }}></div>
+                    <div className="bg-blue-500 h-2 rounded-full transition-all duration-1000" style={{ width: '62%' }}></div>
                   </div>
-                  <span className="text-sm font-bold text-gray-700 font-sans">50%</span>
+                  <span className="text-sm font-bold text-gray-700 font-sans">62%</span>
                 </div>
-                <div className="text-xs text-blue-600 font-sans">4/8 steps • 1.5 days</div>
+                <div className="text-xs text-blue-600 font-sans">6/10 steps • 1.8 days</div>
               </div>
             </div>
+
+            <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-purple-50 to-purple-100 border border-purple-200">
+              <div className="flex items-center">
+                <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-purple-500 rounded-full flex items-center justify-center mr-4 shadow-lg">
+                  <span className="text-white text-sm font-bold font-sans">ER</span>
+                </div>
+                <div>
+                  <div className="font-semibold text-gray-900 font-sans">Emily Rodriguez</div>
+                  <div className="text-sm text-gray-600 font-sans">GrowthCo • Brand Identity Project</div>
+                  <div className="text-xs text-purple-700 font-sans">Reviewing design concepts • 45 min ago</div>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="flex items-center mb-2">
+                  <div className="w-20 bg-purple-200 rounded-full h-2 mr-3">
+                    <div className="bg-purple-500 h-2 rounded-full transition-all duration-1000" style={{ width: '78%' }}></div>
+                  </div>
+                  <span className="text-sm font-bold text-gray-700 font-sans">78%</span>
+                </div>
+                <div className="text-xs text-purple-600 font-sans">7/9 steps • 3.1 days</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4 font-sans">Quick Actions</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <button className="flex items-center justify-center p-4 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-xl hover:shadow-lg transition-all duration-200 font-sans">
+            <Plus className="w-5 h-5 mr-2" />
+            Create New Checklist
+          </button>
+          <button className="flex items-center justify-center p-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl hover:shadow-lg transition-all duration-200 font-sans">
+            <Send className="w-5 h-5 mr-2" />
+            Send Client Reminder
+          </button>
+          <button className="flex items-center justify-center p-4 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all duration-200 font-sans">
+            <BarChart3 className="w-5 h-5 mr-2" />
+            View Analytics
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderTemplateSelection = () => (
+    <div className="max-w-6xl mx-auto pt-32">
+      <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-emerald-500 to-blue-600 p-8 text-white">
+          <div className="text-center">
+            <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-4">
+              <Sparkles className="w-8 h-8" />
+            </div>
+            <h2 className="text-3xl font-bold font-sans mb-2">Choose Your Template</h2>
+            <p className="text-blue-100 text-lg font-sans">Start with a proven template or create from scratch</p>
+          </div>
+        </div>
+
+        {/* Search and Filters */}
+        <div className="p-6 border-b border-gray-200 bg-gray-50">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1 relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search className="h-5 w-5 text-gray-400" />
+              </div>
+              <input
+                type="text"
+                value={searchTerm}
+                className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
+                placeholder="Search templates..."
+                readOnly
+              />
+            </div>
+            <select
+              value={selectedCategory}
+              className="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
+            >
+              <option value="All">All Categories</option>
+              <option value="Design">Design</option>
+              <option value="Development">Development</option>
+              <option value="Marketing">Marketing</option>
+              <option value="E-commerce">E-commerce</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Templates Grid */}
+        <div className="p-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Create from Scratch */}
+            <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 hover:border-emerald-400 hover:bg-emerald-50 transition-all cursor-pointer group">
+              <div className="text-center">
+                <div className="w-12 h-12 bg-gray-100 group-hover:bg-emerald-100 rounded-lg flex items-center justify-center mx-auto mb-4 transition-colors">
+                  <Plus className="w-6 h-6 text-gray-400 group-hover:text-emerald-500 transition-colors" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2 font-sans">Start from Scratch</h3>
+                <p className="text-gray-600 text-sm font-sans">Create a completely custom checklist</p>
+              </div>
+            </div>
+
+            {/* Template Cards */}
+            {templates.map((template) => (
+              <div
+                key={template.id}
+                className={`bg-white border-2 rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-lg ${
+                  selectedTemplate === template.id 
+                    ? 'border-emerald-500 ring-4 ring-emerald-500/20 scale-105' 
+                    : 'border-gray-200 hover:border-emerald-300'
+                }`}
+              >
+                {template.popular && (
+                  <div className="absolute -top-3 -right-3">
+                    <div className="bg-gradient-to-r from-orange-400 to-red-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+                      POPULAR
+                    </div>
+                  </div>
+                )}
+                
+                <div className="relative">
+                  <div className="flex items-center mb-4">
+                    <div 
+                      className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl mr-4 shadow-sm"
+                      style={{ backgroundColor: `${template.color}20` }}
+                    >
+                      {template.icon}
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 font-sans">{template.name}</h3>
+                      <span 
+                        className="inline-block px-2 py-1 rounded-full text-xs font-medium text-white"
+                        style={{ backgroundColor: template.color }}
+                      >
+                        {template.category}
+                      </span>
+                    </div>
+                  </div>
+
+                  <p className="text-gray-600 text-sm mb-4 font-sans leading-relaxed">{template.description}</p>
+
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="text-sm text-gray-500 font-sans">
+                      {template.steps} steps included
+                    </div>
+                    <div className="flex items-center">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className="w-3 h-3 text-yellow-400 fill-current" />
+                      ))}
+                      <span className="text-xs text-gray-500 ml-1 font-sans">(4.9)</span>
+                    </div>
+                  </div>
+
+                  <button 
+                    className={`w-full py-3 rounded-lg font-semibold transition-all duration-200 font-sans ${
+                      selectedTemplate === template.id
+                        ? 'bg-emerald-500 text-white shadow-lg'
+                        : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                    }`}
+                  >
+                    {selectedTemplate === template.id ? 'Selected ✓' : 'Use This Template'}
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
     </div>
   );
 
-  const renderCreateChecklist = () => (
-    <div className="max-w-4xl mx-auto pt-8">
-      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8">
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-            <Plus className="w-8 h-8 text-white" />
-          </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-4 font-sans">Create New Onboarding Checklist</h2>
-          <p className="text-gray-600 text-lg font-sans">Choose a template or start from scratch</p>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-6">
-          <div 
-            className={`bg-gradient-to-br from-blue-50 to-purple-50 border-2 rounded-xl p-6 shadow-lg transition-all cursor-pointer ${
-              currentStep >= 1 ? 'border-blue-500 scale-105 ring-4 ring-blue-500/20' : 'border-blue-300'
-            }`}
-          >
-            <div className="text-center mb-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center mx-auto mb-3 shadow-lg">
-                <Palette className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 font-sans">Website Design Project</h3>
-              <span className="inline-block px-3 py-1 bg-blue-500 text-white rounded-full text-sm font-medium mt-2">
-                Recommended
-              </span>
-            </div>
-            <p className="text-gray-600 text-sm mb-4 font-sans">
-              Complete onboarding flow for website design clients including discovery, assets, and project setup
-            </p>
-            <div className="space-y-2 mb-6">
-              <div className="text-xs font-medium text-gray-700 mb-2 font-sans">8 steps included:</div>
-              <div className="text-xs text-gray-600 space-y-1">
-                <div className="flex items-center">
-                  <div className="w-1.5 h-1.5 bg-blue-400 rounded-full mr-2"></div>
-                  <span className="font-sans">Project discovery & requirements</span>
-                </div>
-                <div className="flex items-center">
-                  <div className="w-1.5 h-1.5 bg-blue-400 rounded-full mr-2"></div>
-                  <span className="font-sans">Brand assets & style guide upload</span>
-                </div>
-                <div className="flex items-center">
-                  <div className="w-1.5 h-1.5 bg-blue-400 rounded-full mr-2"></div>
-                  <span className="font-sans">Content & copy collection</span>
-                </div>
-                <div className="text-xs text-gray-500 font-sans">+5 more steps</div>
-              </div>
-            </div>
-            <button className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white py-3 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl font-sans">
-              Use This Template ✨
-            </button>
-          </div>
-
-          <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-md transition-all duration-200">
-            <div className="text-center mb-4">
-              <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                <Edit className="w-6 h-6 text-gray-600" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 font-sans">Start from Scratch</h3>
-            </div>
-            <p className="text-gray-600 text-sm mb-6 font-sans">
-              Create a completely custom checklist tailored to your specific needs
-            </p>
-            <button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-lg font-semibold transition-colors font-sans">
-              Create Custom Checklist
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderBuildChecklist = () => (
-    <div className="max-w-6xl mx-auto pt-8">
-      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 overflow-hidden">
+  const renderChecklistBuilder = () => (
+    <div className="max-w-7xl mx-auto pt-32">
+      <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden">
+        {/* Header */}
         <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6 text-white">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-bold font-sans">{checklistTitle || 'Website Design Project Checklist'}</h2>
-              <p className="text-blue-100 font-sans">{checklistDescription || 'Building your client onboarding flow'}</p>
+              <h2 className="text-2xl font-bold font-sans">{checklistTitle || 'Building Your Checklist...'}</h2>
+              <p className="text-blue-100 font-sans">{checklistDescription || 'Setting up your client onboarding flow'}</p>
             </div>
-            <button className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg font-sans">
-              Save Checklist
-            </button>
+            <div className="flex items-center space-x-3">
+              <button className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white px-4 py-2 rounded-lg font-semibold transition-all duration-200 shadow-lg font-sans">
+                <Save className="w-4 h-4 mr-2 inline" />
+                Save Draft
+              </button>
+              <button className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-lg font-semibold transition-all duration-200 shadow-lg font-sans">
+                Publish Checklist
+              </button>
+            </div>
           </div>
         </div>
 
-        <div className="p-6">
+        <div className="p-8">
           <div className="grid lg:grid-cols-2 gap-8">
-            {/* Settings Panel */}
+            {/* Left Column - Checklist Settings */}
             <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">Checklist Title</label>
-                <input 
-                  type="text" 
-                  value={checklistTitle}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-sans"
-                  readOnly
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">Description</label>
-                <textarea 
-                  value={checklistDescription}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-sans"
-                  rows={3}
-                  readOnly
-                />
+              <div className="bg-gray-50 rounded-xl p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4 font-sans">Checklist Settings</h3>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">Title</label>
+                    <input 
+                      type="text" 
+                      value={checklistTitle}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-sans"
+                      readOnly
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">Description</label>
+                    <textarea 
+                      value={checklistDescription}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-sans"
+                      rows={3}
+                      readOnly
+                    />
+                  </div>
+                </div>
               </div>
 
-              {/* Current step being added */}
-              {currentStep >= 2 && (
-                <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
-                  <h4 className="font-medium text-emerald-900 mb-3 font-sans">Adding Step {currentStep - 1}</h4>
-                  <div className="space-y-3">
+              {/* Add Step Form */}
+              {showAddStepForm && (
+                <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-6 animate-pulse">
+                  <h4 className="font-semibold text-emerald-900 mb-4 font-sans">Adding Step {steps.length + 1}</h4>
+                  <div className="space-y-4">
                     <div>
-                      <label className="block text-xs font-medium text-emerald-800 mb-1 font-sans">Step Title</label>
+                      <label className="block text-sm font-medium text-emerald-800 mb-2 font-sans">Step Title</label>
                       <input
                         type="text"
                         value={currentStepForm.title}
-                        className="w-full px-3 py-2 border border-emerald-300 rounded-lg text-sm font-sans"
+                        className="w-full px-3 py-2 border border-emerald-300 rounded-lg font-sans"
                         readOnly
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-emerald-800 mb-1 font-sans">Description</label>
+                      <label className="block text-sm font-medium text-emerald-800 mb-2 font-sans">Description</label>
                       <textarea
                         value={currentStepForm.description}
-                        className="w-full px-3 py-2 border border-emerald-300 rounded-lg text-sm font-sans"
+                        className="w-full px-3 py-2 border border-emerald-300 rounded-lg font-sans"
                         rows={2}
                         readOnly
                       />
                     </div>
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center">
-                        <input
-                          type="checkbox"
-                          checked={currentStepForm.required}
-                          className="mr-2 text-emerald-600"
-                          readOnly
-                        />
-                        <span className="text-xs text-emerald-800 font-sans">Required step</span>
+                      <div className="flex items-center space-x-4">
+                        <select className="px-3 py-2 border border-emerald-300 rounded-lg text-sm font-sans" value={currentStepForm.type}>
+                          <option value="textarea">Long Text</option>
+                          <option value="file_upload">File Upload</option>
+                          <option value="checkbox">Checkbox</option>
+                        </select>
+                        <label className="flex items-center text-sm text-emerald-800 font-sans">
+                          <input type="checkbox" checked={currentStepForm.required} className="mr-2" readOnly />
+                          Required
+                        </label>
                       </div>
-                      <button className="bg-emerald-600 text-white px-3 py-1 rounded text-xs font-sans">
+                      <button className="bg-emerald-600 text-white px-4 py-2 rounded-lg font-semibold font-sans">
                         Add Step
                       </button>
                     </div>
@@ -488,32 +678,63 @@ export default function DemoPage() {
               )}
             </div>
 
-            {/* Steps Preview */}
+            {/* Right Column - Steps Preview */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900 font-sans">Checklist Steps ({steps.length})</h3>
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-gray-900 font-sans">Checklist Steps ({steps.length})</h3>
+                <button className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center font-sans">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Step
+                </button>
+              </div>
+              
               <div className="space-y-3 max-h-96 overflow-y-auto">
                 {steps.map((step, index) => (
-                  <div key={step.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div className="flex items-center">
-                      <span className="text-lg mr-3">
-                        {step.type === 'textarea' ? '📝' : 
-                         step.type === 'file_upload' ? '📎' : 
-                         step.type === 'checkbox' ? '☑️' : '📝'}
-                      </span>
-                      <div>
-                        <div className="font-medium text-gray-900 text-sm font-sans">{step.title}</div>
-                        <div className="text-xs text-gray-500 font-sans">{step.type.replace('_', ' ')}</div>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      {step.required && (
-                        <span className="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium font-sans">
-                          Required
+                  <div key={step.id} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-start">
+                        <span className="text-lg mr-3 mt-1">
+                          {step.type === 'textarea' ? '📝' : 
+                           step.type === 'file_upload' ? '📎' : 
+                           step.type === 'checkbox' ? '☑️' : '📝'}
                         </span>
-                      )}
+                        <div className="flex-1">
+                          <div className="flex items-center mb-2">
+                            <h4 className="font-semibold text-gray-900 font-sans">{step.title}</h4>
+                            {step.required && (
+                              <span className="ml-2 px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium font-sans">
+                                Required
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-sm text-gray-600 font-sans leading-relaxed">{step.description}</p>
+                          <div className="mt-2 flex items-center">
+                            <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium font-sans">
+                              {step.type === 'textarea' ? 'Long Text' : 
+                               step.type === 'file_upload' ? 'File Upload' : 
+                               step.type === 'checkbox' ? 'Checkbox' : 'Text Input'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-1 ml-4">
+                        <button className="p-1 text-gray-400 hover:text-blue-600 transition-colors">
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button className="p-1 text-gray-400 hover:text-red-600 transition-colors">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
+                
+                {steps.length === 0 && (
+                  <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
+                    <Plus className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                    <p className="text-gray-500 font-sans">Building your checklist...</p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -523,7 +744,7 @@ export default function DemoPage() {
   );
 
   const renderCustomerExperience = () => (
-    <div className="max-w-3xl mx-auto pt-8">
+    <div className="max-w-4xl mx-auto pt-32">
       {showCustomerForm && (
         <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-8 mb-8">
           <div className="text-center mb-6">
@@ -579,9 +800,10 @@ export default function DemoPage() {
 
       {!showCustomerForm && (
         <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden">
+          {/* Progress Header */}
           <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-8 text-white">
             <div className="text-center">
-              <h1 className="text-3xl font-bold font-sans mb-2">Website Design Project</h1>
+              <h1 className="text-3xl font-bold font-sans mb-2">Website Design Project Onboarding</h1>
               <p className="text-blue-100 font-sans">Complete these steps to get your project started</p>
               
               <div className="mt-6">
@@ -605,59 +827,97 @@ export default function DemoPage() {
           </div>
 
           <div className="p-8">
-            <div className="space-y-6">
-              {/* Show current step being worked on */}
-              {currentCustomerStep < 4 && (
-                <div className="bg-blue-50 rounded-xl p-6">
-                  <div className="flex items-center mb-4">
-                    <span className="text-2xl mr-4">📝</span>
-                    <div>
-                      <h3 className="text-xl font-bold text-gray-900 font-sans">
-                        Step {currentCustomerStep + 1}: Project Discovery & Requirements
-                      </h3>
+            {/* Current Step */}
+            {currentCustomerStep < websiteDesignSteps.length && (
+              <div className="bg-blue-50 rounded-xl p-6 mb-6">
+                <div className="flex items-center mb-4">
+                  <span className="text-2xl mr-4">
+                    {websiteDesignSteps[currentCustomerStep].type === 'textarea' ? '📝' : 
+                     websiteDesignSteps[currentCustomerStep].type === 'file_upload' ? '📎' : '☑️'}
+                  </span>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 font-sans">
+                      Step {currentCustomerStep + 1}: {websiteDesignSteps[currentCustomerStep].title}
+                    </h3>
+                    {websiteDesignSteps[currentCustomerStep].required && (
                       <span className="inline-block mt-2 px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-medium font-sans">
                         Required
                       </span>
-                    </div>
+                    )}
                   </div>
-                  <p className="text-gray-700 mb-4 font-sans">Share your project vision, target audience, and key objectives</p>
+                </div>
+                <p className="text-gray-700 mb-4 font-sans leading-relaxed">{websiteDesignSteps[currentCustomerStep].description}</p>
+                
+                {websiteDesignSteps[currentCustomerStep].type === 'textarea' && (
                   <textarea
-                    value={completedSteps.includes('step-0') ? 
-                      "We're a boutique marketing agency specializing in B2B SaaS companies. We need a modern, professional website that showcases our case studies and attracts enterprise clients. Our target audience is CMOs and marketing directors at companies with 50-500 employees." : 
-                      ''}
+                    value={customerStepContent[`step-${currentCustomerStep}`] || ''}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-sans"
-                    placeholder="Describe your project goals, target audience, and key requirements..."
+                    placeholder={websiteDesignSteps[currentCustomerStep].placeholder}
                     rows={4}
                     readOnly
                   />
-                  {completedSteps.includes('step-0') && (
-                    <div className="mt-3 text-emerald-600 font-medium text-sm font-sans">
-                      ✓ Step completed
+                )}
+                
+                {websiteDesignSteps[currentCustomerStep].type === 'file_upload' && (
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                    <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                    <div className="text-gray-600 mb-2 font-sans">
+                      {customerStepContent[`step-${currentCustomerStep}`] ? (
+                        <span className="text-emerald-600 font-medium">{customerStepContent[`step-${currentCustomerStep}`]}</span>
+                      ) : (
+                        'Drop files here or click to upload'
+                      )}
                     </div>
-                  )}
-                </div>
-              )}
-
-              {/* Show completed steps summary */}
-              {completedSteps.length > 0 && (
-                <div className="bg-emerald-50 rounded-xl p-4">
-                  <h4 className="font-semibold text-emerald-900 mb-3 font-sans">Completed Steps</h4>
-                  <div className="space-y-2">
-                    {completedSteps.map((stepId, index) => (
-                      <div key={stepId} className="flex items-center text-sm text-emerald-700">
-                        <CheckCircle className="w-4 h-4 mr-2" />
-                        <span className="font-sans">
-                          {index === 0 && 'Project Discovery & Requirements'}
-                          {index === 1 && 'Brand Assets & Style Guide'}
-                          {index === 2 && 'Website Content & Copy'}
-                          {index === 3 && 'Design Inspiration & References'}
-                        </span>
-                      </div>
-                    ))}
+                    <div className="text-xs text-gray-500 font-sans">
+                      {websiteDesignSteps[currentCustomerStep].placeholder}
+                    </div>
                   </div>
+                )}
+                
+                {websiteDesignSteps[currentCustomerStep].type === 'checkbox' && (
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <label className="flex items-center cursor-pointer">
+                      <div className={`w-6 h-6 rounded border-2 flex items-center justify-center mr-3 transition-colors ${
+                        completedSteps.includes(`step-${currentCustomerStep}`) 
+                          ? 'bg-blue-500 border-blue-500 text-white' 
+                          : 'border-gray-300'
+                      }`}>
+                        {completedSteps.includes(`step-${currentCustomerStep}`) && (
+                          <Check className="w-4 h-4" />
+                        )}
+                      </div>
+                      <span className="text-lg font-medium text-gray-900 font-sans">
+                        I confirm and agree to proceed
+                      </span>
+                    </label>
+                  </div>
+                )}
+                
+                {completedSteps.includes(`step-${currentCustomerStep}`) && (
+                  <div className="mt-4 flex items-center text-emerald-600 font-medium text-sm font-sans">
+                    <CheckCircle className="w-4 h-4 mr-2" />
+                    Step completed
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Completed Steps Summary */}
+            {completedSteps.length > 0 && (
+              <div className="bg-emerald-50 rounded-xl p-6">
+                <h4 className="font-semibold text-emerald-900 mb-4 font-sans">Completed Steps</h4>
+                <div className="space-y-3">
+                  {completedSteps.map((stepId, index) => (
+                    <div key={stepId} className="flex items-center text-sm text-emerald-700">
+                      <CheckCircle className="w-4 h-4 mr-3 flex-shrink-0" />
+                      <span className="font-sans">
+                        {websiteDesignSteps[index]?.title}
+                      </span>
+                    </div>
+                  ))}
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -665,14 +925,34 @@ export default function DemoPage() {
   );
 
   const renderCompletion = () => (
-    <div className="max-w-2xl mx-auto text-center pt-8">
+    <div className="max-w-3xl mx-auto text-center pt-32">
       <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden border border-white/20">
-        <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 p-8 text-white">
-          <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-6">
-            <CheckCircle className="w-10 h-10" />
+        <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 p-8 text-white relative overflow-hidden">
+          {/* Confetti Animation */}
+          <div className="absolute inset-0 pointer-events-none">
+            {[...Array(20)].map((_, i) => (
+              <div
+                key={i}
+                className="absolute animate-bounce"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                  animationDelay: `${Math.random() * 2}s`,
+                  animationDuration: `${2 + Math.random() * 2}s`
+                }}
+              >
+                {['🎉', '✨', '🎊', '⭐'][Math.floor(Math.random() * 4)]}
+              </div>
+            ))}
           </div>
-          <h1 className="text-4xl font-bold font-sans mb-4">Fantastic Work, Sarah! 🎉</h1>
-          <p className="text-emerald-100 text-lg font-sans">Your website project onboarding is complete!</p>
+          
+          <div className="relative z-10">
+            <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-6">
+              <CheckCircle className="w-10 h-10" />
+            </div>
+            <h1 className="text-4xl font-bold font-sans mb-4">Outstanding Work, Sarah! 🎉</h1>
+            <p className="text-emerald-100 text-lg font-sans">Your website project onboarding is complete!</p>
+          </div>
         </div>
 
         <div className="p-8">
@@ -682,7 +962,7 @@ export default function DemoPage() {
               <div className="text-sm text-gray-600 font-sans">Steps Completed</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-blue-600 font-sans">2.1</div>
+              <div className="text-3xl font-bold text-blue-600 font-sans">2.3</div>
               <div className="text-sm text-gray-600 font-sans">Days to Complete</div>
             </div>
             <div className="text-center">
@@ -691,13 +971,33 @@ export default function DemoPage() {
             </div>
           </div>
 
-          <div className="bg-gradient-to-r from-emerald-50 to-blue-50 rounded-xl p-6 mb-6">
-            <h3 className="font-semibold text-gray-900 mb-3 font-sans">What happens next?</h3>
-            <div className="space-y-2 text-sm text-gray-700">
-              <p className="font-sans">✓ Our design team will review your requirements within 24 hours</p>
-              <p className="font-sans">✓ You'll receive initial wireframes and mood boards by Friday</p>
-              <p className="font-sans">✓ We'll schedule your project kickoff call for next week</p>
-              <p className="font-sans">✓ Expected project completion: 3-4 weeks</p>
+          <div className="bg-gradient-to-r from-emerald-50 to-blue-50 rounded-xl p-6 mb-8">
+            <h3 className="font-semibold text-gray-900 mb-4 font-sans">🚀 What happens next?</h3>
+            <div className="space-y-3 text-sm text-gray-700">
+              <div className="flex items-center">
+                <div className="w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                  <Check className="w-3 h-3 text-white" />
+                </div>
+                <p className="font-sans">Our design team will review your requirements within 24 hours</p>
+              </div>
+              <div className="flex items-center">
+                <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                  <Calendar className="w-3 h-3 text-white" />
+                </div>
+                <p className="font-sans">You'll receive initial wireframes and mood boards by Friday</p>
+              </div>
+              <div className="flex items-center">
+                <div className="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                  <Phone className="w-3 h-3 text-white" />
+                </div>
+                <p className="font-sans">We'll schedule your project kickoff call for next week</p>
+              </div>
+              <div className="flex items-center">
+                <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                  <Target className="w-3 h-3 text-white" />
+                </div>
+                <p className="font-sans">Expected project completion: 4-6 weeks</p>
+              </div>
             </div>
           </div>
 
@@ -706,7 +1006,7 @@ export default function DemoPage() {
               View Project Portal
             </button>
             <button className="bg-white border-2 border-gray-200 text-gray-700 py-4 rounded-xl font-semibold text-lg transition-all duration-200 hover:border-gray-300 hover:shadow-md font-sans">
-              Schedule Call
+              Schedule Strategy Call
             </button>
           </div>
         </div>
@@ -718,12 +1018,12 @@ export default function DemoPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <DemoHeader />
       
-      <div className="pt-32 pb-16">
+      <div className="pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="transition-all duration-500 ease-in-out">
             {views[currentView] === 'dashboard' && renderDashboard()}
-            {views[currentView] === 'create-checklist' && renderCreateChecklist()}
-            {views[currentView] === 'build-checklist' && renderBuildChecklist()}
+            {views[currentView] === 'template-selection' && renderTemplateSelection()}
+            {views[currentView] === 'checklist-builder' && renderChecklistBuilder()}
             {views[currentView] === 'customer-experience' && renderCustomerExperience()}
             {views[currentView] === 'completion' && renderCompletion()}
           </div>
