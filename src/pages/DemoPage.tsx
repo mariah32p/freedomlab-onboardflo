@@ -335,12 +335,12 @@ export default function DemoPage() {
         {[
           { icon: Users, value: '127', label: 'Active Clients', color: 'blue' },
           { icon: CheckCircle, value: '94%', label: 'Completion Rate', color: 'emerald' },
-          { icon: Clock, value: '2.8d', label: 'Avg. Time', color: 'orange' }
+          { icon: Clock, value: '2.8d', label: 'Avg. Time', color: 'purple' }
         ].map((stat, index) => (
           <div key={index} className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300">
             <div className="flex items-center">
-              <div className={`w-12 h-12 bg-gradient-to-br from-${stat.color}-500 to-${stat.color}-600 rounded-xl flex items-center justify-center shadow-lg`}>
-                <stat.icon className="w-6 h-6 text-white" />
+              <div className={`w-12 h-12 bg-${stat.color}-100 rounded-xl flex items-center justify-center shadow-lg`}>
+                <stat.icon className={`w-6 h-6 text-${stat.color}-600`} />
               </div>
               <div className="ml-4">
                 <div className="text-2xl font-bold text-gray-900 font-sans">{stat.value}</div>
