@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react'; // <-- Import useRef
 import {
   Users,
   CheckCircle,
@@ -62,6 +62,7 @@ export default function DemoPage() {
   const [checklistDescription, setChecklistDescription] = useState('');
   const [steps, setSteps] = useState<any[]>([]);
   const [buildingStep, setBuildingStep] = useState(0);
+  const stepsContainerRef = useRef<HTMLDivElement>(null); // <-- NEW: Ref for the steps container
   
   // Customer experience state
   const [customerData, setCustomerData] = useState({
@@ -84,6 +85,7 @@ export default function DemoPage() {
     'completion'
   ];
 
+  // ... (templates and websiteDesignSteps data remains the same)
   const templates = [
     {
       id: 'website-design',
@@ -227,7 +229,6 @@ export default function DemoPage() {
 
     switch (view) {
       case 'dashboard':
-        // Spend 4 seconds on the dashboard
         viewTimeout = setTimeout(advanceView, 4000);
         break;
 
@@ -237,7 +238,7 @@ export default function DemoPage() {
         
         setTimeout(() => setSearchTerm('website'), 1000);
         setTimeout(() => setSelectedTemplate('website-design'), 2500);
-        viewTimeout = setTimeout(advanceView, 4500); // Total 4.5 seconds
+        viewTimeout = setTimeout(advanceView, 4500);
         break;
 
       case 'checklist-builder':
@@ -251,16 +252,18 @@ export default function DemoPage() {
           setChecklistDescription('Complete onboarding process for new website design clients');
         }, 1000);
         
-        websiteDesignSteps.forEach((step, index) => {
+        // MODIFIED: Only add the first 5 steps and at a slower pace
+        const stepsToAdd = websiteDesignSteps.slice(0, 5);
+        stepsToAdd.forEach((step, index) => {
           setTimeout(() => {
             setBuildingStep(index + 1);
             setSteps(prev => [...prev, { ...step, id: `step-${index}` }]);
-          }, 2000 + (index * 800));
+          }, 2000 + (index * 1200)); // Slower pace: 1.2s per step
         });
         
-        // Wait for all steps to be added, then advance
-        const builderDuration = 2000 + (websiteDesignSteps.length * 800) + 1500;
-        viewTimeout = setTimeout(advanceView, builderDuration); // ~9.9 seconds
+        // MODIFIED: Recalculate duration for 5 steps
+        const builderDuration = 2000 + (stepsToAdd.length * 1200) + 1500;
+        viewTimeout = setTimeout(advanceView, builderDuration); // ~9.5 seconds
         break;
 
       case 'customer-experience': {
@@ -285,7 +288,6 @@ export default function DemoPage() {
         
         const processCustomerStep = (index: number) => {
           if (index >= websiteDesignSteps.length) {
-            // All steps are done, advance to completion view
             setTimeout(advanceView, 2000);
             return;
           }
@@ -315,21 +317,18 @@ export default function DemoPage() {
                 
                 setTimeout(() => {
                   setCompletedSteps(prev => [...prev, `step-${index}`]);
-                  // Pause after completion, then move to the next step
                   setTimeout(() => processCustomerStep(index + 1), 1500);
                 }, 500);
               }
-            }, 40); // Slower, more realistic typing speed
-          }, 1000); // 1-second pause before typing starts
+            }, 40);
+          }, 1000);
         };
 
-        // Start the customer step-by-step process after the intro form hides
         setTimeout(() => processCustomerStep(0), 3500);
         break;
       }
 
       case 'completion':
-        // Stay on completion screen for 8 seconds before looping
         viewTimeout = setTimeout(advanceView, 8000);
         break;
 
@@ -339,10 +338,19 @@ export default function DemoPage() {
 
     return () => {
       clearTimeout(viewTimeout);
-      // It's good practice to clear any long-running intervals if the component unmounts or effect re-runs
     };
   }, [currentView, autoPlay, advanceView]);
-
+  
+  // NEW: useEffect hook to handle auto-scrolling
+  useEffect(() => {
+    if (stepsContainerRef.current) {
+      const scrollElement = stepsContainerRef.current;
+      scrollElement.scrollTo({
+        top: scrollElement.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
+  }, [steps]); // Trigger whenever the steps array is updated
 
   const renderDashboard = () => (
     <div className="space-y-8 pt-8">
@@ -501,6 +509,7 @@ export default function DemoPage() {
   );
 
   const renderTemplateSelection = () => (
+    // ... (This component's JSX remains the same)
     <div className="max-w-6xl mx-auto pt-8">
       <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden">
         {/* Header */}
@@ -623,7 +632,7 @@ export default function DemoPage() {
   const renderChecklistBuilder = () => (
     <div className="max-w-7xl mx-auto pt-8">
       <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden">
-        {/* Header */}
+        {/* ... (Header remains the same) ... */}
         <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6 text-white">
           <div className="flex items-center justify-between">
             <div>
@@ -644,7 +653,7 @@ export default function DemoPage() {
 
         <div className="p-8">
           <div className="grid lg:grid-cols-2 gap-8">
-            {/* Left Column - Checklist Settings */}
+            {/* ... (Left column remains the same) ... */}
             <div className="space-y-6">
               <div className="bg-gray-50 rounded-xl p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4 font-sans">Checklist Settings</h3>
@@ -671,7 +680,7 @@ export default function DemoPage() {
               </div>
 
               {/* Building indicator */}
-              {buildingStep > 0 && buildingStep <= websiteDesignSteps.length && (
+              {buildingStep > 0 && buildingStep <= websiteDesignSteps.slice(0, 5).length && (
                 <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-6">
                   <h4 className="font-semibold text-emerald-900 mb-4 font-sans">
                     Adding Step {buildingStep}: {websiteDesignSteps[buildingStep - 1]?.title}
@@ -684,7 +693,7 @@ export default function DemoPage() {
                     <div className="w-full bg-emerald-200 rounded-full h-2">
                       <div 
                         className="bg-emerald-500 h-2 rounded-full transition-all duration-500"
-                        style={{ width: `${(buildingStep / websiteDesignSteps.length) * 100}%` }}
+                        style={{ width: `${(buildingStep / websiteDesignSteps.slice(0, 5).length) * 100}%` }}
                       ></div>
                     </div>
                   </div>
@@ -702,9 +711,11 @@ export default function DemoPage() {
                 </button>
               </div>
               
-              <div className="space-y-3 max-h-96 overflow-y-auto">
+              {/* MODIFIED: Added ref to this container */}
+              <div ref={stepsContainerRef} className="space-y-3 max-h-96 overflow-y-auto pr-2">
                 {steps.map((step, index) => (
                   <div key={step.id} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200 animate-fade-in">
+                    {/* ... (step card JSX remains the same) ... */}
                     <div className="flex items-start justify-between">
                       <div className="flex items-start">
                         <span className="text-lg mr-3 mt-1">
@@ -758,6 +769,7 @@ export default function DemoPage() {
   );
 
   const renderCustomerExperience = () => (
+    // ... (This component's JSX remains the same)
     <div className="max-w-4xl mx-auto pt-8">
       {showCustomerForm && (
         <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-8 mb-8">
@@ -968,6 +980,7 @@ export default function DemoPage() {
   );
 
   const renderCompletion = () => (
+    // ... (This component's JSX remains the same)
     <div className="max-w-3xl mx-auto text-center pt-8">
       <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden border border-white/20">
         <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 p-8 text-white relative overflow-hidden">
@@ -1058,6 +1071,7 @@ export default function DemoPage() {
   );
 
   return (
+    // ... (This component's JSX remains the same)
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <DemoHeader />
       
