@@ -55,7 +55,7 @@ const demoSteps: DemoStep[] = [
       title: 'Customer Submissions',
       description: 'Track customer progress and manage submissions',
       duration: 2500, // FASTER
-    },
+      duration: 6000,
     {
       id: 'customer-view',
       title: 'Customer Experience',
@@ -66,7 +66,7 @@ const demoSteps: DemoStep[] = [
       id: 'branding',
       title: 'Brand Customization',
       description: 'Customize colors, fonts, and logos to match your brand',
-      duration: 2500, // FASTER
+      duration: 4000,
     }
   ];
 
@@ -75,6 +75,8 @@ export default function DemoPage() {
   const [currentStep, setCurrentStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const [progress, setProgress] = useState(0);
+  const [builderActiveTab, setBuilderActiveTab] = useState<'settings' | 'steps'>('settings');
+  const [builderSteps, setBuilderSteps] = useState<any[]>([]);
   const [animatedStats, setAnimatedStats] = useState({ users: 0, completed: 0, rate: 0, days: 0 });
   const [animatedProgress, setAnimatedProgress] = useState<Record<string, number>>({});
   const [activityItems, setActivityItems] = useState([
