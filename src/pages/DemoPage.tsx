@@ -153,6 +153,15 @@ export default function DemoPage() {
     'analytics'
   ];
 
+  // Auto-advance through views every 8 seconds
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentView(prev => (prev + 1) % views.length);
+    }, 8000);
+
+    return () => clearInterval(timer);
+  }, []);
+
   // Typing effect for notifications
   useEffect(() => {
     if (currentView === 1) {
@@ -734,18 +743,6 @@ export default function DemoPage() {
     </div>
   );
 
-  const getCurrentViewTitle = () => {
-    switch (views[currentView]) {
-      case 'dashboard': return 'Customer Success Dashboard';
-      case 'customer-detail': return 'Live Customer Progress';
-      case 'checklist-builder': return 'Visual Checklist Builder';
-      case 'customer-experience': return 'Customer Experience';
-      case 'completion-celebration': return 'Success Celebration';
-      case 'analytics': return 'Performance Analytics';
-      default: return 'Demo';
-    }
-  };
-
   const renderCurrentView = () => {
     switch (views[currentView]) {
       case 'dashboard': return renderDashboard();
@@ -764,85 +761,9 @@ export default function DemoPage() {
       
       <div className="pt-20 pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Demo Header */}
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center bg-emerald-100 text-emerald-800 px-4 py-2 rounded-full text-sm font-medium mb-6 font-sans">
-              <Sparkles className="w-4 h-4 mr-2" />
-              Interactive Demo Experience
-            </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 font-sans">
-              See OnboardFlo in Action
-            </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8 font-sans">
-              Watch how leading companies use OnboardFlo to transform their customer onboarding 
-              and achieve 87% completion rates.
-            </p>
-            
-            {/* Demo Controls */}
-            <div className="flex items-center justify-center space-x-4 mb-8">
-              <div className="flex items-center space-x-2">
-                {views.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentView(index)}
-                    className={`w-3 h-3 rounded-full transition-all duration-200 ${
-                      currentView === index 
-                        ? 'bg-emerald-500 scale-125' 
-                        : 'bg-gray-300 hover:bg-gray-400'
-                    }`}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* Current View Title */}
-            <div className="bg-white/60 backdrop-blur-sm rounded-xl px-6 py-3 inline-block border border-white/20 shadow-lg">
-              <h2 className="text-lg font-semibold text-gray-900 font-sans">{getCurrentViewTitle()}</h2>
-            </div>
-          </div>
-
-          {/* Demo Content */}
+          {/* Auto-playing demo content */}
           <div className="transition-all duration-500 ease-in-out">
             {renderCurrentView()}
-          </div>
-
-          {/* Demo Navigation */}
-          <div className="flex items-center justify-center space-x-4 mt-12">
-            <button
-              onClick={() => setCurrentView(Math.max(0, currentView - 1))}
-              disabled={currentView === 0}
-              className="px-4 py-2 text-gray-600 hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed font-sans"
-            >
-              ← Previous
-            </button>
-            
-            <span className="text-sm text-gray-600 font-sans">
-              {currentView + 1} of {views.length}
-            </span>
-            
-            <button
-              onClick={() => setCurrentView(Math.min(views.length - 1, currentView + 1))}
-              disabled={currentView === views.length - 1}
-              className="px-4 py-2 text-gray-600 hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed font-sans"
-            >
-              Next →
-            </button>
-          </div>
-
-          {/* CTA Section */}
-          <div className="text-center mt-16 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-2xl p-12 text-white shadow-2xl">
-            <h2 className="text-3xl font-bold font-sans mb-4">Ready to transform your onboarding?</h2>
-            <p className="text-xl text-emerald-100 mb-8 font-sans">
-              Join hundreds of companies achieving 87% completion rates with OnboardFlo
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-white text-emerald-600 px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-sans">
-                Start 7-Day Free Trial
-              </button>
-              <button className="bg-emerald-400/20 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 border border-emerald-400/30 hover:bg-emerald-400/30 font-sans">
-                Schedule Demo Call
-              </button>
-            </div>
           </div>
         </div>
       </div>
