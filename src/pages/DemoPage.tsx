@@ -302,7 +302,9 @@ export default function DemoPage() {
         setTimeout(() => {
           setCurrentCustomerStep(index);
         }, 4000 + (index * 1200)); // Much slower step progression
-        }, 1500 + (index * 400));
+        setTimeout(() => {
+          setCustomerStepContent(prev => ({ ...prev, [`step-${index}`]: content }));
+        }, 4000 + (index * 1200) + 500);
         setTimeout(() => {
           setCompletedSteps(prev => [...prev, `step-${index}`]);
         }, 4000 + (index * 1200) + 1000); // Complete step after showing content
