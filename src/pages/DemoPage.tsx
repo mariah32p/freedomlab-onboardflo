@@ -24,7 +24,8 @@ import {
   Calendar,
   RotateCcw,
   Upload,
-  X
+  X,
+  Save
 } from 'lucide-react';
 import DemoHeader from '../components/DemoHeader';
 
