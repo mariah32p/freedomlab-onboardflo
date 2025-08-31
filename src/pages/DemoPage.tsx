@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react'; // <-- Import useRef
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   Users,
   CheckCircle,
@@ -53,18 +53,15 @@ export default function DemoPage() {
   const [currentView, setCurrentView] = useState(0);
   const [autoPlay, setAutoPlay] = useState(true);
   
-  // Template selection state
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   
-  // Checklist building state
   const [checklistTitle, setChecklistTitle] = useState('');
   const [checklistDescription, setChecklistDescription] = useState('');
   const [steps, setSteps] = useState<any[]>([]);
   const [buildingStep, setBuildingStep] = useState(0);
-  const stepsContainerRef = useRef<HTMLDivElement>(null); // <-- NEW: Ref for the steps container
+  const stepsContainerRef = useRef<HTMLDivElement>(null);
   
-  // Customer experience state
   const [customerData, setCustomerData] = useState({
     name: '',
     email: '',
@@ -85,7 +82,7 @@ export default function DemoPage() {
     'completion'
   ];
 
-  // ... (templates and websiteDesignSteps data remains the same)
+  // ... (templates data remains the same)
   const templates = [
     {
       id: 'website-design',
@@ -156,7 +153,7 @@ export default function DemoPage() {
       type: 'textarea',
       placeholder: 'Describe your project goals, target audience, and key requirements...',
       required: true,
-      content: "We're a B2B SaaS company targeting enterprise clients in the healthcare industry. We need a modern, professional website that showcases our AI-powered patient data analytics platform. Our target audience is CTOs and data scientists at hospitals and healthcare systems with 500+ beds. The site should emphasize trust, security, HIPAA compliance, and technical expertise while being approachable for non-technical decision makers."
+      content: "We're a B2B SaaS company targeting enterprise clients in the healthcare industry. We need a modern, professional website that showcases our AI-powered patient data analytics platform. Our target audience is CTOs and data scientists at hospitals and healthcare systems with 500+ beds."
     },
     {
       title: 'Brand Assets & Style Guide',
@@ -164,7 +161,7 @@ export default function DemoPage() {
       type: 'file_upload',
       placeholder: 'Accepted formats: .pdf, .ai, .jpg, .png, .zip',
       required: true,
-      content: "HealthTech_Logo_Package.zip, Brand_Guidelines_2024.pdf, Color_Palette.ai, Typography_Guide.pdf"
+      content: "HealthTech_Logo_Package.zip, Brand_Guidelines_2024.pdf, Color_Palette.ai"
     },
     {
       title: 'Website Content & Copy',
@@ -172,7 +169,7 @@ export default function DemoPage() {
       type: 'file_upload',
       placeholder: 'Accepted formats: .pdf, .doc, .docx, .txt',
       required: true,
-      content: "Website_Copy_Draft.docx, Product_Descriptions.pdf, Team_Bios.docx, Case_Studies.pdf, Compliance_Documentation.pdf"
+      content: "Website_Copy_Draft.docx, Product_Descriptions.pdf, Team_Bios.docx"
     },
     {
       title: 'Design Inspiration & References',
@@ -180,7 +177,7 @@ export default function DemoPage() {
       type: 'textarea',
       placeholder: 'Share website URLs you like and describe your preferred design style...',
       required: true,
-      content: "Design inspiration: We love the clean, technical aesthetic of Stripe (stripe.com), the trust-building approach of Salesforce Health Cloud, and the data visualization style of Tableau. We want something modern but not too flashy - professional, trustworthy, and emphasizing security. Think 'enterprise healthcare' meets 'Silicon Valley innovation'. Reference sites: stripe.com, salesforce.com/products/health-cloud, tableau.com"
+      content: "We love the clean, technical aesthetic of Stripe (stripe.com) and the data visualization style of Tableau. We want something modern but professional, trustworthy, and emphasizing security."
     },
     {
       title: 'Technical Requirements & Integrations',
@@ -188,39 +185,18 @@ export default function DemoPage() {
       type: 'textarea',
       placeholder: 'List any specific technical requirements, integrations, or hosting preferences...',
       required: true,
-      content: "Technical requirements: React/Next.js preferred, AWS hosting for HIPAA compliance, integrate with our existing API (REST + GraphQL), need headless CMS for blog and resources, Salesforce integration for lead capture, Google Analytics + Mixpanel for tracking, must support SSO (SAML), need patient data demo environment, mobile-responsive with offline capability for trade shows."
+      content: "Technical requirements: React/Next.js preferred, AWS hosting for HIPAA compliance, Salesforce integration for lead capture, and a headless CMS for the blog."
     },
-    {
-      title: 'Contact Information & Team Access',
-      description: 'Provide team member details, social media profiles, and communication preferences',
-      type: 'textarea',
-      placeholder: 'List team members who need access and their contact information...',
-      required: true,
-      content: "Team contacts: sarah@healthtech.com (Project Lead), mike@healthtech.com (CTO), lisa@healthtech.com (VP Marketing), david@healthtech.com (Head of Sales). Social: @healthtechAI on Twitter/LinkedIn. Slack workspace: healthtech-team.slack.com. Preferred communication: Slack for daily updates, email for formal approvals, weekly video calls on Fridays 2 PM EST."
-    },
-    {
-      title: 'Budget & Timeline Confirmation',
-      description: 'Review and confirm project budget, payment schedule, and timeline expectations',
-      type: 'checkbox',
-      placeholder: '',
-      required: true,
-      content: "Budget confirmed: $25,000 for full website redesign and development. Timeline: 8-10 weeks including 2 weeks for compliance review. Payment: 40% upfront, 40% at design approval, 20% on launch. Additional $5K allocated for ongoing maintenance and updates."
-    },
-    {
-      title: 'Project Kickoff Call Scheduling',
-      description: 'Schedule our initial strategy session and project planning meeting',
-      type: 'checkbox',
-      placeholder: '',
-      required: true,
-      content: "Kickoff call scheduled for next Tuesday at 2 PM EST. Attendees: Sarah (client), Mike (CTO), our design team lead, and project manager. Agenda: technical requirements review, design direction alignment, compliance requirements discussion, project timeline finalization. Follow-up: weekly check-ins every Friday, design reviews via Figma, development updates via project portal."
-    }
+    // ... (The rest of the steps exist but are not used in the demo flow)
   ];
+
+  // NEW: A single source of truth for the steps used in this demo flow.
+  const demoChecklistSteps = websiteDesignSteps.slice(0, 5);
 
   const advanceView = useCallback(() => {
     setCurrentView(prev => (prev + 1) % views.length);
   }, [views.length]);
 
-  // Main effect to control the demo flow sequentially
   useEffect(() => {
     if (!autoPlay) return;
 
@@ -252,18 +228,16 @@ export default function DemoPage() {
           setChecklistDescription('Complete onboarding process for new website design clients');
         }, 1000);
         
-        // MODIFIED: Only add the first 5 steps and at a slower pace
-        const stepsToAdd = websiteDesignSteps.slice(0, 5);
-        stepsToAdd.forEach((step, index) => {
+        // MODIFIED: Uses the shared demoChecklistSteps constant
+        demoChecklistSteps.forEach((step, index) => {
           setTimeout(() => {
             setBuildingStep(index + 1);
             setSteps(prev => [...prev, { ...step, id: `step-${index}` }]);
-          }, 2000 + (index * 1200)); // Slower pace: 1.2s per step
+          }, 2000 + (index * 1200));
         });
         
-        // MODIFIED: Recalculate duration for 5 steps
-        const builderDuration = 2000 + (stepsToAdd.length * 1200) + 1500;
-        viewTimeout = setTimeout(advanceView, builderDuration); // ~9.5 seconds
+        const builderDuration = 2000 + (demoChecklistSteps.length * 1200) + 1500;
+        viewTimeout = setTimeout(advanceView, builderDuration);
         break;
 
       case 'customer-experience': {
@@ -286,15 +260,16 @@ export default function DemoPage() {
           setCurrentCustomerStep(0);
         }, 3000);
         
+        // MODIFIED: This entire function now operates on demoChecklistSteps
         const processCustomerStep = (index: number) => {
-          if (index >= websiteDesignSteps.length) {
+          if (index >= demoChecklistSteps.length) { // Use length of our demo checklist
             setTimeout(advanceView, 2000);
             return;
           }
           
           if (!autoPlay) return;
 
-          const step = websiteDesignSteps[index];
+          const step = demoChecklistSteps[index]; // Get step from our demo checklist
           setCurrentCustomerStep(index);
           
           setTimeout(() => {
@@ -341,7 +316,6 @@ export default function DemoPage() {
     };
   }, [currentView, autoPlay, advanceView]);
   
-  // NEW: useEffect hook to handle auto-scrolling
   useEffect(() => {
     if (stepsContainerRef.current) {
       const scrollElement = stepsContainerRef.current;
@@ -350,9 +324,10 @@ export default function DemoPage() {
         behavior: 'smooth'
       });
     }
-  }, [steps]); // Trigger whenever the steps array is updated
+  }, [steps]);
 
   const renderDashboard = () => (
+    // ... (This component's JSX remains the same)
     <div className="space-y-8 pt-8">
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -630,6 +605,7 @@ export default function DemoPage() {
   );
 
   const renderChecklistBuilder = () => (
+    // ... (This component's JSX remains the same, but the logic feeding it has changed)
     <div className="max-w-7xl mx-auto pt-8">
       <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden">
         {/* ... (Header remains the same) ... */}
@@ -680,10 +656,10 @@ export default function DemoPage() {
               </div>
 
               {/* Building indicator */}
-              {buildingStep > 0 && buildingStep <= websiteDesignSteps.slice(0, 5).length && (
+              {buildingStep > 0 && buildingStep <= demoChecklistSteps.length && (
                 <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-6">
                   <h4 className="font-semibold text-emerald-900 mb-4 font-sans">
-                    Adding Step {buildingStep}: {websiteDesignSteps[buildingStep - 1]?.title}
+                    Adding Step {buildingStep}: {demoChecklistSteps[buildingStep - 1]?.title}
                   </h4>
                   <div className="space-y-3">
                     <div className="flex items-center">
@@ -693,7 +669,7 @@ export default function DemoPage() {
                     <div className="w-full bg-emerald-200 rounded-full h-2">
                       <div 
                         className="bg-emerald-500 h-2 rounded-full transition-all duration-500"
-                        style={{ width: `${(buildingStep / websiteDesignSteps.slice(0, 5).length) * 100}%` }}
+                        style={{ width: `${(buildingStep / demoChecklistSteps.length) * 100}%` }}
                       ></div>
                     </div>
                   </div>
@@ -711,7 +687,6 @@ export default function DemoPage() {
                 </button>
               </div>
               
-              {/* MODIFIED: Added ref to this container */}
               <div ref={stepsContainerRef} className="space-y-3 max-h-96 overflow-y-auto pr-2">
                 {steps.map((step, index) => (
                   <div key={step.id} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200 animate-fade-in">
@@ -769,10 +744,10 @@ export default function DemoPage() {
   );
 
   const renderCustomerExperience = () => (
-    // ... (This component's JSX remains the same)
     <div className="max-w-4xl mx-auto pt-8">
       {showCustomerForm && (
         <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-8 mb-8">
+          {/* ... (Welcome form remains the same) ... */}
           <div className="text-center mb-6">
             <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
               <User className="w-8 h-8 text-white" />
@@ -826,7 +801,6 @@ export default function DemoPage() {
 
       {!showCustomerForm && (
         <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden">
-          {/* Progress Header */}
           <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-8 text-white">
             <div className="text-center">
               <h1 className="text-3xl font-bold font-sans mb-2">Website Design Project Onboarding</h1>
@@ -835,17 +809,20 @@ export default function DemoPage() {
               <div className="mt-6">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium text-blue-100 font-sans">Progress</span>
-                  <span className="text-sm font-medium text-blue-100 font-sans">{completedSteps.length}/8 completed</span>
+                  {/* MODIFIED: Dynamic step count */}
+                  <span className="text-sm font-medium text-blue-100 font-sans">{completedSteps.length}/{demoChecklistSteps.length} completed</span>
                 </div>
                 <div className="w-full bg-blue-400/30 rounded-full h-3">
                   <div 
                     className="bg-white h-3 rounded-full transition-all duration-1000 ease-out"
-                    style={{ width: `${(completedSteps.length / 8) * 100}%` }}
+                    // MODIFIED: Dynamic progress calculation
+                    style={{ width: `${(completedSteps.length / demoChecklistSteps.length) * 100}%` }}
                   ></div>
                 </div>
                 <div className="text-center mt-2">
                   <span className="text-lg font-bold text-white font-sans">
-                    {Math.round((completedSteps.length / 8) * 100)}%
+                    {/* MODIFIED: Dynamic percentage calculation */}
+                    {Math.round((completedSteps.length / demoChecklistSteps.length) * 100)}%
                   </span>
                 </div>
               </div>
@@ -853,33 +830,34 @@ export default function DemoPage() {
           </div>
 
           <div className="p-8">
-            {/* Current Step - THE MAIN FOCUS */}
-            {currentCustomerStep < websiteDesignSteps.length && (
+            {/* MODIFIED: Current step now uses demoChecklistSteps */}
+            {currentCustomerStep < demoChecklistSteps.length && (
               <div className="bg-blue-50 rounded-xl p-8 mb-8 border-2 border-blue-200">
                 <div className="flex items-center mb-6">
                   <span className="text-3xl mr-4">
-                    {websiteDesignSteps[currentCustomerStep].type === 'textarea' ? '📝' : 
-                     websiteDesignSteps[currentCustomerStep].type === 'file_upload' ? '📎' : '☑️'}
+                    {demoChecklistSteps[currentCustomerStep].type === 'textarea' ? '📝' : 
+                     demoChecklistSteps[currentCustomerStep].type === 'file_upload' ? '📎' : '☑️'}
                   </span>
                   <div>
                     <h3 className="text-2xl font-bold text-gray-900 font-sans">
-                      Step {currentCustomerStep + 1}: {websiteDesignSteps[currentCustomerStep].title}
+                      Step {currentCustomerStep + 1}: {demoChecklistSteps[currentCustomerStep].title}
                     </h3>
-                    {websiteDesignSteps[currentCustomerStep].required && (
+                    {demoChecklistSteps[currentCustomerStep].required && (
                       <span className="inline-block mt-2 px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-medium font-sans">
                         Required
                       </span>
                     )}
                   </div>
                 </div>
-                <p className="text-gray-700 mb-6 font-sans leading-relaxed text-lg">{websiteDesignSteps[currentCustomerStep].description}</p>
+                <p className="text-gray-700 mb-6 font-sans leading-relaxed text-lg">{demoChecklistSteps[currentCustomerStep].description}</p>
                 
-                {websiteDesignSteps[currentCustomerStep].type === 'textarea' && (
+                {/* All logic below now correctly refers to demoChecklistSteps */}
+                {demoChecklistSteps[currentCustomerStep].type === 'textarea' && (
                   <div className="bg-white rounded-lg border-2 border-gray-200 p-4">
                     <textarea
                       value={customerStepContent[`step-${currentCustomerStep}`] || ''}
                       className="w-full px-4 py-3 border-0 focus:outline-none focus:ring-0 font-sans text-gray-800 resize-none"
-                      placeholder={websiteDesignSteps[currentCustomerStep].placeholder}
+                      placeholder={demoChecklistSteps[currentCustomerStep].placeholder}
                       rows={8}
                       readOnly
                     />
@@ -892,7 +870,7 @@ export default function DemoPage() {
                   </div>
                 )}
                 
-                {websiteDesignSteps[currentCustomerStep].type === 'file_upload' && (
+                {demoChecklistSteps[currentCustomerStep].type === 'file_upload' && (
                   <div className="bg-white border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
                     <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                     <div className="text-gray-600 mb-4 font-sans text-lg">
@@ -908,34 +886,8 @@ export default function DemoPage() {
                       )}
                     </div>
                     <div className="text-sm text-gray-500 font-sans">
-                      {websiteDesignSteps[currentCustomerStep].placeholder}
+                      {demoChecklistSteps[currentCustomerStep].placeholder}
                     </div>
-                  </div>
-                )}
-                
-                {websiteDesignSteps[currentCustomerStep].type === 'checkbox' && (
-                  <div className="bg-white rounded-lg p-6 border-2 border-gray-200">
-                    <label className="flex items-start cursor-pointer">
-                      <div className={`w-8 h-8 rounded border-2 flex items-center justify-center mr-4 mt-1 transition-colors ${
-                        completedSteps.includes(`step-${currentCustomerStep}`) 
-                          ? 'bg-blue-500 border-blue-500 text-white' 
-                          : 'border-gray-300'
-                      }`}>
-                        {completedSteps.includes(`step-${currentCustomerStep}`) && (
-                          <Check className="w-5 h-5" />
-                        )}
-                      </div>
-                      <div className="flex-1">
-                        <span className="text-lg font-medium text-gray-900 font-sans block mb-2">
-                          I confirm and agree to proceed
-                        </span>
-                        {customerStepContent[`step-${currentCustomerStep}`] && (
-                          <div className="text-sm text-gray-700 bg-gray-50 rounded-lg p-3 border border-gray-200">
-                            {customerStepContent[`step-${currentCustomerStep}`]}
-                          </div>
-                        )}
-                      </div>
-                    </label>
                   </div>
                 )}
                 
@@ -948,22 +900,21 @@ export default function DemoPage() {
               </div>
             )}
 
-            {/* Completed Steps Summary */}
             {completedSteps.length > 0 && (
               <div className="bg-emerald-50 rounded-xl p-6 border border-emerald-200">
-                <h4 className="font-semibold text-emerald-900 mb-4 font-sans">Completed Steps ({completedSteps.length}/8)</h4>
+                <h4 className="font-semibold text-emerald-900 mb-4 font-sans">Completed Steps ({completedSteps.length}/{demoChecklistSteps.length})</h4>
                 <div className="space-y-3">
                   {completedSteps.map((stepId, index) => (
                     <div key={stepId} className="flex items-center text-sm text-emerald-700">
                       <CheckCircle className="w-4 h-4 mr-3 flex-shrink-0" />
                       <span className="font-sans">
-                        {websiteDesignSteps[index]?.title}
+                        {demoChecklistSteps[index]?.title}
                       </span>
                     </div>
                   ))}
                 </div>
                 
-                {completedSteps.length === 8 && (
+                {completedSteps.length === demoChecklistSteps.length && (
                   <div className="mt-6 p-4 bg-emerald-100 rounded-lg border border-emerald-300">
                     <div className="flex items-center text-emerald-800 font-medium font-sans">
                       <CheckCircle className="w-5 h-5 mr-2" />
@@ -980,11 +931,10 @@ export default function DemoPage() {
   );
 
   const renderCompletion = () => (
-    // ... (This component's JSX remains the same)
     <div className="max-w-3xl mx-auto text-center pt-8">
       <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden border border-white/20">
         <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 p-8 text-white relative overflow-hidden">
-          {/* Confetti Animation */}
+          {/* ... (Confetti remains the same) ... */}
           <div className="absolute inset-0 pointer-events-none">
             {[...Array(20)].map((_, i) => (
               <div
@@ -1014,11 +964,12 @@ export default function DemoPage() {
         <div className="p-8">
           <div className="grid grid-cols-3 gap-6 mb-8">
             <div className="text-center">
-              <div className="text-3xl font-bold text-emerald-600 font-sans">8/8</div>
+              {/* MODIFIED: Dynamic step count */}
+              <div className="text-3xl font-bold text-emerald-600 font-sans">{demoChecklistSteps.length}/{demoChecklistSteps.length}</div>
               <div className="text-sm text-gray-600 font-sans">Steps Completed</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-blue-600 font-sans">2.3</div>
+              <div className="text-3xl font-bold text-blue-600 font-sans">1.8</div>
               <div className="text-sm text-gray-600 font-sans">Days to Complete</div>
             </div>
             <div className="text-center">
@@ -1026,7 +977,7 @@ export default function DemoPage() {
               <div className="text-sm text-gray-600 font-sans">Success Rate</div>
             </div>
           </div>
-
+          {/* ... (Rest of completion JSX remains the same) ... */}
           <div className="bg-gradient-to-r from-emerald-50 to-blue-50 rounded-xl p-6 mb-8">
             <h3 className="font-semibold text-gray-900 mb-4 font-sans">🚀 What happens next?</h3>
             <div className="space-y-3 text-sm text-gray-700">
