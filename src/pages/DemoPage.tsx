@@ -956,3 +956,24 @@ export default function DemoPage() {
       </div>
     </div>
   );
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      <DemoHeader 
+        currentView={currentView}
+        views={views}
+        autoPlay={autoPlay}
+        setAutoPlay={setAutoPlay}
+        setCurrentView={setCurrentView}
+      />
+      
+      <div className="pt-20 pb-12 px-4 sm:px-6 lg:px-8">
+        {views[currentView] === 'dashboard' && renderDashboard()}
+        {views[currentView] === 'template-selection' && renderTemplateSelection()}
+        {views[currentView] === 'checklist-builder' && renderChecklistBuilder()}
+        {views[currentView] === 'customer-experience' && renderCustomerExperience()}
+        {views[currentView] === 'completion' && renderCompletion()}
+      </div>
+    </div>
+  );
+}
