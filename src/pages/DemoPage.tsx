@@ -83,6 +83,8 @@ export default function DemoPage() {
   ]);
   const [completedSteps, setCompletedSteps] = useState<string[]>([]);
   const [showNewActivity, setShowNewActivity] = useState(false);
+  const [checklistSetupStep, setChecklistSetupStep] = useState(0);
+  const [setupSteps, setSetupSteps] = useState<any[]>([]);
 
   // Auto-advance steps
   useEffect(() => {
@@ -163,15 +165,28 @@ export default function DemoPage() {
         }, 500);
       }, 1500); // Adjusted to fit new shorter slide duration
     } else if (currentStep === 2) {
-      // Submissions page animations
-      setTimeout(() => {
-        setAnimatedProgress({
-          'sarah': 85,
-          'mike': 100,
-          'lisa': 45,
-          'david': 70
-        });
-      }, 1000);
+      // Checklist setup animation
+      const setupSequence = [
+        { type: 'title', content: 'Website Design Onboarding' },
+        { type: 'description', content: 'Complete onboarding checklist for new website design clients including requirements gathering and asset collection.' },
+        { type: 'step', content: { title: 'Project Requirements & Goals', description: 'Share your project vision, target audience, and key objectives', type: 'textarea' } },
+        { type: 'step', content: { title: 'Design Preferences & Branding', description: 'Upload your logo, brand guidelines, and design inspiration', type: 'file_upload' } },
+        { type: 'step', content: { title: 'Technical Requirements', description: 'Specify hosting preferences, integrations, and technical needs', type: 'textarea' } },
+        { type: 'step', content: { title: 'Timeline & Budget Confirmation', description: 'Review and confirm project timeline and payment schedule', type: 'checkbox' } },
+      ];
+      
+      setSetupSteps([]);
+      setChecklistSetupStep(0);
+      
+      setupSequence.forEach((step, index) => {
+        setTimeout(() => {
+          if (step.type === 'title' || step.type === 'description') {
+            setChecklistSetupStep(index + 1);
+          } else {
+            setSetupSteps(prev => [...prev, step.content]);
+          }
+        }, index * 600);
+      });
     } else if (currentStep === 3) {
       // Customer view animations - slower progression through all steps
       const steps = ['slack', 'logo', 'brand', 'contact', 'inspiration', 'timeline', 'kickoff'];
@@ -295,6 +310,174 @@ export default function DemoPage() {
   );
 
   const renderChecklists = () => (
+    <div className="max-w-6xl mx-auto space-y-8">
+      {/* Header */}
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-gray-900 font-sans mb-2">Create New Checklist</h2>
+        <p className="text-gray-600 font-sans">Watch as we build a website design onboarding checklist</p>
+      </div>
+
+      {/* Checklist Builder Interface */}
+      <div className="bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+          <div>
+            <h3 className="text-xl font-semibold text-gray-900 font-sans">Checklist Builder</h3>
+            <p className="text-sm text-gray-600 mt-1 font-sans">Creating a professional onboarding flow</p>
+          </div>
+          <button className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Tab Navigation */}
+        <div className="border-b border-gray-200 bg-gray-50">
+          <nav className="flex">
+            <button className="px-6 py-3 font-medium text-sm transition-colors font-sans border-b-2 border-emerald-500 text-emerald-600 bg-white">
+              Settings
+            </button>
+            <button className="px-6 py-3 font-medium text-sm transition-colors font-sans text-gray-500">
+              Steps
+              <span className="ml-2 px-2 py-0.5 bg-gray-200 text-gray-700 rounded-full text-xs">
+                {setupSteps.length}
+              </span>
+            </button>
+          </nav>
+        </div>
+
+        {/* Content */}
+        <div className="p-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Left Column - Form */}
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">
+                  Checklist Title
+                </label>
+                <input
+                  type="text"
+                  value={checklistSetupStep >= 1 ? "Website Design Onboarding" : ""}
+                  className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans transition-all duration-300 ${
+                    checklistSetupStep >= 1 ? 'bg-white' : 'bg-gray-50'
+                  }`}
+                  placeholder="e.g., SaaS Onboarding Checklist"
+                  readOnly
+                />
+                {checklistSetupStep >= 1 && (
+                  <div className="absolute right-2 top-2 w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">
+                  Description
+                </label>
+                <textarea
+                  value={checklistSetupStep >= 2 ? "Complete onboarding checklist for new website design clients including requirements gathering and asset collection." : ""}
+                  className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans transition-all duration-300 ${
+                    checklistSetupStep >= 2 ? 'bg-white' : 'bg-gray-50'
+                  }`}
+                  placeholder="Brief description of this onboarding flow"
+                  rows={3}
+                  readOnly
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-3 font-sans">
+                  Visibility
+                </label>
+                <div className="space-y-3">
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="visibility"
+                      checked={true}
+                      className="mr-3 text-emerald-600 focus:ring-emerald-500"
+                      readOnly
+                    />
+                    <div className="flex items-center">
+                      <Eye className="w-4 h-4 text-emerald-500 mr-2" />
+                      <span className="font-sans">Public - Anyone with the link can access</span>
+                    </div>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column - Steps Preview */}
+            <div className="space-y-6">
+              <div>
+                <h4 className="text-lg font-semibold text-gray-900 mb-4 font-sans">Steps Being Added</h4>
+                <div className="space-y-3 max-h-96 overflow-y-auto">
+                  {setupSteps.map((step, index) => (
+                    <div
+                      key={index}
+                      className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 animate-slide-in"
+                    >
+                      <div className="flex items-start">
+                        <div className="flex items-center mr-3 mt-1">
+                          <span className="text-sm text-emerald-600 mr-2 font-sans font-medium">{index + 1}</span>
+                          <span className="text-sm">
+                            {step.type === 'checkbox' ? '☑️' : 
+                             step.type === 'textarea' ? '📄' : 
+                             step.type === 'file_upload' ? '📎' : '📝'}
+                          </span>
+                        </div>
+                        <div className="flex-1">
+                          <h5 className="font-medium text-gray-900 font-sans mb-1">{step.title}</h5>
+                          <p className="text-sm text-gray-600 font-sans">{step.description}</p>
+                          <div className="flex items-center mt-2">
+                            <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium font-sans mr-2">
+                              {step.type === 'checkbox' ? 'Checkbox' :
+                               step.type === 'textarea' ? 'Long Text' :
+                               step.type === 'file_upload' ? 'File Upload' : 'Text Input'}
+                            </span>
+                            <span className="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium font-sans">
+                              Required
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  
+                  {setupSteps.length === 0 && (
+                    <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
+                      <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <Plus className="w-6 h-6 text-gray-400" />
+                      </div>
+                      <p className="text-gray-500 font-sans">Steps will appear here as they're added...</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50">
+          <div className="text-sm text-gray-600 font-sans">
+            {setupSteps.length > 0 && (
+              <span className="text-emerald-600 font-medium">● Building checklist...</span>
+            )}
+          </div>
+          <div className="flex items-center space-x-3">
+            <button className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium transition-colors font-sans">
+              Cancel
+            </button>
+            <button className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-lg font-medium transition-colors flex items-center font-sans">
+              <Save className="w-4 h-4 mr-2" />
+              Create Checklist
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderChecklistsOld = () => (
     <div className="max-w-7xl mx-auto space-y-8">
       {/* Header */}
       <div className="flex items-center justify-between">
