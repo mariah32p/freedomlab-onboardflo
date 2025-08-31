@@ -51,7 +51,7 @@ import DemoHeader from '../components/DemoHeader';
 
 export default function DemoPage() {
   const [currentView, setCurrentView] = useState(0);
-  const [autoPlay, setAutoPlay] = useState(true);
+  const [autoPlay, setAutoPlay] = useState(true); // Still managing autoplay state internally for animation logic
   
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -333,7 +333,7 @@ export default function DemoPage() {
   }, [steps]);
 
   const renderDashboard = () => (
-    <div className="space-y-8 pt-8">
+    <div className="space-y-8">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300">
           <div className="flex items-center">
@@ -479,7 +479,7 @@ export default function DemoPage() {
   );
 
   const renderTemplateSelection = () => (
-    <div className="max-w-6xl mx-auto pt-8">
+    <div className="max-w-6xl mx-auto">
       <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden">
         <div className="bg-gradient-to-r from-emerald-500 to-blue-600 p-8 text-white">
           <div className="text-center">
@@ -591,7 +591,7 @@ export default function DemoPage() {
   );
 
   const renderChecklistBuilder = () => (
-    <div className="max-w-7xl mx-auto pt-8">
+    <div className="max-w-7xl mx-auto">
       <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden">
         <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6 text-white">
           <div className="flex items-center justify-between">
@@ -717,7 +717,7 @@ export default function DemoPage() {
   );
 
   const renderCustomerExperience = () => (
-    <div className="max-w-4xl mx-auto pt-8">
+    <div className="max-w-4xl mx-auto">
       {showCustomerForm && (
         <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-8 mb-8">
           <div className="text-center mb-6">
@@ -888,10 +888,9 @@ export default function DemoPage() {
   );
 
   const renderCompletion = () => (
-    <div className="max-w-3xl mx-auto text-center pt-8">
+    <div className="max-w-3xl mx-auto text-center">
       <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden border border-white/20">
         <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 p-8 text-white relative overflow-hidden">
-          {/* REMOVED: Confetti animation is gone */}
           <div className="relative z-10">
             <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle className="w-10 h-10" />
@@ -962,36 +961,10 @@ export default function DemoPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <DemoHeader />
       
-      <div className="fixed bottom-6 right-6 z-50">
-        <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 p-4">
-          <div className="flex items-center space-x-4">
-            <button
-              onClick={() => setAutoPlay(!autoPlay)}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors font-sans ${
-                autoPlay 
-                  ? 'bg-emerald-500 text-white' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              {autoPlay ? 'Pause Demo' : 'Play Demo'}
-            </button>
-            <div className="flex space-x-1">
-              {views.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentView(index)}
-                  className={`w-3 h-3 rounded-full transition-colors ${
-                    currentView === index ? 'bg-emerald-500' : 'bg-gray-300 hover:bg-gray-400'
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Removed: Demo Controls */}
       
-      <div className="pb-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32">
+      <div className="pb-8"> {/* Reduced padding-bottom */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16"> {/* Reduced padding-top */}
           <div className="transition-all duration-500 ease-in-out">
             {views[currentView] === 'dashboard' && renderDashboard()}
             {views[currentView] === 'template-selection' && renderTemplateSelection()}
