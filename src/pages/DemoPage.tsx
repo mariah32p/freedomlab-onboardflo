@@ -47,32 +47,71 @@ import {
   Heart,
   Briefcase
 } from 'lucide-react';
-import DemoHeader from '../components/DemoHeader';
+
+// Mock DemoHeader component since it's not provided
+const DemoHeader = ({ currentView, views, autoPlay, setAutoPlay, setCurrentView }) => (
+  <div className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-sm border-b border-white/20 z-50">
+    <div className="max-w-7xl mx-auto px-4 py-3">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <h1 className="text-xl font-bold text-gray-900">Demo: Client Onboarding</h1>
+          <div className="flex items-center space-x-2">
+            {views.map((view, index) => (
+              <button
+                key={view}
+                onClick={() => setCurrentView(index)}
+                className={`px-3 py-1 rounded-full text-sm transition-colors ${
+                  currentView === index 
+                    ? 'bg-blue-500 text-white' 
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {view.replace('-', ' ')}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="flex items-center space-x-4">
+          <button
+            onClick={() => setAutoPlay(!autoPlay)}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              autoPlay 
+                ? 'bg-emerald-500 text-white' 
+                : 'bg-gray-200 text-gray-700'
+            }`}
+          >
+            {autoPlay ? 'Pause Demo' : 'Play Demo'}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+);
 
 export default function DemoPage() {
   const [currentView, setCurrentView] = useState(0);
   const [autoPlay, setAutoPlay] = useState(true);
   
-  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   
   const [checklistTitle, setChecklistTitle] = useState('');
   const [checklistDescription, setChecklistDescription] = useState('');
-  const [steps, setSteps] = useState<any[]>([]);
+  const [steps, setSteps] = useState([]);
   const [buildingStep, setBuildingStep] = useState(0);
-  const stepsContainerRef = useRef<HTMLDivElement>(null);
+  const stepsContainerRef = useRef(null);
   
   const [customerData, setCustomerData] = useState({
     name: '',
     email: '',
     company: ''
   });
-  const [completedSteps, setCompletedSteps] = useState<string[]>([]);
+  const [completedSteps, setCompletedSteps] = useState([]);
   const [currentCustomerStep, setCurrentCustomerStep] = useState(0);
   const [showCustomerForm, setShowCustomerForm] = useState(true);
-  const [customerStepContent, setCustomerStepContent] = useState<Record<string, string>>({});
+  const [customerStepContent, setCustomerStepContent] = useState({});
   const [isTypingStep, setIsTypingStep] = useState(false);
-  const [typingStepId, setTypingStepId] = useState<string>('');
+  const [typingStepId, setTypingStepId] = useState('');
 
   const autoPlayRef = useRef(autoPlay);
   autoPlayRef.current = autoPlay;
@@ -201,7 +240,7 @@ export default function DemoPage() {
     if (!autoPlay) return;
 
     const view = views[currentView];
-    let viewTimeout: NodeJS.Timeout;
+    let viewTimeout;
     let isCancelled = false;
 
     switch (view) {
@@ -242,7 +281,7 @@ export default function DemoPage() {
         break;
 
       case 'customer-experience': {
-        const sleep = (ms: number) => new Promise(res => setTimeout(res, ms));
+        const sleep = (ms) => new Promise(res => setTimeout(res, ms));
 
         const runCustomerFlow = async () => {
           if (isCancelled) return;
@@ -276,7 +315,7 @@ export default function DemoPage() {
             await sleep(1000);
 
             if (isCancelled || !autoPlayRef.current) return;
-            await new Promise<void>(resolve => {
+            await new Promise((resolve) => {
               setIsTypingStep(true);
               setTypingStepId(`step-${i}`);
               const content = step.content;
@@ -318,9 +357,9 @@ export default function DemoPage() {
 
     return () => {
       isCancelled = true;
-      clearTimeout(viewTimeout);
+      if (viewTimeout) clearTimeout(viewTimeout);
     };
-  }, [currentView, advanceView]);
+  }, [currentView, advanceView, autoPlay, demoChecklistSteps]);
   
   useEffect(() => {
     if (stepsContainerRef.current) {
@@ -341,8 +380,8 @@ export default function DemoPage() {
               <Users className="w-6 h-6 text-white" />
             </div>
             <div className="ml-4">
-              <div className="text-2xl font-bold text-gray-900 font-sans">127</div>
-              <div className="text-sm text-gray-600 font-sans">Active Clients</div>
+              <div className="text-2xl font-bold text-gray-900">127</div>
+              <div className="text-sm text-gray-600">Active Clients</div>
             </div>
           </div>
         </div>
@@ -352,8 +391,8 @@ export default function DemoPage() {
               <CheckCircle className="w-6 h-6 text-white" />
             </div>
             <div className="ml-4">
-              <div className="text-2xl font-bold text-gray-900 font-sans">94%</div>
-              <div className="text-sm text-gray-600 font-sans">Completion Rate</div>
+              <div className="text-2xl font-bold text-gray-900">94%</div>
+              <div className="text-sm text-gray-600">Completion Rate</div>
             </div>
           </div>
         </div>
@@ -363,8 +402,8 @@ export default function DemoPage() {
               <Clock className="w-6 h-6 text-white" />
             </div>
             <div className="ml-4">
-              <div className="text-2xl font-bold text-gray-900 font-sans">2.8d</div>
-              <div className="text-sm text-gray-600 font-sans">Avg. Time</div>
+              <div className="text-2xl font-bold text-gray-900">2.8d</div>
+              <div className="text-sm text-gray-600">Avg. Time</div>
             </div>
           </div>
         </div>
@@ -374,8 +413,8 @@ export default function DemoPage() {
               <TrendingUp className="w-6 h-6 text-white" />
             </div>
             <div className="ml-4">
-              <div className="text-2xl font-bold text-gray-900 font-sans">↑68%</div>
-              <div className="text-sm text-gray-600 font-sans">vs Manual</div>
+              <div className="text-2xl font-bold text-gray-900">↑68%</div>
+              <div className="text-sm text-gray-600">vs Manual</div>
             </div>
           </div>
         </div>
@@ -383,10 +422,10 @@ export default function DemoPage() {
       <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20">
         <div className="p-6 border-b border-gray-100">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-gray-900 font-sans">Live Client Activity</h2>
+            <h2 className="text-xl font-semibold text-gray-900">Live Client Activity</h2>
             <div className="flex items-center text-sm text-emerald-600">
               <div className="w-2 h-2 bg-emerald-500 rounded-full mr-2 animate-pulse"></div>
-              <span className="font-sans">Live</span>
+              <span>Live</span>
             </div>
           </div>
         </div>
@@ -395,12 +434,12 @@ export default function DemoPage() {
             <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-emerald-50 to-emerald-100 border border-emerald-200">
               <div className="flex items-center">
                 <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-500 rounded-full flex items-center justify-center mr-4 shadow-lg">
-                  <span className="text-white text-sm font-bold font-sans">SM</span>
+                  <span className="text-white text-sm font-bold">SM</span>
                 </div>
                 <div>
-                  <div className="font-semibold text-gray-900 font-sans">Sarah Martinez</div>
-                  <div className="text-sm text-gray-600 font-sans">HealthTech Solutions • Website Redesign</div>
-                  <div className="text-xs text-emerald-700 font-sans">✓ Just uploaded brand assets • 3 min ago</div>
+                  <div className="font-semibold text-gray-900">Sarah Martinez</div>
+                  <div className="text-sm text-gray-600">HealthTech Solutions • Website Redesign</div>
+                  <div className="text-xs text-emerald-700">✓ Just uploaded brand assets • 3 min ago</div>
                 </div>
               </div>
               <div className="text-right">
@@ -408,20 +447,20 @@ export default function DemoPage() {
                   <div className="w-20 bg-emerald-200 rounded-full h-2 mr-3">
                     <div className="bg-emerald-500 h-2 rounded-full transition-all duration-1000" style={{ width: '87%' }}></div>
                   </div>
-                  <span className="text-sm font-bold text-gray-700 font-sans">87%</span>
+                  <span className="text-sm font-bold text-gray-700">87%</span>
                 </div>
-                <div className="text-xs text-emerald-600 font-sans">7/8 steps • 2.3 days</div>
+                <div className="text-xs text-emerald-600">7/8 steps • 2.3 days</div>
               </div>
             </div>
             <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200">
               <div className="flex items-center">
                 <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-500 rounded-full flex items-center justify-center mr-4 shadow-lg">
-                  <span className="text-white text-sm font-bold font-sans">MC</span>
+                  <span className="text-white text-sm font-bold">MC</span>
                 </div>
                 <div>
-                  <div className="font-semibold text-gray-900 font-sans">Marcus Chen</div>
-                  <div className="text-sm text-gray-600 font-sans">StartupXYZ • E-commerce Platform</div>
-                  <div className="text-xs text-blue-700 font-sans">Working on technical requirements • 12 min ago</div>
+                  <div className="font-semibold text-gray-900">Marcus Chen</div>
+                  <div className="text-sm text-gray-600">StartupXYZ • E-commerce Platform</div>
+                  <div className="text-xs text-blue-700">Working on technical requirements • 12 min ago</div>
                 </div>
               </div>
               <div className="text-right">
@@ -429,20 +468,20 @@ export default function DemoPage() {
                   <div className="w-20 bg-blue-200 rounded-full h-2 mr-3">
                     <div className="bg-blue-500 h-2 rounded-full transition-all duration-1000" style={{ width: '62%' }}></div>
                   </div>
-                  <span className="text-sm font-bold text-gray-700 font-sans">62%</span>
+                  <span className="text-sm font-bold text-gray-700">62%</span>
                 </div>
-                <div className="text-xs text-blue-600 font-sans">6/10 steps • 1.8 days</div>
+                <div className="text-xs text-blue-600">6/10 steps • 1.8 days</div>
               </div>
             </div>
             <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-purple-50 to-purple-100 border border-purple-200">
               <div className="flex items-center">
                 <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-purple-500 rounded-full flex items-center justify-center mr-4 shadow-lg">
-                  <span className="text-white text-sm font-bold font-sans">ER</span>
+                  <span className="text-white text-sm font-bold">ER</span>
                 </div>
                 <div>
-                  <div className="font-semibold text-gray-900 font-sans">Emily Rodriguez</div>
-                  <div className="text-sm text-gray-600 font-sans">GrowthCo • Brand Identity Project</div>
-                  <div className="text-xs text-purple-700 font-sans">Reviewing design concepts • 45 min ago</div>
+                  <div className="font-semibold text-gray-900">Emily Rodriguez</div>
+                  <div className="text-sm text-gray-600">GrowthCo • Brand Identity Project</div>
+                  <div className="text-xs text-purple-700">Reviewing design concepts • 45 min ago</div>
                 </div>
               </div>
               <div className="text-right">
@@ -450,26 +489,26 @@ export default function DemoPage() {
                   <div className="w-20 bg-purple-200 rounded-full h-2 mr-3">
                     <div className="bg-purple-500 h-2 rounded-full transition-all duration-1000" style={{ width: '78%' }}></div>
                   </div>
-                  <span className="text-sm font-bold text-gray-700 font-sans">78%</span>
+                  <span className="text-sm font-bold text-gray-700">78%</span>
                 </div>
-                <div className="text-xs text-purple-600 font-sans">7/9 steps • 3.1 days</div>
+                <div className="text-xs text-purple-600">7/9 steps • 3.1 days</div>
               </div>
             </div>
           </div>
         </div>
       </div>
       <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 font-sans">Quick Actions</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button className="flex items-center justify-center p-4 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-xl hover:shadow-lg transition-all duration-200 font-sans">
+          <button className="flex items-center justify-center p-4 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-xl hover:shadow-lg transition-all duration-200">
             <Plus className="w-5 h-5 mr-2" />
             Create New Checklist
           </button>
-          <button className="flex items-center justify-center p-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl hover:shadow-lg transition-all duration-200 font-sans">
+          <button className="flex items-center justify-center p-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl hover:shadow-lg transition-all duration-200">
             <Send className="w-5 h-5 mr-2" />
             Send Client Reminder
           </button>
-          <button className="flex items-center justify-center p-4 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all duration-200 font-sans">
+          <button className="flex items-center justify-center p-4 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all duration-200">
             <BarChart3 className="w-5 h-5 mr-2" />
             View Analytics
           </button>
@@ -486,8 +525,8 @@ export default function DemoPage() {
             <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-4">
               <Sparkles className="w-8 h-8" />
             </div>
-            <h2 className="text-3xl font-bold font-sans mb-2">Choose Your Template</h2>
-            <p className="text-blue-100 text-lg font-sans">Start with a proven template or create from scratch</p>
+            <h2 className="text-3xl font-bold mb-2">Choose Your Template</h2>
+            <p className="text-blue-100 text-lg">Start with a proven template or create from scratch</p>
           </div>
         </div>
         <div className="p-6 border-b border-gray-200 bg-gray-50">
@@ -499,12 +538,12 @@ export default function DemoPage() {
               <input
                 type="text"
                 value={searchTerm}
-                className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
+                className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                 placeholder="Search templates..."
                 readOnly
               />
             </div>
-            <select className="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans">
+            <select className="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
               <option value="All">All Categories</option>
               <option value="Design">Design</option>
               <option value="Development">Development</option>
@@ -520,8 +559,8 @@ export default function DemoPage() {
                 <div className="w-12 h-12 bg-gray-100 group-hover:bg-emerald-100 rounded-lg flex items-center justify-center mx-auto mb-4 transition-colors">
                   <Plus className="w-6 h-6 text-gray-400 group-hover:text-emerald-500 transition-colors" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2 font-sans">Start from Scratch</h3>
-                <p className="text-gray-600 text-sm font-sans">Create a completely custom checklist</p>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Start from Scratch</h3>
+                <p className="text-gray-600 text-sm">Create a completely custom checklist</p>
               </div>
             </div>
             {templates.map((template) => (
@@ -549,7 +588,7 @@ export default function DemoPage() {
                     {template.icon}
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 font-sans">{template.name}</h3>
+                    <h3 className="text-lg font-semibold text-gray-900">{template.name}</h3>
                     <span 
                       className="inline-block px-2 py-1 rounded-full text-xs font-medium text-white"
                       style={{ backgroundColor: template.color }}
@@ -559,22 +598,22 @@ export default function DemoPage() {
                   </div>
                 </div>
 
-                <p className="text-gray-600 text-sm mb-4 font-sans leading-relaxed">{template.description}</p>
+                <p className="text-gray-600 text-sm mb-4 leading-relaxed">{template.description}</p>
 
                 <div className="flex items-center justify-between mb-4">
-                  <div className="text-sm text-gray-500 font-sans">
+                  <div className="text-sm text-gray-500">
                     {template.steps} steps included
                   </div>
                   <div className="flex items-center">
                     {[...Array(5)].map((_, i) => (
                       <Star key={i} className="w-3 h-3 text-yellow-400 fill-current" />
                     ))}
-                    <span className="text-xs text-gray-500 ml-1 font-sans">(4.9)</span>
+                    <span className="text-xs text-gray-500 ml-1">(4.9)</span>
                   </div>
                 </div>
 
                 <button 
-                  className={`w-full py-3 rounded-lg font-semibold transition-all duration-200 font-sans ${
+                  className={`w-full py-3 rounded-lg font-semibold transition-all duration-200 ${
                     selectedTemplate === template.id
                       ? 'bg-emerald-500 text-white shadow-lg'
                       : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
@@ -596,15 +635,15 @@ export default function DemoPage() {
         <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6 text-white">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-bold font-sans">{checklistTitle || 'Building Your Checklist...'}</h2>
-              <p className="text-blue-100 font-sans">{checklistDescription || 'Setting up your client onboarding flow'}</p>
+              <h2 className="text-2xl font-bold">{checklistTitle || 'Building Your Checklist...'}</h2>
+              <p className="text-blue-100">{checklistDescription || 'Setting up your client onboarding flow'}</p>
             </div>
             <div className="flex items-center space-x-3">
-              <button className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white px-4 py-2 rounded-lg font-semibold transition-all duration-200 shadow-lg font-sans">
+              <button className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white px-4 py-2 rounded-lg font-semibold transition-all duration-200 shadow-lg">
                 <Save className="w-4 h-4 mr-2 inline" />
                 Save Draft
               </button>
-              <button className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-lg font-semibold transition-all duration-200 shadow-lg font-sans">
+              <button className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-lg font-semibold transition-all duration-200 shadow-lg">
                 Publish Checklist
               </button>
             </div>
@@ -614,22 +653,22 @@ export default function DemoPage() {
           <div className="grid lg:grid-cols-2 gap-8">
             <div className="space-y-6">
               <div className="bg-gray-50 rounded-xl p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4 font-sans">Checklist Settings</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Checklist Settings</h3>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">Title</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
                     <input 
                       type="text" 
                       value={checklistTitle}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-sans"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       readOnly
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">Description</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
                     <textarea 
                       value={checklistDescription}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-sans"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       rows={3}
                       readOnly
                     />
@@ -638,13 +677,13 @@ export default function DemoPage() {
               </div>
               {buildingStep > 0 && buildingStep <= demoChecklistSteps.length && (
                 <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-6">
-                  <h4 className="font-semibold text-emerald-900 mb-4 font-sans">
+                  <h4 className="font-semibold text-emerald-900 mb-4">
                     Adding Step {buildingStep}: {demoChecklistSteps[buildingStep - 1]?.title}
                   </h4>
                   <div className="space-y-3">
                     <div className="flex items-center">
                       <div className="w-2 h-2 bg-emerald-500 rounded-full mr-3 animate-pulse"></div>
-                      <span className="text-sm text-emerald-800 font-sans">Configuring step settings...</span>
+                      <span className="text-sm text-emerald-800">Configuring step settings...</span>
                     </div>
                     <div className="w-full bg-emerald-200 rounded-full h-2">
                       <div 
@@ -658,8 +697,8 @@ export default function DemoPage() {
             </div>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-gray-900 font-sans">Checklist Steps ({steps.length})</h3>
-                <button className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center font-sans">
+                <h3 className="text-lg font-semibold text-gray-900">Checklist Steps ({steps.length})</h3>
+                <button className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center">
                   <Plus className="w-4 h-4 mr-2" />
                   Add Step
                 </button>
@@ -675,16 +714,16 @@ export default function DemoPage() {
                         </span>
                         <div className="flex-1">
                           <div className="flex items-center mb-2">
-                            <h4 className="font-semibold text-gray-900 font-sans">{step.title}</h4>
+                            <h4 className="font-semibold text-gray-900">{step.title}</h4>
                             {step.required && (
-                              <span className="ml-2 px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium font-sans">
+                              <span className="ml-2 px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium">
                                 Required
                               </span>
                             )}
                           </div>
-                          <p className="text-sm text-gray-600 font-sans leading-relaxed">{step.description}</p>
+                          <p className="text-sm text-gray-600 leading-relaxed">{step.description}</p>
                           <div className="mt-2 flex items-center">
-                            <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium font-sans">
+                            <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
                               {step.type === 'textarea' ? 'Long Text' : 'File Upload'}
                             </span>
                           </div>
@@ -705,7 +744,7 @@ export default function DemoPage() {
                 {steps.length === 0 && (
                   <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
                     <Plus className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                    <p className="text-gray-500 font-sans">Building your checklist...</p>
+                    <p className="text-gray-500">Building your checklist...</p>
                   </div>
                 )}
               </div>
@@ -724,43 +763,43 @@ export default function DemoPage() {
             <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
               <User className="w-8 h-8 text-white" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2 font-sans">Welcome to Your Website Project!</h2>
-            <p className="text-gray-600 font-sans">Let's get started with some basic information</p>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome to Your Website Project!</h2>
+            <p className="text-gray-600">Let's get started with some basic information</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">Full Name *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
               <input
                 type="text"
                 value={customerData.name}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-sans"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Your full name"
                 readOnly
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">Email Address *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Email Address *</label>
               <input
                 type="email"
                 value={customerData.email}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-sans"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="your@email.com"
                 readOnly
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">Company</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Company</label>
               <input
                 type="text"
                 value={customerData.company}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-sans"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Your company"
                 readOnly
               />
             </div>
           </div>
           <div className="flex justify-center mt-6">
-            <button className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl font-sans">
+            <button className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl">
               Continue to Checklist
             </button>
           </div>
@@ -771,12 +810,12 @@ export default function DemoPage() {
         <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden">
           <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-8 text-white">
             <div className="text-center">
-              <h1 className="text-3xl font-bold font-sans mb-2">Website Design Project Onboarding</h1>
-              <p className="text-blue-100 font-sans">Complete these steps to get your project started</p>
+              <h1 className="text-3xl font-bold mb-2">Website Design Project Onboarding</h1>
+              <p className="text-blue-100">Complete these steps to get your project started</p>
               <div className="mt-6">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-blue-100 font-sans">Progress</span>
-                  <span className="text-sm font-medium text-blue-100 font-sans">{completedSteps.length}/{demoChecklistSteps.length} completed</span>
+                  <span className="text-sm font-medium text-blue-100">Progress</span>
+                  <span className="text-sm font-medium text-blue-100">{completedSteps.length}/{demoChecklistSteps.length} completed</span>
                 </div>
                 <div className="w-full bg-blue-400/30 rounded-full h-3">
                   <div 
@@ -785,7 +824,7 @@ export default function DemoPage() {
                   ></div>
                 </div>
                 <div className="text-center mt-2">
-                  <span className="text-lg font-bold text-white font-sans">
+                  <span className="text-lg font-bold text-white">
                     {Math.round((completedSteps.length / demoChecklistSteps.length) * 100)}%
                   </span>
                 </div>
@@ -800,22 +839,22 @@ export default function DemoPage() {
                     {demoChecklistSteps[currentCustomerStep].type === 'textarea' ? '📝' : '📎'}
                   </span>
                   <div>
-                    <h3 className="text-2xl font-bold text-gray-900 font-sans">
+                    <h3 className="text-2xl font-bold text-gray-900">
                       Step {currentCustomerStep + 1}: {demoChecklistSteps[currentCustomerStep].title}
                     </h3>
                     {demoChecklistSteps[currentCustomerStep].required && (
-                      <span className="inline-block mt-2 px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-medium font-sans">
+                      <span className="inline-block mt-2 px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-medium">
                         Required
                       </span>
                     )}
                   </div>
                 </div>
-                <p className="text-gray-700 mb-6 font-sans leading-relaxed text-lg">{demoChecklistSteps[currentCustomerStep].description}</p>
+                <p className="text-gray-700 mb-6 leading-relaxed text-lg">{demoChecklistSteps[currentCustomerStep].description}</p>
                 {demoChecklistSteps[currentCustomerStep].type === 'textarea' && (
                   <div className="bg-white rounded-lg border-2 border-gray-200 p-4">
                     <textarea
                       value={customerStepContent[`step-${currentCustomerStep}`] || ''}
-                      className="w-full px-4 py-3 border-0 focus:outline-none focus:ring-0 font-sans text-gray-800 resize-none"
+                      className="w-full px-4 py-3 border-0 focus:outline-none focus:ring-0 text-gray-800 resize-none"
                       placeholder={demoChecklistSteps[currentCustomerStep].placeholder}
                       rows={8}
                       readOnly
@@ -823,7 +862,7 @@ export default function DemoPage() {
                     {isTypingStep && typingStepId === `step-${currentCustomerStep}` && (
                       <div className="flex items-center mt-2 text-blue-600">
                         <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-600 mr-2"></div>
-                        <span className="text-xs font-sans">Typing...</span>
+                        <span className="text-xs">Typing...</span>
                       </div>
                     )}
                   </div>
@@ -831,7 +870,7 @@ export default function DemoPage() {
                 {demoChecklistSteps[currentCustomerStep].type === 'file_upload' && (
                   <div className="bg-white border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
                     <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <div className="text-gray-600 mb-4 font-sans text-lg">
+                    <div className="text-gray-600 mb-4 text-lg">
                       {customerStepContent[`step-${currentCustomerStep}`] ? (
                         <div className="space-y-2">
                           <span className="text-emerald-600 font-medium">Files uploaded successfully!</span>
@@ -843,13 +882,13 @@ export default function DemoPage() {
                         'Drop files here or click to upload'
                       )}
                     </div>
-                    <div className="text-sm text-gray-500 font-sans">
+                    <div className="text-sm text-gray-500">
                       {demoChecklistSteps[currentCustomerStep].placeholder}
                     </div>
                   </div>
                 )}
                 {completedSteps.includes(`step-${currentCustomerStep}`) && (
-                  <div className="mt-6 flex items-center text-emerald-600 font-medium font-sans">
+                  <div className="mt-6 flex items-center text-emerald-600 font-medium">
                     <CheckCircle className="w-5 h-5 mr-2" />
                     Step completed successfully
                   </div>
@@ -859,12 +898,12 @@ export default function DemoPage() {
 
             {completedSteps.length > 0 && (
               <div className="bg-emerald-50 rounded-xl p-6 border border-emerald-200">
-                <h4 className="font-semibold text-emerald-900 mb-4 font-sans">Completed Steps ({completedSteps.length}/{demoChecklistSteps.length})</h4>
+                <h4 className="font-semibold text-emerald-900 mb-4">Completed Steps ({completedSteps.length}/{demoChecklistSteps.length})</h4>
                 <div className="space-y-3">
                   {completedSteps.map((stepId, index) => (
                     <div key={stepId} className="flex items-center text-sm text-emerald-700">
                       <CheckCircle className="w-4 h-4 mr-3 flex-shrink-0" />
-                      <span className="font-sans">
+                      <span>
                         {demoChecklistSteps[index]?.title}
                       </span>
                     </div>
@@ -873,7 +912,7 @@ export default function DemoPage() {
                 
                 {completedSteps.length === demoChecklistSteps.length && (
                   <div className="mt-6 p-4 bg-emerald-100 rounded-lg border border-emerald-300">
-                    <div className="flex items-center text-emerald-800 font-medium font-sans">
+                    <div className="flex items-center text-emerald-800 font-medium">
                       <CheckCircle className="w-5 h-5 mr-2" />
                       All steps completed! Ready to submit.
                     </div>
@@ -895,60 +934,60 @@ export default function DemoPage() {
             <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle className="w-10 h-10" />
             </div>
-            <h1 className="text-4xl font-bold font-sans mb-4">Outstanding Work, Sarah! 🎉</h1>
-            <p className="text-emerald-100 text-lg font-sans">Your website project onboarding is complete!</p>
+            <h1 className="text-4xl font-bold mb-4">Outstanding Work, Sarah!</h1>
+            <p className="text-emerald-100 text-lg">Your website project onboarding is complete!</p>
           </div>
         </div>
 
         <div className="p-8">
           <div className="grid grid-cols-3 gap-6 mb-8">
             <div className="text-center">
-              <div className="text-3xl font-bold text-emerald-600 font-sans">{demoChecklistSteps.length}/{demoChecklistSteps.length}</div>
-              <div className="text-sm text-gray-600 font-sans">Steps Completed</div>
+              <div className="text-3xl font-bold text-emerald-600">{demoChecklistSteps.length}/{demoChecklistSteps.length}</div>
+              <div className="text-sm text-gray-600">Steps Completed</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-blue-600 font-sans">1.8</div>
-              <div className="text-sm text-gray-600 font-sans">Days to Complete</div>
+              <div className="text-3xl font-bold text-blue-600">1.8</div>
+              <div className="text-sm text-gray-600">Days to Complete</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-purple-600 font-sans">100%</div>
-              <div className="text-sm text-gray-600 font-sans">Success Rate</div>
+              <div className="text-3xl font-bold text-purple-600">100%</div>
+              <div className="text-sm text-gray-600">Success Rate</div>
             </div>
           </div>
           <div className="bg-gradient-to-r from-emerald-50 to-blue-50 rounded-xl p-6 mb-8">
-            <h3 className="font-semibold text-gray-900 mb-4 font-sans">🚀 What happens next?</h3>
+            <h3 className="font-semibold text-gray-900 mb-4">🚀 What happens next?</h3>
             <div className="space-y-3 text-sm text-gray-700">
               <div className="flex items-center">
                 <div className="w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
                   <Check className="w-3 h-3 text-white" />
                 </div>
-                <p className="font-sans">Our design team will review your requirements within 24 hours</p>
+                <p>Our design team will review your requirements within 24 hours</p>
               </div>
               <div className="flex items-center">
                 <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
                   <Calendar className="w-3 h-3 text-white" />
                 </div>
-                <p className="font-sans">You'll receive initial wireframes and mood boards by Friday</p>
+                <p>You'll receive initial wireframes and mood boards by Friday</p>
               </div>
               <div className="flex items-center">
                 <div className="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
                   <Phone className="w-3 h-3 text-white" />
                 </div>
-                <p className="font-sans">We'll schedule your project kickoff call for next week</p>
+                <p>We'll schedule your project kickoff call for next week</p>
               </div>
               <div className="flex items-center">
                 <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
                   <Target className="w-3 h-3 text-white" />
                 </div>
-                <p className="font-sans">Expected project completion: 8-10 weeks</p>
+                <p>Expected project completion: 8-10 weeks</p>
               </div>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <button className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white py-4 rounded-xl font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl font-sans">
+            <button className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white py-4 rounded-xl font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl">
               View Project Portal
             </button>
-            <button className="bg-white border-2 border-gray-200 text-gray-700 py-4 rounded-xl font-semibold text-lg transition-all duration-200 hover:border-gray-300 hover:shadow-md font-sans">
+            <button className="bg-white border-2 border-gray-200 text-gray-700 py-4 rounded-xl font-semibold text-lg transition-all duration-200 hover:border-gray-300 hover:shadow-md">
               Schedule Strategy Call
             </button>
           </div>
@@ -976,4 +1015,3 @@ export default function DemoPage() {
       </div>
     </div>
   );
-}
