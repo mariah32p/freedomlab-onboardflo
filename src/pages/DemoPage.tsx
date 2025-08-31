@@ -75,15 +75,8 @@ export default function DemoPage() {
   const [currentStep, setCurrentStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const [progress, setProgress] = useState(0);
-  
-  // Checklist builder animation state
   const [builderActiveTab, setBuilderActiveTab] = useState<'settings' | 'steps'>('settings');
-  const [builderTitle, setBuilderTitle] = useState('');
-  const [builderDescription, setBuilderDescription] = useState('');
-  const [builderVisibility, setBuilderVisibility] = useState(false);
   const [builderSteps, setBuilderSteps] = useState<any[]>([]);
-  const [isAddingSteps, setIsAddingSteps] = useState(false);
-  
   const [animatedStats, setAnimatedStats] = useState({ users: 0, completed: 0, rate: 0, days: 0 });
   const [animatedProgress, setAnimatedProgress] = useState<Record<string, number>>({});
   const [activityItems, setActivityItems] = useState([
