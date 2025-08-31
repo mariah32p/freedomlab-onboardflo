@@ -169,6 +169,66 @@ export default function DemoPage() {
           setShowNewActivity(false);
         }, 500);
       }, 1500); // Adjusted to fit new shorter slide duration
+    } else if (currentStep === 1) {
+      // Reset checklist setup animation
+      setBuilderActiveTab('settings');
+      setBuilderSteps([]);
+      
+      // Animate checklist creation
+      const timeouts: NodeJS.Timeout[] = [];
+      
+      // Phase 1: Settings autofill (1.2 seconds)
+      timeouts.push(setTimeout(() => {
+        // Title appears
+      }, 200));
+      
+      timeouts.push(setTimeout(() => {
+        // Description appears  
+      }, 600));
+      
+      timeouts.push(setTimeout(() => {
+        // Visibility selection
+      }, 1000));
+      
+      // Phase 2: Navigate to Steps tab (1.5 seconds)
+      timeouts.push(setTimeout(() => {
+        setBuilderActiveTab('steps');
+        // Scroll to steps section
+        const stepsSection = document.querySelector('.demo-builder-steps');
+        if (stepsSection) {
+          stepsSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 1500));
+      
+      // Phase 2: Add steps one by one
+      const stepsToAdd = [
+        { title: 'Join Project Slack', step_type: 'checkbox', description: 'Join our project communication channel', is_required: true },
+        { title: 'Upload Brand Assets', step_type: 'file_upload', description: 'Share your logo and brand materials', is_required: true },
+        { title: 'Project Requirements', step_type: 'textarea', description: 'Tell us about your project goals', is_required: true },
+        { title: 'Contact Information', step_type: 'email', description: 'Primary contact for this project', is_required: true },
+        { title: 'Timeline Preferences', step_type: 'text', description: 'When do you need this completed?', is_required: false },
+        { title: 'Schedule Kickoff', step_type: 'checkbox', description: 'Book your strategy session', is_required: true }
+      ];
+      
+      stepsToAdd.forEach((step, index) => {
+        timeouts.push(setTimeout(() => {
+          setBuilderSteps(prev => {
+            const newSteps = [...prev, step];
+            // Scroll to the newly added step
+            setTimeout(() => {
+              const stepElement = document.querySelector(`.demo-step-${index}`);
+              if (stepElement) {
+                stepElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }
+            }, 100);
+            return newSteps;
+          });
+        }, 2000 + (index * 500)));
+      });
+      
+      return () => {
+        timeouts.forEach(timeout => clearTimeout(timeout));
+      };
     } else if (currentStep === 2) {
       // Checklist setup animation - first settings, then steps
       setSetupSteps([]);
@@ -222,6 +282,13 @@ export default function DemoPage() {
           setCompletedSteps(prev => [...prev, step]);
         }, (index + 1) * 1500);
       });
+    } else if (currentStep === 4) {
+      // Reset branding animation
+      
+      // Scroll back to top for branding section
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 100);
     }
   }, [currentStep]);
 
