@@ -331,12 +331,11 @@ export default function DemoPage() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {[
           { icon: Users, value: '127', label: 'Active Clients', color: 'blue' },
           { icon: CheckCircle, value: '94%', label: 'Completion Rate', color: 'emerald' },
-          { icon: Clock, value: '2.8d', label: 'Avg. Time', color: 'orange' },
-          { icon: TrendingUp, value: '↑68%', label: 'vs Manual', color: 'purple' }
+          { icon: Clock, value: '2.8d', label: 'Avg. Time', color: 'orange' }
         ].map((stat, index) => (
           <div key={index} className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300">
             <div className="flex items-center">
