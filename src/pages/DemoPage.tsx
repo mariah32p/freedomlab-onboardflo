@@ -435,7 +435,9 @@ export default function DemoPage() {
           </button>
         </div>
 
-              className={`transition-colors font-medium font-sans pb-1 ${
+        <div className="hidden md:flex items-center space-x-8">
+          <nav className="flex items-center space-x-8">
+            <button className={`transition-colors font-medium font-sans pb-1 ${
                 currentStep === 'customer' 
                   ? 'text-emerald-600 hover:text-emerald-700 border-b-2 border-emerald-500' 
                   : 'text-gray-600 hover:text-gray-900'
@@ -455,6 +457,7 @@ export default function DemoPage() {
             >
               Settings
             </button>
+          </nav>
             <button
               className={`px-6 py-3 font-medium text-sm transition-colors font-sans relative ${
                 activeChecklistTab === 'steps'
