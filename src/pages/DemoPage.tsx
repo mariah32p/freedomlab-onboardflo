@@ -48,116 +48,31 @@ import {
   Briefcase
 } from 'lucide-react';
 
-// Types
-interface Template {
-  id: string;
-  name: string;
-  category: string;
-  icon: string;
-  color: string;
-  description: string;
-  steps: number;
-  popular: boolean;
-}
-
-interface Step {
-  id: string;
-  title: string;
-  description: string;
-  type: string;
-  placeholder: string;
-  required: boolean;
-  content: string;
-}
-
-interface CustomerData {
-  name: string;
-  email: string;
-  company: string;
-}
-
-interface DemoHeaderProps {
-  currentView: number;
-  views: string[];
-  autoPlay: boolean;
-  setAutoPlay: (value: boolean) => void;
-  setCurrentView: (value: number) => void;
-}
-
-// Clean DemoHeader component
-const DemoHeader: React.FC<DemoHeaderProps> = ({ 
-  currentView, 
-  views, 
-  autoPlay, 
-  setAutoPlay, 
-  setCurrentView 
-}) => (
-  <div className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-b border-gray-200 z-50">
-    <div className="max-w-7xl mx-auto px-6 py-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-6">
-          <div className="flex items-center">
-            <div className="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center mr-3">
-              <Workflow className="w-6 h-6 text-white" />
-            </div>
-            <span className="text-xl font-bold text-gray-900 font-sans">OnboardFlo Demo</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            {views.map((view, index) => (
-              <button
-                key={view}
-                onClick={() => setCurrentView(index)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 font-sans ${
-                  currentView === index 
-                    ? 'bg-emerald-500 text-white shadow-md' 
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {index + 1}. {view.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
-              </button>
-            ))}
-          </div>
-        </div>
-        <button
-          onClick={() => setAutoPlay(!autoPlay)}
-          className={`px-6 py-2 rounded-lg font-semibold transition-all duration-200 font-sans ${
-            autoPlay 
-              ? 'bg-red-500 hover:bg-red-600 text-white' 
-              : 'bg-emerald-500 hover:bg-emerald-600 text-white'
-          }`}
-        >
-          {autoPlay ? 'Pause Demo' : 'Play Demo'}
-        </button>
-      </div>
-    </div>
-  </div>
-);
-
 export default function DemoPage() {
-  const [currentView, setCurrentView] = useState<number>(0);
-  const [autoPlay, setAutoPlay] = useState<boolean>(true);
+  const [currentView, setCurrentView] = useState(0);
+  const [autoPlay, setAutoPlay] = useState(true);
   
   // Template selection state
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState('');
   
   // Checklist builder state
-  const [checklistTitle, setChecklistTitle] = useState<string>('');
-  const [checklistDescription, setChecklistDescription] = useState<string>('');
-  const [steps, setSteps] = useState<Step[]>([]);
-  const [buildingStep, setBuildingStep] = useState<number>(0);
+  const [checklistTitle, setChecklistTitle] = useState('');
+  const [checklistDescription, setChecklistDescription] = useState('');
+  const [steps, setSteps] = useState<any[]>([]);
+  const [buildingStep, setBuildingStep] = useState(0);
   
   // Customer experience state
-  const [customerData, setCustomerData] = useState<CustomerData>({
+  const [customerData, setCustomerData] = useState({
     name: '',
     email: '',
     company: ''
   });
   const [completedSteps, setCompletedSteps] = useState<string[]>([]);
-  const [currentCustomerStep, setCurrentCustomerStep] = useState<number>(0);
-  const [showCustomerForm, setShowCustomerForm] = useState<boolean>(true);
+  const [currentCustomerStep, setCurrentCustomerStep] = useState(0);
+  const [showCustomerForm, setShowCustomerForm] = useState(true);
   const [customerStepContent, setCustomerStepContent] = useState<Record<string, string>>({});
-  const [isTyping, setIsTyping] = useState<boolean>(false);
+  const [isTyping, setIsTyping] = useState(false);
 
   const autoPlayRef = useRef(autoPlay);
   autoPlayRef.current = autoPlay;
@@ -170,7 +85,7 @@ export default function DemoPage() {
     'completion'
   ];
 
-  const templates: Template[] = [
+  const templates = [
     {
       id: 'website-design',
       name: 'Website Design Project',
@@ -276,34 +191,28 @@ export default function DemoPage() {
           break;
 
         case 'template-selection':
-          // Reset state
           setSelectedTemplate(null);
           setSearchTerm('');
           
-          // Animate search
           setTimeout(() => {
             if (!isCancelled && autoPlayRef.current) setSearchTerm('website');
           }, 800);
           
-          // Select template
           setTimeout(() => {
             if (!isCancelled && autoPlayRef.current) setSelectedTemplate('website-design');
           }, 1800);
           
-          // Advance
           timeout = setTimeout(() => {
             if (!isCancelled && autoPlayRef.current) advanceView();
           }, 3000);
           break;
 
         case 'checklist-builder':
-          // Reset state
           setSteps([]);
           setChecklistTitle('');
           setChecklistDescription('');
           setBuildingStep(0);
           
-          // Set title and description
           setTimeout(() => {
             if (!isCancelled && autoPlayRef.current) {
               setChecklistTitle('Website Design Project Onboarding');
@@ -311,7 +220,6 @@ export default function DemoPage() {
             }
           }, 600);
           
-          // Add steps progressively
           demoSteps.forEach((step, index) => {
             setTimeout(() => {
               if (!isCancelled && autoPlayRef.current) {
@@ -321,14 +229,12 @@ export default function DemoPage() {
             }, 1200 + (index * 800));
           });
           
-          // Advance after all steps are added
           timeout = setTimeout(() => {
             if (!isCancelled && autoPlayRef.current) advanceView();
           }, 1200 + (demoSteps.length * 800) + 1000);
           break;
 
         case 'customer-experience':
-          // Reset customer state
           setCustomerData({ name: '', email: '', company: '' });
           setCompletedSteps([]);
           setCurrentCustomerStep(0);
@@ -336,7 +242,6 @@ export default function DemoPage() {
           setCustomerStepContent({});
           setIsTyping(false);
 
-          // Fill customer form
           setTimeout(() => {
             if (!isCancelled && autoPlayRef.current) {
               setCustomerData({
@@ -347,14 +252,12 @@ export default function DemoPage() {
             }
           }, 800);
 
-          // Hide form and start steps
           setTimeout(() => {
             if (!isCancelled && autoPlayRef.current) {
               setShowCustomerForm(false);
             }
           }, 2000);
 
-          // Process each step
           const processStep = async (stepIndex: number) => {
             if (stepIndex >= demoSteps.length || !autoPlayRef.current) {
               setTimeout(() => {
@@ -369,7 +272,6 @@ export default function DemoPage() {
             await new Promise(resolve => setTimeout(resolve, 600));
             if (!autoPlayRef.current) return;
 
-            // Type content
             setIsTyping(true);
             const content = step.content;
             
@@ -417,6 +319,12 @@ export default function DemoPage() {
 
   const renderDashboard = () => (
     <div className="space-y-8">
+      {/* Header */}
+      <div className="text-center mb-8">
+        <h1 className="text-4xl font-bold text-gray-900 mb-4 font-sans">OnboardFlo Dashboard</h1>
+        <p className="text-xl text-gray-600 font-sans">Real-time customer onboarding insights</p>
+      </div>
+
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {[
@@ -928,31 +836,13 @@ export default function DemoPage() {
 
   const renderCompletion = () => (
     <div className="max-w-3xl mx-auto text-center">
-      <div className="bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-100">
+      <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden border border-white/20">
         <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 p-8 text-white relative overflow-hidden">
-          {/* Confetti animation */}
-          <div className="absolute inset-0 pointer-events-none">
-            {[...Array(15)].map((_, i) => (
-              <div
-                key={i}
-                className="absolute animate-bounce text-2xl"
-                style={{
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
-                  animationDelay: `${Math.random() * 2}s`,
-                  animationDuration: `${2 + Math.random()}s`
-                }}
-              >
-                {['🎉', '✨', '🎊', '⭐'][Math.floor(Math.random() * 4)]}
-              </div>
-            ))}
-          </div>
-          
           <div className="relative z-10">
-            <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle className="w-10 h-10" />
             </div>
-            <h1 className="text-4xl font-bold mb-4 font-sans">Outstanding Work, Sarah!</h1>
+            <h1 className="text-4xl font-bold font-sans mb-4">Outstanding Work, Sarah! 🎉</h1>
             <p className="text-emerald-100 text-lg font-sans">Your website project onboarding is complete!</p>
           </div>
         </div>
@@ -972,31 +862,40 @@ export default function DemoPage() {
               <div className="text-sm text-gray-600 font-sans">Success Rate</div>
             </div>
           </div>
-
           <div className="bg-gradient-to-r from-emerald-50 to-blue-50 rounded-xl p-6 mb-8">
             <h3 className="font-semibold text-gray-900 mb-4 font-sans">🚀 What happens next?</h3>
             <div className="space-y-3 text-sm text-gray-700">
-              {[
-                { icon: Check, color: 'emerald', text: 'Design team reviews requirements within 24 hours' },
-                { icon: Calendar, color: 'blue', text: 'Initial wireframes delivered by Friday' },
-                { icon: Phone, color: 'purple', text: 'Project kickoff call scheduled for next week' },
-                { icon: Target, color: 'orange', text: 'Expected completion: 8-10 weeks' }
-              ].map((item, index) => (
-                <div key={index} className="flex items-center">
-                  <div className={`w-6 h-6 bg-${item.color}-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0`}>
-                    <item.icon className="w-3 h-3 text-white" />
-                  </div>
-                  <p className="font-sans">{item.text}</p>
+              <div className="flex items-center">
+                <div className="w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                  <Check className="w-3 h-3 text-white" />
                 </div>
-              ))}
+                <p className="font-sans">Our design team will review your requirements within 24 hours</p>
+              </div>
+              <div className="flex items-center">
+                <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                  <Calendar className="w-3 h-3 text-white" />
+                </div>
+                <p className="font-sans">You'll receive initial wireframes and mood boards by Friday</p>
+              </div>
+              <div className="flex items-center">
+                <div className="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                  <Phone className="w-3 h-3 text-white" />
+                </div>
+                <p className="font-sans">We'll schedule your project kickoff call for next week</p>
+              </div>
+              <div className="flex items-center">
+                <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                  <Target className="w-3 h-3 text-white" />
+                </div>
+                <p className="font-sans">Expected project completion: 8-10 weeks</p>
+              </div>
             </div>
           </div>
-
           <div className="grid grid-cols-2 gap-4">
             <button className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white py-4 rounded-xl font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl font-sans">
               View Project Portal
             </button>
-            <button className="bg-white border-2 border-gray-200 text-gray-700 py-4 rounded-xl font-semibold text-lg transition-all duration-200 hover:border-gray-300 font-sans">
+            <button className="bg-white border-2 border-gray-200 text-gray-700 py-4 rounded-xl font-semibold text-lg transition-all duration-200 hover:border-gray-300 hover:shadow-md font-sans">
               Schedule Strategy Call
             </button>
           </div>
@@ -1007,13 +906,17 @@ export default function DemoPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-      <DemoHeader 
-        currentView={currentView}
-        views={views}
-        autoPlay={autoPlay}
-        setAutoPlay={setAutoPlay}
-        setCurrentView={setCurrentView}
-      />
+      {/* Clean header without demo controls */}
+      <div className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-b border-gray-200 z-50">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center">
+            <div className="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center mr-3">
+              <Workflow className="w-6 h-6 text-white" />
+            </div>
+            <span className="text-xl font-bold text-gray-900 font-sans">OnboardFlo</span>
+          </div>
+        </div>
+      </div>
       
       <div className="pt-24 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="transition-all duration-500 ease-in-out">
