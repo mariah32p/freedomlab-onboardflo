@@ -901,24 +901,6 @@ export default function DemoPage() {
     <div className="min-h-screen bg-gray-50">
       <DemoHeader />
       <div className="pt-20">
-        {/* Small refresh button */}
-        <div className="fixed top-24 right-4 z-50">
-          <button
-            onClick={() => {
-              setCurrentStep(0);
-              setProgress(0);
-              setAnimatedStats({ users: 0, completed: 0, rate: 0, days: 0 });
-              setAnimatedProgress({});
-              setCompletedSteps([]);
-              setIsPlaying(true);
-            }}
-            className="bg-white hover:bg-gray-50 text-gray-600 p-2 rounded-lg shadow-sm border border-gray-200 transition-colors"
-            title="Restart demo"
-          >
-            <RotateCcw className="w-4 h-4" />
-          </button>
-        </div>
-
         {/* Demo Content */}
         <div className="px-4 sm:px-6 lg:px-8 py-8">
           {renderCurrentStep()}
