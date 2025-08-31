@@ -66,7 +66,7 @@ const demoSteps: DemoStep[] = [
       id: 'branding',
       title: 'Brand Customization',
       description: 'Customize colors, fonts, and logos to match your brand',
-      duration: 4000,
+      duration: 6000,
     }
   ];
 
