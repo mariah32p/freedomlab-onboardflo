@@ -87,6 +87,7 @@ export default function DemoPage() {
   const [showNewActivity, setShowNewActivity] = useState(false);
   const [checklistSetupStep, setChecklistSetupStep] = useState(0);
   const [setupSteps, setSetupSteps] = useState<any[]>([]);
+  const [currentActiveStep, setCurrentActiveStep] = useState<string | null>(null);
 
   // Auto-advance steps
   useEffect(() => {
@@ -197,6 +198,25 @@ export default function DemoPage() {
       const steps = ['slack', 'logo', 'brand', 'contact', 'inspiration', 'timeline', 'kickoff'];
       steps.forEach((step, index) => {
         setTimeout(() => {
+          // Set as active step first
+          setCurrentActiveStep(step);
+          
+          // Scroll to the step
+          setTimeout(() => {
+            const stepElement = document.getElementById(`step-${step}`);
+            if (stepElement) {
+              stepElement.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+              });
+            }
+          }, 100);
+          
+          // Complete the step after showing it's active
+          setTimeout(() => {
+            setCompletedSteps(prev => [...prev, step]);
+            setCurrentActiveStep(null);
+          }, 800);
           setCompletedSteps(prev => [...prev, step]);
         }, (index + 1) * 1500);
       });
@@ -855,11 +875,12 @@ export default function DemoPage() {
             }
           ].map((step, index) => {
             const isCompleted = completedSteps.includes(step.id);
-            const isActive = index === completedSteps.length && !isCompleted;
+            const isActive = currentActiveStep === step.id || (index === completedSteps.length && !isCompleted && !currentActiveStep);
 
             return (
               <div
                 key={step.id}
+                id={`step-${step.id}`}
                 className={`flex items-start space-x-3 p-4 rounded-lg transition-all duration-300 ${
                   isActive ? 'bg-blue-50 border border-blue-200' :
                   isCompleted ? 'bg-emerald-50 border border-emerald-200' : 'bg-gray-50'
