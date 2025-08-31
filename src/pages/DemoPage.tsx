@@ -417,47 +417,27 @@ export default function DemoPage() {
       {/* Checklist Builder Interface */}
       <div className="bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden">
         {/* Header */}
-              className={`transition-colors font-medium font-sans pb-1 ${
-                currentStep === 'dashboard' 
-                  ? 'text-emerald-600 hover:text-emerald-700 border-b-2 border-emerald-500' 
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
+        <div className="p-6 border-b border-gray-200 flex items-center justify-between">
           <div>
             <h3 className="text-xl font-semibold text-gray-900 font-sans">Checklist Builder</h3>
             <p className="text-sm text-gray-600 mt-1 font-sans">Creating a professional onboarding flow</p>
           </div>
-              className={`transition-colors font-medium font-sans pb-1 ${
-                currentStep === 'checklist' 
-                  ? 'text-emerald-600 hover:text-emerald-700 border-b-2 border-emerald-500' 
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
+          <button className="p-2 text-gray-400 hover:text-gray-600">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="hidden md:flex items-center space-x-8">
-          <nav className="flex items-center space-x-8">
-            <button className={`transition-colors font-medium font-sans pb-1 ${
-                currentStep === 'customer' 
-                  ? 'text-emerald-600 hover:text-emerald-700 border-b-2 border-emerald-500' 
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
         <div className="border-b border-gray-200 bg-gray-50">
           <nav className="flex">
             <button
               className={`px-6 py-3 font-medium text-sm transition-colors font-sans relative ${
-              className={`transition-colors font-medium font-sans pb-1 ${
-                currentStep === 'branding' 
-                  ? 'text-emerald-600 hover:text-emerald-700 border-b-2 border-emerald-500' 
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
+                activeChecklistTab === 'settings'
                   ? 'border-b-2 border-emerald-500 text-emerald-600 bg-white'
                   : 'text-gray-500 hover:text-gray-700'
               }`}
             >
               Settings
             </button>
-          </nav>
             <button
               className={`px-6 py-3 font-medium text-sm transition-colors font-sans relative ${
                 activeChecklistTab === 'steps'
