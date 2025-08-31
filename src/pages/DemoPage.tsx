@@ -84,7 +84,7 @@ interface DemoHeaderProps {
   setCurrentView: (value: number) => void;
 }
 
-// Mock DemoHeader component
+// Clean DemoHeader component
 const DemoHeader: React.FC<DemoHeaderProps> = ({ 
   currentView, 
   views, 
@@ -92,39 +92,42 @@ const DemoHeader: React.FC<DemoHeaderProps> = ({
   setAutoPlay, 
   setCurrentView 
 }) => (
-  <div className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-sm border-b border-white/20 z-50">
-    <div className="max-w-7xl mx-auto px-4 py-3">
+  <div className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-b border-gray-200 z-50">
+    <div className="max-w-7xl mx-auto px-6 py-4">
       <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <h1 className="text-xl font-bold text-gray-900">Demo: Client Onboarding</h1>
+        <div className="flex items-center space-x-6">
+          <div className="flex items-center">
+            <div className="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center mr-3">
+              <Workflow className="w-6 h-6 text-white" />
+            </div>
+            <span className="text-xl font-bold text-gray-900 font-sans">OnboardFlo Demo</span>
+          </div>
           <div className="flex items-center space-x-2">
             {views.map((view, index) => (
               <button
                 key={view}
                 onClick={() => setCurrentView(index)}
-                className={`px-3 py-1 rounded-full text-sm transition-colors ${
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 font-sans ${
                   currentView === index 
-                    ? 'bg-blue-500 text-white' 
+                    ? 'bg-emerald-500 text-white shadow-md' 
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
-                {view.replace('-', ' ')}
+                {index + 1}. {view.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
               </button>
             ))}
           </div>
         </div>
-        <div className="flex items-center space-x-4">
-          <button
-            onClick={() => setAutoPlay(!autoPlay)}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              autoPlay 
-                ? 'bg-emerald-500 text-white' 
-                : 'bg-gray-200 text-gray-700'
-            }`}
-          >
-            {autoPlay ? 'Pause Demo' : 'Play Demo'}
-          </button>
-        </div>
+        <button
+          onClick={() => setAutoPlay(!autoPlay)}
+          className={`px-6 py-2 rounded-lg font-semibold transition-all duration-200 font-sans ${
+            autoPlay 
+              ? 'bg-red-500 hover:bg-red-600 text-white' 
+              : 'bg-emerald-500 hover:bg-emerald-600 text-white'
+          }`}
+        >
+          {autoPlay ? 'Pause Demo' : 'Play Demo'}
+        </button>
       </div>
     </div>
   </div>
@@ -134,15 +137,17 @@ export default function DemoPage() {
   const [currentView, setCurrentView] = useState<number>(0);
   const [autoPlay, setAutoPlay] = useState<boolean>(true);
   
+  // Template selection state
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
   
+  // Checklist builder state
   const [checklistTitle, setChecklistTitle] = useState<string>('');
   const [checklistDescription, setChecklistDescription] = useState<string>('');
   const [steps, setSteps] = useState<Step[]>([]);
   const [buildingStep, setBuildingStep] = useState<number>(0);
-  const stepsContainerRef = useRef<HTMLDivElement>(null);
   
+  // Customer experience state
   const [customerData, setCustomerData] = useState<CustomerData>({
     name: '',
     email: '',
@@ -152,8 +157,7 @@ export default function DemoPage() {
   const [currentCustomerStep, setCurrentCustomerStep] = useState<number>(0);
   const [showCustomerForm, setShowCustomerForm] = useState<boolean>(true);
   const [customerStepContent, setCustomerStepContent] = useState<Record<string, string>>({});
-  const [isTypingStep, setIsTypingStep] = useState<boolean>(false);
-  const [typingStepId, setTypingStepId] = useState<string>('');
+  const [isTyping, setIsTyping] = useState<boolean>(false);
 
   const autoPlayRef = useRef(autoPlay);
   autoPlayRef.current = autoPlay;
@@ -173,8 +177,8 @@ export default function DemoPage() {
       category: 'Design',
       icon: '🎨',
       color: '#3b82f6',
-      description: 'Complete onboarding flow for website design clients including discovery, assets, and project setup',
-      steps: 8,
+      description: 'Complete onboarding flow for website design clients',
+      steps: 5,
       popular: true
     },
     {
@@ -183,7 +187,7 @@ export default function DemoPage() {
       category: 'Development',
       icon: '💻',
       color: '#10b981',
-      description: 'Technical onboarding for web development projects with requirements gathering',
+      description: 'Technical onboarding for web development projects',
       steps: 6,
       popular: false
     },
@@ -193,86 +197,64 @@ export default function DemoPage() {
       category: 'E-commerce',
       icon: '🛒',
       color: '#f59e0b',
-      description: 'Comprehensive onboarding for e-commerce website projects',
-      steps: 10,
+      description: 'Comprehensive onboarding for e-commerce projects',
+      steps: 8,
       popular: false
     },
     {
       id: 'marketing-campaign',
-      name: 'Marketing Campaign Launch',
+      name: 'Marketing Campaign',
       category: 'Marketing',
       icon: '📈',
       color: '#ef4444',
-      description: 'Strategic onboarding for marketing campaign development',
+      description: 'Strategic marketing campaign development',
       steps: 7,
-      popular: false
-    },
-    {
-      id: 'brand-identity',
-      name: 'Brand Identity Design',
-      category: 'Design',
-      icon: '✨',
-      color: '#8b5cf6',
-      description: 'Complete brand identity development process',
-      steps: 9,
-      popular: false
-    },
-    {
-      id: 'app-development',
-      name: 'Mobile App Development',
-      category: 'Development',
-      icon: '📱',
-      color: '#06b6d4',
-      description: 'Mobile app development project onboarding',
-      steps: 12,
       popular: false
     }
   ];
 
-  const websiteDesignSteps = [
+  const demoSteps = [
     {
-      title: 'Project Discovery & Requirements',
-      description: 'Share your project vision, target audience, and key business objectives',
+      title: 'Project Discovery',
+      description: 'Share your project vision and business objectives',
       type: 'textarea',
-      placeholder: 'Describe your project goals, target audience, and key requirements...',
+      placeholder: 'Describe your project goals...',
       required: true,
-      content: "We're a B2B SaaS company targeting enterprise clients in the healthcare industry. We need a modern, professional website that showcases our AI-powered patient data analytics platform. Our target audience is CTOs and data scientists at hospitals and healthcare systems with 500+ beds."
+      content: "We're a B2B SaaS company targeting enterprise healthcare clients. We need a modern website showcasing our AI-powered analytics platform for CTOs and data scientists."
     },
     {
-      title: 'Brand Assets & Style Guide',
-      description: 'Upload your logo, brand guidelines, color palette, and existing design materials',
+      title: 'Brand Assets',
+      description: 'Upload your logo and brand guidelines',
       type: 'file_upload',
-      placeholder: 'Accepted formats: .pdf, .ai, .jpg, .png, .zip',
+      placeholder: 'Accepted: .pdf, .ai, .jpg, .png',
       required: true,
-      content: "HealthTech_Logo_Package.zip, Brand_Guidelines_2024.pdf, Color_Palette.ai"
+      content: "HealthTech_Logo.zip, Brand_Guidelines.pdf, Colors.ai"
     },
     {
-      title: 'Website Content & Copy',
-      description: 'Provide all text content including page copy, product descriptions, and company information',
+      title: 'Content & Copy',
+      description: 'Provide website content and materials',
       type: 'file_upload',
-      placeholder: 'Accepted formats: .pdf, .doc, .docx, .txt',
+      placeholder: 'Accepted: .pdf, .doc, .txt',
       required: true,
-      content: "Website_Copy_Draft.docx, Product_Descriptions.pdf, Team_Bios.docx"
+      content: "Website_Copy.docx, Product_Info.pdf, Team_Bios.docx"
     },
     {
-      title: 'Design Inspiration & References',
-      description: 'Share websites you love, describe your preferred style, and provide visual inspiration',
+      title: 'Design References',
+      description: 'Share inspiration and style preferences',
       type: 'textarea',
-      placeholder: 'Share website URLs you like and describe your preferred design style...',
+      placeholder: 'Share websites you like...',
       required: true,
-      content: "We love the clean, technical aesthetic of Stripe (stripe.com) and the data visualization style of Tableau. We want something modern but professional, trustworthy, and emphasizing security."
+      content: "We love Stripe's clean aesthetic and Tableau's data visualization style. Modern, professional, trustworthy."
     },
     {
-      title: 'Technical Requirements & Integrations',
-      description: 'Specify hosting preferences, CMS requirements, third-party integrations, and special functionality',
+      title: 'Technical Requirements',
+      description: 'Specify hosting and integration needs',
       type: 'textarea',
-      placeholder: 'List any specific technical requirements, integrations, or hosting preferences...',
+      placeholder: 'List technical requirements...',
       required: true,
-      content: "Technical requirements: React/Next.js preferred, AWS hosting for HIPAA compliance, Salesforce integration for lead capture, and a headless CMS for the blog."
-    },
+      content: "React/Next.js, AWS hosting for HIPAA compliance, Salesforce integration, headless CMS for blog."
+    }
   ];
-
-  const demoChecklistSteps = websiteDesignSteps.slice(0, 5);
 
   const advanceView = useCallback(() => {
     setCurrentView(prev => (prev + 1) % views.length);
@@ -282,266 +264,241 @@ export default function DemoPage() {
     if (!autoPlay) return;
 
     const view = views[currentView];
-    let viewTimeout: NodeJS.Timeout;
+    let timeout: NodeJS.Timeout;
     let isCancelled = false;
 
-    switch (view) {
-      case 'dashboard':
-        viewTimeout = setTimeout(advanceView, 4000);
-        break;
+    const runViewSequence = async () => {
+      switch (view) {
+        case 'dashboard':
+          timeout = setTimeout(() => {
+            if (!isCancelled && autoPlayRef.current) advanceView();
+          }, 3000);
+          break;
 
-      case 'template-selection':
-        setSelectedTemplate(null);
-        setSearchTerm('');
-        
-        setTimeout(() => setSearchTerm('website'), 1000);
-        setTimeout(() => setSelectedTemplate('website-design'), 2500);
-        viewTimeout = setTimeout(advanceView, 4500);
-        break;
-
-      case 'checklist-builder':
-        setSteps([]);
-        setChecklistTitle('');
-        setChecklistDescription('');
-        setBuildingStep(0);
-        
-        setTimeout(() => {
-          setChecklistTitle('Website Design Project Onboarding');
-          setChecklistDescription('Complete onboarding process for new website design clients');
-        }, 1000);
-        
-        demoChecklistSteps.forEach((step, index) => {
+        case 'template-selection':
+          // Reset state
+          setSelectedTemplate(null);
+          setSearchTerm('');
+          
+          // Animate search
           setTimeout(() => {
-            if (isCancelled) return;
-            setBuildingStep(index + 1);
-            setSteps(prev => [...prev, { ...step, id: `step-${index}` }]);
-          }, 2000 + (index * 1200));
-        });
-        
-        const builderDuration = 2000 + (demoChecklistSteps.length * 1200) + 1500;
-        viewTimeout = setTimeout(advanceView, builderDuration);
-        break;
+            if (!isCancelled && autoPlayRef.current) setSearchTerm('website');
+          }, 800);
+          
+          // Select template
+          setTimeout(() => {
+            if (!isCancelled && autoPlayRef.current) setSelectedTemplate('website-design');
+          }, 1800);
+          
+          // Advance
+          timeout = setTimeout(() => {
+            if (!isCancelled && autoPlayRef.current) advanceView();
+          }, 3000);
+          break;
 
-      case 'customer-experience': {
-        const sleep = (ms: number) => new Promise(res => setTimeout(res, ms));
+        case 'checklist-builder':
+          // Reset state
+          setSteps([]);
+          setChecklistTitle('');
+          setChecklistDescription('');
+          setBuildingStep(0);
+          
+          // Set title and description
+          setTimeout(() => {
+            if (!isCancelled && autoPlayRef.current) {
+              setChecklistTitle('Website Design Project Onboarding');
+              setChecklistDescription('Complete onboarding process for new website design clients');
+            }
+          }, 600);
+          
+          // Add steps progressively
+          demoSteps.forEach((step, index) => {
+            setTimeout(() => {
+              if (!isCancelled && autoPlayRef.current) {
+                setBuildingStep(index + 1);
+                setSteps(prev => [...prev, { ...step, id: `step-${index}` }]);
+              }
+            }, 1200 + (index * 800));
+          });
+          
+          // Advance after all steps are added
+          timeout = setTimeout(() => {
+            if (!isCancelled && autoPlayRef.current) advanceView();
+          }, 1200 + (demoSteps.length * 800) + 1000);
+          break;
 
-        const runCustomerFlow = async () => {
-          if (isCancelled) return;
+        case 'customer-experience':
+          // Reset customer state
           setCustomerData({ name: '', email: '', company: '' });
           setCompletedSteps([]);
           setCurrentCustomerStep(0);
           setShowCustomerForm(true);
           setCustomerStepContent({});
-          setIsTypingStep(false);
-          setTypingStepId('');
+          setIsTyping(false);
 
-          await sleep(1000);
-          if (isCancelled || !autoPlayRef.current) return;
-          setCustomerData({
-            name: 'Sarah Martinez',
-            email: 'sarah@healthtech.com',
-            company: 'HealthTech Solutions'
-          });
+          // Fill customer form
+          setTimeout(() => {
+            if (!isCancelled && autoPlayRef.current) {
+              setCustomerData({
+                name: 'Sarah Martinez',
+                email: 'sarah@healthtech.com',
+                company: 'HealthTech Solutions'
+              });
+            }
+          }, 800);
 
-          await sleep(2000);
-          if (isCancelled || !autoPlayRef.current) return;
-          setShowCustomerForm(false);
-          
-          await sleep(500);
+          // Hide form and start steps
+          setTimeout(() => {
+            if (!isCancelled && autoPlayRef.current) {
+              setShowCustomerForm(false);
+            }
+          }, 2000);
 
-          for (let i = 0; i < demoChecklistSteps.length; i++) {
-            if (isCancelled || !autoPlayRef.current) return;
+          // Process each step
+          const processStep = async (stepIndex: number) => {
+            if (stepIndex >= demoSteps.length || !autoPlayRef.current) {
+              setTimeout(() => {
+                if (!isCancelled && autoPlayRef.current) advanceView();
+              }, 1000);
+              return;
+            }
+
+            const step = demoSteps[stepIndex];
+            setCurrentCustomerStep(stepIndex);
             
-            const step = demoChecklistSteps[i];
-            setCurrentCustomerStep(i);
-            await sleep(1000);
+            await new Promise(resolve => setTimeout(resolve, 600));
+            if (!autoPlayRef.current) return;
 
-            if (isCancelled || !autoPlayRef.current) return;
-            await new Promise<void>(resolve => {
-              setIsTypingStep(true);
-              setTypingStepId(`step-${i}`);
-              const content = step.content;
-              let charIndex = 0;
-              const typeInterval = setInterval(() => {
-                if (isCancelled || charIndex >= content.length) {
-                  clearInterval(typeInterval);
-                  resolve();
-                } else {
-                  setCustomerStepContent(prev => ({...prev, [`step-${i}`]: content.slice(0, charIndex + 1)}));
-                  charIndex++;
-                }
-              }, 15);
-            });
+            // Type content
+            setIsTyping(true);
+            const content = step.content;
+            
+            for (let i = 0; i <= content.length; i++) {
+              if (!autoPlayRef.current) break;
+              setCustomerStepContent(prev => ({
+                ...prev,
+                [`step-${stepIndex}`]: content.slice(0, i)
+              }));
+              await new Promise(resolve => setTimeout(resolve, 20));
+            }
+            
+            setIsTyping(false);
+            await new Promise(resolve => setTimeout(resolve, 300));
+            
+            if (!autoPlayRef.current) return;
+            setCompletedSteps(prev => [...prev, `step-${stepIndex}`]);
+            
+            await new Promise(resolve => setTimeout(resolve, 800));
+            processStep(stepIndex + 1);
+          };
 
-            if (isCancelled || !autoPlayRef.current) return;
-            setIsTypingStep(false);
-            await sleep(500);
+          setTimeout(() => {
+            if (!isCancelled && autoPlayRef.current) {
+              processStep(0);
+            }
+          }, 2400);
+          break;
 
-            if (isCancelled || !autoPlayRef.current) return;
-            setCompletedSteps(prev => [...prev, `step-${i}`]);
-            await sleep(1500);
-          }
-          
-          if (isCancelled || !autoPlayRef.current) return;
-          await sleep(500);
-          advanceView();
-        };
-
-        runCustomerFlow();
-        break;
+        case 'completion':
+          timeout = setTimeout(() => {
+            if (!isCancelled && autoPlayRef.current) advanceView();
+          }, 6000);
+          break;
       }
-      case 'completion':
-        viewTimeout = setTimeout(advanceView, 8000);
-        break;
-      default:
-        break;
-    }
+    };
+
+    runViewSequence();
 
     return () => {
       isCancelled = true;
-      if (viewTimeout) clearTimeout(viewTimeout);
+      if (timeout) clearTimeout(timeout);
     };
-  }, [currentView, advanceView, autoPlay, demoChecklistSteps]);
-  
-  useEffect(() => {
-    if (stepsContainerRef.current) {
-      const scrollElement = stepsContainerRef.current;
-      scrollElement.scrollTo({
-        top: scrollElement.scrollHeight,
-        behavior: 'smooth'
-      });
-    }
-  }, [steps]);
+  }, [currentView, advanceView, autoPlay]);
 
   const renderDashboard = () => (
     <div className="space-y-8">
+      {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300">
-          <div className="flex items-center">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
-              <Users className="w-6 h-6 text-white" />
-            </div>
-            <div className="ml-4">
-              <div className="text-2xl font-bold text-gray-900">127</div>
-              <div className="text-sm text-gray-600">Active Clients</div>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300">
-          <div className="flex items-center">
-            <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
-              <CheckCircle className="w-6 h-6 text-white" />
-            </div>
-            <div className="ml-4">
-              <div className="text-2xl font-bold text-gray-900">94%</div>
-              <div className="text-sm text-gray-600">Completion Rate</div>
+        {[
+          { icon: Users, value: '127', label: 'Active Clients', color: 'blue' },
+          { icon: CheckCircle, value: '94%', label: 'Completion Rate', color: 'emerald' },
+          { icon: Clock, value: '2.8d', label: 'Avg. Time', color: 'orange' },
+          { icon: TrendingUp, value: '↑68%', label: 'vs Manual', color: 'purple' }
+        ].map((stat, index) => (
+          <div key={index} className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300">
+            <div className="flex items-center">
+              <div className={`w-12 h-12 bg-gradient-to-br from-${stat.color}-500 to-${stat.color}-600 rounded-xl flex items-center justify-center shadow-lg`}>
+                <stat.icon className="w-6 h-6 text-white" />
+              </div>
+              <div className="ml-4">
+                <div className="text-2xl font-bold text-gray-900 font-sans">{stat.value}</div>
+                <div className="text-sm text-gray-600 font-sans">{stat.label}</div>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300">
-          <div className="flex items-center">
-            <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
-              <Clock className="w-6 h-6 text-white" />
-            </div>
-            <div className="ml-4">
-              <div className="text-2xl font-bold text-gray-900">2.8d</div>
-              <div className="text-sm text-gray-600">Avg. Time</div>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300">
-          <div className="flex items-center">
-            <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-              <TrendingUp className="w-6 h-6 text-white" />
-            </div>
-            <div className="ml-4">
-              <div className="text-2xl font-bold text-gray-900">↑68%</div>
-              <div className="text-sm text-gray-600">vs Manual</div>
-            </div>
-          </div>
-        </div>
+        ))}
       </div>
-      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20">
+
+      {/* Live Activity */}
+      <div className="bg-white rounded-2xl shadow-lg border border-gray-100">
         <div className="p-6 border-b border-gray-100">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-gray-900">Live Client Activity</h2>
+            <h2 className="text-xl font-semibold text-gray-900 font-sans">Live Client Activity</h2>
             <div className="flex items-center text-sm text-emerald-600">
               <div className="w-2 h-2 bg-emerald-500 rounded-full mr-2 animate-pulse"></div>
-              <span>Live</span>
+              <span className="font-sans">Live</span>
             </div>
           </div>
         </div>
         <div className="p-6">
           <div className="space-y-4">
             {[
-              {
-                initials: 'SM',
-                name: 'Sarah Martinez',
-                company: 'HealthTech Solutions • Website Redesign',
-                status: '✓ Just uploaded brand assets • 3 min ago',
-                progress: 87,
-                steps: '7/8 steps • 2.3 days',
-                color: 'emerald'
-              },
-              {
-                initials: 'MC',
-                name: 'Marcus Chen',
-                company: 'StartupXYZ • E-commerce Platform',
-                status: 'Working on technical requirements • 12 min ago',
-                progress: 62,
-                steps: '6/10 steps • 1.8 days',
-                color: 'blue'
-              },
-              {
-                initials: 'ER',
-                name: 'Emily Rodriguez',
-                company: 'GrowthCo • Brand Identity Project',
-                status: 'Reviewing design concepts • 45 min ago',
-                progress: 78,
-                steps: '7/9 steps • 3.1 days',
-                color: 'purple'
-              }
+              { name: 'Sarah M.', company: 'HealthTech • Website', status: '✓ Uploaded assets • 3m ago', progress: 87, color: 'emerald' },
+              { name: 'Marcus C.', company: 'StartupXYZ • E-commerce', status: 'Working on requirements • 12m ago', progress: 62, color: 'blue' },
+              { name: 'Emily R.', company: 'GrowthCo • Branding', status: 'Reviewing concepts • 45m ago', progress: 78, color: 'purple' }
             ].map((client, index) => (
               <div key={index} className={`flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-${client.color}-50 to-${client.color}-100 border border-${client.color}-200`}>
                 <div className="flex items-center">
                   <div className={`w-10 h-10 bg-gradient-to-br from-${client.color}-400 to-${client.color}-500 rounded-full flex items-center justify-center mr-4 shadow-lg`}>
-                    <span className="text-white text-sm font-bold">{client.initials}</span>
+                    <span className="text-white text-sm font-bold font-sans">{client.name.split(' ').map(n => n[0]).join('')}</span>
                   </div>
                   <div>
-                    <div className="font-semibold text-gray-900">{client.name}</div>
-                    <div className="text-sm text-gray-600">{client.company}</div>
-                    <div className={`text-xs text-${client.color}-700`}>{client.status}</div>
+                    <div className="font-semibold text-gray-900 font-sans">{client.name}</div>
+                    <div className="text-sm text-gray-600 font-sans">{client.company}</div>
+                    <div className={`text-xs text-${client.color}-700 font-sans`}>{client.status}</div>
                   </div>
                 </div>
                 <div className="text-right">
                   <div className="flex items-center mb-2">
                     <div className={`w-20 bg-${client.color}-200 rounded-full h-2 mr-3`}>
-                      <div className={`bg-${client.color}-500 h-2 rounded-full transition-all duration-1000`} style={{ width: `${client.progress}%` }}></div>
+                      <div 
+                        className={`bg-${client.color}-500 h-2 rounded-full transition-all duration-1000`} 
+                        style={{ width: `${client.progress}%` }}
+                      ></div>
                     </div>
-                    <span className="text-sm font-bold text-gray-700">{client.progress}%</span>
+                    <span className="text-sm font-bold text-gray-700 font-sans">{client.progress}%</span>
                   </div>
-                  <div className={`text-xs text-${client.color}-600`}>{client.steps}</div>
                 </div>
               </div>
             ))}
           </div>
         </div>
       </div>
-      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+
+      {/* Quick Actions */}
+      <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4 font-sans">Quick Actions</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button className="flex items-center justify-center p-4 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-xl hover:shadow-lg transition-all duration-200">
-            <Plus className="w-5 h-5 mr-2" />
-            Create New Checklist
-          </button>
-          <button className="flex items-center justify-center p-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl hover:shadow-lg transition-all duration-200">
-            <Send className="w-5 h-5 mr-2" />
-            Send Client Reminder
-          </button>
-          <button className="flex items-center justify-center p-4 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all duration-200">
-            <BarChart3 className="w-5 h-5 mr-2" />
-            View Analytics
-          </button>
+          {[
+            { icon: Plus, text: 'Create Checklist', color: 'emerald' },
+            { icon: Send, text: 'Send Reminder', color: 'blue' },
+            { icon: BarChart3, text: 'View Analytics', color: 'purple' }
+          ].map((action, index) => (
+            <button key={index} className={`flex items-center justify-center p-4 bg-gradient-to-r from-${action.color}-500 to-${action.color}-600 text-white rounded-xl hover:shadow-lg transition-all duration-200 font-sans`}>
+              <action.icon className="w-5 h-5 mr-2" />
+              {action.text}
+            </button>
+          ))}
         </div>
       </div>
     </div>
@@ -549,18 +506,19 @@ export default function DemoPage() {
 
   const renderTemplateSelection = () => (
     <div className="max-w-6xl mx-auto">
-      <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
         <div className="bg-gradient-to-r from-emerald-500 to-blue-600 p-8 text-white">
           <div className="text-center">
-            <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <Sparkles className="w-8 h-8" />
             </div>
-            <h2 className="text-3xl font-bold mb-2">Choose Your Template</h2>
-            <p className="text-blue-100 text-lg">Start with a proven template or create from scratch</p>
+            <h2 className="text-3xl font-bold mb-2 font-sans">Choose Your Template</h2>
+            <p className="text-blue-100 text-lg font-sans">Start with a proven template or create from scratch</p>
           </div>
         </div>
+
         <div className="p-6 border-b border-gray-200 bg-gray-50">
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex gap-4">
             <div className="flex-1 relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Search className="h-5 w-5 text-gray-400" />
@@ -568,31 +526,33 @@ export default function DemoPage() {
               <input
                 type="text"
                 value={searchTerm}
-                className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 font-sans"
                 placeholder="Search templates..."
                 readOnly
               />
             </div>
-            <select className="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
-              <option value="All">All Categories</option>
-              <option value="Design">Design</option>
-              <option value="Development">Development</option>
-              <option value="Marketing">Marketing</option>
-              <option value="E-commerce">E-commerce</option>
+            <select className="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 font-sans">
+              <option>All Categories</option>
+              <option>Design</option>
+              <option>Development</option>
             </select>
           </div>
         </div>
+
         <div className="p-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Create from scratch */}
             <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 hover:border-emerald-400 hover:bg-emerald-50 transition-all cursor-pointer group">
               <div className="text-center">
                 <div className="w-12 h-12 bg-gray-100 group-hover:bg-emerald-100 rounded-lg flex items-center justify-center mx-auto mb-4 transition-colors">
-                  <Plus className="w-6 h-6 text-gray-400 group-hover:text-emerald-500 transition-colors" />
+                  <Plus className="w-6 h-6 text-gray-400 group-hover:text-emerald-500" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Start from Scratch</h3>
-                <p className="text-gray-600 text-sm">Create a completely custom checklist</p>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2 font-sans">Start from Scratch</h3>
+                <p className="text-gray-600 text-sm font-sans">Create a custom checklist</p>
               </div>
             </div>
+
+            {/* Templates */}
             {templates.map((template) => (
               <div
                 key={template.id}
@@ -612,13 +572,13 @@ export default function DemoPage() {
                 
                 <div className="flex items-center mb-4">
                   <div 
-                    className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl mr-4 shadow-sm"
+                    className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl mr-4"
                     style={{ backgroundColor: `${template.color}20` }}
                   >
                     {template.icon}
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900">{template.name}</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 font-sans">{template.name}</h3>
                     <span 
                       className="inline-block px-2 py-1 rounded-full text-xs font-medium text-white"
                       style={{ backgroundColor: template.color }}
@@ -628,28 +588,26 @@ export default function DemoPage() {
                   </div>
                 </div>
 
-                <p className="text-gray-600 text-sm mb-4 leading-relaxed">{template.description}</p>
+                <p className="text-gray-600 text-sm mb-4 font-sans">{template.description}</p>
 
                 <div className="flex items-center justify-between mb-4">
-                  <div className="text-sm text-gray-500">
-                    {template.steps} steps included
-                  </div>
+                  <div className="text-sm text-gray-500 font-sans">{template.steps} steps</div>
                   <div className="flex items-center">
                     {[...Array(5)].map((_, i) => (
                       <Star key={i} className="w-3 h-3 text-yellow-400 fill-current" />
                     ))}
-                    <span className="text-xs text-gray-500 ml-1">(4.9)</span>
+                    <span className="text-xs text-gray-500 ml-1 font-sans">(4.9)</span>
                   </div>
                 </div>
 
                 <button 
-                  className={`w-full py-3 rounded-lg font-semibold transition-all duration-200 ${
+                  className={`w-full py-3 rounded-lg font-semibold transition-all duration-200 font-sans ${
                     selectedTemplate === template.id
                       ? 'bg-emerald-500 text-white shadow-lg'
                       : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                   }`}
                 >
-                  {selectedTemplate === template.id ? 'Selected ✓' : 'Use This Template'}
+                  {selectedTemplate === template.id ? 'Selected ✓' : 'Use Template'}
                 </button>
               </div>
             ))}
@@ -661,102 +619,105 @@ export default function DemoPage() {
 
   const renderChecklistBuilder = () => (
     <div className="max-w-7xl mx-auto">
-      <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
         <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6 text-white">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-bold">{checklistTitle || 'Building Your Checklist...'}</h2>
-              <p className="text-blue-100">{checklistDescription || 'Setting up your client onboarding flow'}</p>
+              <h2 className="text-2xl font-bold font-sans">{checklistTitle || 'Building Your Checklist...'}</h2>
+              <p className="text-blue-100 font-sans">{checklistDescription || 'Setting up your onboarding flow'}</p>
             </div>
             <div className="flex items-center space-x-3">
-              <button className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white px-4 py-2 rounded-lg font-semibold transition-all duration-200 shadow-lg">
+              <button className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg font-semibold transition-all font-sans">
                 <Save className="w-4 h-4 mr-2 inline" />
                 Save Draft
               </button>
-              <button className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-lg font-semibold transition-all duration-200 shadow-lg">
-                Publish Checklist
+              <button className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-lg font-semibold transition-all font-sans">
+                Publish
               </button>
             </div>
           </div>
         </div>
+
         <div className="p-8">
           <div className="grid lg:grid-cols-2 gap-8">
+            {/* Settings */}
             <div className="space-y-6">
               <div className="bg-gray-50 rounded-xl p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Checklist Settings</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4 font-sans">Settings</h3>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">Title</label>
                     <input 
                       type="text" 
                       value={checklistTitle}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg font-sans"
                       readOnly
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">Description</label>
                     <textarea 
                       value={checklistDescription}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg font-sans"
                       rows={3}
                       readOnly
                     />
                   </div>
                 </div>
               </div>
-              {buildingStep > 0 && buildingStep <= demoChecklistSteps.length && (
+
+              {buildingStep > 0 && (
                 <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-6">
-                  <h4 className="font-semibold text-emerald-900 mb-4">
-                    Adding Step {buildingStep}: {demoChecklistSteps[buildingStep - 1]?.title}
+                  <h4 className="font-semibold text-emerald-900 mb-4 font-sans">
+                    Adding Step {buildingStep}: {demoSteps[buildingStep - 1]?.title}
                   </h4>
                   <div className="space-y-3">
                     <div className="flex items-center">
                       <div className="w-2 h-2 bg-emerald-500 rounded-full mr-3 animate-pulse"></div>
-                      <span className="text-sm text-emerald-800">Configuring step settings...</span>
+                      <span className="text-sm text-emerald-800 font-sans">Configuring...</span>
                     </div>
                     <div className="w-full bg-emerald-200 rounded-full h-2">
                       <div 
                         className="bg-emerald-500 h-2 rounded-full transition-all duration-500"
-                        style={{ width: `${(buildingStep / demoChecklistSteps.length) * 100}%` }}
+                        style={{ width: `${(buildingStep / demoSteps.length) * 100}%` }}
                       ></div>
                     </div>
                   </div>
                 </div>
               )}
             </div>
+
+            {/* Steps */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-gray-900">Checklist Steps ({steps.length})</h3>
-                <button className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center">
+                <h3 className="text-lg font-semibold text-gray-900 font-sans">Steps ({steps.length})</h3>
+                <button className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium flex items-center font-sans">
                   <Plus className="w-4 h-4 mr-2" />
                   Add Step
                 </button>
               </div>
               
-              <div ref={stepsContainerRef} className="space-y-3 max-h-96 overflow-y-auto pr-2">
+              <div className="space-y-3 max-h-96 overflow-y-auto">
                 {steps.map((step) => (
                   <div key={step.id} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200">
                     <div className="flex items-start justify-between">
                       <div className="flex items-start">
                         <span className="text-lg mr-3 mt-1">
-                          {step.type === 'textarea' ? '📝' : '📎'}
+                          {step.type === 'textarea' ? '📝' : step.type === 'file_upload' ? '📎' : '☑️'}
                         </span>
                         <div className="flex-1">
                           <div className="flex items-center mb-2">
-                            <h4 className="font-semibold text-gray-900">{step.title}</h4>
+                            <h4 className="font-semibold text-gray-900 font-sans">{step.title}</h4>
                             {step.required && (
-                              <span className="ml-2 px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium">
+                              <span className="ml-2 px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium font-sans">
                                 Required
                               </span>
                             )}
                           </div>
-                          <p className="text-sm text-gray-600 leading-relaxed">{step.description}</p>
-                          <div className="mt-2 flex items-center">
-                            <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
-                              {step.type === 'textarea' ? 'Long Text' : 'File Upload'}
-                            </span>
-                          </div>
+                          <p className="text-sm text-gray-600 font-sans">{step.description}</p>
+                          <span className="inline-block mt-2 px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium font-sans">
+                            {step.type === 'textarea' ? 'Long Text' : step.type === 'file_upload' ? 'File Upload' : 'Checkbox'}
+                          </span>
                         </div>
                       </div>
                       <div className="flex items-center space-x-1 ml-4">
@@ -774,7 +735,7 @@ export default function DemoPage() {
                 {steps.length === 0 && (
                   <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
                     <Plus className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                    <p className="text-gray-500">Building your checklist...</p>
+                    <p className="text-gray-500 font-sans">Building checklist...</p>
                   </div>
                 )}
               </div>
@@ -788,48 +749,50 @@ export default function DemoPage() {
   const renderCustomerExperience = () => (
     <div className="max-w-4xl mx-auto">
       {showCustomerForm && (
-        <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-8 mb-8">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 mb-8">
           <div className="text-center mb-6">
             <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
               <User className="w-8 h-8 text-white" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome to Your Website Project!</h2>
-            <p className="text-gray-600">Let's get started with some basic information</p>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2 font-sans">Welcome to Your Website Project!</h2>
+            <p className="text-gray-600 font-sans">Let's get started with some basic information</p>
           </div>
+          
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">Full Name *</label>
               <input
                 type="text"
                 value={customerData.name}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-sans"
                 placeholder="Your full name"
                 readOnly
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Email Address *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">Email *</label>
               <input
                 type="email"
                 value={customerData.email}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-sans"
                 placeholder="your@email.com"
                 readOnly
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Company</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">Company</label>
               <input
                 type="text"
                 value={customerData.company}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-sans"
                 placeholder="Your company"
                 readOnly
               />
             </div>
           </div>
+          
           <div className="flex justify-center mt-6">
-            <button className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl">
+            <button className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-8 py-3 rounded-xl font-semibold shadow-lg font-sans">
               Continue to Checklist
             </button>
           </div>
@@ -837,73 +800,79 @@ export default function DemoPage() {
       )}
 
       {!showCustomerForm && (
-        <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
           <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-8 text-white">
             <div className="text-center">
-              <h1 className="text-3xl font-bold mb-2">Website Design Project Onboarding</h1>
-              <p className="text-blue-100">Complete these steps to get your project started</p>
+              <h1 className="text-3xl font-bold mb-2 font-sans">Website Design Project Onboarding</h1>
+              <p className="text-blue-100 font-sans">Complete these steps to get started</p>
+              
               <div className="mt-6">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-blue-100">Progress</span>
-                  <span className="text-sm font-medium text-blue-100">{completedSteps.length}/{demoChecklistSteps.length} completed</span>
+                  <span className="text-sm font-medium text-blue-100 font-sans">Progress</span>
+                  <span className="text-sm font-medium text-blue-100 font-sans">{completedSteps.length}/{demoSteps.length} completed</span>
                 </div>
                 <div className="w-full bg-blue-400/30 rounded-full h-3">
                   <div 
-                    className="bg-white h-3 rounded-full transition-all duration-1000 ease-out"
-                    style={{ width: `${(completedSteps.length / demoChecklistSteps.length) * 100}%` }}
+                    className="bg-white h-3 rounded-full transition-all duration-1000"
+                    style={{ width: `${(completedSteps.length / demoSteps.length) * 100}%` }}
                   ></div>
                 </div>
                 <div className="text-center mt-2">
-                  <span className="text-lg font-bold text-white">
-                    {Math.round((completedSteps.length / demoChecklistSteps.length) * 100)}%
+                  <span className="text-lg font-bold text-white font-sans">
+                    {Math.round((completedSteps.length / demoSteps.length) * 100)}%
                   </span>
                 </div>
               </div>
             </div>
           </div>
+
           <div className="p-8">
-            {currentCustomerStep < demoChecklistSteps.length && (
+            {currentCustomerStep < demoSteps.length && (
               <div className="bg-blue-50 rounded-xl p-8 mb-8 border-2 border-blue-200">
                 <div className="flex items-center mb-6">
                   <span className="text-3xl mr-4">
-                    {demoChecklistSteps[currentCustomerStep].type === 'textarea' ? '📝' : '📎'}
+                    {demoSteps[currentCustomerStep].type === 'textarea' ? '📝' : 
+                     demoSteps[currentCustomerStep].type === 'file_upload' ? '📎' : '☑️'}
                   </span>
                   <div>
-                    <h3 className="text-2xl font-bold text-gray-900">
-                      Step {currentCustomerStep + 1}: {demoChecklistSteps[currentCustomerStep].title}
+                    <h3 className="text-2xl font-bold text-gray-900 font-sans">
+                      Step {currentCustomerStep + 1}: {demoSteps[currentCustomerStep].title}
                     </h3>
-                    {demoChecklistSteps[currentCustomerStep].required && (
-                      <span className="inline-block mt-2 px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-medium">
+                    {demoSteps[currentCustomerStep].required && (
+                      <span className="inline-block mt-2 px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-medium font-sans">
                         Required
                       </span>
                     )}
                   </div>
                 </div>
-                <p className="text-gray-700 mb-6 leading-relaxed text-lg">{demoChecklistSteps[currentCustomerStep].description}</p>
-                {demoChecklistSteps[currentCustomerStep].type === 'textarea' && (
+                
+                <p className="text-gray-700 mb-6 font-sans text-lg">{demoSteps[currentCustomerStep].description}</p>
+                
+                {demoSteps[currentCustomerStep].type === 'textarea' && (
                   <div className="bg-white rounded-lg border-2 border-gray-200 p-4">
                     <textarea
                       value={customerStepContent[`step-${currentCustomerStep}`] || ''}
-                      className="w-full px-4 py-3 border-0 focus:outline-none focus:ring-0 text-gray-800 resize-none"
-                      placeholder={demoChecklistSteps[currentCustomerStep].placeholder}
-                      rows={8}
+                      className="w-full px-4 py-3 border-0 focus:outline-none text-gray-800 resize-none font-sans"
+                      placeholder={demoSteps[currentCustomerStep].placeholder}
+                      rows={6}
                       readOnly
                     />
-                    {isTypingStep && typingStepId === `step-${currentCustomerStep}` && (
+                    {isTyping && (
                       <div className="flex items-center mt-2 text-blue-600">
                         <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-600 mr-2"></div>
-                        <span className="text-xs">Typing...</span>
+                        <span className="text-xs font-sans">Typing...</span>
                       </div>
                     )}
                   </div>
                 )}
-                {demoChecklistSteps[currentCustomerStep].type === 'file_upload' && (
+                
+                {demoSteps[currentCustomerStep].type === 'file_upload' && (
                   <div className="bg-white border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
                     <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <div className="text-gray-600 mb-4 text-lg">
+                    <div className="text-gray-600 mb-4 font-sans text-lg">
                       {customerStepContent[`step-${currentCustomerStep}`] ? (
                         <div className="space-y-2">
-                          <span className="text-emerald-600 font-medium">Files uploaded successfully!</span>
+                          <span className="text-emerald-600 font-medium">Files uploaded!</span>
                           <div className="text-sm text-gray-700 bg-emerald-50 rounded-lg p-3 border border-emerald-200">
                             {customerStepContent[`step-${currentCustomerStep}`]}
                           </div>
@@ -912,13 +881,14 @@ export default function DemoPage() {
                         'Drop files here or click to upload'
                       )}
                     </div>
-                    <div className="text-sm text-gray-500">
-                      {demoChecklistSteps[currentCustomerStep].placeholder}
+                    <div className="text-sm text-gray-500 font-sans">
+                      {demoSteps[currentCustomerStep].placeholder}
                     </div>
                   </div>
                 )}
+                
                 {completedSteps.includes(`step-${currentCustomerStep}`) && (
-                  <div className="mt-6 flex items-center text-emerald-600 font-medium">
+                  <div className="mt-6 flex items-center text-emerald-600 font-medium font-sans">
                     <CheckCircle className="w-5 h-5 mr-2" />
                     Step completed successfully
                   </div>
@@ -928,21 +898,21 @@ export default function DemoPage() {
 
             {completedSteps.length > 0 && (
               <div className="bg-emerald-50 rounded-xl p-6 border border-emerald-200">
-                <h4 className="font-semibold text-emerald-900 mb-4">Completed Steps ({completedSteps.length}/{demoChecklistSteps.length})</h4>
+                <h4 className="font-semibold text-emerald-900 mb-4 font-sans">
+                  Completed Steps ({completedSteps.length}/{demoSteps.length})
+                </h4>
                 <div className="space-y-3">
                   {completedSteps.map((stepId, index) => (
                     <div key={stepId} className="flex items-center text-sm text-emerald-700">
                       <CheckCircle className="w-4 h-4 mr-3 flex-shrink-0" />
-                      <span>
-                        {demoChecklistSteps[index]?.title}
-                      </span>
+                      <span className="font-sans">{demoSteps[index]?.title}</span>
                     </div>
                   ))}
                 </div>
                 
-                {completedSteps.length === demoChecklistSteps.length && (
+                {completedSteps.length === demoSteps.length && (
                   <div className="mt-6 p-4 bg-emerald-100 rounded-lg border border-emerald-300">
-                    <div className="flex items-center text-emerald-800 font-medium">
+                    <div className="flex items-center text-emerald-800 font-medium font-sans">
                       <CheckCircle className="w-5 h-5 mr-2" />
                       All steps completed! Ready to submit.
                     </div>
@@ -958,66 +928,75 @@ export default function DemoPage() {
 
   const renderCompletion = () => (
     <div className="max-w-3xl mx-auto text-center">
-      <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden border border-white/20">
+      <div className="bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-100">
         <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 p-8 text-white relative overflow-hidden">
+          {/* Confetti animation */}
+          <div className="absolute inset-0 pointer-events-none">
+            {[...Array(15)].map((_, i) => (
+              <div
+                key={i}
+                className="absolute animate-bounce text-2xl"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                  animationDelay: `${Math.random() * 2}s`,
+                  animationDuration: `${2 + Math.random()}s`
+                }}
+              >
+                {['🎉', '✨', '🎊', '⭐'][Math.floor(Math.random() * 4)]}
+              </div>
+            ))}
+          </div>
+          
           <div className="relative z-10">
-            <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-6">
+            <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle className="w-10 h-10" />
             </div>
-            <h1 className="text-4xl font-bold mb-4">Outstanding Work, Sarah!</h1>
-            <p className="text-emerald-100 text-lg">Your website project onboarding is complete!</p>
+            <h1 className="text-4xl font-bold mb-4 font-sans">Outstanding Work, Sarah!</h1>
+            <p className="text-emerald-100 text-lg font-sans">Your website project onboarding is complete!</p>
           </div>
         </div>
 
         <div className="p-8">
           <div className="grid grid-cols-3 gap-6 mb-8">
             <div className="text-center">
-              <div className="text-3xl font-bold text-emerald-600">{demoChecklistSteps.length}/{demoChecklistSteps.length}</div>
-              <div className="text-sm text-gray-600">Steps Completed</div>
+              <div className="text-3xl font-bold text-emerald-600 font-sans">{demoSteps.length}/{demoSteps.length}</div>
+              <div className="text-sm text-gray-600 font-sans">Steps Completed</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-blue-600">1.8</div>
-              <div className="text-sm text-gray-600">Days to Complete</div>
+              <div className="text-3xl font-bold text-blue-600 font-sans">1.8</div>
+              <div className="text-sm text-gray-600 font-sans">Days to Complete</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-purple-600">100%</div>
-              <div className="text-sm text-gray-600">Success Rate</div>
+              <div className="text-3xl font-bold text-purple-600 font-sans">100%</div>
+              <div className="text-sm text-gray-600 font-sans">Success Rate</div>
             </div>
           </div>
+
           <div className="bg-gradient-to-r from-emerald-50 to-blue-50 rounded-xl p-6 mb-8">
-            <h3 className="font-semibold text-gray-900 mb-4">🚀 What happens next?</h3>
+            <h3 className="font-semibold text-gray-900 mb-4 font-sans">🚀 What happens next?</h3>
             <div className="space-y-3 text-sm text-gray-700">
-              <div className="flex items-center">
-                <div className="w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
-                  <Check className="w-3 h-3 text-white" />
+              {[
+                { icon: Check, color: 'emerald', text: 'Design team reviews requirements within 24 hours' },
+                { icon: Calendar, color: 'blue', text: 'Initial wireframes delivered by Friday' },
+                { icon: Phone, color: 'purple', text: 'Project kickoff call scheduled for next week' },
+                { icon: Target, color: 'orange', text: 'Expected completion: 8-10 weeks' }
+              ].map((item, index) => (
+                <div key={index} className="flex items-center">
+                  <div className={`w-6 h-6 bg-${item.color}-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0`}>
+                    <item.icon className="w-3 h-3 text-white" />
+                  </div>
+                  <p className="font-sans">{item.text}</p>
                 </div>
-                <p>Our design team will review your requirements within 24 hours</p>
-              </div>
-              <div className="flex items-center">
-                <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
-                  <Calendar className="w-3 h-3 text-white" />
-                </div>
-                <p>You'll receive initial wireframes and mood boards by Friday</p>
-              </div>
-              <div className="flex items-center">
-                <div className="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
-                  <Phone className="w-3 h-3 text-white" />
-                </div>
-                <p>We'll schedule your project kickoff call for next week</p>
-              </div>
-              <div className="flex items-center">
-                <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
-                  <Target className="w-3 h-3 text-white" />
-                </div>
-                <p>Expected project completion: 8-10 weeks</p>
-              </div>
+              ))}
             </div>
           </div>
+
           <div className="grid grid-cols-2 gap-4">
-            <button className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white py-4 rounded-xl font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl">
+            <button className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white py-4 rounded-xl font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl font-sans">
               View Project Portal
             </button>
-            <button className="bg-white border-2 border-gray-200 text-gray-700 py-4 rounded-xl font-semibold text-lg transition-all duration-200 hover:border-gray-300 hover:shadow-md">
+            <button className="bg-white border-2 border-gray-200 text-gray-700 py-4 rounded-xl font-semibold text-lg transition-all duration-200 hover:border-gray-300 font-sans">
               Schedule Strategy Call
             </button>
           </div>
@@ -1036,12 +1015,14 @@ export default function DemoPage() {
         setCurrentView={setCurrentView}
       />
       
-      <div className="pt-20 pb-12 px-4 sm:px-6 lg:px-8">
-        {views[currentView] === 'dashboard' && renderDashboard()}
-        {views[currentView] === 'template-selection' && renderTemplateSelection()}
-        {views[currentView] === 'checklist-builder' && renderChecklistBuilder()}
-        {views[currentView] === 'customer-experience' && renderCustomerExperience()}
-        {views[currentView] === 'completion' && renderCompletion()}
+      <div className="pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+        <div className="transition-all duration-500 ease-in-out">
+          {views[currentView] === 'dashboard' && renderDashboard()}
+          {views[currentView] === 'template-selection' && renderTemplateSelection()}
+          {views[currentView] === 'checklist-builder' && renderChecklistBuilder()}
+          {views[currentView] === 'customer-experience' && renderCustomerExperience()}
+          {views[currentView] === 'completion' && renderCompletion()}
+        </div>
       </div>
     </div>
   );
