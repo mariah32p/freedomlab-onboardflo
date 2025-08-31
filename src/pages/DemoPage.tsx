@@ -48,8 +48,50 @@ import {
   Briefcase
 } from 'lucide-react';
 
-// Mock DemoHeader component since it's not provided
-const DemoHeader = ({ currentView, views, autoPlay, setAutoPlay, setCurrentView }) => (
+// Types
+interface Template {
+  id: string;
+  name: string;
+  category: string;
+  icon: string;
+  color: string;
+  description: string;
+  steps: number;
+  popular: boolean;
+}
+
+interface Step {
+  id: string;
+  title: string;
+  description: string;
+  type: string;
+  placeholder: string;
+  required: boolean;
+  content: string;
+}
+
+interface CustomerData {
+  name: string;
+  email: string;
+  company: string;
+}
+
+interface DemoHeaderProps {
+  currentView: number;
+  views: string[];
+  autoPlay: boolean;
+  setAutoPlay: (value: boolean) => void;
+  setCurrentView: (value: number) => void;
+}
+
+// Mock DemoHeader component
+const DemoHeader: React.FC<DemoHeaderProps> = ({ 
+  currentView, 
+  views, 
+  autoPlay, 
+  setAutoPlay, 
+  setCurrentView 
+}) => (
   <div className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-sm border-b border-white/20 z-50">
     <div className="max-w-7xl mx-auto px-4 py-3">
       <div className="flex items-center justify-between">
@@ -89,29 +131,29 @@ const DemoHeader = ({ currentView, views, autoPlay, setAutoPlay, setCurrentView 
 );
 
 export default function DemoPage() {
-  const [currentView, setCurrentView] = useState(0);
-  const [autoPlay, setAutoPlay] = useState(true);
+  const [currentView, setCurrentView] = useState<number>(0);
+  const [autoPlay, setAutoPlay] = useState<boolean>(true);
   
-  const [selectedTemplate, setSelectedTemplate] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>('');
   
-  const [checklistTitle, setChecklistTitle] = useState('');
-  const [checklistDescription, setChecklistDescription] = useState('');
-  const [steps, setSteps] = useState([]);
-  const [buildingStep, setBuildingStep] = useState(0);
-  const stepsContainerRef = useRef(null);
+  const [checklistTitle, setChecklistTitle] = useState<string>('');
+  const [checklistDescription, setChecklistDescription] = useState<string>('');
+  const [steps, setSteps] = useState<Step[]>([]);
+  const [buildingStep, setBuildingStep] = useState<number>(0);
+  const stepsContainerRef = useRef<HTMLDivElement>(null);
   
-  const [customerData, setCustomerData] = useState({
+  const [customerData, setCustomerData] = useState<CustomerData>({
     name: '',
     email: '',
     company: ''
   });
-  const [completedSteps, setCompletedSteps] = useState([]);
-  const [currentCustomerStep, setCurrentCustomerStep] = useState(0);
-  const [showCustomerForm, setShowCustomerForm] = useState(true);
-  const [customerStepContent, setCustomerStepContent] = useState({});
-  const [isTypingStep, setIsTypingStep] = useState(false);
-  const [typingStepId, setTypingStepId] = useState('');
+  const [completedSteps, setCompletedSteps] = useState<string[]>([]);
+  const [currentCustomerStep, setCurrentCustomerStep] = useState<number>(0);
+  const [showCustomerForm, setShowCustomerForm] = useState<boolean>(true);
+  const [customerStepContent, setCustomerStepContent] = useState<Record<string, string>>({});
+  const [isTypingStep, setIsTypingStep] = useState<boolean>(false);
+  const [typingStepId, setTypingStepId] = useState<string>('');
 
   const autoPlayRef = useRef(autoPlay);
   autoPlayRef.current = autoPlay;
@@ -124,7 +166,7 @@ export default function DemoPage() {
     'completion'
   ];
 
-  const templates = [
+  const templates: Template[] = [
     {
       id: 'website-design',
       name: 'Website Design Project',
@@ -240,7 +282,7 @@ export default function DemoPage() {
     if (!autoPlay) return;
 
     const view = views[currentView];
-    let viewTimeout;
+    let viewTimeout: NodeJS.Timeout;
     let isCancelled = false;
 
     switch (view) {
@@ -281,7 +323,7 @@ export default function DemoPage() {
         break;
 
       case 'customer-experience': {
-        const sleep = (ms) => new Promise(res => setTimeout(res, ms));
+        const sleep = (ms: number) => new Promise(res => setTimeout(res, ms));
 
         const runCustomerFlow = async () => {
           if (isCancelled) return;
@@ -315,7 +357,7 @@ export default function DemoPage() {
             await sleep(1000);
 
             if (isCancelled || !autoPlayRef.current) return;
-            await new Promise((resolve) => {
+            await new Promise<void>(resolve => {
               setIsTypingStep(true);
               setTypingStepId(`step-${i}`);
               const content = step.content;
@@ -431,69 +473,57 @@ export default function DemoPage() {
         </div>
         <div className="p-6">
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-emerald-50 to-emerald-100 border border-emerald-200">
-              <div className="flex items-center">
-                <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-500 rounded-full flex items-center justify-center mr-4 shadow-lg">
-                  <span className="text-white text-sm font-bold">SM</span>
-                </div>
-                <div>
-                  <div className="font-semibold text-gray-900">Sarah Martinez</div>
-                  <div className="text-sm text-gray-600">HealthTech Solutions • Website Redesign</div>
-                  <div className="text-xs text-emerald-700">✓ Just uploaded brand assets • 3 min ago</div>
-                </div>
-              </div>
-              <div className="text-right">
-                <div className="flex items-center mb-2">
-                  <div className="w-20 bg-emerald-200 rounded-full h-2 mr-3">
-                    <div className="bg-emerald-500 h-2 rounded-full transition-all duration-1000" style={{ width: '87%' }}></div>
+            {[
+              {
+                initials: 'SM',
+                name: 'Sarah Martinez',
+                company: 'HealthTech Solutions • Website Redesign',
+                status: '✓ Just uploaded brand assets • 3 min ago',
+                progress: 87,
+                steps: '7/8 steps • 2.3 days',
+                color: 'emerald'
+              },
+              {
+                initials: 'MC',
+                name: 'Marcus Chen',
+                company: 'StartupXYZ • E-commerce Platform',
+                status: 'Working on technical requirements • 12 min ago',
+                progress: 62,
+                steps: '6/10 steps • 1.8 days',
+                color: 'blue'
+              },
+              {
+                initials: 'ER',
+                name: 'Emily Rodriguez',
+                company: 'GrowthCo • Brand Identity Project',
+                status: 'Reviewing design concepts • 45 min ago',
+                progress: 78,
+                steps: '7/9 steps • 3.1 days',
+                color: 'purple'
+              }
+            ].map((client, index) => (
+              <div key={index} className={`flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-${client.color}-50 to-${client.color}-100 border border-${client.color}-200`}>
+                <div className="flex items-center">
+                  <div className={`w-10 h-10 bg-gradient-to-br from-${client.color}-400 to-${client.color}-500 rounded-full flex items-center justify-center mr-4 shadow-lg`}>
+                    <span className="text-white text-sm font-bold">{client.initials}</span>
                   </div>
-                  <span className="text-sm font-bold text-gray-700">87%</span>
-                </div>
-                <div className="text-xs text-emerald-600">7/8 steps • 2.3 days</div>
-              </div>
-            </div>
-            <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200">
-              <div className="flex items-center">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-500 rounded-full flex items-center justify-center mr-4 shadow-lg">
-                  <span className="text-white text-sm font-bold">MC</span>
-                </div>
-                <div>
-                  <div className="font-semibold text-gray-900">Marcus Chen</div>
-                  <div className="text-sm text-gray-600">StartupXYZ • E-commerce Platform</div>
-                  <div className="text-xs text-blue-700">Working on technical requirements • 12 min ago</div>
-                </div>
-              </div>
-              <div className="text-right">
-                <div className="flex items-center mb-2">
-                  <div className="w-20 bg-blue-200 rounded-full h-2 mr-3">
-                    <div className="bg-blue-500 h-2 rounded-full transition-all duration-1000" style={{ width: '62%' }}></div>
+                  <div>
+                    <div className="font-semibold text-gray-900">{client.name}</div>
+                    <div className="text-sm text-gray-600">{client.company}</div>
+                    <div className={`text-xs text-${client.color}-700`}>{client.status}</div>
                   </div>
-                  <span className="text-sm font-bold text-gray-700">62%</span>
                 </div>
-                <div className="text-xs text-blue-600">6/10 steps • 1.8 days</div>
-              </div>
-            </div>
-            <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-purple-50 to-purple-100 border border-purple-200">
-              <div className="flex items-center">
-                <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-purple-500 rounded-full flex items-center justify-center mr-4 shadow-lg">
-                  <span className="text-white text-sm font-bold">ER</span>
-                </div>
-                <div>
-                  <div className="font-semibold text-gray-900">Emily Rodriguez</div>
-                  <div className="text-sm text-gray-600">GrowthCo • Brand Identity Project</div>
-                  <div className="text-xs text-purple-700">Reviewing design concepts • 45 min ago</div>
-                </div>
-              </div>
-              <div className="text-right">
-                <div className="flex items-center mb-2">
-                  <div className="w-20 bg-purple-200 rounded-full h-2 mr-3">
-                    <div className="bg-purple-500 h-2 rounded-full transition-all duration-1000" style={{ width: '78%' }}></div>
+                <div className="text-right">
+                  <div className="flex items-center mb-2">
+                    <div className={`w-20 bg-${client.color}-200 rounded-full h-2 mr-3`}>
+                      <div className={`bg-${client.color}-500 h-2 rounded-full transition-all duration-1000`} style={{ width: `${client.progress}%` }}></div>
+                    </div>
+                    <span className="text-sm font-bold text-gray-700">{client.progress}%</span>
                   </div>
-                  <span className="text-sm font-bold text-gray-700">78%</span>
+                  <div className={`text-xs text-${client.color}-600`}>{client.steps}</div>
                 </div>
-                <div className="text-xs text-purple-600">7/9 steps • 3.1 days</div>
               </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
@@ -706,7 +736,7 @@ export default function DemoPage() {
               
               <div ref={stepsContainerRef} className="space-y-3 max-h-96 overflow-y-auto pr-2">
                 {steps.map((step) => (
-                  <div key={step.id} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200 animate-fade-in">
+                  <div key={step.id} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200">
                     <div className="flex items-start justify-between">
                       <div className="flex items-start">
                         <span className="text-lg mr-3 mt-1">
@@ -1015,3 +1045,4 @@ export default function DemoPage() {
       </div>
     </div>
   );
+}
