@@ -220,7 +220,7 @@ export default function DemoPage() {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentView(prev => (prev + 1) % views.length);
-    }, 8000); // 8 seconds per view
+    }, 12000); // 12 seconds per view to accommodate slower customer experience
 
     return () => clearInterval(timer);
   }, []);
@@ -278,12 +278,12 @@ export default function DemoPage() {
           email: 'sarah@techcorp.com',
           company: 'TechCorp Solutions'
         });
-      }, 1500);
+      }, 2000);
       
       setTimeout(() => {
         setShowCustomerForm(false);
         setCurrentCustomerStep(0);
-      }, 2500);
+      }, 3500);
       
       // Simulate completing ALL steps with realistic content
       const stepContents = [
@@ -301,17 +301,17 @@ export default function DemoPage() {
       stepContents.forEach((content, index) => {
         setTimeout(() => {
           setCurrentCustomerStep(index);
-          setCustomerStepContent(prev => ({ ...prev, [`step-${index}`]: content }));
+        }, 4000 + (index * 1200)); // Much slower step progression
         }, 1500 + (index * 400));
         setTimeout(() => {
           setCompletedSteps(prev => [...prev, `step-${index}`]);
-        }, 3000 + (index * 600));
+        }, 4000 + (index * 1200) + 1000); // Complete step after showing content
       });
       
       // Mark as completed after all steps
       setTimeout(() => {
         setCurrentView(4); // Move to completion view
-      }, 3000 + (stepContents.length * 600) + 500);
+      }, 4000 + (stepContents.length * 1200) + 1500);
     }
   }, [currentView]);
 
