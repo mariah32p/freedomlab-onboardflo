@@ -55,7 +55,7 @@ const demoSteps: DemoStep[] = [
       title: 'Customer Submissions',
       description: 'Track customer progress and manage submissions',
       duration: 2500, // FASTER
-      duration: 6000,
+    },
     {
       id: 'customer-view',
       title: 'Customer Experience',
@@ -219,7 +219,6 @@ export default function DemoPage() {
             setCompletedSteps(prev => [...prev, step]);
             setCurrentActiveStep(null);
           }, 800);
-          setCompletedSteps(prev => [...prev, step]);
         }, (index + 1) * 1500);
       });
     }
