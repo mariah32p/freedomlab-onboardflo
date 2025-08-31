@@ -139,7 +139,6 @@ const demoSteps = [
 
 export default function DemoPage() {
   const [currentView, setCurrentView] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
   const [completingStep, setCompletingStep] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
@@ -153,21 +152,6 @@ export default function DemoPage() {
     'completion-celebration',
     'analytics'
   ];
-
-  // Auto-advance demo
-  useEffect(() => {
-    if (!isPlaying) return;
-
-    const timer = setTimeout(() => {
-      if (currentView < views.length - 1) {
-        setCurrentView(prev => prev + 1);
-      } else {
-        setCurrentView(0); // Loop back to start
-      }
-    }, 8000);
-
-    return () => clearTimeout(timer);
-  }, [currentView, isPlaying, views.length]);
 
   // Typing effect for notifications
   useEffect(() => {
@@ -796,17 +780,6 @@ export default function DemoPage() {
             
             {/* Demo Controls */}
             <div className="flex items-center justify-center space-x-4 mb-8">
-              <button
-                onClick={() => setIsPlaying(!isPlaying)}
-                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-sans ${
-                  isPlaying 
-                    ? 'bg-red-500 hover:bg-red-600 text-white' 
-                    : 'bg-emerald-500 hover:bg-emerald-600 text-white'
-                }`}
-              >
-                {isPlaying ? 'Pause Demo' : 'Start Demo'}
-              </button>
-              
               <div className="flex items-center space-x-2">
                 {views.map((_, index) => (
                   <button
