@@ -892,14 +892,6 @@ export default function DemoPage() {
               </div>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <button className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white py-4 rounded-xl font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl font-sans">
-              View Project Portal
-            </button>
-            <button className="bg-white border-2 border-gray-200 text-gray-700 py-4 rounded-xl font-semibold text-lg transition-all duration-200 hover:border-gray-300 hover:shadow-md font-sans">
-              Schedule Strategy Call
-            </button>
-          </div>
         </div>
       </div>
     </div>
