@@ -66,7 +66,7 @@ const demoSteps: DemoStep[] = [
       id: 'branding',
       title: 'Brand Customization',
       description: 'Customize colors, fonts, and logos to match your brand',
-      duration: 6000,
+      duration: 4000,
     }
   ];
 
@@ -170,6 +170,12 @@ export default function DemoPage() {
         }, 500);
       }, 1500); // Adjusted to fit new shorter slide duration
     } else if (currentStep === 2) {
+      // Scroll back to top when entering branding
+      const container = document.querySelector('.demo-scroll-container');
+      if (container) {
+        container.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      
       // Checklist setup animation - first settings, then steps
       setSetupSteps([]);
       setChecklistSetupStep(0);
