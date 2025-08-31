@@ -19,7 +19,7 @@ export default function DemoHeader() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             <nav className="flex items-center space-x-8">
-              <button className="text-emerald-600 hover:text-emerald-700 transition-colors font-medium font-sans border-b-2 border-emerald-500 pb-1">
+              <button className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
                 Dashboard
               </button>
               <button className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
