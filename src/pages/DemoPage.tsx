@@ -34,6 +34,41 @@ interface DemoStep {
   duration: number;
 }
 
+// Defined outside the component for performance and stability.
+const demoSteps: DemoStep[] = [
+    {
+      id: 'dashboard',
+      title: 'Dashboard Overview',
+      description: 'Real-time customer onboarding analytics and activity feed',
+      duration: 2500, // FASTER
+    },
+    {
+      id: 'checklists',
+      title: 'Checklist Management',
+      description: 'Create and manage onboarding flows with templates',
+      duration: 2500, // FASTER
+    },
+    {
+      id: 'submissions',
+      title: 'Customer Submissions',
+      description: 'Track customer progress and manage submissions',
+      duration: 2500, // FASTER
+    },
+    {
+      id: 'customer-view',
+      title: 'Customer Experience',
+      description: 'Beautiful, mobile-friendly checklist interface',
+      duration: 11000, // REMAINS SLOW
+    },
+    {
+      id: 'branding',
+      title: 'Brand Customization',
+      description: 'Customize colors, fonts, and logos to match your brand',
+      duration: 2500, // FASTER
+    }
+  ];
+
+
 export default function DemoPage() {
   const [currentStep, setCurrentStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
@@ -49,39 +84,6 @@ export default function DemoPage() {
   const [completedSteps, setCompletedSteps] = useState<string[]>([]);
   const [showNewActivity, setShowNewActivity] = useState(false);
 
-  const demoSteps: DemoStep[] = [
-    {
-      id: 'dashboard',
-      title: 'Dashboard Overview',
-      description: 'Real-time customer onboarding analytics and activity feed',
-      duration: 4000,
-    },
-    {
-      id: 'checklists',
-      title: 'Checklist Management',
-      description: 'Create and manage onboarding flows with templates',
-      duration: 4000,
-    },
-    {
-      id: 'submissions',
-      title: 'Customer Submissions',
-      description: 'Track customer progress and manage submissions',
-      duration: 4000,
-    },
-    {
-      id: 'customer-view',
-      title: 'Customer Experience',
-      description: 'Beautiful, mobile-friendly checklist interface',
-      duration: 11000, // MODIFIED: Increased duration to accommodate slower animation
-    },
-    {
-      id: 'branding',
-      title: 'Brand Customization',
-      description: 'Customize colors, fonts, and logos to match your brand',
-      duration: 4000,
-    }
-  ];
-
   // Auto-advance steps
   useEffect(() => {
     if (!isPlaying) return;
@@ -91,19 +93,12 @@ export default function DemoPage() {
         setCurrentStep(prev => prev + 1);
         setProgress(0);
       } else {
-        // Reset to beginning
+        // Simplified the reset logic to prevent stalling.
         setCurrentStep(0);
         setProgress(0);
         setAnimatedStats({ users: 0, completed: 0, rate: 0, days: 0 });
         setAnimatedProgress({});
         setShowNewActivity(false);
-        // Move to next slide more quickly after new activity appears
-        setTimeout(() => {
-          if (currentStep < demoSteps.length - 1) {
-            setCurrentStep(prev => prev + 1);
-            setProgress(0);
-          }
-        }, 800);
         setActivityItems([
           { user: 'Mike R.', action: 'started onboarding', time: '15 min ago', type: 'info' },
           { user: 'Lisa K.', action: 'needs assistance', time: '1 hour ago', type: 'warning' },
@@ -114,7 +109,7 @@ export default function DemoPage() {
     }, demoSteps[currentStep].duration);
 
     return () => clearTimeout(timer);
-  }, [currentStep, isPlaying, demoSteps]);
+  }, [currentStep, isPlaying]);
 
   // Progress bar animation
   useEffect(() => {
@@ -132,7 +127,7 @@ export default function DemoPage() {
     }, interval);
 
     return () => clearInterval(timer);
-  }, [currentStep, isPlaying, demoSteps]);
+  }, [currentStep, isPlaying]);
 
   // Step-specific animations
   useEffect(() => {
@@ -152,7 +147,7 @@ export default function DemoPage() {
       // Dashboard animations
       setTimeout(() => {
         setAnimatedStats({ users: 247, completed: 215, rate: 87, days: 2.3 });
-      }, 200); // MODIFIED: Changed from 500ms to 200ms
+      }, 200);
 
       setTimeout(() => {
         setShowNewActivity(true);
@@ -163,7 +158,7 @@ export default function DemoPage() {
           ]);
           setShowNewActivity(false);
         }, 500);
-      }, 2000);
+      }, 1500); // Adjusted to fit new shorter slide duration
     } else if (currentStep === 2) {
       // Submissions page animations
       setTimeout(() => {
@@ -180,7 +175,7 @@ export default function DemoPage() {
       steps.forEach((step, index) => {
         setTimeout(() => {
           setCompletedSteps(prev => [...prev, step]);
-        }, (index + 1) * 1500); // MODIFIED: Changed from 800ms to 1500ms
+        }, (index + 1) * 1500);
       });
     }
   }, [currentStep]);
