@@ -220,7 +220,7 @@ export default function DemoPage() {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentView(prev => (prev + 1) % views.length);
-    }, 8000); // 8 seconds per view
+    }, 15000); // 15 seconds per view
 
     return () => clearInterval(timer);
   }, []);
@@ -278,14 +278,14 @@ export default function DemoPage() {
           email: 'sarah@techcorp.com',
           company: 'TechCorp Solutions'
         });
-      }, 2000);
+      }, 3000);
       
       setTimeout(() => {
         setShowCustomerForm(false);
         setCurrentCustomerStep(0);
-      }, 3500);
+      }, 5000);
       
-      // Simulate completing ALL steps with realistic content
+      // Simulate completing ALL steps with realistic content - MUCH SLOWER
       const stepContents = [
         "We're a B2B SaaS company targeting enterprise clients. We need a modern, professional website that showcases our AI-powered analytics platform. Our target audience is CTOs and data scientists at companies with 100+ employees. The site should emphasize trust, security, and technical expertise.",
         "Brand assets uploaded: TechCorp_Logo_Package.zip, Brand_Guidelines_2024.pdf, Color_Palette.ai",
@@ -301,19 +301,19 @@ export default function DemoPage() {
       stepContents.forEach((content, index) => {
         setTimeout(() => {
           setCurrentCustomerStep(index);
-        }, 4000 + (index * 1200)); // Much slower step progression
+        }, 6000 + (index * 2500)); // MUCH slower - 2.5 seconds per step
         setTimeout(() => {
           setCustomerStepContent(prev => ({ ...prev, [`step-${index}`]: content }));
-        }, 4000 + (index * 1200) + 500);
+        }, 6000 + (index * 2500) + 800); // Show content after 0.8s
         setTimeout(() => {
           setCompletedSteps(prev => [...prev, `step-${index}`]);
-        }, 4000 + (index * 1200) + 1000); // Complete step after showing content
+        }, 6000 + (index * 2500) + 1800); // Complete step after 1.8s
       });
       
       // Mark as completed after all steps
       setTimeout(() => {
         setCurrentView(4); // Move to completion view
-      }, 4000 + (stepContents.length * 1200) + 1500);
+      }, 6000 + (stepContents.length * 2500) + 2000);
     }
   }, [currentView]);
 
