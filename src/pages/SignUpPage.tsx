@@ -53,16 +53,10 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         {/* Header */}
         <div className="text-center">
-          <Link to="/" className="inline-flex items-center mb-8">
-            <div className="w-12 h-12 bg-emerald-500 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
-              <Workflow className="w-6 h-6 text-white" />
-            </div>
-            <span className="text-3xl font-bold text-gray-900 font-sans whitespace-nowrap">OnboardFlo</span>
-          </Link>
           <h2 className="text-3xl font-bold text-gray-900 mb-2 font-sans mt-8">
             Start your free trial
           </h2>
@@ -136,27 +130,9 @@ export default function SignUpPage() {
                   )}
                 </button>
               </div>
-              <div className="mt-2 text-sm text-gray-600 font-sans">
-                <p className="mb-1">Password must contain:</p>
-                <ul className="space-y-1 text-xs">
-                  <li className="flex items-center">
-                    <span className={`w-1.5 h-1.5 rounded-full mr-2 ${formData.password.length >= 8 ? 'bg-emerald-500' : 'bg-gray-300'}`}></span>
-                    At least 8 characters
-                  </li>
-                  <li className="flex items-center">
-                    <span className={`w-1.5 h-1.5 rounded-full mr-2 ${/[A-Z]/.test(formData.password) ? 'bg-emerald-500' : 'bg-gray-300'}`}></span>
-                    One uppercase letter
-                  </li>
-                  <li className="flex items-center">
-                    <span className={`w-1.5 h-1.5 rounded-full mr-2 ${/[a-z]/.test(formData.password) ? 'bg-emerald-500' : 'bg-gray-300'}`}></span>
-                    One lowercase letter
-                  </li>
-                  <li className="flex items-center">
-                    <span className={`w-1.5 h-1.5 rounded-full mr-2 ${/\d/.test(formData.password) ? 'bg-emerald-500' : 'bg-gray-300'}`}></span>
-                    One number
-                  </li>
-                </ul>
-              </div>
+              <p className="mt-2 text-sm text-gray-600 font-sans">
+                Must be at least 8 characters long
+              </p>
             </div>
 
             {/* Confirm Password */}
