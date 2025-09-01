@@ -28,7 +28,7 @@ const faqs = [
   },
   {
     question: 'How secure is customer data and file uploads?',
-    answer: 'We take data security seriously. All data is encrypted in transit and at rest. Customer file uploads are handled securely, and we follow industry best practices for data protection. You maintain full control over your customer data.'
+    answer: 'All customer data is stored securely in our database with proper access controls. Currently, file uploads capture filenames for tracking purposes. All data transmission is encrypted, and you maintain full control over your customer data through your dashboard.'
   },
   {
     question: 'What kind of analytics and reporting do you provide?',
