@@ -10,9 +10,9 @@ export default function Hero() {
       <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/50 to-blue-50/30"></div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Left side - Content */}
-          <div className="text-left">
+          <div className="text-left pt-8 sm:pt-0">
             <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight font-sans">
               Customer onboarding
               <span className="text-emerald-600"> made simple</span>
@@ -40,7 +40,7 @@ export default function Hero() {
             </div>
             
             <p className="text-gray-500 text-sm font-sans">
-              ✓ 7-day free trial • ✓ Setup in 5 minutes
+              ✓ 7-day free trial • ✓ Cancel anytime
             </p>
           </div>
           
