@@ -2,7 +2,7 @@
 export const stripeProducts = [
   {
     priceId: 'price_1RzrMYDn6VTzl81bogCwhX1U',
-    name: 'Standard',
+    name: 'Basic',
     description: 'Perfect for small teams getting started',
     price: 29,
     mode: 'subscription' as const,
