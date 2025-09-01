@@ -4,7 +4,7 @@ import { ArrowRight, Play, CheckCircle, TrendingUp, Users, Clock, Target, AlertC
 
 export default function Hero() {
   return (
-    <section className="pt-20 pb-16 bg-gradient-to-br from-gray-50 to-white relative overflow-hidden">
+    <section className="pt-16 pb-16 bg-gradient-to-br from-gray-50 to-white relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 bg-grid-slate-100"></div>
       <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/50 to-blue-50/30"></div>
@@ -13,21 +13,26 @@ export default function Hero() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left side - Content */}
           <div className="text-left">
-            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight font-sans">
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight font-sans">
               Customer onboarding
               <span className="text-emerald-600"> made simple</span>
             </h1>
             
-            <p className="text-xl text-gray-600 mb-8 leading-relaxed font-sans">
+            <p className="text-lg md:text-xl text-gray-600 mb-8 leading-relaxed font-sans">
               Create beautiful, trackable onboarding checklists that guide your customers 
               to success and reduce support tickets by 60%.
             </p>
             
             {/* CTA buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 mb-8">
+            <div className="mb-8">
               <Link 
                 to="/signup" 
-                className="group bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-sans"
+                className="group bg-emerald-600 hover:bg-emerald-700 text-white font-semibold transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-sans w-full sm:w-auto sm:inline-flex rounded-md px-8 py-4 text-lg sm:px-6 sm:py-3 sm:text-base"
+                style={{ 
+                  width: 'auto',
+                  minWidth: '160px',
+                  height: '48px'
+                }}
               >
                 Start Free Trial
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
