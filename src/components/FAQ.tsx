@@ -8,7 +8,7 @@ const faqs = [
   },
   {
     question: 'Do my customers need to create accounts to use the checklists?',
-    answer: 'No! Your customers simply click a link you send them and can complete the checklist immediately. No signups, passwords, or downloads required on their end.'
+    answer: 'No! Your customers simply click a link you send them and can complete the checklist immediately. No signups or downloads required on their end. Note: Pro users can optionally add password protection to their checklists for extra security.'
   },
   {
     question: 'Can I customize the look and feel to match my brand?',
@@ -16,11 +16,11 @@ const faqs = [
   },
   {
     question: 'What happens if a customer gets stuck or needs help?',
-    answer: 'You\'ll see real-time progress in your dashboard and can identify exactly where customers need assistance. You can send targeted reminders or reach out proactively when someone hasn\'t made progress.'
+    answer: 'You\'ll see real-time progress in your dashboard and can identify exactly where customers need assistance. You can reach out proactively when someone hasn\'t made progress.'
   },
   {
     question: 'Is there a limit to how many checklists I can create?',
-    answer: 'The Basic plan includes up to 3 active checklists, while the Professional plan offers unlimited checklists. You can always upgrade as your needs grow.'
+    answer: 'The Standard plan includes up to 3 active checklists, while the Pro plan offers unlimited checklists. You can always upgrade as your needs grow.'
   },
   {
     question: 'How does the 7-day free trial work?',
