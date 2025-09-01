@@ -39,7 +39,7 @@ export default function Header() {
             {!showUserMenu && (
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors mr-2"
+               style={{ width: '120px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
                 {isMenuOpen ? (
                   <X className="w-6 h-6 text-gray-600" />
@@ -101,14 +101,7 @@ export default function Header() {
                   <Link to="/signup" className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-md font-semibold transition-colors font-sans" style={{ width: '160px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px' }}>
                     Start Free Trial
                   </Link>
-                </>
-              )}
-            </div>
-          </div>
-
-          {/* Mobile menu button */}
-          {!showUserMenu && (
-            <div className="md:hidden">
+                   style={{ width: '160px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px' }}
               <Link to="/signup" className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-3 rounded-md font-semibold transition-colors font-sans text-sm">
                 Try Free
               </Link>
