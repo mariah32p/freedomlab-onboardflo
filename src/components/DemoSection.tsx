@@ -869,6 +869,423 @@ export default function DemoSection() {
     </div>
   );
 
+  const renderMobileMockup = () => (
+    <div className="bg-gray-900 rounded-3xl p-2 shadow-2xl max-w-sm mx-auto">
+      {/* Phone Frame */}
+      <div className="bg-black rounded-2xl p-1">
+        <div className="bg-white rounded-xl overflow-hidden">
+          {/* Phone Status Bar */}
+          <div className="bg-gray-900 px-4 py-2 flex items-center justify-between text-white text-xs">
+            <span className="font-sans">9:41</span>
+            <div className="flex items-center space-x-1">
+              <div className="w-4 h-2 border border-white rounded-sm">
+                <div className="w-3 h-1 bg-white rounded-sm"></div>
+              </div>
+            </div>
+          </div>
+
+          {/* Mobile App Header */}
+          <div className="bg-emerald-500 px-4 py-3 text-white">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <div className="w-6 h-6 bg-white/20 rounded-md flex items-center justify-center mr-2">
+                  <Workflow className="w-4 h-4" />
+                </div>
+                <span className="font-bold font-sans text-sm">OnboardFlo</span>
+              </div>
+              <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center">
+                <span className="text-xs font-bold font-sans">JD</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Mobile Content */}
+          <div className="bg-gray-50 min-h-[400px] p-4">
+            {views[currentView].id === 'dashboard' && renderMobileDashboard()}
+            {views[currentView].id === 'templates' && renderMobileTemplates()}
+            {views[currentView].id === 'builder' && renderMobileBuilder()}
+            {views[currentView].id === 'customer' && renderMobileCustomer()}
+            {views[currentView].id === 'analytics' && renderMobileAnalytics()}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderMobileDashboard = () => (
+    <div className="space-y-4">
+      <h2 className="text-lg font-bold text-gray-900 font-sans">Dashboard</h2>
+      
+      {/* Mobile Stats */}
+      <div className="grid grid-cols-2 gap-3">
+        <div className="bg-white rounded-lg p-3 shadow-sm">
+          <div className="flex items-center">
+            <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-2">
+              <Users className="w-4 h-4 text-blue-600" />
+            </div>
+            <div>
+              <div className="text-lg font-bold text-gray-900 font-sans">127</div>
+              <div className="text-xs text-gray-600 font-sans">Clients</div>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white rounded-lg p-3 shadow-sm">
+          <div className="flex items-center">
+            <div className="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center mr-2">
+              <CheckCircle className="w-4 h-4 text-emerald-600" />
+            </div>
+            <div>
+              <div className="text-lg font-bold text-gray-900 font-sans">94%</div>
+              <div className="text-xs text-gray-600 font-sans">Complete</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Activity */}
+      <div className="bg-white rounded-lg shadow-sm">
+        <div className="p-3 border-b border-gray-200">
+          <h3 className="font-medium text-gray-900 font-sans text-sm">Recent Activity</h3>
+        </div>
+        <div className="p-3 space-y-2">
+          {[
+            { name: 'Sarah M.', status: 'Completed setup', progress: 100 },
+            { name: 'Mike R.', status: 'In progress', progress: 65 }
+          ].map((client, index) => (
+            <div key={index} className="flex items-center justify-between">
+              <div>
+                <div className="font-medium text-gray-900 text-sm font-sans">{client.name}</div>
+                <div className="text-xs text-gray-600 font-sans">{client.status}</div>
+              </div>
+              <div className="text-right">
+                <div className="text-sm font-bold text-gray-700 font-sans">{client.progress}%</div>
+                <div className="w-12 bg-gray-200 rounded-full h-1">
+                  <div 
+                    className="bg-emerald-500 h-1 rounded-full transition-all duration-1000"
+                    style={{ width: `${client.progress}%` }}
+                  ></div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderMobileTemplates = () => (
+    <div className="space-y-4">
+      <h2 className="text-lg font-bold text-gray-900 font-sans">Choose Template</h2>
+      
+      {/* Mobile Search */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+        <input
+          type="text"
+          value={searchTerm}
+          className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-sm font-sans"
+          placeholder="Search templates..."
+          readOnly
+        />
+      </div>
+
+      {/* Mobile Templates */}
+      <div className="space-y-3">
+        {templates.slice(0, 3).map((template) => (
+          <div
+            key={template.id}
+            className={`bg-white border rounded-lg p-3 transition-all duration-300 ${
+              selectedTemplate === template.id 
+                ? 'border-emerald-500 ring-2 ring-emerald-500/20' 
+                : 'border-gray-200'
+            }`}
+          >
+            <div className="flex items-center mb-2">
+              <div 
+                className="w-8 h-8 rounded-lg flex items-center justify-center text-sm mr-3"
+                style={{ backgroundColor: `${template.color}20` }}
+              >
+                {template.icon}
+              </div>
+              <div className="flex-1">
+                <h3 className="font-medium text-gray-900 text-sm font-sans">{template.name}</h3>
+                <span 
+                  className="inline-block px-2 py-0.5 rounded-full text-xs font-medium text-white"
+                  style={{ backgroundColor: template.color }}
+                >
+                  {template.category}
+                </span>
+              </div>
+            </div>
+            <p className="text-gray-600 text-xs mb-3 font-sans">{template.description}</p>
+            <button 
+              className={`w-full py-2 rounded-lg font-medium transition-all text-xs font-sans ${
+                selectedTemplate === template.id
+                  ? 'bg-emerald-500 text-white'
+                  : 'bg-gray-100 text-gray-700'
+              }`}
+            >
+              {selectedTemplate === template.id ? 'Selected ✓' : 'Use Template'}
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  const renderMobileBuilder = () => (
+    <div className="space-y-4">
+      <div className="bg-blue-500 text-white p-4 rounded-lg -m-4 mb-4">
+        <h2 className="font-bold font-sans text-sm">{checklistTitle || 'Building Checklist...'}</h2>
+        <p className="text-blue-100 text-xs font-sans">{checklistDescription || 'Setting up flow'}</p>
+      </div>
+
+      {buildingStep > 0 && (
+        <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3">
+          <div className="text-sm font-medium text-emerald-900 mb-2 font-sans">
+            Adding Step {buildingStep}
+          </div>
+          <div className="w-full bg-emerald-200 rounded-full h-1.5">
+            <div 
+              className="bg-emerald-500 h-1.5 rounded-full transition-all duration-500"
+              style={{ width: `${(buildingStep / demoSteps.length) * 100}%` }}
+            ></div>
+          </div>
+        </div>
+      )}
+
+      {/* Mobile Steps List */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <h3 className="font-medium text-gray-900 text-sm font-sans">Steps ({steps.length})</h3>
+          <button className="bg-emerald-500 text-white px-3 py-1 rounded-lg text-xs font-medium font-sans">
+            <Plus className="w-3 h-3 mr-1 inline" />
+            Add
+          </button>
+        </div>
+        
+        {steps.slice(0, 3).map((step) => (
+          <div key={step.id} className="bg-white border border-gray-200 rounded-lg p-3">
+            <div className="flex items-start">
+              <span className="text-sm mr-2 mt-0.5">
+                {step.type === 'textarea' ? '📝' : step.type === 'file_upload' ? '📎' : '☑️'}
+              </span>
+              <div className="flex-1">
+                <h4 className="font-medium text-gray-900 text-sm font-sans">{step.title}</h4>
+                <p className="text-xs text-gray-600 font-sans">{step.description}</p>
+                {step.required && (
+                  <span className="inline-block mt-1 px-2 py-0.5 bg-red-100 text-red-700 rounded-full text-xs font-medium font-sans">
+                    Required
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+        
+        {steps.length > 3 && (
+          <div className="text-center text-xs text-gray-500 font-sans">
+            +{steps.length - 3} more steps
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
+  const renderMobileCustomer = () => (
+    <div className="space-y-4">
+      {showCustomerForm ? (
+        <div className="bg-white rounded-lg p-4 shadow-sm">
+          <div className="text-center mb-4">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-3">
+              <User className="w-6 h-6 text-white" />
+            </div>
+            <h2 className="font-bold text-gray-900 font-sans text-sm">Welcome!</h2>
+            <p className="text-gray-600 text-xs font-sans">Let's get started</p>
+          </div>
+          
+          <div className="space-y-3">
+            <input
+              type="text"
+              value={customerData.name}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm font-sans"
+              placeholder="Full name"
+              readOnly
+            />
+            <input
+              type="email"
+              value={customerData.email}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm font-sans"
+              placeholder="Email"
+              readOnly
+            />
+            <input
+              type="text"
+              value={customerData.company}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm font-sans"
+              placeholder="Company"
+              readOnly
+            />
+          </div>
+          
+          <button className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white py-2 rounded-lg font-medium text-sm mt-4 font-sans">
+            Continue
+          </button>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {/* Mobile Progress Header */}
+          <div className="bg-blue-500 text-white p-4 rounded-lg -m-4 mb-4">
+            <h2 className="font-bold text-sm font-sans">Website Project</h2>
+            <div className="mt-2">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-xs text-blue-100 font-sans">Progress</span>
+                <span className="text-xs text-blue-100 font-sans">{completedSteps.length}/{demoSteps.length}</span>
+              </div>
+              <div className="w-full bg-blue-400/30 rounded-full h-2">
+                <div 
+                  className="bg-white h-2 rounded-full transition-all duration-1000"
+                  style={{ width: `${(completedSteps.length / demoSteps.length) * 100}%` }}
+                ></div>
+              </div>
+            </div>
+          </div>
+
+          {/* Current Mobile Step */}
+          {currentCustomerStep < demoSteps.length && (
+            <div className="bg-white rounded-lg p-4 shadow-sm">
+              <div className="flex items-center mb-3">
+                <span className="text-lg mr-2">
+                  {demoSteps[currentCustomerStep].type === 'textarea' ? '📝' : 
+                   demoSteps[currentCustomerStep].type === 'file_upload' ? '📎' : '☑️'}
+                </span>
+                <div>
+                  <h3 className="font-bold text-gray-900 text-sm font-sans">
+                    Step {currentCustomerStep + 1}: {demoSteps[currentCustomerStep].title}
+                  </h3>
+                  {demoSteps[currentCustomerStep].required && (
+                    <span className="inline-block mt-1 px-2 py-0.5 bg-red-100 text-red-700 rounded-full text-xs font-medium font-sans">
+                      Required
+                    </span>
+                  )}
+                </div>
+              </div>
+              
+              <p className="text-gray-600 mb-3 text-xs font-sans">{demoSteps[currentCustomerStep].description}</p>
+              
+              {demoSteps[currentCustomerStep].type === 'textarea' && (
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <textarea
+                    value={customerStepContent[`step-${currentCustomerStep}`] || ''}
+                    className="w-full border-0 focus:outline-none text-gray-800 resize-none text-xs font-sans bg-transparent"
+                    placeholder={demoSteps[currentCustomerStep].placeholder}
+                    rows={3}
+                    readOnly
+                  />
+                  {isTyping && (
+                    <div className="flex items-center mt-2 text-blue-600">
+                      <div className="animate-spin rounded-full h-2 w-2 border-b border-blue-600 mr-2"></div>
+                      <span className="text-xs font-sans">Typing...</span>
+                    </div>
+                  )}
+                </div>
+              )}
+              
+              {demoSteps[currentCustomerStep].type === 'file_upload' && (
+                <div className="bg-gray-50 border border-dashed border-gray-300 rounded-lg p-4 text-center">
+                  <Upload className="h-6 w-6 text-gray-400 mx-auto mb-2" />
+                  <div className="text-gray-600 text-xs font-sans">
+                    {customerStepContent[`step-${currentCustomerStep}`] ? (
+                      <span className="text-emerald-600 font-medium">{customerStepContent[`step-${currentCustomerStep}`]}</span>
+                    ) : (
+                      'Tap to upload'
+                    )}
+                  </div>
+                </div>
+              )}
+              
+              {completedSteps.includes(`step-${currentCustomerStep}`) && (
+                <div className="mt-3 flex items-center text-emerald-600 font-medium text-xs font-sans">
+                  <CheckCircle className="w-4 h-4 mr-2" />
+                  Completed
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Mobile Completed Steps */}
+          {completedSteps.length > 0 && (
+            <div className="bg-emerald-50 rounded-lg p-3">
+              <h4 className="font-medium text-emerald-900 mb-2 text-xs font-sans">
+                Completed ({completedSteps.length}/{demoSteps.length})
+              </h4>
+              <div className="space-y-1">
+                {completedSteps.slice(0, 2).map((stepId, index) => (
+                  <div key={stepId} className="flex items-center text-xs text-emerald-700">
+                    <CheckCircle className="w-3 h-3 mr-2 flex-shrink-0" />
+                    <span className="font-sans">{demoSteps[index]?.title}</span>
+                  </div>
+                ))}
+                {completedSteps.length > 2 && (
+                  <div className="text-xs text-emerald-600 font-sans">
+                    +{completedSteps.length - 2} more completed
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+
+  const renderMobileAnalytics = () => (
+    <div className="space-y-4">
+      <div className="bg-emerald-500 text-white p-4 rounded-lg -m-4 mb-4 text-center">
+        <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
+          <CheckCircle className="w-6 h-6" />
+        </div>
+        <h2 className="font-bold font-sans text-sm">Great Work, Sarah! 🎉</h2>
+        <p className="text-emerald-100 text-xs font-sans">Project onboarding complete!</p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <div className="bg-white rounded-lg p-3 text-center shadow-sm">
+          <div className="text-xl font-bold text-emerald-600 font-sans">{demoSteps.length}/{demoSteps.length}</div>
+          <div className="text-xs text-gray-600 font-sans">Steps Done</div>
+        </div>
+        <div className="bg-white rounded-lg p-3 text-center shadow-sm">
+          <div className="text-xl font-bold text-blue-600 font-sans">1.8</div>
+          <div className="text-xs text-gray-600 font-sans">Days</div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-lg p-3 shadow-sm">
+        <h3 className="font-medium text-gray-900 mb-3 text-sm font-sans">🚀 What's next?</h3>
+        <div className="space-y-2 text-xs text-gray-700">
+          <div className="flex items-center">
+            <div className="w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center mr-2 flex-shrink-0">
+              <Check className="w-2 h-2 text-white" />
+            </div>
+            <p className="font-sans">Design review in 24h</p>
+          </div>
+          <div className="flex items-center">
+            <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center mr-2 flex-shrink-0">
+              <Calendar className="w-2 h-2 text-white" />
+            </div>
+            <p className="font-sans">Wireframes by Friday</p>
+          </div>
+          <div className="flex items-center">
+            <div className="w-4 h-4 bg-purple-500 rounded-full flex items-center justify-center mr-2 flex-shrink-0">
+              <Phone className="w-2 h-2 text-white" />
+            </div>
+            <p className="font-sans">Kickoff call next week</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <section ref={sectionRef} className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -881,19 +1298,29 @@ export default function DemoSection() {
           </p>
         </div>
         
-        <div className="max-w-5xl mx-auto">
-          {renderBrowserFrame(
-            <div className="transition-all duration-500 ease-in-out">
-              {views[currentView].id === 'dashboard' && renderDashboard()}
-              {views[currentView].id === 'templates' && renderTemplateSelection()}
-              {views[currentView].id === 'builder' && renderChecklistBuilder()}
-              {views[currentView].id === 'customer' && renderCustomerExperience()}
-              {views[currentView].id === 'analytics' && renderCompletion()}
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+            {/* Desktop Demo */}
+            <div className="lg:col-span-2">
+              {renderBrowserFrame(
+                <div className="transition-all duration-500 ease-in-out">
+                  {views[currentView].id === 'dashboard' && renderDashboard()}
+                  {views[currentView].id === 'templates' && renderTemplateSelection()}
+                  {views[currentView].id === 'builder' && renderChecklistBuilder()}
+                  {views[currentView].id === 'customer' && renderCustomerExperience()}
+                  {views[currentView].id === 'analytics' && renderCompletion()}
+                </div>
+              )}
             </div>
-          )}
+
+            {/* Mobile Demo */}
+            <div className="lg:col-span-1">
+              {renderMobileMockup()}
+            </div>
+          </div>
           
           {/* Demo Progress Indicator */}
-          <div className="flex justify-center mt-6 space-x-2">
+          <div className="flex justify-center mt-8 space-x-2">
             {views.map((_, index) => (
               <div
                 key={index}
@@ -902,6 +1329,18 @@ export default function DemoSection() {
                 }`}
               ></div>
             ))}
+          </div>
+          
+          {/* Device Labels */}
+          <div className="flex justify-center mt-4 space-x-8 text-sm text-gray-600 font-sans">
+            <div className="flex items-center">
+              <Monitor className="w-4 h-4 mr-2" />
+              Desktop Experience
+            </div>
+            <div className="flex items-center">
+              <Smartphone className="w-4 h-4 mr-2" />
+              Mobile Experience
+            </div>
           </div>
         </div>
       </div>
