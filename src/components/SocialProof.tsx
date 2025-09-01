@@ -1,39 +1,36 @@
 import React from 'react';
-import { Star, TrendingUp, Users, Award, CheckCircle, Building } from 'lucide-react';
+import { Star, TrendingUp, Users, Award, CheckCircle, Building, Quote } from 'lucide-react';
 
 const testimonials = [
   {
-    name: 'Sarah Chen',
-    role: 'VP of Customer Success',
-    company: 'TechFlow Solutions',
-    industry: 'B2B SaaS',
-    avatar: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=120&h=120&fit=crop',
-    content: 'OnboardFlo reduced our customer churn by 45% in the first month. The visual progress tracking keeps users engaged throughout the entire setup process. Our support tickets dropped dramatically.',
+    name: 'Mariah W.',
+    role: 'Operations Director',
+    company: 'Tech Solutions',
+    industry: 'Technology & Software',
+    content: 'OnboardFlo streamlined our client onboarding process completely. The visual progress tracking keeps our customers engaged and we can see exactly where they need help.',
     rating: 5,
-    metric: '45% less churn',
-    timeframe: 'First month'
+    metric: 'Streamlined process',
+    timeframe: 'Immediate impact'
   },
   {
-    name: 'Marcus Rodriguez',
-    role: 'Head of Product',
-    company: 'DataVault Inc',
-    industry: 'Enterprise Software',
-    avatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=120&h=120&fit=crop',
-    content: 'The analytics dashboard is incredible. We can see exactly where customers get stuck and optimize our flows in real-time. Game changer for our customer success team.',
+    name: 'Nathan R.',
+    role: 'IT Manager',
+    company: 'Legal Services Group',
+    industry: 'Legal Services',
+    content: 'The dashboard gives us clear visibility into our client onboarding process. We can track progress and identify where clients need additional support.',
     rating: 5,
-    metric: '3x faster setup',
-    timeframe: 'Within 2 weeks'
+    metric: 'Clear visibility',
+    timeframe: 'Day one'
   },
   {
-    name: 'Emily Watson',
-    role: 'Customer Operations Manager',
-    company: 'CloudSync Pro',
-    industry: 'Cloud Services',
-    avatar: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=120&h=120&fit=crop',
-    content: 'Our support tickets dropped by 60% after implementing OnboardFlo. Customers can now self-serve through the guided onboarding process. The ROI was immediate.',
+    name: 'Amber I.',
+    role: 'Creative Director',
+    company: 'Design Studio',
+    industry: 'Design & Insurance',
+    content: 'The brand customization features let us create onboarding experiences that perfectly match our clients\' brands. The template system saved us hours of setup time.',
     rating: 5,
-    metric: '60% fewer tickets',
-    timeframe: 'First quarter'
+    metric: 'Perfect branding',
+    timeframe: 'Setup complete'
   }
 ];
 
@@ -64,11 +61,11 @@ export default function SocialProof() {
 
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 font-sans">
-            Trusted by customer success teams worldwide
+            Trusted by professionals who value efficiency
           </h2>
           <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto font-sans">
-            Join hundreds of companies that have transformed their customer onboarding 
-            with OnboardFlo's proven platform.
+            See how OnboardFlo helps professionals across different industries 
+            create better onboarding experiences.
           </p>
         </div>
         
@@ -91,36 +88,16 @@ export default function SocialProof() {
                 </div>
               </div>
 
-              {/* Desktop Layout */}
-              <div className="hidden md:flex items-start space-x-4 mb-6">
-                <img 
-                  src={testimonial.avatar} 
-                  alt={testimonial.name}
-                  className="w-15 h-15 rounded-full object-cover flex-shrink-0"
-                  style={{ width: '60px', height: '60px' }}
-                />
-                <div className="flex-1">
-                  <div className="font-semibold text-gray-900 font-sans">{testimonial.name}</div>
-                  <div className="text-sm text-gray-600 font-sans">{testimonial.role}</div>
-                  <div className="text-sm text-emerald-600 font-medium font-sans">{testimonial.company}</div>
-                  <div className="text-xs text-gray-500 font-sans">{testimonial.industry}</div>
-                </div>
-              </div>
-
-              {/* Mobile Layout */}
-              <div className="md:hidden text-center mb-6">
-                <img 
-                  src={testimonial.avatar} 
-                  alt={testimonial.name}
-                  className="w-12 h-12 rounded-full object-cover mx-auto mb-3"
-                />
+              {/* Quote icon and testimonial info */}
+              <div className="mb-6">
+                <Quote className="w-8 h-8 text-emerald-500 mb-4" />
                 <div className="font-semibold text-gray-900 font-sans">{testimonial.name}</div>
                 <div className="text-sm text-gray-600 font-sans">{testimonial.role}</div>
                 <div className="text-sm text-emerald-600 font-medium font-sans">{testimonial.company}</div>
                 <div className="text-xs text-gray-500 font-sans">{testimonial.industry}</div>
               </div>
               
-              <blockquote className="text-gray-700 leading-relaxed font-sans text-base italic border-l-4 border-emerald-200 pl-4">
+              <blockquote className="text-gray-700 leading-relaxed font-sans text-base">
                 "{testimonial.content}"
               </blockquote>
             </div>
@@ -131,32 +108,32 @@ export default function SocialProof() {
         <div className="mt-16 text-center">
           <div className="bg-white rounded-2xl p-6 md:p-8 shadow-lg border border-gray-100">
             <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-6 font-sans">
-              Join the companies improving their onboarding
+              Built for professionals who value quality
             </h3>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
               <div className="text-center">
                 <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                  <Building className="w-6 h-6 text-blue-600" />
+                  <CheckCircle className="w-6 h-6 text-blue-600" />
                 </div>
-                <div className="text-lg md:text-xl font-bold text-gray-900 font-sans">Enterprise Ready</div>
-                <div className="text-sm text-gray-600 font-sans">SOC 2 compliant infrastructure</div>
+                <div className="text-lg md:text-xl font-bold text-gray-900 font-sans">Quick Setup</div>
+                <div className="text-sm text-gray-600 font-sans">Get your first checklist live in minutes</div>
               </div>
               
               <div className="text-center">
                 <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                  <CheckCircle className="w-6 h-6 text-emerald-600" />
+                  <Users className="w-6 h-6 text-emerald-600" />
                 </div>
-                <div className="text-lg md:text-xl font-bold text-gray-900 font-sans">5-Minute Setup</div>
-                <div className="text-sm text-gray-600 font-sans">Get your first checklist live instantly</div>
+                <div className="text-lg md:text-xl font-bold text-gray-900 font-sans">Real-Time Tracking</div>
+                <div className="text-sm text-gray-600 font-sans">See customer progress as it happens</div>
               </div>
               
               <div className="text-center">
                 <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                  <Award className="w-6 h-6 text-purple-600" />
+                  <Building className="w-6 h-6 text-purple-600" />
                 </div>
-                <div className="text-lg md:text-xl font-bold text-gray-900 font-sans">24/7 Support</div>
-                <div className="text-sm text-gray-600 font-sans">Expert help when you need it</div>
+                <div className="text-lg md:text-xl font-bold text-gray-900 font-sans">Professional Templates</div>
+                <div className="text-sm text-gray-600 font-sans">Industry-specific starting points</div>
               </div>
             </div>
           </div>
