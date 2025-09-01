@@ -207,11 +207,11 @@ export default function DemoSection() {
       setCustomerStepContent({});
       setIsTyping(false);
 
-      // Dashboard view
+      // 1. Dashboard view (3 seconds)
       await new Promise(resolve => setTimeout(resolve, 3000));
       setCurrentView(1);
 
-      // Template selection
+      // 2. Template selection (show search, then select template)
       await new Promise(resolve => setTimeout(resolve, 800));
       setSearchTerm('website');
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -219,21 +219,22 @@ export default function DemoSection() {
       await new Promise(resolve => setTimeout(resolve, 2000));
       setCurrentView(2);
 
-      // Checklist builder
+      // 3. Checklist builder (build the checklist step by step)
       await new Promise(resolve => setTimeout(resolve, 600));
       setChecklistTitle('Website Design Project Onboarding');
       setChecklistDescription('Complete onboarding process for new website design clients');
       
+      // Add steps one by one with animation
       for (let i = 0; i < demoSteps.length; i++) {
         await new Promise(resolve => setTimeout(resolve, 800));
         setBuildingStep(i + 1);
         setSteps(prev => [...prev, { ...demoSteps[i], id: `step-${i}` }]);
       }
       
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, 1500));
       setCurrentView(3);
 
-      // Customer experience
+      // 4. Customer experience (customer fills out and completes)
       await new Promise(resolve => setTimeout(resolve, 500));
       setCustomerData({
         name: 'Sarah Martinez',
@@ -244,7 +245,7 @@ export default function DemoSection() {
       await new Promise(resolve => setTimeout(resolve, 700));
       setShowCustomerForm(false);
       
-      // Process steps quickly
+      // Customer completes steps one by one
       for (let stepIndex = 0; stepIndex < demoSteps.length; stepIndex++) {
         await new Promise(resolve => setTimeout(resolve, 600));
         setCurrentCustomerStep(stepIndex);
@@ -263,11 +264,13 @@ export default function DemoSection() {
         setCompletedSteps(prev => [...prev, `step-${stepIndex}`]);
       }
       
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, 1500));
       setCurrentView(4);
       
-      // Reset after completion view
-      await new Promise(resolve => setTimeout(resolve, 5000));
+      // 5. Analytics/Completion view (show results)
+      await new Promise(resolve => setTimeout(resolve, 4000));
+      
+      // Loop back to beginning
       runDemoSequence();
     };
 
