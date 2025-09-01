@@ -12,14 +12,14 @@ export default function SimpleHeader() {
   return (
     <header className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-b border-gray-100 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <div className="flex items-center">
             <Link to="/" className="flex items-center" onClick={scrollToTop}>
-              <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center mr-3">
-                <Workflow className="w-5 h-5 text-white" />
+              <div className="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center mr-4">
+                <Workflow className="w-6 h-6 text-white" />
               </div>
-              <span className="text-xl font-bold text-gray-900 font-sans">OnboardFlo</span>
+              <span className="text-2xl font-bold text-gray-900 font-sans">OnboardFlo</span>
             </Link>
           </div>
 
@@ -31,8 +31,8 @@ export default function SimpleHeader() {
               </Link>
             </nav>
             <div className="flex items-center space-x-4">
-              <Link to="/get-started" className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium transition-colors font-sans">
-                Get Started
+              <Link to="/signup" className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium transition-colors font-sans">
+                Start Free Trial
               </Link>
             </div>
           </div>
@@ -58,8 +58,8 @@ export default function SimpleHeader() {
                 Pricing
               </Link>
               <div className="pt-4 border-t border-gray-100 flex flex-col space-y-2">
-                <Link to="/get-started" className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-lg font-medium transition-colors text-left font-sans">
-                  Get Started
+                <Link to="/signup" className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-lg font-medium transition-colors text-left font-sans">
+                  Start Free Trial
                 </Link>
               </div>
             </div>

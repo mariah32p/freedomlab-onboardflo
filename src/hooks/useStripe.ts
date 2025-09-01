@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../lib/supabase';
 import { APP_CONFIG } from '../config/app';
 
 export function useStripe() {
@@ -8,20 +9,11 @@ export function useStripe() {
   const { session } = useAuth();
 
   const createCheckoutSession = async (priceId: string, mode: 'payment' | 'subscription' = 'subscription') => {
-    if (!session) {
+    // Get fresh session to ensure token is current
+    const { data: { session: currentSession } } = await supabase.auth.getSession();
+    
+    if (!currentSession) {
       throw new Error('User must be authenticated');
-    }
-
-    if (!APP_CONFIG.ENABLE_REAL_AUTH) {
-      // Mock mode - simulate checkout process
-      setLoading(true);
-      
-      // Simulate processing time
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Redirect to success page
-      window.location.href = `${window.location.origin}/dashboard?success=true&demo=true`;
-      return { sessionId: 'mock-session-id', url: null };
     }
     setLoading(true);
     setError(null);
@@ -30,7 +22,7 @@ export function useStripe() {
       const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/stripe-checkout`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${session.access_token}`,
+          'Authorization': `Bearer ${currentSession.access_token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -49,7 +41,7 @@ export function useStripe() {
 
       // Redirect to Stripe Checkout
       if (data.url) {
-        window.location.href = data.url;
+        window.open(data.url, '_blank', 'noopener,noreferrer');
       }
 
       return data;

@@ -73,6 +73,7 @@ async function handleEvent(event: Stripe.Event) {
 
   if (!customerId || typeof customerId !== 'string') {
     console.error(`No customer received on event: ${JSON.stringify(event)}`);
+    return;
   } else {
     let isSubscription = true;
 
@@ -121,6 +122,22 @@ async function handleEvent(event: Stripe.Event) {
         console.error('Error processing one-time payment:', error);
       }
     }
+
+    // Handle specific webhook events for payment failures
+    if (event.type === 'invoice.payment_failed') {
+      const { error: paymentFailureError } = await supabase
+        .from('stripe_subscriptions')
+        .update({
+          status: 'past_due',
+          payment_issue_since: new Date().toISOString(),
+        })
+        .eq('customer_id', customerId)
+        .is('payment_issue_since', null); // Only set if not already set
+
+      if (paymentFailureError) {
+        console.error('Error updating payment failure status:', paymentFailureError);
+      }
+    }
   }
 }
 
@@ -135,13 +152,12 @@ async function syncCustomerFromStripe(customerId: string) {
       expand: ['data.default_payment_method'],
     });
 
-    // TODO verify if needed
     if (subscriptions.data.length === 0) {
       console.info(`No active subscriptions found for customer: ${customerId}`);
       const { error: noSubError } = await supabase.from('stripe_subscriptions').upsert(
         {
           customer_id: customerId,
-          subscription_status: 'not_started',
+          status: 'not_started',
         },
         {
           onConflict: 'customer_id',
@@ -152,6 +168,7 @@ async function syncCustomerFromStripe(customerId: string) {
         console.error('Error updating subscription status:', noSubError);
         throw new Error('Failed to update subscription status in database');
       }
+      return;
     }
 
     // assumes that a customer can only have a single subscription
@@ -166,6 +183,8 @@ async function syncCustomerFromStripe(customerId: string) {
         current_period_start: subscription.current_period_start,
         current_period_end: subscription.current_period_end,
         cancel_at_period_end: subscription.cancel_at_period_end,
+        // Clear payment_issue_since if subscription is active/trialing (payment recovered)
+        payment_issue_since: ['active', 'trialing'].includes(subscription.status) ? null : undefined,
         ...(subscription.default_payment_method && typeof subscription.default_payment_method !== 'string'
           ? {
               payment_method_brand: subscription.default_payment_method.card?.brand ?? null,
@@ -183,6 +202,7 @@ async function syncCustomerFromStripe(customerId: string) {
       console.error('Error syncing subscription:', subError);
       throw new Error('Failed to sync subscription in database');
     }
+
     console.info(`Successfully synced subscription for customer: ${customerId}`);
   } catch (error) {
     console.error(`Failed to sync subscription for customer ${customerId}:`, error);

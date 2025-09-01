@@ -12,18 +12,20 @@ export default function SignInPage() {
   const { signIn } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError('');
+    try {
+      const { error: authError } = await signIn(email, password);
 
-    const { error: authError } = await signIn(email, password);
-    
-    if (authError) {
-      setError(authError.message);
+      if (authError) {
+        setError(authError.message);
+      } else {
+        navigate('/dashboard');
+      }
+    } finally {
       setLoading(false);
-    } else {
-      navigate('/dashboard');
     }
   };
 
@@ -32,13 +34,7 @@ export default function SignInPage() {
       <div className="max-w-md w-full space-y-8">
         {/* Header */}
         <div className="text-center">
-          <Link to="/" className="inline-flex items-center mb-8">
-            <div className="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
-              <Workflow className="w-6 h-6 text-white" />
-            </div>
-            <span className="text-2xl font-bold text-gray-900 font-sans whitespace-nowrap">OnboardFlo</span>
-          </Link>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2 font-sans mt-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-2 font-sans">
             Welcome back
           </h2>
           <p className="text-gray-600 font-sans">
@@ -99,6 +95,7 @@ export default function SignInPage() {
                 <button
                   type="button"
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
@@ -111,24 +108,10 @@ export default function SignInPage() {
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                className="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded"
-              />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700 font-sans">
-                Remember me
-              </label>
-            </div>
-
-            <div className="text-sm">
-              <a href="#" className="font-medium text-emerald-600 hover:text-emerald-500 font-sans">
-                Forgot password?
-              </a>
-            </div>
+          <div className="text-right">
+            <Link to="/forgot-password" className="text-sm font-medium text-emerald-600 hover:text-emerald-500 font-sans">
+              Forgot password?
+            </Link>
           </div>
 
           <div>
@@ -144,8 +127,8 @@ export default function SignInPage() {
           <div className="text-center">
             <p className="text-sm text-gray-600 font-sans">
               Don't have an account?{' '}
-              <Link to="/get-started" className="font-medium text-emerald-600 hover:text-emerald-500 font-sans">
-                Get started
+              <Link to="/signup" className="font-medium text-emerald-600 hover:text-emerald-500 font-sans">
+                Sign up
               </Link>
             </p>
           </div>

@@ -24,7 +24,7 @@ export default function PricingPage() {
     try {
       await createCheckoutSession(priceId, 'subscription');
     } catch (err) {
-      console.error('Failed to create checkout session:', err);
+      console.error('Error creating checkout session:', err);
     }
   };
 
@@ -90,16 +90,16 @@ export default function PricingPage() {
                   ))}
                 </ul>
                 
-                <button 
-                  onClick={() => handleSubscribe(plan.priceId)}
-                  disabled={loading}
-                  className={`w-full py-4 rounded-lg font-semibold text-lg transition-all duration-200 font-sans ${
-                  isPopular
-                    ? 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg hover:shadow-xl'
-                    : 'bg-gray-900 hover:bg-gray-800 text-white'
-                } disabled:opacity-50`}>
-                  {loading ? 'Loading...' : user ? 'Start 7-Day Free Trial' : 'Sign Up to Continue'}
-                </button>
+                <Link 
+                  to="/signup"
+                  className={`block w-full py-4 rounded-lg font-semibold text-lg transition-all duration-200 text-center ${
+                    isPopular
+                      ? 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg hover:shadow-xl'
+                      : 'bg-gray-900 hover:bg-gray-800 text-white'
+                  }`}
+                >
+                  Get Started
+                </Link>
               </div>
             );
           })}
@@ -107,17 +107,10 @@ export default function PricingPage() {
         
         <div className="text-center mt-12">
           <p className="text-gray-600 mb-4 font-sans">
-            All plans include a 7-day free trial. {!user && (
-              <>
-                <Link to="/get-started" className="text-emerald-600 hover:text-emerald-500 font-medium">
-                  Create account
-                </Link> to get started.
-              </>
-            )}
+            All plans include a 7-day free trial • Choose your plan after creating your account
           </p>
           <div className="flex items-center justify-center space-x-8 text-sm text-gray-500 font-sans">
             <span>✓ Cancel anytime</span>
-            <span>✓ 30-day money back guarantee</span>
           </div>
         </div>
       </div>
