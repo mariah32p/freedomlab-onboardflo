@@ -1088,6 +1088,46 @@ export default function DemoSection() {
               </div>
             </div>
             
+            {/* Website Header */}
+            <div className="bg-white border-x border-gray-200 px-8 py-4 flex items-center justify-between">
+              <div className="flex items-center">
+                <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center mr-3">
+                  <Workflow className="w-5 h-5 text-white" />
+                </div>
+                <span className="text-xl font-bold text-gray-900 font-sans">OnboardFlo</span>
+              </div>
+              <nav className="hidden md:flex items-center space-x-6">
+                <button className={`text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans ${
+                  views[currentView] === 'dashboard' ? 'text-emerald-600 font-semibold' : ''
+                }`}>
+                  Dashboard
+                </button>
+                <button className={`text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans ${
+                  views[currentView] === 'template-selection' || views[currentView] === 'checklist-builder' ? 'text-emerald-600 font-semibold' : ''
+                }`}>
+                  Checklists
+                </button>
+                <button className={`text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans ${
+                  views[currentView] === 'customer-experience' ? 'text-emerald-600 font-semibold' : ''
+                }`}>
+                  Submissions
+                </button>
+                <button className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
+                  Branding
+                </button>
+                <button className={`text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans ${
+                  views[currentView] === 'analytics' ? 'text-emerald-600 font-semibold' : ''
+                }`}>
+                  Settings
+                </button>
+              </nav>
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center">
+                  <span className="text-white text-sm font-bold font-sans">JD</span>
+                </div>
+              </div>
+            </div>
+            
             <div className="bg-white border-x border-b border-gray-200 rounded-b-xl p-8 min-h-[500px]">
               <div className="transition-all duration-500 ease-in-out">
                 {views[currentView] === 'dashboard' && renderDesktopDashboard()}
