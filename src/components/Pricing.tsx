@@ -5,13 +5,13 @@ import { stripeProducts } from '../stripe-config';
 import { Link } from 'react-router-dom';
 
 const planIcons = {
-  'Basic': Zap,
+  'Standard': Zap,
   'Pro': Building,
 };
 
 // Updated feature lists with realistic limits
 const planFeatures = {
-  'Basic': [
+  'Standard': [
     'Up to 3 active checklists',
     'Up to 50 customer submissions per month',
     'All 6 step types (checkbox, text, file upload, etc.)',
@@ -37,10 +37,10 @@ export default function Pricing() {
     <section id="pricing" className="py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 font-sans">
             Simple, transparent pricing
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto font-sans">
             Same powerful tool, different limits. Start with a 7-day free trial on any plan.
           </p>
         </div>
@@ -75,7 +75,7 @@ export default function Pricing() {
                     <Icon className={`w-6 h-6 ${isPopular ? 'text-white' : 'text-gray-600'}`} />
                   </div>
                   <h3 className="text-2xl font-bold text-gray-900 mb-2 font-sans">{plan.name}</h3>
-                  <p className="text-gray-600 mb-4">{plan.description}</p>
+                  <p className="text-gray-600 mb-4 font-sans">{plan.description}</p>
                   <div className="mb-6">
                     <div>
                       <span className="text-5xl font-bold text-gray-900 font-sans">${plan.price}</span>
@@ -88,31 +88,26 @@ export default function Pricing() {
                   {features.map((feature, featureIndex) => (
                     <li key={featureIndex} className="flex items-start">
                       <Check className="w-5 h-5 text-emerald-500 mt-0.5 mr-3 flex-shrink-0" />
-                      <span className="text-gray-700">{feature}</span>
+                      <span className="text-gray-700 font-sans">{feature}</span>
                     </li>
                   ))}
                 </ul>
-                
-                <Link
-                  to="/signup"
-                  className={`w-full block py-4 rounded-lg font-semibold text-lg transition-all duration-200 text-center shadow-lg hover:shadow-xl font-sans ${
-                    isPopular
-                      ? 'bg-emerald-500 hover:bg-emerald-600 text-white'
-                      : 'bg-gray-900 hover:bg-gray-800 text-white'
-                  }`}
-                >
-                  Start 7-Day Free Trial
-                </Link>
               </div>
             );
           })}
         </div>
         
-        <div className="text-center mt-12">
-          <p className="text-gray-600 mb-4">
+        <div className="text-center mt-16">
+          <Link
+            to="/signup"
+            className="inline-block bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl font-sans mb-6"
+          >
+            Start 7-Day Free Trial
+          </Link>
+          <p className="text-gray-600 mb-4 font-sans">
             7-day free trial • Full access to all features during trial • Cancel anytime
           </p>
-          <div className="flex items-center justify-center space-x-8 text-sm text-gray-500">
+          <div className="flex items-center justify-center space-x-8 text-sm text-gray-500 font-sans">
             <span>✓ Cancel anytime</span>
             <span>✓ 30-day money back guarantee</span>
             <span>✓ No setup fees</span>
