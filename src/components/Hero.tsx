@@ -4,43 +4,52 @@ import { ArrowRight, Play, CheckCircle, TrendingUp, Users, Clock, Target, AlertC
 
 export default function Hero() {
   return (
-    <section className="pt-20 pb-16 bg-gradient-to-br from-gray-50 to-white relative overflow-hidden">
+    <section className="pt-24 pb-16 bg-gradient-to-br from-gray-50 to-white relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 bg-grid-slate-100"></div>
       <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/50 to-blue-50/30"></div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Left side - Content */}
           <div className="text-left">
-            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight font-sans">
+            <div className="inline-flex items-center bg-blue-500/20 text-blue-700 px-4 py-2 rounded-full text-sm font-semibold mb-8 border border-blue-500/30 font-sans">
+              <span className="w-2 h-2 bg-blue-500 rounded-full mr-2 animate-pulse"></span>
+              7-Day Free Trial Available
+            </div>
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight font-sans">
               Customer onboarding
               <span className="text-emerald-600"> made simple</span>
             </h1>
             
-            <p className="text-xl text-gray-600 mb-8 leading-relaxed font-sans">
+            <p className="text-base md:text-lg lg:text-xl text-gray-600 mb-8 leading-relaxed font-sans">
               Create beautiful, trackable onboarding checklists that guide your customers 
               to success and reduce support tickets by 60%.
             </p>
             
             {/* CTA buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 mb-8">
+            <div className="mb-6 md:mb-8">
               <Link 
                 to="/signup" 
-                className="group bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-sans"
+                className="group bg-emerald-600 hover:bg-emerald-700 text-white font-semibold transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-sans w-full sm:w-auto sm:inline-flex rounded-lg px-6 py-3 text-base md:text-lg"
+                style={{ 
+                  width: 'auto',
+                  minWidth: '200px',
+                  height: '52px'
+                }}
               >
                 Start Free Trial
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
             
-            <p className="text-gray-500 text-sm font-sans">
-              ✓ 7-day free trial • ✓ Setup in 5 minutes
+            <p className="text-gray-500 text-xs md:text-sm font-sans">
+              ✓ 7-day free trial • ✓ Cancel anytime
             </p>
           </div>
           
           {/* Right side - Dashboard Visual */}
-          <div className="relative">
+          <div className="relative max-w-lg mx-auto lg:mx-0">
             {/* Main Dashboard Container */}
             <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden">
               {/* Dashboard Header */}

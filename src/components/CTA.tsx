@@ -11,30 +11,29 @@ export default function CTA() {
       
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
         <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 font-sans">
-          Ready to fix your onboarding?
+          Ready to transform your onboarding?
         </h2>
         <p className="text-xl text-blue-100 mb-12 font-sans">
-          Start your 7-day free trial and see the difference organized onboarding makes.
+          Join hundreds of companies using OnboardFlo to create seamless customer experiences.
         </p>
         
         {/* CTA buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-          <Link to="/signup" className="group bg-white hover:bg-gray-50 text-emerald-600 px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-sans">
-            <Zap className="mr-2 w-5 h-5" />
-            Start 7-Day Free Trial
-          </Link>
+        <div className="mb-8">
           <Link 
-            to="/pricing" 
-            className="group bg-emerald-500/20 hover:bg-emerald-500/30 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 flex items-center justify-center border border-emerald-400/30 hover:border-emerald-400/50 font-sans"
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            to="/signup" 
+            className="group bg-white hover:bg-gray-50 text-emerald-600 font-semibold text-lg transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-sans w-full sm:w-auto sm:inline-flex rounded-md px-8 py-4"
+            style={{ 
+              minWidth: '200px',
+              height: '56px'
+            }}
           >
-            View Pricing
-            <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            Start 7-Day Free Trial
+            <ArrowRight className="ml-2 w-5 h-5" />
           </Link>
         </div>
         
         <p className="text-blue-200 text-sm font-sans">
-          Setup in under 5 minutes • Cancel anytime
+          Setup in under 10 minutes • Cancel anytime • No setup fees
         </p>
       </div>
     </section>

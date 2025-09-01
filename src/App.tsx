@@ -6,6 +6,10 @@ import Header from './components/Header';
 import Hero from './components/Hero';
 import ProblemSolution from './components/ProblemSolution';
 import Features from './components/Features';
+import DemoSection from './components/DemoSection';
+import SocialProof from './components/SocialProof';
+import Pricing from './components/Pricing';
+import FAQ from './components/FAQ';
 import CTA from './components/CTA';
 import PricingPage from './pages/PricingPage';
 import SignUpPage from './pages/SignUpPage';
@@ -26,8 +30,11 @@ function LandingPage() {
   return (
     <>
       <Hero />
-      <ProblemSolution />
+      <DemoSection />
       <Features />
+      <SocialProof />
+      <Pricing />
+      <FAQ />
       <CTA />
     </>
   );

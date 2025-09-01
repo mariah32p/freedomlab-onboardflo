@@ -5,6 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 
 export default function SignUpPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordHelper, setShowPasswordHelper] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const { signUp } = useAuth();
@@ -22,6 +23,12 @@ export default function SignUpPage() {
 
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
+      setLoading(false);
+      return;
+    }
+
+    if (formData.password.length < 8) {
+      setError('Password must be at least 8 characters long');
       setLoading(false);
       return;
     }
@@ -47,16 +54,10 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         {/* Header */}
         <div className="text-center">
-          <Link to="/" className="inline-flex items-center mb-8">
-            <div className="w-12 h-12 bg-emerald-500 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
-              <Workflow className="w-6 h-6 text-white" />
-            </div>
-            <span className="text-3xl font-bold text-gray-900 font-sans whitespace-nowrap">OnboardFlo</span>
-          </Link>
           <h2 className="text-3xl font-bold text-gray-900 mb-2 font-sans mt-8">
             Start your free trial
           </h2>
@@ -114,6 +115,17 @@ export default function SignUpPage() {
                   required
                   value={formData.password}
                   onChange={handleChange}
+                  onFocus={() => setShowPasswordHelper(true)}
+                  onBlur={() => {
+                    // Only hide if password meets all requirements
+                    const meetsRequirements = formData.password.length >= 8 && 
+                      /[A-Z]/.test(formData.password) && 
+                      /[a-z]/.test(formData.password) && 
+                      /\d/.test(formData.password);
+                    if (meetsRequirements) {
+                      setShowPasswordHelper(false);
+                    }
+                  }}
                   className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
                   placeholder="Create a password"
                 />
@@ -130,27 +142,29 @@ export default function SignUpPage() {
                   )}
                 </button>
               </div>
-              <div className="mt-2 text-sm text-gray-600 font-sans">
-                <p className="mb-1">Password must contain:</p>
-                <ul className="space-y-1 text-xs">
-                  <li className="flex items-center">
-                    <span className={`w-1.5 h-1.5 rounded-full mr-2 ${formData.password.length >= 8 ? 'bg-emerald-500' : 'bg-gray-300'}`}></span>
-                    At least 8 characters
-                  </li>
-                  <li className="flex items-center">
-                    <span className={`w-1.5 h-1.5 rounded-full mr-2 ${/[A-Z]/.test(formData.password) ? 'bg-emerald-500' : 'bg-gray-300'}`}></span>
-                    One uppercase letter
-                  </li>
-                  <li className="flex items-center">
-                    <span className={`w-1.5 h-1.5 rounded-full mr-2 ${/[a-z]/.test(formData.password) ? 'bg-emerald-500' : 'bg-gray-300'}`}></span>
-                    One lowercase letter
-                  </li>
-                  <li className="flex items-center">
-                    <span className={`w-1.5 h-1.5 rounded-full mr-2 ${/\d/.test(formData.password) ? 'bg-emerald-500' : 'bg-gray-300'}`}></span>
-                    One number
-                  </li>
-                </ul>
-              </div>
+              {showPasswordHelper && (
+                <div className="mt-2 text-sm text-gray-600 font-sans transition-all duration-200">
+                  <p className="mb-2">Password must contain:</p>
+                  <ul className="space-y-1 text-xs">
+                    <li className="flex items-center">
+                      <span className={`w-1.5 h-1.5 rounded-full mr-2 transition-colors ${formData.password.length >= 8 ? 'bg-emerald-500' : 'bg-gray-300'}`}></span>
+                      At least 8 characters
+                    </li>
+                    <li className="flex items-center">
+                      <span className={`w-1.5 h-1.5 rounded-full mr-2 transition-colors ${/[A-Z]/.test(formData.password) ? 'bg-emerald-500' : 'bg-gray-300'}`}></span>
+                      One uppercase letter
+                    </li>
+                    <li className="flex items-center">
+                      <span className={`w-1.5 h-1.5 rounded-full mr-2 transition-colors ${/[a-z]/.test(formData.password) ? 'bg-emerald-500' : 'bg-gray-300'}`}></span>
+                      One lowercase letter
+                    </li>
+                    <li className="flex items-center">
+                      <span className={`w-1.5 h-1.5 rounded-full mr-2 transition-colors ${/\d/.test(formData.password) ? 'bg-emerald-500' : 'bg-gray-300'}`}></span>
+                      One number
+                    </li>
+                  </ul>
+                </div>
+              )}
             </div>
 
             {/* Confirm Password */}

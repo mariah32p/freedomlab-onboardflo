@@ -40,6 +40,24 @@ export default function ResetPasswordPage() {
       return;
     }
 
+    if (!/[A-Z]/.test(formData.password)) {
+      setError('Password must contain at least one uppercase letter');
+      setLoading(false);
+      return;
+    }
+
+    if (!/[a-z]/.test(formData.password)) {
+      setError('Password must contain at least one lowercase letter');
+      setLoading(false);
+      return;
+    }
+
+    if (!/\d/.test(formData.password)) {
+      setError('Password must contain at least one number');
+      setLoading(false);
+      return;
+    }
+
     try {
       const { error: authError } = await updatePassword(formData.password);
 
