@@ -1,5 +1,5 @@
 import React from 'react';
-import { Check, Zap, Building, ArrowRight } from 'lucide-react';
+import { Check, Zap, Building } from 'lucide-react';
 
 import { stripeProducts } from '../stripe-config';
 import { Link } from 'react-router-dom';
@@ -9,34 +9,72 @@ const planIcons = {
   'Pro': Building,
 };
 
+// Updated feature lists with realistic limits
+const planFeatures = {
+  'Basic': [
+    'Up to 3 active checklists',
+    'Up to 50 customer submissions per month',
+    'All 6 step types (checkbox, text, file upload, etc.)',
+    'Real-time progress tracking',
+    'Basic branding (logo + colors)',
+    'Shareable customer links',
+    'Email notifications'
+  ],
+  'Pro': [
+    'Unlimited checklists',
+    'Unlimited customer submissions',
+    'All 6 step types (checkbox, text, file upload, etc.)',
+    'Real-time progress tracking',
+    'Advanced branding (logo, colors, fonts)',
+    'Password-protected checklists',
+    'Custom completion pages',
+    'Priority support'
+  ]
+};
+
 export default function Pricing() {
   return (
     <section id="pricing" className="py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Choose your plan
+            Simple, transparent pricing
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Start with a 7-day free trial. Choose the plan that fits your business needs.
+            Same powerful tool, different limits. Start with a 7-day free trial on any plan.
           </p>
         </div>
         
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {stripeProducts.map((plan, index) => {
             const Icon = planIcons[plan.name as keyof typeof planIcons];
-            const planName = plan.name === 'Basic' ? 'Standard' : 'Professional';
+            const isPopular = plan.name === 'Pro';
+            const features = planFeatures[plan.name as keyof typeof planFeatures];
 
             return (
               <div
                 key={index}
-                className="relative bg-white rounded-2xl p-8 shadow-lg transition-all duration-200 hover:shadow-xl border border-gray-200 hover:border-emerald-300"
+                className={`relative bg-white rounded-2xl p-8 shadow-lg transition-all duration-200 hover:shadow-xl border-2 hover:-translate-y-1 ${
+                  isPopular 
+                    ? 'border-emerald-500 ring-4 ring-emerald-500/20' 
+                    : 'border-gray-200 hover:border-emerald-300'
+                }`}
               >
-                <div className="text-center mb-6">
-                  <div className="inline-flex items-center justify-center w-12 h-12 bg-emerald-100 rounded-lg mb-4">
-                    <Icon className="w-6 h-6 text-emerald-600" />
+                {isPopular && (
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                    <div className="bg-emerald-500 text-white px-4 py-2 rounded-full text-sm font-medium font-sans">
+                      Most Popular
+                    </div>
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2 font-sans">{planName}</h3>
+                )}
+                
+                <div className="text-center mb-6">
+                  <div className={`inline-flex items-center justify-center w-12 h-12 rounded-lg mb-4 ${
+                    isPopular ? 'bg-emerald-500' : 'bg-gray-100'
+                  }`}>
+                    <Icon className={`w-6 h-6 ${isPopular ? 'text-white' : 'text-gray-600'}`} />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2 font-sans">{plan.name}</h3>
                   <p className="text-gray-600 mb-4">{plan.description}</p>
                   <div className="mb-6">
                     <div>
@@ -47,7 +85,7 @@ export default function Pricing() {
                 </div>
                 
                 <ul className="space-y-4 mb-8">
-                  {plan.features.map((feature, featureIndex) => (
+                  {features.map((feature, featureIndex) => (
                     <li key={featureIndex} className="flex items-start">
                       <Check className="w-5 h-5 text-emerald-500 mt-0.5 mr-3 flex-shrink-0" />
                       <span className="text-gray-700">{feature}</span>
@@ -57,8 +95,11 @@ export default function Pricing() {
                 
                 <Link
                   to="/signup"
-                  className="w-full block py-4 rounded-md font-semibold text-lg transition-all duration-200 text-center bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg hover:shadow-xl font-sans"
-                  style={{ height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  className={`w-full block py-4 rounded-lg font-semibold text-lg transition-all duration-200 text-center shadow-lg hover:shadow-xl font-sans ${
+                    isPopular
+                      ? 'bg-emerald-500 hover:bg-emerald-600 text-white'
+                      : 'bg-gray-900 hover:bg-gray-800 text-white'
+                  }`}
                 >
                   Start 7-Day Free Trial
                 </Link>
@@ -67,24 +108,14 @@ export default function Pricing() {
           })}
         </div>
         
-        {/* Secondary CTA */}
-        <div className="text-center mt-12 space-y-4">
-          <Link
-            to="/pricing"
-            className="inline-flex items-center border-2 border-gray-300 hover:border-emerald-500 text-gray-700 hover:text-emerald-600 px-6 py-3 rounded-md font-semibold transition-all duration-200 font-sans"
-            style={{ width: '180px', height: '44px', justifyContent: 'center' }}
-          >
-            View Full Pricing Details
-          </Link>
-        </div>
-        
         <div className="text-center mt-12">
           <p className="text-gray-600 mb-4">
-            7-day free trial • Choose your plan after creating your account
+            7-day free trial • Full access to all features during trial • Cancel anytime
           </p>
           <div className="flex items-center justify-center space-x-8 text-sm text-gray-500">
             <span>✓ Cancel anytime</span>
             <span>✓ 30-day money back guarantee</span>
+            <span>✓ No setup fees</span>
           </div>
         </div>
       </div>
