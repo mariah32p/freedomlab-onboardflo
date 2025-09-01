@@ -15,8 +15,7 @@ const planFeatures = {
     'Up to 3 active checklists',
     'Up to 50 customer submissions per month',
     'Basic branding (logo + colors)',
-    'Shareable customer links',
-    'Email notifications'
+    'Shareable customer links'
   ],
   'Pro': [
     'Unlimited checklists',
