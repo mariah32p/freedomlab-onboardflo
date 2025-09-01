@@ -13,6 +13,10 @@ export default function Hero() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Left side - Content */}
           <div className="text-left">
+            <div className="inline-flex items-center bg-emerald-500/20 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold mb-8 border border-emerald-500/30">
+              <span className="w-2 h-2 bg-emerald-500 rounded-full mr-2 animate-pulse"></span>
+              7-Day Free Trial Available
+            </div>
             <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight font-sans">
               Customer onboarding
               <span className="text-emerald-600"> made simple</span>
