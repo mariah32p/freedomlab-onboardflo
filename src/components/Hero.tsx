@@ -22,20 +22,20 @@ export default function Hero() {
               <span className="text-emerald-600"> made simple</span>
             </h1>
             
-            <p className="text-lg md:text-xl text-gray-600 mb-8 leading-relaxed font-sans">
+            <p className="text-base md:text-lg lg:text-xl text-gray-600 mb-8 leading-relaxed font-sans">
               Create beautiful, trackable onboarding checklists that guide your customers 
               to success and reduce support tickets by 60%.
             </p>
             
             {/* CTA buttons */}
-            <div className="mb-8">
+            <div className="mb-6 md:mb-8">
               <Link 
                 to="/signup" 
-                className="group bg-emerald-600 hover:bg-emerald-700 text-white font-semibold transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-sans w-full sm:w-auto sm:inline-flex rounded-md px-8 py-4 text-lg sm:px-6 sm:py-3 sm:text-base"
+                className="group bg-emerald-600 hover:bg-emerald-700 text-white font-semibold transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-sans w-full sm:w-auto sm:inline-flex rounded-lg px-6 py-3 text-base md:text-lg"
                 style={{ 
                   width: 'auto',
-                  minWidth: '160px',
-                  height: '48px'
+                  minWidth: '200px',
+                  height: '52px'
                 }}
               >
                 Start Free Trial
@@ -43,7 +43,7 @@ export default function Hero() {
               </Link>
             </div>
             
-            <p className="text-gray-500 text-sm font-sans">
+            <p className="text-gray-500 text-xs md:text-sm font-sans">
               ✓ 7-day free trial • ✓ Cancel anytime
             </p>
           </div>

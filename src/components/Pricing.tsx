@@ -31,10 +31,10 @@ export default function Pricing() {
     <section id="pricing" className="py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 font-sans">
+          <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 md:mb-6 font-sans">
             Simple, transparent pricing
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto font-sans">
+          <p className="text-base md:text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto font-sans">
             Same powerful tool, different limits. Start with a 7-day free trial on any plan.
           </p>
         </div>
@@ -68,12 +68,12 @@ export default function Pricing() {
                   }`}>
                     <Icon className={`w-6 h-6 ${isPopular ? 'text-white' : 'text-gray-600'}`} />
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2 font-sans">{plan.name}</h3>
-                  <p className="text-gray-600 mb-4 font-sans">{plan.description}</p>
+                  <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-2 font-sans">{plan.name}</h3>
+                  <p className="text-sm md:text-base text-gray-600 mb-4 font-sans">{plan.description}</p>
                   <div className="mb-6">
                     <div>
-                      <span className="text-5xl font-bold text-gray-900 font-sans">${plan.price}</span>
-                      <span className="text-gray-600 ml-2 font-sans">/month</span>
+                      <span className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 font-sans">${plan.price}</span>
+                      <span className="text-gray-600 ml-1 md:ml-2 text-sm md:text-base font-sans">/month</span>
                     </div>
                   </div>
                 </div>
@@ -82,7 +82,7 @@ export default function Pricing() {
                   {features.map((feature, featureIndex) => (
                     <li key={featureIndex} className="flex items-start">
                       <Check className="w-5 h-5 text-emerald-500 mt-0.5 mr-3 flex-shrink-0" />
-                      <span className="text-gray-700 font-sans">{feature}</span>
+                      <span className="text-sm md:text-base text-gray-700 font-sans">{feature}</span>
                     </li>
                   ))}
                 </ul>

@@ -8,10 +8,10 @@ export default function Features() {
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-20">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 font-sans">
+            <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 md:mb-6 font-sans">
               Key Features
             </h2>
-            <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto font-sans">
+            <p className="text-base md:text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto font-sans">
               Detailed breakdown of how OnboardFlo transforms your customer onboarding process
             </p>
           </div>
@@ -24,9 +24,9 @@ export default function Features() {
                   <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
                     <BarChart3 className="w-6 h-6 text-blue-600" />
                   </div>
-                  <h3 className="text-2xl md:text-3xl font-bold text-gray-900 font-sans">Real-Time Analytics Dashboard</h3>
+                  <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 font-sans">Real-Time Analytics Dashboard</h3>
                 </div>
-                <p className="text-base md:text-lg text-gray-600 mb-6 font-sans">
+                <p className="text-sm md:text-base lg:text-lg text-gray-600 mb-4 md:mb-6 font-sans">
                   Get instant visibility into your customer onboarding performance. Track completion rates, 
                   identify bottlenecks, and see live customer activity as it happens.
                 </p>
@@ -177,9 +177,9 @@ export default function Features() {
                   <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
                     <Plus className="w-6 h-6 text-purple-600" />
                   </div>
-                  <h3 className="text-2xl md:text-3xl font-bold text-gray-900 font-sans">Professional Templates</h3>
+                  <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 font-sans">Professional Templates</h3>
                 </div>
-                <p className="text-base md:text-lg text-gray-600 mb-6 font-sans">
+                <p className="text-sm md:text-base lg:text-lg text-gray-600 mb-4 md:mb-6 font-sans">
                   Start with proven templates designed for different industries and use cases. 
                   Each template includes optimized steps and completion flows.
                 </p>

@@ -40,7 +40,7 @@ export default function GetStartedPage() {
   };
 
   const planIcons = {
-    'Basic': Zap,
+    'Standard': Zap,
     'Pro': Building,
   };
 
