@@ -45,7 +45,7 @@ export default function Hero() {
           </div>
           
           {/* Right side - Dashboard Visual */}
-          <div className="relative">
+          <div className="relative max-w-lg mx-auto lg:mx-0">
             {/* Main Dashboard Container */}
             <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden">
               {/* Dashboard Header */}
