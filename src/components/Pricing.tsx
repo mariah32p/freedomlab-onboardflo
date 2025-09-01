@@ -11,7 +11,7 @@ const planIcons = {
 
 // Updated feature lists with realistic limits
 const planFeatures = {
-  'Standard': [
+  'Basic': [
     'Up to 3 active checklists',
     'Up to 50 customer submissions per month',
     'Real-time progress tracking',
