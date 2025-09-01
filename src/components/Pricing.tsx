@@ -11,10 +11,9 @@ const planIcons = {
 
 // Updated feature lists with realistic limits
 const planFeatures = {
-  'Basic': [
+  'Standard': [
     'Up to 3 active checklists',
     'Up to 50 customer submissions per month',
-    'All 6 step types (checkbox, text, file upload, etc.)',
     'Real-time progress tracking',
     'Basic branding (logo + colors)',
     'Shareable customer links',
@@ -23,7 +22,6 @@ const planFeatures = {
   'Pro': [
     'Unlimited checklists',
     'Unlimited customer submissions',
-    'All 6 step types (checkbox, text, file upload, etc.)',
     'Real-time progress tracking',
     'Advanced branding (logo, colors, fonts)',
     'Password-protected checklists',
