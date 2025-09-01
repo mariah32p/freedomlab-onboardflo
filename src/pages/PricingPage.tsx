@@ -24,7 +24,7 @@ export default function PricingPage() {
     try {
       await createCheckoutSession(priceId, 'subscription');
     } catch (err) {
-    'Standard': Zap,
+      console.error('Error creating checkout session:', err);
     }
   };
 
