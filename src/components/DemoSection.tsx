@@ -1343,7 +1343,6 @@ export default function DemoSection() {
             </div>
           </div>
         </div>
-      </div>
     </section>
   );
 }
