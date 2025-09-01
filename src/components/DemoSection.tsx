@@ -76,11 +76,11 @@ export default function DemoSection() {
   const [isTyping, setIsTyping] = useState(false);
 
   const views = [
-    'dashboard',
-    'template-selection', 
-    'checklist-builder',
-    'customer-experience',
-    'completion'
+    { id: 'dashboard', name: 'Dashboard', icon: BarChart3 },
+    { id: 'templates', name: 'Templates', icon: Sparkles },
+    { id: 'builder', name: 'Builder', icon: Edit },
+    { id: 'customer', name: 'Customer View', icon: User },
+    { id: 'analytics', name: 'Analytics', icon: TrendingUp }
   ];
 
   const templates = [
@@ -208,7 +208,7 @@ export default function DemoSection() {
       setIsTyping(false);
 
       // Dashboard view
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, 3000));
       setCurrentView(1);
 
       // Template selection
@@ -216,7 +216,7 @@ export default function DemoSection() {
       setSearchTerm('website');
       await new Promise(resolve => setTimeout(resolve, 1000));
       setSelectedTemplate('website-design');
-      await new Promise(resolve => setTimeout(resolve, 1200));
+      await new Promise(resolve => setTimeout(resolve, 2000));
       setCurrentView(2);
 
       // Checklist builder
@@ -230,7 +230,7 @@ export default function DemoSection() {
         setSteps(prev => [...prev, { ...demoSteps[i], id: `step-${i}` }]);
       }
       
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 2000));
       setCurrentView(3);
 
       // Customer experience
@@ -263,19 +263,89 @@ export default function DemoSection() {
         setCompletedSteps(prev => [...prev, `step-${stepIndex}`]);
       }
       
-      await new Promise(resolve => setTimeout(resolve, 800));
+      await new Promise(resolve => setTimeout(resolve, 2000));
       setCurrentView(4);
       
       // Reset after completion view
-      await new Promise(resolve => setTimeout(resolve, 4000));
+      await new Promise(resolve => setTimeout(resolve, 5000));
       runDemoSequence();
     };
 
     runDemoSequence();
   }, [isVisible]);
 
+  const renderBrowserFrame = (content: React.ReactNode) => (
+    <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden">
+      {/* Browser Header */}
+      <div className="bg-gray-100 px-4 py-3 border-b border-gray-200">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <div className="w-3 h-3 bg-red-400 rounded-full"></div>
+            <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
+            <div className="w-3 h-3 bg-green-400 rounded-full"></div>
+          </div>
+          <div className="flex-1 mx-4">
+            <div className="bg-white rounded-md px-3 py-1 text-sm text-gray-600 font-mono">
+              app.onboardflo.com/{views[currentView].id}
+            </div>
+          </div>
+          <div className="w-16"></div>
+        </div>
+      </div>
+
+      {/* App Header */}
+      <div className="bg-white border-b border-gray-200 px-6 py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center mr-3">
+              <Workflow className="w-5 h-5 text-white" />
+            </div>
+            <span className="text-xl font-bold text-gray-900 font-sans">OnboardFlo</span>
+          </div>
+          <nav className="hidden md:flex items-center space-x-6">
+            {views.map((view, index) => {
+              const Icon = view.icon;
+              return (
+                <div
+                  key={view.id}
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-all duration-300 ${
+                    currentView === index
+                      ? 'bg-emerald-100 text-emerald-700'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span className="text-sm font-medium font-sans">{view.name}</span>
+                  {currentView === index && (
+                    <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                  )}
+                </div>
+              );
+            })}
+          </nav>
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center">
+              <span className="text-white text-sm font-bold font-sans">JD</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="bg-gray-50 min-h-[600px]">
+        {content}
+      </div>
+    </div>
+  );
+
   const renderDashboard = () => (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="p-8 space-y-6">
+      {/* Header */}
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2 font-sans">Dashboard Overview</h1>
+        <p className="text-gray-600 font-sans">Track your onboarding performance</p>
+      </div>
+
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {[
@@ -283,13 +353,13 @@ export default function DemoSection() {
           { icon: CheckCircle, value: '94%', label: 'Completion Rate', color: 'emerald' },
           { icon: Clock, value: '2.8d', label: 'Avg. Time', color: 'purple' }
         ].map((stat, index) => (
-          <div key={index} className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+          <div key={index} className="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
             <div className="flex items-center">
-              <div className={`w-12 h-12 bg-${stat.color}-100 rounded-xl flex items-center justify-center`}>
-                <stat.icon className={`w-6 h-6 text-${stat.color}-600`} />
+              <div className={`w-10 h-10 bg-${stat.color}-100 rounded-lg flex items-center justify-center`}>
+                <stat.icon className={`w-5 h-5 text-${stat.color}-600`} />
               </div>
               <div className="ml-4">
-                <div className="text-2xl font-bold text-gray-900 font-sans">{stat.value}</div>
+                <div className="text-xl font-bold text-gray-900 font-sans">{stat.value}</div>
                 <div className="text-sm text-gray-600 font-sans">{stat.label}</div>
               </div>
             </div>
@@ -298,24 +368,24 @@ export default function DemoSection() {
       </div>
 
       {/* Live Activity */}
-      <div className="bg-white rounded-2xl shadow-lg border border-gray-100">
-        <div className="p-6 border-b border-gray-100">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+        <div className="p-4 border-b border-gray-200">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-gray-900 font-sans">Live Client Activity</h2>
+            <h2 className="text-lg font-semibold text-gray-900 font-sans">Recent Activity</h2>
             <div className="flex items-center text-sm text-emerald-600">
               <div className="w-2 h-2 bg-emerald-500 rounded-full mr-2 animate-pulse"></div>
               <span className="font-sans">Live</span>
             </div>
           </div>
         </div>
-        <div className="p-6">
-          <div className="space-y-4">
+        <div className="p-4">
+          <div className="space-y-3">
             {[
               { name: 'Sarah M.', company: 'HealthTech • Website', status: '✓ Uploaded assets • 3m ago', progress: 87, color: 'emerald' },
               { name: 'Marcus C.', company: 'StartupXYZ • E-commerce', status: 'Working on requirements • 12m ago', progress: 62, color: 'blue' },
               { name: 'Emily R.', company: 'GrowthCo • Branding', status: 'Reviewing concepts • 45m ago', progress: 78, color: 'purple' }
             ].map((client, index) => (
-              <div key={index} className={`flex items-center justify-between p-4 rounded-xl bg-${client.color}-50 border border-${client.color}-200`}>
+              <div key={index} className={`flex items-center justify-between p-3 rounded-lg bg-${client.color}-50 border border-${client.color}-200`}>
                 <div>
                   <div className="font-semibold text-gray-900 font-sans">{client.name}</div>
                   <div className="text-sm text-gray-600 font-sans">{client.company}</div>
@@ -323,9 +393,9 @@ export default function DemoSection() {
                 </div>
                 <div className="text-right">
                   <div className="flex items-center mb-2">
-                    <div className={`w-20 bg-${client.color}-200 rounded-full h-2 mr-3`}>
+                    <div className={`w-16 bg-${client.color}-200 rounded-full h-1.5 mr-2`}>
                       <div 
-                        className={`bg-${client.color}-500 h-2 rounded-full transition-all duration-1000`} 
+                        className={`bg-${client.color}-500 h-1.5 rounded-full transition-all duration-1000`} 
                         style={{ width: `${client.progress}%` }}
                       ></div>
                     </div>
@@ -341,149 +411,167 @@ export default function DemoSection() {
   );
 
   const renderTemplateSelection = () => (
-    <div className="max-w-6xl mx-auto">
-      <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-        <div className="bg-gradient-to-r from-emerald-500 to-blue-600 p-8 text-white">
+    <div className="p-8">
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2 font-sans">Choose Your Template</h1>
+        <p className="text-gray-600 font-sans">Start with a proven template or create from scratch</p>
+      </div>
+
+      {/* Search Bar */}
+      <div className="mb-6">
+        <div className="flex-1 relative max-w-md">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Search className="h-5 w-5 text-gray-400" />
+          </div>
+          <input
+            type="text"
+            value={searchTerm}
+            className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 font-sans"
+            placeholder="Search templates..."
+            readOnly
+          />
+        </div>
+      </div>
+
+      {/* Templates Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {/* Create from scratch */}
+        <div className="border-2 border-dashed border-gray-300 rounded-xl p-4 hover:border-emerald-400 hover:bg-emerald-50 transition-all cursor-pointer group">
           <div className="text-center">
-            <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Sparkles className="w-8 h-8" />
+            <div className="w-10 h-10 bg-gray-100 group-hover:bg-emerald-100 rounded-lg flex items-center justify-center mx-auto mb-3 transition-colors">
+              <Plus className="w-5 h-5 text-gray-400 group-hover:text-emerald-500" />
             </div>
-            <h2 className="text-3xl font-bold mb-2 font-sans">Choose Your Template</h2>
-            <p className="text-blue-100 text-lg font-sans">Start with a proven template or create from scratch</p>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2 font-sans">Start from Scratch</h3>
+            <p className="text-gray-600 text-sm font-sans">Create a custom checklist</p>
           </div>
         </div>
 
-        <div className="p-6 border-b border-gray-200 bg-gray-50">
-          <div className="flex gap-4">
-            <div className="flex-1 relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                value={searchTerm}
-                className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 font-sans"
-                placeholder="Search templates..."
-                readOnly
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="p-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {templates.map((template) => (
-              <div
-                key={template.id}
-                className={`bg-white border-2 rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-lg relative ${
-                  selectedTemplate === template.id 
-                    ? 'border-emerald-500 ring-4 ring-emerald-500/20 scale-105' 
-                    : 'border-gray-200 hover:border-emerald-300'
-                }`}
-              >
-                <div className="flex items-center mb-4">
-                  <div 
-                    className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl mr-4"
-                    style={{ backgroundColor: `${template.color}20` }}
-                  >
-                    {template.icon}
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 font-sans">{template.name}</h3>
-                    <span 
-                      className="inline-block px-2 py-1 rounded-full text-xs font-medium text-white"
-                      style={{ backgroundColor: template.color }}
-                    >
-                      {template.category}
-                    </span>
-                  </div>
+        {/* Templates */}
+        {templates.slice(0, 5).map((template) => (
+          <div
+            key={template.id}
+            className={`bg-white border-2 rounded-xl p-4 cursor-pointer transition-all duration-300 relative ${
+              selectedTemplate === template.id 
+                ? 'border-emerald-500 ring-2 ring-emerald-500/20 scale-105' 
+                : 'border-gray-200 hover:border-emerald-300'
+            }`}
+          >
+            {template.popular && (
+              <div className="absolute -top-2 -right-2">
+                <div className="bg-gradient-to-r from-orange-400 to-red-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg">
+                  POPULAR
                 </div>
-
-                <p className="text-gray-600 text-sm mb-4 font-sans">{template.description}</p>
-
-                <button 
-                  className={`w-full py-3 rounded-lg font-semibold transition-all duration-200 font-sans ${
-                    selectedTemplate === template.id
-                      ? 'bg-emerald-500 text-white shadow-lg'
-                      : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                  }`}
-                >
-                  {selectedTemplate === template.id ? 'Selected ✓' : 'Use Template'}
-                </button>
               </div>
-            ))}
+            )}
+            
+            <div className="flex items-center mb-3">
+              <div 
+                className="w-10 h-10 rounded-lg flex items-center justify-center text-lg mr-3"
+                style={{ backgroundColor: `${template.color}20` }}
+              >
+                {template.icon}
+              </div>
+              <div>
+                <h3 className="text-base font-semibold text-gray-900 font-sans">{template.name}</h3>
+                <span 
+                  className="inline-block px-2 py-1 rounded-full text-xs font-medium text-white"
+                  style={{ backgroundColor: template.color }}
+                >
+                  {template.category}
+                </span>
+              </div>
+            </div>
+
+            <p className="text-gray-600 text-sm mb-4 font-sans">{template.description}</p>
+
+            <button 
+              className={`w-full py-2 rounded-lg font-medium transition-all duration-200 font-sans text-sm ${
+                selectedTemplate === template.id
+                  ? 'bg-emerald-500 text-white shadow-lg'
+                  : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+              }`}
+            >
+              {selectedTemplate === template.id ? 'Selected ✓' : 'Use Template'}
+            </button>
           </div>
-        </div>
+        ))}
       </div>
     </div>
   );
 
   const renderChecklistBuilder = () => (
-    <div className="max-w-7xl mx-auto">
-      <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-        <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6 text-white">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-bold font-sans">{checklistTitle || 'Building Your Checklist...'}</h2>
-              <p className="text-blue-100 font-sans">{checklistDescription || 'Setting up your onboarding flow'}</p>
+    <div className="p-8">
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2 font-sans">
+          {checklistTitle || 'Building Your Checklist...'}
+        </h1>
+        <p className="text-gray-600 font-sans">
+          {checklistDescription || 'Setting up your onboarding flow'}
+        </p>
+      </div>
+
+      <div className="grid lg:grid-cols-2 gap-6">
+        <div className="space-y-4">
+          {buildingStep > 0 && (
+            <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
+              <h4 className="font-semibold text-emerald-900 mb-3 font-sans">
+                Adding Step {buildingStep}: {demoSteps[buildingStep - 1]?.title}
+              </h4>
+              <div className="space-y-2">
+                <div className="flex items-center">
+                  <div className="w-2 h-2 bg-emerald-500 rounded-full mr-3 animate-pulse"></div>
+                  <span className="text-sm text-emerald-800 font-sans">Configuring...</span>
+                </div>
+                <div className="w-full bg-emerald-200 rounded-full h-2">
+                  <div 
+                    className="bg-emerald-500 h-2 rounded-full transition-all duration-500"
+                    style={{ width: `${(buildingStep / demoSteps.length) * 100}%` }}
+                  ></div>
+                </div>
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
-        <div className="p-8">
-          <div className="grid lg:grid-cols-2 gap-8">
-            <div className="space-y-6">
-              {buildingStep > 0 && (
-                <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-6">
-                  <h4 className="font-semibold text-emerald-900 mb-4 font-sans">
-                    Adding Step {buildingStep}: {demoSteps[buildingStep - 1]?.title}
-                  </h4>
-                  <div className="space-y-3">
-                    <div className="flex items-center">
-                      <div className="w-2 h-2 bg-emerald-500 rounded-full mr-3 animate-pulse"></div>
-                      <span className="text-sm text-emerald-800 font-sans">Configuring...</span>
-                    </div>
-                    <div className="w-full bg-emerald-200 rounded-full h-2">
-                      <div 
-                        className="bg-emerald-500 h-2 rounded-full transition-all duration-500"
-                        style={{ width: `${(buildingStep / demoSteps.length) * 100}%` }}
-                      ></div>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-gray-900 font-sans">Steps ({steps.length})</h3>
+            <button className="bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-2 rounded-lg font-medium flex items-center font-sans text-sm">
+              <Plus className="w-4 h-4 mr-1" />
+              Add Step
+            </button>
+          </div>
+          
+          <div className="space-y-2 max-h-80 overflow-y-auto">
+            {steps.map((step) => (
+              <div key={step.id} className="bg-white border border-gray-200 rounded-lg p-3 shadow-sm">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-start">
+                    <span className="text-base mr-2 mt-1">
+                      {step.type === 'textarea' ? '📝' : step.type === 'file_upload' ? '📎' : '☑️'}
+                    </span>
+                    <div className="flex-1">
+                      <div className="flex items-center mb-1">
+                        <h4 className="font-semibold text-gray-900 font-sans text-sm">{step.title}</h4>
+                        {step.required && (
+                          <span className="ml-2 px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium font-sans">
+                            Required
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-gray-600 font-sans">{step.description}</p>
                     </div>
                   </div>
                 </div>
-              )}
-            </div>
-
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-gray-900 font-sans">Steps ({steps.length})</h3>
               </div>
-              
-              <div className="space-y-3 max-h-96 overflow-y-auto">
-                {steps.map((step) => (
-                  <div key={step.id} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-start">
-                        <span className="text-lg mr-3 mt-1">
-                          {step.type === 'textarea' ? '📝' : step.type === 'file_upload' ? '📎' : '☑️'}
-                        </span>
-                        <div className="flex-1">
-                          <div className="flex items-center mb-2">
-                            <h4 className="font-semibold text-gray-900 font-sans">{step.title}</h4>
-                            {step.required && (
-                              <span className="ml-2 px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium font-sans">
-                                Required
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-sm text-gray-600 font-sans">{step.description}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+            ))}
+            
+            {steps.length === 0 && (
+              <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
+                <Plus className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                <p className="text-gray-500 font-sans">Building checklist...</p>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
@@ -491,11 +579,14 @@ export default function DemoSection() {
   );
 
   const renderCustomerExperience = () => (
-    <div className="max-w-4xl mx-auto">
+    <div className="p-8">
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2 font-sans">Customer Experience</h1>
+      </div>
       {showCustomerForm && (
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 mb-8">
+        <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
           <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2 font-sans">Welcome to Your Website Project!</h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-2 font-sans">Welcome to Your Website Project!</h2>
             <p className="text-gray-600 font-sans">Let's get started with some basic information</p>
           </div>
           
@@ -535,13 +626,13 @@ export default function DemoSection() {
       )}
 
       {!showCustomerForm && (
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-          <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-8 text-white">
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6 text-white">
             <div className="text-center">
-              <h1 className="text-3xl font-bold mb-2 font-sans">Website Design Project Onboarding</h1>
+              <h1 className="text-2xl font-bold mb-2 font-sans">Website Design Project Onboarding</h1>
               <p className="text-blue-100 font-sans">Complete these steps to get started</p>
               
-              <div className="mt-6">
+              <div className="mt-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium text-blue-100 font-sans">Progress</span>
                   <span className="text-sm font-medium text-blue-100 font-sans">{completedSteps.length}/{demoSteps.length} completed</span>
@@ -556,29 +647,29 @@ export default function DemoSection() {
             </div>
           </div>
 
-          <div className="p-8">
+          <div className="p-6">
             {currentCustomerStep < demoSteps.length && (
-              <div className="bg-blue-50 rounded-xl p-8 mb-8 border-2 border-blue-200">
+              <div className="bg-blue-50 rounded-xl p-6 mb-6 border-2 border-blue-200">
                 <div className="flex items-center mb-6">
-                  <span className="text-3xl mr-4">
+                  <span className="text-2xl mr-3">
                     {demoSteps[currentCustomerStep].type === 'textarea' ? '📝' : 
                      demoSteps[currentCustomerStep].type === 'file_upload' ? '📎' : '☑️'}
                   </span>
                   <div>
-                    <h3 className="text-2xl font-bold text-gray-900 font-sans">
+                    <h3 className="text-xl font-bold text-gray-900 font-sans">
                       Step {currentCustomerStep + 1}: {demoSteps[currentCustomerStep].title}
                     </h3>
                   </div>
                 </div>
                 
-                <p className="text-gray-700 mb-6 font-sans text-lg">{demoSteps[currentCustomerStep].description}</p>
+                <p className="text-gray-700 mb-4 font-sans">{demoSteps[currentCustomerStep].description}</p>
                 
                 {demoSteps[currentCustomerStep].type === 'textarea' && (
                   <div className="bg-white rounded-lg border-2 border-gray-200 p-4">
                     <textarea
                       value={customerStepContent[`step-${currentCustomerStep}`] || ''}
                       className="w-full px-4 py-3 border-0 focus:outline-none text-gray-800 resize-none font-sans"
-                      rows={6}
+                      rows={4}
                       readOnly
                     />
                     {isTyping && (
@@ -591,9 +682,9 @@ export default function DemoSection() {
                 )}
                 
                 {demoSteps[currentCustomerStep].type === 'file_upload' && (
-                  <div className="bg-white border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                    <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <div className="text-gray-600 mb-4 font-sans text-lg">
+                  <div className="bg-white border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                    <Upload className="h-8 w-8 text-gray-400 mx-auto mb-3" />
+                    <div className="text-gray-600 mb-3 font-sans">
                       {customerStepContent[`step-${currentCustomerStep}`] ? (
                         <div className="space-y-2">
                           <span className="text-emerald-600 font-medium">Files uploaded!</span>
@@ -609,7 +700,7 @@ export default function DemoSection() {
                 )}
                 
                 {completedSteps.includes(`step-${currentCustomerStep}`) && (
-                  <div className="mt-6 flex items-center text-emerald-600 font-medium font-sans">
+                  <div className="mt-4 flex items-center text-emerald-600 font-medium font-sans">
                     <CheckCircle className="w-5 h-5 mr-2" />
                     Step completed successfully
                   </div>
@@ -623,25 +714,35 @@ export default function DemoSection() {
   );
 
   const renderCompletion = () => (
-    <div className="max-w-3xl mx-auto text-center">
-      <div className="bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-100">
-        <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 p-8 text-white">
-          <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-6">
-            <CheckCircle className="w-10 h-10" />
-          </div>
-          <h1 className="text-4xl font-bold font-sans mb-4">Outstanding Work! 🎉</h1>
-          <p className="text-emerald-100 text-lg font-sans">Your website project onboarding is complete!</p>
+    <div className="p-8">
+      <div className="max-w-2xl mx-auto text-center">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2 font-sans">Completion Analytics</h1>
+          <p className="text-gray-600 font-sans">Customer successfully completed onboarding</p>
         </div>
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 p-6 text-white">
+            <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CheckCircle className="w-8 h-8" />
+            </div>
+            <h2 className="text-2xl font-bold font-sans mb-2">Sarah Completed! 🎉</h2>
+            <p className="text-emerald-100 font-sans">Website project onboarding finished</p>
+          </div>
 
-        <div className="p-8">
-          <div className="grid grid-cols-2 gap-8 mb-8 max-w-md mx-auto">
+          <div className="p-6">
+            <div className="grid grid-cols-3 gap-4 mb-6">
             <div className="text-center">
-              <div className="text-3xl font-bold text-emerald-600 font-sans">{demoSteps.length}/{demoSteps.length}</div>
+                <div className="text-2xl font-bold text-emerald-600 font-sans">{demoSteps.length}/{demoSteps.length}</div>
               <div className="text-sm text-gray-600 font-sans">Steps Completed</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-blue-600 font-sans">1.8</div>
+                <div className="text-2xl font-bold text-blue-600 font-sans">1.8</div>
               <div className="text-sm text-gray-600 font-sans">Days to Complete</div>
+            </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-purple-600 font-sans">100%</div>
+                <div className="text-sm text-gray-600 font-sans">Success Rate</div>
+              </div>
             </div>
           </div>
         </div>
@@ -661,12 +762,28 @@ export default function DemoSection() {
           </p>
         </div>
         
-        <div className="transition-all duration-500 ease-in-out">
-          {views[currentView] === 'dashboard' && renderDashboard()}
-          {views[currentView] === 'template-selection' && renderTemplateSelection()}
-          {views[currentView] === 'checklist-builder' && renderChecklistBuilder()}
-          {views[currentView] === 'customer-experience' && renderCustomerExperience()}
-          {views[currentView] === 'completion' && renderCompletion()}
+        <div className="max-w-5xl mx-auto">
+          {renderBrowserFrame(
+            <div className="transition-all duration-500 ease-in-out">
+              {views[currentView].id === 'dashboard' && renderDashboard()}
+              {views[currentView].id === 'templates' && renderTemplateSelection()}
+              {views[currentView].id === 'builder' && renderChecklistBuilder()}
+              {views[currentView].id === 'customer' && renderCustomerExperience()}
+              {views[currentView].id === 'analytics' && renderCompletion()}
+            </div>
+          )}
+          
+          {/* Demo Progress Indicator */}
+          <div className="flex justify-center mt-6 space-x-2">
+            {views.map((_, index) => (
+              <div
+                key={index}
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                  currentView === index ? 'bg-emerald-500' : 'bg-gray-300'
+                }`}
+              ></div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
