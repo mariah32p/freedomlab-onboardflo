@@ -27,8 +27,8 @@ const faqs = [
     answer: 'Your trial includes full access to all features. We\'ll collect your payment information upfront, but you won\'t be charged until after your 7-day trial ends. Cancel anytime during the trial with no charges.'
   },
   {
-    question: 'Can multiple team members collaborate on checklists?',
-    answer: 'Yes! You can invite team members to help create and manage checklists. Everyone can see real-time customer progress and collaborate on improving your onboarding flows.'
+    question: 'How secure is customer data and file uploads?',
+    answer: 'We take data security seriously. All data is encrypted in transit and at rest. Customer file uploads are handled securely, and we follow industry best practices for data protection. You maintain full control over your customer data.'
   },
   {
     question: 'What kind of analytics and reporting do you provide?',
