@@ -34,13 +34,7 @@ export default function SignInPage() {
       <div className="max-w-md w-full space-y-8">
         {/* Header */}
         <div className="text-center">
-          <Link to="/" className="inline-flex items-center mb-8">
-            <div className="w-12 h-12 bg-emerald-500 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
-              <Workflow className="w-6 h-6 text-white" />
-            </div>
-            <span className="text-3xl font-bold text-gray-900 font-sans whitespace-nowrap">OnboardFlo</span>
-          </Link>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2 font-sans mt-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-2 font-sans">
             Welcome back
           </h2>
           <p className="text-gray-600 font-sans">
@@ -133,8 +127,8 @@ export default function SignInPage() {
           <div className="text-center">
             <p className="text-sm text-gray-600 font-sans">
               Don't have an account?{' '}
-              <Link to="/get-started" className="font-medium text-emerald-600 hover:text-emerald-500 font-sans">
-                Get started
+              <Link to="/signup" className="font-medium text-emerald-600 hover:text-emerald-500 font-sans">
+                Sign up
               </Link>
             </p>
           </div>
