@@ -111,7 +111,6 @@ export default function PricingPage() {
           </p>
           <div className="flex items-center justify-center space-x-8 text-sm text-gray-500 font-sans">
             <span>✓ Cancel anytime</span>
-            <span>✓ 30-day money back guarantee</span>
           </div>
         </div>
       </div>
