@@ -1084,7 +1084,7 @@ export default function DemoSection() {
               </div>
               <div className="bg-white rounded-lg px-4 py-2 flex items-center">
                 <div className="w-4 h-4 bg-gray-300 rounded mr-3"></div>
-                <div className="text-sm text-gray-600 font-sans">app.onboardflo.com</div>
+                <div className="text-sm text-gray-600 font-sans">onboardflo.com</div>
               </div>
             </div>
             
