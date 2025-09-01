@@ -5,13 +5,13 @@ import { stripeProducts } from '../stripe-config';
 import { Link } from 'react-router-dom';
 
 const planIcons = {
-  'Basic': Zap,
+  'Standard': Zap,
   'Pro': Building,
 };
 
 // Updated feature lists with realistic limits
 const planFeatures = {
-  'Basic': [
+  'Standard': [
     'Up to 3 active checklists',
     'Up to 50 customer submissions per month',
     'Basic branding (logo + colors)',
