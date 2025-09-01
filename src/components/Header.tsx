@@ -35,25 +35,11 @@ export default function Header() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center">
-            {/* Mobile hamburger menu */}
-            {!showUserMenu && (
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors mr-2"
-               style={{ width: '120px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-              >
-                {isMenuOpen ? (
-                  <X className="w-6 h-6 text-gray-600" />
-                ) : (
-                  <Menu className="w-6 h-6 text-gray-600" />
-                )}
-              </button>
-            )}
             <button onClick={handleLogoClick} className="flex items-center">
               <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center mr-3">
                 <Workflow className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold text-gray-900 font-sans" style={{ maxWidth: '120px' }}>OnboardFlo</span>
+              <span className="text-xl font-bold text-gray-900 font-sans">OnboardFlo</span>
             </button>
           </div>
 
@@ -99,7 +85,7 @@ export default function Header() {
                 </>
               ) : (
                 <>
-                  <Link to="/signup" className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-md font-semibold transition-colors font-sans" style={{ width: '160px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px' }}>
+                  <Link to="/signup" className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors font-sans">
                     Start Free Trial
                   </Link>
                 </>
@@ -109,8 +95,18 @@ export default function Header() {
 
           {/* Mobile CTA for non-user menu */}
           {!showUserMenu && (
-            <div className="md:hidden">
-              <Link to="/signup" className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-3 rounded-md font-semibold transition-colors font-sans text-sm">
+            <div className="md:hidden flex items-center space-x-2">
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              >
+                {isMenuOpen ? (
+                  <X className="w-6 h-6 text-gray-600" />
+                ) : (
+                  <Menu className="w-6 h-6 text-gray-600" />
+                )}
+              </button>
+              <Link to="/signup" className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors font-sans text-sm">
                 Try Free
               </Link>
             </div>
@@ -137,7 +133,7 @@ export default function Header() {
                 Login
               </Link>
               <div className="pt-4 border-t border-gray-100 flex flex-col space-y-2">
-                <Link to="/signup" className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-md font-semibold transition-colors text-center font-sans" style={{ width: '90%', height: '52px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto' }}>
+                <Link to="/signup" className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors text-center font-sans">
                   Start Free Trial
                 </Link>
               </div>
