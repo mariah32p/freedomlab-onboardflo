@@ -581,8 +581,8 @@ export default function DemoSection() {
               </button>
             </div>
             
-            <div className="space-y-3 max-h-96 overflow-y-auto">
-              {steps.map((step) => (
+            {/* Mobile Demo - Hidden on desktop */}
+            <div className="md:hidden relative max-w-xs mx-auto">
                 <div key={step.id} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200">
                   <div className="flex items-start justify-between">
                     <div className="flex items-start">
@@ -1298,10 +1298,10 @@ export default function DemoSection() {
           </p>
         </div>
         
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-            {/* Desktop Demo */}
-            <div className="lg:col-span-2">
+          {/* Right side - Demo Mockup */}
+          <div className="lg:order-2">
+            {/* Desktop Demo - Hidden on mobile */}
+            <div className="hidden md:block relative">
               {renderBrowserFrame(
                 <div className="transition-all duration-500 ease-in-out">
                   {views[currentView].id === 'dashboard' && renderDashboard()}
