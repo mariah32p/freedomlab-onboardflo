@@ -14,7 +14,6 @@ const planFeatures = {
   'Basic': [
     'Up to 3 active checklists',
     'Up to 50 customer submissions per month',
-    'Real-time progress tracking',
     'Basic branding (logo + colors)',
     'Shareable customer links',
     'Email notifications'
@@ -22,11 +21,9 @@ const planFeatures = {
   'Pro': [
     'Unlimited checklists',
     'Unlimited customer submissions',
-    'Real-time progress tracking',
     'Advanced branding (logo, colors, fonts)',
     'Password-protected checklists',
-    'Custom completion pages',
-    'Priority support'
+    'Custom completion pages'
   ]
 };
 
