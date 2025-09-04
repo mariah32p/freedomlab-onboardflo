@@ -29,6 +29,7 @@ const getStepTypeIcon = (stepType: StepType) => {
     case 'file_upload': return '📎';
     case 'url': return '🔗';
     case 'email': return '📧';
+    case 'secure_text': return '🔒';
     default: return '☑️';
   }
 };
@@ -41,6 +42,7 @@ const getStepTypeLabel = (stepType: StepType) => {
     case 'file_upload': return 'File Upload';
     case 'url': return 'Website URL';
     case 'email': return 'Email';
+    case 'secure_text': return 'Secure Text';
     default: return 'Checkbox';
   }
 };
@@ -288,6 +290,32 @@ export default function ChecklistBuilder({ checklist, template, onSave, onClose,
             className="w-full px-3 py-2 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-sans"
             placeholder="Enter placeholder text..."
           />
+        </div>
+      )}
+      
+      {step.step_type === 'secure_text' && (
+        <div>
+          <label className="block text-sm font-medium text-blue-800 mb-1 font-sans">
+            Expiry Time (hours)
+          </label>
+          <select
+            value={step.options || '24'}
+            onChange={(e) => {
+              const updatedSteps = [...steps];
+              updatedSteps[index] = { ...step, options: e.target.value };
+              setSteps(updatedSteps);
+            }}
+            className="w-full px-3 py-2 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-sans"
+          >
+            <option value="1">1 hour</option>
+            <option value="6">6 hours</option>
+            <option value="24">24 hours (default)</option>
+            <option value="72">72 hours</option>
+            <option value="168">1 week</option>
+          </select>
+          <p className="text-xs text-blue-700 mt-1 font-sans">
+            Sensitive data will be automatically deleted after this time
+          </p>
         </div>
       )}
       

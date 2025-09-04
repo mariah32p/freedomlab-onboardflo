@@ -12,7 +12,7 @@ export interface Checklist {
   updated_at: string;
 }
 
-export type StepType = 'checkbox' | 'text' | 'textarea' | 'file_upload' | 'url' | 'email';
+export type StepType = 'checkbox' | 'text' | 'textarea' | 'file_upload' | 'url' | 'email' | 'secure_text';
 
 export interface ChecklistStep {
   id: string;

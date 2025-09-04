@@ -383,8 +383,8 @@ export const checklistTemplates: ChecklistTemplate[] = [
       {
         title: 'Primary Platform API Keys',
         description: 'Provide API keys for your main platform (Stripe, Salesforce, HubSpot, etc.)',
-        step_type: 'textarea' as const,
-        options: 'API Key, Secret Key, Webhook URLs, Account IDs...',
+        step_type: 'secure_text' as const,
+        options: '48',
         isRequired: true,
       },
       {
@@ -397,8 +397,8 @@ export const checklistTemplates: ChecklistTemplate[] = [
       {
         title: 'Webhook Configuration',
         description: 'Webhook endpoints, signing secrets, and event configurations',
-        step_type: 'textarea' as const,
-        options: 'Webhook URLs, signing secrets, event types to listen for...',
+        step_type: 'secure_text' as const,
+        options: '72',
         isRequired: false,
       },
       {
@@ -411,8 +411,8 @@ export const checklistTemplates: ChecklistTemplate[] = [
       {
         title: 'Testing Credentials',
         description: 'Sandbox/testing API keys for development and testing',
-        step_type: 'textarea' as const,
-        options: 'Test API keys, sandbox account details, staging environment URLs...',
+        step_type: 'secure_text' as const,
+        options: '168',
         isRequired: false,
       },
       {

@@ -21,6 +21,7 @@ export function useSessionProgress({ checklistId, sessionToken }: UseSessionProg
   const realtimeChannel = useRef<any>(null);
   const saveTimeouts = useRef<Map<string, NodeJS.Timeout>>(new Map());
   const lastSaveAttempt = useRef<Map<string, number>>(new Map());
+  const { saveSecureText, getSecureText } = useSecureText(session?.id || '');
 
   useEffect(() => {
     if (checklistId && sessionToken) {
