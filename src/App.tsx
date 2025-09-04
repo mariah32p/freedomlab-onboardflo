@@ -24,6 +24,7 @@ import SettingsPage from './pages/SettingsPage';
 import BrandingPage from './pages/BrandingPage';
 import PublicChecklistPage from './pages/PublicChecklistPage';
 import DemoPage from './pages/DemoPage';
+import CreateChecklistPage from './pages/CreateChecklistPage';
 
 // Simple landing page component that combines all sections
 function LandingPage() {
@@ -67,6 +68,7 @@ function App() {
                     <Route path="/reset-password" element={<ResetPasswordPage />} />
                     <Route path="/dashboard" element={<DashboardPage />} />
                     <Route path="/checklists" element={<ChecklistsPage />} />
+                    <Route path="/checklists/create" element={<CreateChecklistPage />} />
                     <Route path="/submissions" element={<SubmissionsPage />} />
                     <Route path="/settings" element={<SettingsPage />} />
                     <Route path="/branding" element={<BrandingPage />} />

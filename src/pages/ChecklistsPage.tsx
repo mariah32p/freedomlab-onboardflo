@@ -2,11 +2,10 @@ import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useSubscription } from '../hooks/useSubscription';
 import { useNavigate } from 'react-router-dom';
-import ChecklistWizard from '../components/checklist/ChecklistWizard';
 import { useChecklists } from '../hooks/useChecklists';
 import PaymentBanner from '../components/PaymentBanner';
 import TrialBanner from '../components/TrialBanner';
-import { Checklist, CreateChecklistData } from '../types/checklist';
+import { Checklist } from '../types/checklist';
 import { 
   Plus, 
   Edit, 
@@ -24,19 +23,11 @@ import {
 export default function ChecklistsPage() {
   const { user } = useAuth();
   const { subscription, getAccessStatus } = useSubscription();
-  const { checklists, loading, error, createChecklist, updateChecklist, deleteChecklist } = useChecklists();
-  const [showWizard, setShowWizard] = useState(false);
+  const { checklists, loading, error, deleteChecklist } = useChecklists();
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const accessStatus = getAccessStatus();
   const navigate = useNavigate();
-
-  const handleCreateChecklist = async (data: CreateChecklistData & { steps: any[] }) => {
-    const success = await createChecklist(data);
-    if (success) {
-      setShowWizard(false);
-    }
-  };
 
   const handleDeleteChecklist = async (id: string) => {
     if (!confirm('Are you sure you want to delete this checklist? This will also delete all customer sessions and cannot be undone.')) {
@@ -71,10 +62,6 @@ export default function ChecklistsPage() {
     navigate('/submissions');
   };
 
-  if (showWizard) {
-    return <ChecklistWizard onSave={handleCreateChecklist} onClose={() => setShowWizard(false)} />;
-  }
-
   if (loading) {
     return (
       <div className="pt-20 min-h-screen bg-gray-50 flex items-center justify-center">
@@ -104,7 +91,7 @@ export default function ChecklistsPage() {
             </p>
           </div>
           <button
-            onClick={() => setShowWizard(true)}
+            onClick={() => navigate('/checklists/create')}
             className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center font-sans"
           >
             <Plus className="w-5 h-5 mr-2" />
@@ -129,7 +116,7 @@ export default function ChecklistsPage() {
               Build a step-by-step onboarding experience that guides your customers to success
             </p>
             <button
-              onClick={() => setShowWizard(true)}
+              onClick={() => navigate('/checklists/create')}
               className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors font-sans"
             >
               Create Checklist
