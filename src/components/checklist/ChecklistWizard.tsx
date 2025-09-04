@@ -380,12 +380,6 @@ export default function ChecklistWizard({ onSave, onClose }: ChecklistWizardProp
 
               <div className="flex items-center justify-between">
                 <div className="text-sm text-gray-500 font-sans">{template.steps.length} steps</div>
-                <div className="flex items-center">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-3 h-3 text-yellow-400 fill-current" />
-                  ))}
-                  <span className="text-xs text-gray-500 ml-1 font-sans">(4.9)</span>
-                </div>
               </div>
             </div>
           ))}
