@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useCallback, useRef } from 'react';
 import { supabase } from '../lib/supabase';
 import { useSessionProgress } from '../hooks/useSessionProgress';
+import FileUpload from '../components/FileUpload';
 import ConcurrentEditNotification from '../components/ConcurrentEditNotification';
 import { generateSessionToken, isValidSessionToken } from '../utils/sessionToken';
 import { 
@@ -10,7 +11,6 @@ import {
   Lock, 
   Eye, 
   EyeOff, 
-  Upload, 
   Link as LinkIcon, 
   Mail,
   ArrowLeft,
@@ -422,34 +422,13 @@ export default function PublicChecklistPage() {
               {step.description && (
                 <p className="text-gray-600 mb-4 font-sans">{step.description}</p>
               )}
-              <div className="relative">
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors cursor-pointer">
-                  <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                  <div className="text-gray-600 mb-2 font-sans">
-                    {stepProgress?.notes ? (
-                      <span className="text-green-600 font-medium">{stepProgress.notes}</span>
-                    ) : (
-                      'Drop files here or click to upload'
-                    )}
-                  </div>
-                  <input
-                    type="file"
-                    accept={step.options || '*'}
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        handleStepChange(step.id, file.name);
-                      }
-                    }}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                  />
-                  {step.options && (
-                    <div className="text-xs text-gray-500 font-sans">
-                      Accepted formats: {step.options}
-                    </div>
-                  )}
-                </div>
-              </div>
+              <FileUpload
+                value={currentValue}
+                onChange={(value) => handleStepChange(step.id, value)}
+                acceptedTypes={step.options}
+                folder={session?.id}
+                placeholder="Drop files here or click to upload"
+              />
             </div>
           </div>
         );

@@ -149,7 +149,11 @@ export function useSessionProgress({ checklistId, sessionToken }: UseSessionProg
     const lastSave = lastSaveAttempt.current.get(stepId) || 0;
     const timeSinceLastSave = now - lastSave;
     
-    if (timeSinceLastSave < 1000) { // Minimum 1 second between saves
+    // For file uploads (JSON data), save immediately
+    // For text inputs, debounce to prevent spam
+    const isFileData = notes.startsWith('[') && notes.endsWith(']');
+    
+    if (!isFileData && timeSinceLastSave < 1000) { // Minimum 1 second between saves for text
       return new Promise<boolean>((resolve) => {
         const timeout = setTimeout(async () => {
           saveTimeouts.current.delete(stepId);

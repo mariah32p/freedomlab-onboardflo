@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Save, Plus, Trash2, Eye, Lock, ArrowUp, ArrowDown, Edit, Check } from 'lucide-react';
+import FileUpload from '../FileUpload';
 import { Checklist, CreateChecklistData, StepType } from '../../types/checklist';
 import { ChecklistTemplate } from '../../data/checklistTemplates';
 
