@@ -264,18 +264,8 @@ export default function SubmissionsPage() {
                           <div>
                             <div className="flex items-center space-x-2 mb-1">
                               <h3 className="font-medium text-gray-900 font-sans">
-                                {session.name && session.name !== 'Anonymous' 
-                                  ? session.name
-                                  : session.link_name || session.company || (session.submission_status === 'pending' ? 'Pending Customer' : 'Anonymous Customer')
-                                }
+                                {session.link_name || 'Unnamed Submission'}
                               </h3>
-                              {session.link_name && (
-                                session.name && session.name !== 'Anonymous' && (
-                                  <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium font-sans">
-                                    {session.link_name}
-                                  </span>
-                                )
-                              )}
                             </div>
                             <div className="flex items-center space-x-4 text-sm text-gray-600 mb-1">
                               <div className="flex items-center">

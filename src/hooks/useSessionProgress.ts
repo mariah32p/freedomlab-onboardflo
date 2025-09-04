@@ -97,7 +97,6 @@ export function useSessionProgress({ checklistId, sessionToken }: UseSessionProg
         .from('customer_sessions')
         .update({
           email: customerData.email,
-          name: customerData.name,
           company: customerData.company,
           submission_status: 'started',
           started_at: new Date().toISOString(),
@@ -431,7 +430,6 @@ export function useSessionProgress({ checklistId, sessionToken }: UseSessionProg
           .from('customer_sessions')
           .update({
             email: customerData.email,
-            name: customerData.name,
             company: customerData.company,
             last_activity: new Date().toISOString(),
           })
