@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useSubscription } from '../hooks/useSubscription';
 import { useNavigate } from 'react-router-dom';
-import ChecklistList from '../components/checklist/ChecklistList';
 import ChecklistWizard from '../components/checklist/ChecklistWizard';
 import { useChecklists } from '../hooks/useChecklists';
 import PaymentBanner from '../components/PaymentBanner';
+import TrialBanner from '../components/TrialBanner';
 import { Checklist, CreateChecklistData } from '../types/checklist';
 import { 
   Plus, 
