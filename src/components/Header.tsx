@@ -16,8 +16,15 @@ export default function Header() {
   };
 
   const handleSignOut = async () => {
-    await signOut();
-    navigate('/');
+    try {
+      await signOut();
+      // Always navigate to home after sign out attempt
+      navigate('/');
+    } catch (err) {
+      // Even if sign out fails, navigate away from protected pages
+      console.error('Sign out error:', err);
+      navigate('/');
+    }
   };
 
   const handleLogoClick = () => {
