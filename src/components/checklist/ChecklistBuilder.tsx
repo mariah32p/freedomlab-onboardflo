@@ -1,793 +1,746 @@
-import React, { useState, useEffect } from 'react';
-import { X, Save, Plus, Trash2, Eye, Lock, ArrowUp, ArrowDown, Edit, Check } from 'lucide-react';
-import FileUpload from '../FileUpload';
-import { Checklist, CreateChecklistData, StepType } from '../../types/checklist';
-import { ChecklistTemplate } from '../../data/checklistTemplates';
-
-interface ChecklistBuilderProps {
-  checklist: Checklist | null;
-  template?: ChecklistTemplate | null;
-  onSave: (data: CreateChecklistData & { steps: StepData[] }) => Promise<void>;
-  onClose: () => void;
-  isCreating: boolean;
-}
-
-interface StepData {
-  title: string;
+export interface ChecklistTemplate {
+  id: string;
+  name: string;
   description: string;
-  step_type: StepType;
-  options?: string;
-  is_required: boolean;
-  order_index: number;
+  category: string;
+  icon: string;
+  brandColor: string;
+  completionMessage: string;
+  steps: {
+    title: string;
+    description: string;
+    step_type: 'checkbox' | 'text' | 'textarea' | 'file_upload' | 'url' | 'email' | 'secure_text';
+    options?: string;
+    isRequired: boolean;
+  }[];
 }
 
-const getStepTypeIcon = (stepType: StepType) => {
-  switch (stepType) {
-    case 'checkbox': return '☑️';
-    case 'text': return '📝';
-    case 'textarea': return '📄';
-    case 'file_upload': return '📎';
-    case 'url': return '🔗';
-    case 'email': return '📧';
-    case 'secure_text': return '🔒';
-    default: return '☑️';
+export const checklistTemplates: ChecklistTemplate[] = [
+  {
+    id: 'web-development',
+    name: 'Website Development Project Onboarding',
+    description: 'Help us understand your vision and requirements to create the perfect website for your business.',
+    category: 'Development',
+    icon: '💻',
+    brandColor: '#3b82f6',
+    completionMessage: 'Thank you! We have everything we need to start building your amazing website. We\'ll be in touch within 24 hours with next steps.',
+    steps: [
+      {
+        title: 'Project Overview',
+        description: 'Tell us about your business and what you want to achieve with this website. What are your main goals?',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Target Audience',
+        description: 'Who is your ideal customer or website visitor?',
+        step_type: 'text',
+        isRequired: true,
+      },
+      {
+        title: 'Brand Assets',
+        description: 'Upload your logo, brand guidelines, or any existing marketing materials',
+        step_type: 'file_upload',
+        options: '.pdf,.jpg,.png,.ai,.eps,.zip',
+        isRequired: false,
+      },
+      {
+        title: 'Content Requirements',
+        description: 'What pages do you need? Do you have existing content or need help creating it?',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Inspiration Websites',
+        description: 'Share 2-3 websites you like the design or functionality of',
+        step_type: 'url',
+        isRequired: false,
+      },
+      {
+        title: 'Technical Preferences',
+        description: 'Check all that apply: WordPress, Custom CMS, E-commerce, Blog, Contact Forms, Newsletter Signup',
+        step_type: 'checkbox',
+        isRequired: true,
+      },
+      {
+        title: 'Domain & Hosting',
+        description: 'Do you have a domain name? Where would you like to host the site?',
+        step_type: 'text',
+        isRequired: false,
+      },
+      {
+        title: 'Access Credentials',
+        description: 'If you have existing hosting, CMS, or domain registrar accounts, share login details here',
+        step_type: 'secure_text',
+        options: '72',
+        isRequired: false,
+      }
+    ]
+  },
+  {
+    id: 'ecommerce-development',
+    name: 'E-commerce Store Development',
+    description: 'Let\'s build your online store that converts visitors into customers and grows your business.',
+    category: 'E-commerce',
+    icon: '🛒',
+    brandColor: '#f59e0b',
+    completionMessage: 'Perfect! Your e-commerce journey starts now. We\'ll send you a detailed development roadmap within 24 hours.',
+    steps: [
+      {
+        title: 'Store Overview',
+        description: 'What products will you sell? Describe your business and target market.',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Product Categories',
+        description: 'List the main product categories you\'ll offer',
+        step_type: 'text',
+        isRequired: true,
+      },
+      {
+        title: 'Product Information',
+        description: 'Upload product catalogs, images, or inventory lists if available',
+        step_type: 'file_upload',
+        options: '.pdf,.xlsx,.csv,.jpg,.png,.zip',
+        isRequired: false,
+      },
+      {
+        title: 'Payment Methods',
+        description: 'Select preferred payment options: PayPal, Stripe, Square, Apple Pay, Crypto, Bank Transfer',
+        step_type: 'checkbox',
+        isRequired: true,
+      },
+      {
+        title: 'Shipping Requirements',
+        description: 'Describe your shipping zones, rates, and fulfillment process',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'E-commerce Features',
+        description: 'Select needed features: Inventory Management, Customer Accounts, Reviews, Wishlist, Abandoned Cart Recovery',
+        step_type: 'checkbox',
+        isRequired: true,
+      },
+      {
+        title: 'Tax Configuration',
+        description: 'What tax requirements do you have? (state, country, VAT, etc.)',
+        step_type: 'text',
+        isRequired: true,
+      },
+      {
+        title: 'Competitor Analysis',
+        description: 'Share 2-3 competitor websites for reference',
+        step_type: 'url',
+        isRequired: false,
+      }
+    ]
+  },
+  {
+    id: 'custom-software',
+    name: 'Custom Software Development Onboarding',
+    description: 'Let\'s gather the technical requirements and specifications for your custom software project.',
+    category: 'Development',
+    icon: '⚙️',
+    brandColor: '#6366f1',
+    completionMessage: 'Excellent! We have all the details needed to create your custom solution. Our development team will review and send you a detailed project plan within 48 hours.',
+    steps: [
+      {
+        title: 'Project Scope',
+        description: 'Describe the software you need built. What problem does it solve?',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Requirements Documentation',
+        description: 'Upload any wireframes, mockups, technical specifications, or requirement documents',
+        step_type: 'file_upload',
+        options: '.pdf,.doc,.docx,.jpg,.png,.fig,.sketch,.xd,.zip',
+        isRequired: false,
+      },
+      {
+        title: 'Platform Requirements',
+        description: 'Select target platforms: Web Application, Mobile App (iOS), Mobile App (Android), Desktop Application, API/Backend Only',
+        step_type: 'checkbox',
+        isRequired: true,
+      },
+      {
+        title: 'User Types & Features',
+        description: 'Who will use this software? What are the main features for each user type?',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Technical Stack Preferences',
+        description: 'Any preferred programming languages, frameworks, or technologies?',
+        step_type: 'text',
+        isRequired: false,
+      },
+      {
+        title: 'Integration Requirements',
+        description: 'Does this need to connect to existing systems, APIs, or databases?',
+        step_type: 'textarea',
+        isRequired: false,
+      },
+      {
+        title: 'Compliance & Security',
+        description: 'Check requirements: GDPR Compliance, HIPAA Compliance, SOC 2, PCI DSS, Custom Security Requirements',
+        step_type: 'checkbox',
+        isRequired: false,
+      },
+      {
+        title: 'System Access',
+        description: 'If we need access to existing systems or APIs for integration, provide credentials here',
+        step_type: 'secure_text',
+        options: '48',
+        isRequired: false,
+      }
+    ]
+  },
+  {
+    id: 'brand-identity',
+    name: 'Brand Identity Design Project',
+    description: 'Help us create a brand identity that perfectly represents your business and connects with your audience.',
+    category: 'Design',
+    icon: '🎨',
+    brandColor: '#ec4899',
+    completionMessage: 'Amazing! We\'re excited to bring your brand vision to life. Expect initial concepts within 3-5 business days.',
+    steps: [
+      {
+        title: 'Company Story',
+        description: 'Tell us about your company - what you do, your mission, and what makes you unique',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Industry & Competitors',
+        description: 'What industry are you in? Who are your main competitors?',
+        step_type: 'text',
+        isRequired: true,
+      },
+      {
+        title: 'Target Audience',
+        description: 'Describe your ideal customer - demographics, preferences, and what matters to them',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Brand Personality',
+        description: 'How should your brand feel? Professional, Playful, Luxurious, Trustworthy, Innovative, Traditional, Bold, Minimalist',
+        step_type: 'checkbox',
+        isRequired: true,
+      },
+      {
+        title: 'Visual References',
+        description: 'Upload any images, colors, or design styles that inspire you or represent your vision',
+        step_type: 'file_upload',
+        options: '.jpg,.png,.pdf,.ai,.psd,.sketch',
+        isRequired: false,
+      },
+      {
+        title: 'Logo Requirements',
+        description: 'Any specific requirements for the logo? Text to include, symbols to avoid, where it will be used?',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Deliverables Needed',
+        description: 'Select what you need: Logo Design, Color Palette, Typography, Business Cards, Letterhead, Brand Guidelines, Social Media Templates',
+        step_type: 'checkbox',
+        isRequired: true,
+      },
+      {
+        title: 'Timeline',
+        description: 'When do you need the brand identity completed?',
+        step_type: 'text',
+        isRequired: true,
+      }
+    ]
+  },
+  {
+    id: 'seo-content-marketing',
+    name: 'SEO & Content Marketing Setup',
+    description: 'Let\'s optimize your online presence and create content that attracts your ideal customers.',
+    category: 'Marketing',
+    icon: '📈',
+    brandColor: '#10b981',
+    completionMessage: 'Great! We\'re ready to boost your search rankings and online visibility. Your SEO strategy will be ready within 3 business days.',
+    steps: [
+      {
+        title: 'Current Website',
+        description: 'What\'s your current website URL?',
+        step_type: 'url',
+        isRequired: true,
+      },
+      {
+        title: 'Google Analytics Access',
+        description: 'Share Google Analytics login or add our email as an admin',
+        step_type: 'secure_text',
+        options: '168',
+        isRequired: true,
+      },
+      {
+        title: 'Business Goals',
+        description: 'What are your main business objectives? What keywords do customers use to find businesses like yours?',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Geographic Focus',
+        description: 'Are you targeting local, national, or international customers? Specify locations.',
+        step_type: 'text',
+        isRequired: true,
+      },
+      {
+        title: 'Competitor Analysis',
+        description: 'Who are your main competitors? Which ones rank well in search results?',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Content Types',
+        description: 'What content should we create? Blog Posts, Service Pages, Product Descriptions, Case Studies, FAQs, Local Pages',
+        step_type: 'checkbox',
+        isRequired: true,
+      },
+      {
+        title: 'Existing Content',
+        description: 'Upload any existing content, keyword lists, or previous SEO reports',
+        step_type: 'file_upload',
+        options: '.pdf,.doc,.docx,.xlsx,.csv,.txt',
+        isRequired: false,
+      },
+      {
+        title: 'Content Budget',
+        description: 'How many pieces of content per month fit your budget?',
+        step_type: 'text',
+        isRequired: true,
+      }
+    ]
+  },
+  {
+    id: 'social-media-management',
+    name: 'Social Media Management Onboarding',
+    description: 'Let\'s create a social media strategy that engages your audience and grows your brand.',
+    category: 'Social Media',
+    icon: '📱',
+    brandColor: '#8b5cf6',
+    completionMessage: 'Perfect! We\'re ready to elevate your social media presence. Your content calendar and strategy will be ready within 2 business days.',
+    steps: [
+      {
+        title: 'Social Platforms',
+        description: 'Which platforms should we manage? Facebook, Instagram, LinkedIn, Twitter, TikTok, YouTube, Pinterest',
+        step_type: 'checkbox',
+        isRequired: true,
+      },
+      {
+        title: 'Account Access',
+        description: 'Share login credentials for the social accounts we\'ll be managing',
+        step_type: 'secure_text',
+        options: '72',
+        isRequired: true,
+      },
+      {
+        title: 'Brand Voice',
+        description: 'How should your brand sound on social media? Professional, casual, humorous, inspirational?',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Brand Assets',
+        description: 'Upload logos, brand colors, fonts, and any existing social media graphics',
+        step_type: 'file_upload',
+        options: '.jpg,.png,.pdf,.ai,.psd,.svg,.zip',
+        isRequired: true,
+      },
+      {
+        title: 'Content Themes',
+        description: 'What topics should we post about? Industry news, behind-the-scenes, products, tips, customer stories?',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Posting Frequency',
+        description: 'How often should we post on each platform? (e.g., 5x/week on Instagram, 3x/week on LinkedIn)',
+        step_type: 'text',
+        isRequired: true,
+      },
+      {
+        title: 'Content Types',
+        description: 'Select content formats: Photos, Videos, Stories, Reels, Carousels, User-generated content, Live videos',
+        step_type: 'checkbox',
+        isRequired: true,
+      },
+      {
+        title: 'Competitors & Inspiration',
+        description: 'Share social accounts you admire or competitors we should be aware of',
+        step_type: 'textarea',
+        isRequired: false,
+      }
+    ]
+  },
+  {
+    id: 'mobile-app-development',
+    name: 'Mobile App Development Project',
+    description: 'Let\'s bring your mobile app idea to life with a user-friendly design and robust functionality.',
+    category: 'Development',
+    icon: '📱',
+    brandColor: '#06b6d4',
+    completionMessage: 'Fantastic! We have everything needed to start developing your mobile app. Expect a detailed project timeline within 48 hours.',
+    steps: [
+      {
+        title: 'App Concept',
+        description: 'Describe your app idea. What problem does it solve? What\'s the main purpose?',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Platform Priority',
+        description: 'Which platforms are most important? iOS (iPhone/iPad), Android, Cross-platform (React Native/Flutter)',
+        step_type: 'checkbox',
+        isRequired: true,
+      },
+      {
+        title: 'Design References',
+        description: 'Upload wireframes, mockups, or screenshots of apps with designs you like',
+        step_type: 'file_upload',
+        options: '.jpg,.png,.pdf,.fig,.sketch,.xd,.zip',
+        isRequired: false,
+      },
+      {
+        title: 'Core Features',
+        description: 'List the essential features your app must have for launch',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'User Journey',
+        description: 'Describe how users will interact with your app from download to main goal completion',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Technical Requirements',
+        description: 'Select needed features: User Accounts, Push Notifications, In-App Purchases, Social Login, Camera, GPS, Offline Mode',
+        step_type: 'checkbox',
+        isRequired: true,
+      },
+      {
+        title: 'Monetization Strategy',
+        description: 'How will the app make money? Free, paid, freemium, ads, subscriptions?',
+        step_type: 'text',
+        isRequired: true,
+      },
+      {
+        title: 'Integration Needs',
+        description: 'Does the app need to connect to existing systems, APIs, or third-party services?',
+        step_type: 'textarea',
+        isRequired: false,
+      }
+    ]
+  },
+  {
+    id: 'ui-ux-design',
+    name: 'UI/UX Design Project Onboarding',
+    description: 'Let\'s create an exceptional user experience that delights your customers and achieves your business goals.',
+    category: 'Design',
+    icon: '🎯',
+    brandColor: '#ef4444',
+    completionMessage: 'Wonderful! We\'re excited to design an amazing user experience for your project. Initial wireframes will be ready within 5 business days.',
+    steps: [
+      {
+        title: 'Project Overview',
+        description: 'What are we designing? Website, app, software interface? What are the main business goals?',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Current Design',
+        description: 'Upload screenshots of existing designs or competitor references',
+        step_type: 'file_upload',
+        options: '.jpg,.png,.pdf,.fig,.sketch,.xd',
+        isRequired: false,
+      },
+      {
+        title: 'User Research',
+        description: 'Who are your users? What are their main goals, pain points, and preferences?',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Design Scope',
+        description: 'What do you need? User Research, Wireframes, UI Design, Prototyping, Usability Testing, Design System',
+        step_type: 'checkbox',
+        isRequired: true,
+      },
+      {
+        title: 'Key User Flows',
+        description: 'What are the most important user journeys we need to optimize?',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Device Requirements',
+        description: 'What devices/screens should we design for? Desktop, Tablet, Mobile, Smartwatch, Other',
+        step_type: 'checkbox',
+        isRequired: true,
+      },
+      {
+        title: 'Brand Guidelines',
+        description: 'Upload existing brand guidelines, style guides, or design system documentation',
+        step_type: 'file_upload',
+        options: '.pdf,.ai,.sketch,.fig,.zip',
+        isRequired: false,
+      },
+      {
+        title: 'Accessibility Needs',
+        description: 'Accessibility requirements: WCAG 2.1 AA, Screen Reader Support, Color Blind Friendly, Keyboard Navigation',
+        step_type: 'checkbox',
+        isRequired: false,
+      }
+    ]
+  },
+  {
+    id: 'digital-marketing-campaign',
+    name: 'Digital Marketing Campaign Launch',
+    description: 'Let\'s create and launch marketing campaigns that drive results and grow your business.',
+    category: 'Marketing',
+    icon: '🚀',
+    brandColor: '#f97316',
+    completionMessage: 'Excellent! We\'re ready to launch campaigns that will boost your business growth. Your marketing strategy will be ready within 2 business days.',
+    steps: [
+      {
+        title: 'Campaign Goals',
+        description: 'What do you want to achieve? Increase sales, generate leads, boost brand awareness, drive website traffic?',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Monthly Budget',
+        description: 'What\'s your total monthly marketing budget for ads and campaigns?',
+        step_type: 'text',
+        isRequired: true,
+      },
+      {
+        title: 'Marketing Channels',
+        description: 'Which channels should we use? Google Ads, Facebook Ads, Instagram Ads, LinkedIn Ads, Email Marketing, Content Marketing',
+        step_type: 'checkbox',
+        isRequired: true,
+      },
+      {
+        title: 'Target Audience',
+        description: 'Describe your ideal customer - demographics, interests, online behavior, pain points',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Landing Pages',
+        description: 'What website or landing pages should we drive traffic to?',
+        step_type: 'url',
+        isRequired: true,
+      },
+      {
+        title: 'Marketing Assets',
+        description: 'Upload logos, product images, brand guidelines, existing ads, or marketing materials',
+        step_type: 'file_upload',
+        options: '.jpg,.png,.pdf,.ai,.psd,.mp4,.zip',
+        isRequired: false,
+      },
+      {
+        title: 'Analytics Access',
+        description: 'Email address for Google Analytics, Facebook Business Manager access',
+        step_type: 'email',
+        isRequired: true,
+      },
+      {
+        title: 'Account Credentials',
+        description: 'Login details for existing ad accounts, social media, or analytics platforms',
+        step_type: 'secure_text',
+        options: '72',
+        isRequired: false,
+      }
+    ]
+  },
+  {
+    id: 'business-consulting',
+    name: 'Business Consulting Engagement',
+    description: 'Let\'s understand your business challenges and goals to create a strategic roadmap for growth and success.',
+    category: 'Consulting',
+    icon: '💼',
+    brandColor: '#1f2937',
+    completionMessage: 'Thank you! We have all the information needed to begin analyzing your business situation. Expect a comprehensive strategy proposal within 5 business days.',
+    steps: [
+      {
+        title: 'Business Overview',
+        description: 'Tell us about your business - what you do, how long you\'ve been operating, and your current position in the market',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Current Challenges',
+        description: 'What are the main problems or obstacles your business is facing right now?',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Business Goals',
+        description: 'What do you want to achieve in the next 6-12 months? What does success look like for your business?',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Consulting Areas',
+        description: 'Which areas need attention? Business Strategy, Operations, Marketing, Sales, Financial Planning, Team Management, Technology, Market Expansion',
+        step_type: 'checkbox',
+        isRequired: true,
+      },
+      {
+        title: 'Annual Revenue',
+        description: 'What\'s your current annual revenue range? (This helps us understand your business scale)',
+        step_type: 'text',
+        isRequired: true,
+      },
+      {
+        title: 'Team Size',
+        description: 'How many employees/contractors do you currently have?',
+        step_type: 'text',
+        isRequired: true,
+      },
+      {
+        title: 'Business Documents',
+        description: 'Upload relevant documents: business plan, financial statements, org charts, marketing materials, or previous consulting reports',
+        step_type: 'file_upload',
+        options: '.pdf,.doc,.docx,.xlsx,.ppt,.pptx,.zip',
+        isRequired: false,
+      },
+      {
+        title: 'Preferred Deliverables',
+        description: 'What outcomes do you expect? Strategic Plan, Process Improvements, Market Analysis, Financial Projections, Implementation Roadmap, Training Materials',
+        step_type: 'checkbox',
+        isRequired: true,
+      }
+    ]
+  },
+  // Keep the existing technical templates
+  {
+    id: 'aws-deployment',
+    name: 'AWS Deployment Setup',
+    description: 'Secure collection of AWS credentials and deployment configuration',
+    category: 'DevOps',
+    icon: '☁️',
+    brandColor: '#ff9900',
+    completionMessage: 'Perfect! We have all your AWS credentials and configuration. Your deployment pipeline will be set up within 24 hours.',
+    steps: [
+      {
+        title: 'AWS Access Credentials',
+        description: 'Upload your AWS credentials file or provide access keys',
+        step_type: 'file_upload',
+        options: '.csv,.json,.txt,.pem',
+        isRequired: true,
+      },
+      {
+        title: 'AWS Account ID & Region',
+        description: 'Provide your AWS account details and preferred deployment region',
+        step_type: 'textarea',
+        options: 'AWS Account ID, preferred region (e.g., us-east-1), and any specific availability zones...',
+        isRequired: true,
+      },
+      {
+        title: 'SSL Certificates',
+        description: 'Upload SSL certificates and private keys for HTTPS setup',
+        step_type: 'file_upload',
+        options: '.pem,.crt,.key,.p12,.pfx',
+        isRequired: false,
+      },
+      {
+        title: 'Environment Variables',
+        description: 'Provide production environment variables and secrets',
+        step_type: 'secure_text',
+        options: '72',
+        isRequired: true,
+      },
+      {
+        title: 'Database Connection Details',
+        description: 'Database credentials and connection strings for production',
+        step_type: 'secure_text',
+        options: '48',
+        isRequired: true,
+      },
+      {
+        title: 'Deployment Configuration',
+        description: 'Upload Docker files, deployment scripts, or configuration files',
+        step_type: 'file_upload',
+        options: '.dockerfile,.yaml,.yml,.json,.sh,.ps1,.zip',
+        isRequired: false,
+      }
+    ]
+  },
+  {
+    id: 'saas-integration',
+    name: 'SaaS Platform Integration',
+    description: 'Collect API keys and credentials for third-party integrations',
+    category: 'Integration',
+    icon: '🔗',
+    brandColor: '#6366f1',
+    completionMessage: 'Excellent! We have all the API credentials needed to set up your integrations. Your connected workflow will be live within 48 hours.',
+    steps: [
+      {
+        title: 'Primary Platform API Keys',
+        description: 'Provide API keys for your main platform (Stripe, Salesforce, HubSpot, etc.)',
+        step_type: 'secure_text',
+        options: '48',
+        isRequired: true,
+      },
+      {
+        title: 'Authentication Credentials',
+        description: 'Upload OAuth credentials, service account files, or API certificates',
+        step_type: 'file_upload',
+        options: '.json,.pem,.p12,.txt,.csv',
+        isRequired: true,
+      },
+      {
+        title: 'Webhook Configuration',
+        description: 'Webhook endpoints, signing secrets, and event configurations',
+        step_type: 'secure_text',
+        options: '72',
+        isRequired: false,
+      },
+      {
+        title: 'Integration Mapping',
+        description: 'Upload field mapping files or data transformation rules',
+        step_type: 'file_upload',
+        options: '.json,.csv,.xlsx,.yaml,.yml',
+        isRequired: false,
+      },
+      {
+        title: 'Testing Credentials',
+        description: 'Sandbox/testing API keys for development and testing',
+        step_type: 'secure_text',
+        options: '168',
+        isRequired: false,
+      },
+      {
+        title: 'Security & Compliance',
+        description: 'Upload compliance certificates, security policies, or audit documents',
+        step_type: 'file_upload',
+        options: '.pdf,.doc,.docx,.txt',
+        isRequired: false,
+      }
+    ]
   }
-};
+];
 
-const getStepTypeLabel = (stepType: StepType) => {
-  switch (stepType) {
-    case 'checkbox': return 'Checkbox';
-    case 'text': return 'Text Input';
-    case 'textarea': return 'Long Text';
-    case 'file_upload': return 'File Upload';
-    case 'url': return 'Website URL';
-    case 'email': return 'Email';
-    case 'secure_text': return 'Secure Text';
-    default: return 'Checkbox';
-  }
-};
+export function getTemplateById(id: string): ChecklistTemplate | undefined {
+  return checklistTemplates.find(template => template.id === id);
+}
 
-export default function ChecklistBuilder({ checklist, template, onSave, onClose, isCreating }: ChecklistBuilderProps) {
-  const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<'settings' | 'steps'>('settings');
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  
-  const [formData, setFormData] = useState<CreateChecklistData>({
-    title: '',
-    description: '',
-    is_public: true,
-    password: '',
-    completion_page_content: 'Congratulations! You have successfully completed the onboarding process.',
-  });
-
-  const [steps, setSteps] = useState<StepData[]>([]);
-  const [editingStepIndex, setEditingStepIndex] = useState<number | null>(null);
-  const [showAddStepForm, setShowAddStepForm] = useState(false);
-
-  const [newStep, setNewStep] = useState<StepData>({
-    title: '',
-    description: '',
-    step_type: 'checkbox',
-    options: '',
-    is_required: true,
-    order_index: 0,
-  });
-
-  // Initialize form data
-  useEffect(() => {
-    if (checklist) {
-      // Editing existing checklist
-      setFormData({
-        title: checklist.title,
-        description: checklist.description,
-        is_public: checklist.is_public,
-        password: '', // Don't show existing password
-        completion_page_content: checklist.completion_page_content,
-      });
-      // TODO: Load existing steps when editing
-    } else if (template) {
-      // Creating from template
-      setFormData({
-        title: template.name,
-        description: template.description,
-        is_public: true,
-        password: '',
-        completion_page_content: template.completionMessage,
-      });
-      
-      // Add template steps
-      const templateSteps: StepData[] = template.steps.map((step, index) => ({
-        title: step.title,
-        description: step.description,
-        step_type: step.step_type,
-        options: step.options || '',
-        is_required: step.isRequired,
-        order_index: index,
-      }));
-      
-      setSteps(templateSteps);
-      setActiveTab('steps'); // Start on steps tab for templates
+export function getTemplatesByCategory(): Record<string, ChecklistTemplate[]> {
+  return checklistTemplates.reduce((acc, template) => {
+    if (!acc[template.category]) {
+      acc[template.category] = [];
     }
-  }, [checklist, template]);
-
-  // Track changes
-  useEffect(() => {
-    setHasUnsavedChanges(true);
-  }, [formData, steps]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      await onSave({ ...formData, steps });
-      setHasUnsavedChanges(false);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleAddStep = () => {
-    const stepToAdd = {
-      ...newStep,
-      order_index: steps.length,
-    };
-    
-    setSteps(prev => [...prev, stepToAdd]);
-    setNewStep({
-      title: '',
-      description: '',
-      step_type: 'checkbox',
-      options: '',
-      is_required: true,
-      order_index: 0,
-    });
-    setShowAddStepForm(false);
-  };
-
-  const handleEditStep = (index: number) => {
-    setEditingStepIndex(index);
-  };
-
-  const handleUpdateStep = (index: number, updatedStep: StepData) => {
-    const updatedSteps = [...steps];
-    updatedSteps[index] = {
-      ...updatedStep,
-      order_index: index,
-    };
-    
-    setSteps(updatedSteps);
-    setEditingStepIndex(null);
-  };
-
-  const handleCancelEdit = () => {
-    setEditingStepIndex(null);
-  };
-
-  const handleDeleteStep = (index: number) => {
-    if (confirm('Are you sure you want to delete this step?')) {
-      const updatedSteps = steps.filter((_, i) => i !== index);
-      // Update order indices
-      const reorderedSteps = updatedSteps.map((step, i) => ({
-        ...step,
-        order_index: i,
-      }));
-      setSteps(reorderedSteps);
-    }
-  };
-
-  const moveStep = (index: number, direction: 'up' | 'down') => {
-    const newIndex = direction === 'up' ? index - 1 : index + 1;
-    if (newIndex < 0 || newIndex >= steps.length) return;
-
-    const updatedSteps = [...steps];
-    [updatedSteps[index], updatedSteps[newIndex]] = [updatedSteps[newIndex], updatedSteps[index]];
-    
-    // Update order indices
-    const reorderedSteps = updatedSteps.map((step, i) => ({
-      ...step,
-      order_index: i,
-    }));
-    
-    setSteps(reorderedSteps);
-  };
-
-  const renderInlineStepEdit = (step: StepData, index: number) => (
-    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-4">
-      <div className="flex items-center justify-between">
-        <h4 className="font-medium text-blue-900 font-sans">Edit Step {index + 1}</h4>
-        <div className="flex items-center space-x-2">
-          <button
-            onClick={() => {
-              const updatedStep = { ...step };
-              handleUpdateStep(index, updatedStep);
-            }}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors flex items-center font-sans"
-          >
-            <Check className="w-3 h-3 mr-1" />
-            Save
-          </button>
-          <button
-            onClick={handleCancelEdit}
-            className="text-blue-600 hover:text-blue-800 px-3 py-1 rounded text-sm font-medium transition-colors font-sans"
-          >
-            Cancel
-          </button>
-        </div>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-blue-800 mb-1 font-sans">
-            Step Title
-          </label>
-          <input
-            type="text"
-            value={step.title}
-            onChange={(e) => {
-              const updatedSteps = [...steps];
-              updatedSteps[index] = { ...step, title: e.target.value };
-              setSteps(updatedSteps);
-            }}
-            className="w-full px-3 py-2 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-sans"
-            placeholder="e.g., Complete your profile"
-            required
-          />
-        </div>
-        
-        <div>
-          <label className="block text-sm font-medium text-blue-800 mb-1 font-sans">
-            Step Type
-          </label>
-          <select
-            value={step.step_type}
-            onChange={(e) => {
-              const updatedSteps = [...steps];
-              updatedSteps[index] = { ...step, step_type: e.target.value as StepType };
-              setSteps(updatedSteps);
-            }}
-            className="w-full px-3 py-2 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-sans"
-          >
-            <option value="checkbox">Simple Checkbox</option>
-            <option value="text">Text Input</option>
-            <option value="textarea">Long Text</option>
-            <option value="file_upload">File Upload</option>
-            <option value="url">Website URL</option>
-            <option value="email">Email Address</option>
-          </select>
-        </div>
-      </div>
-      
-      <div>
-        <label className="block text-sm font-medium text-blue-800 mb-1 font-sans">
-          Description (optional)
-        </label>
-        <textarea
-          value={step.description}
-          onChange={(e) => {
-            const updatedSteps = [...steps];
-            updatedSteps[index] = { ...step, description: e.target.value };
-            setSteps(updatedSteps);
-          }}
-          className="w-full px-3 py-2 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-sans"
-          placeholder="Additional instructions or details"
-          rows={2}
-        />
-      </div>
-      
-      {(step.step_type === 'text' || step.step_type === 'textarea') && (
-        <div>
-          <label className="block text-sm font-medium text-blue-800 mb-1 font-sans">
-            Placeholder Text
-          </label>
-          <input
-            type="text"
-            value={step.options || ''}
-            onChange={(e) => {
-              const updatedSteps = [...steps];
-              updatedSteps[index] = { ...step, options: e.target.value };
-              setSteps(updatedSteps);
-            }}
-            className="w-full px-3 py-2 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-sans"
-            placeholder="Enter placeholder text..."
-          />
-        </div>
-      )}
-      
-      {step.step_type === 'secure_text' && (
-        <div>
-          <label className="block text-sm font-medium text-blue-800 mb-1 font-sans">
-            Expiry Time (hours)
-          </label>
-          <select
-            value={step.options || '24'}
-            onChange={(e) => {
-              const updatedSteps = [...steps];
-              updatedSteps[index] = { ...step, options: e.target.value };
-              setSteps(updatedSteps);
-            }}
-            className="w-full px-3 py-2 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-sans"
-          >
-            <option value="1">1 hour</option>
-            <option value="6">6 hours</option>
-            <option value="24">24 hours (default)</option>
-            <option value="72">72 hours</option>
-            <option value="168">1 week</option>
-          </select>
-          <p className="text-xs text-blue-700 mt-1 font-sans">
-            Sensitive data will be automatically deleted after this time
-          </p>
-        </div>
-      )}
-      
-      {step.step_type === 'file_upload' && (
-        <div>
-          <label className="block text-sm font-medium text-blue-800 mb-1 font-sans">
-            Accepted File Types
-          </label>
-          <input
-            type="text"
-            value={step.options || ''}
-            onChange={(e) => {
-              const updatedSteps = [...steps];
-              updatedSteps[index] = { ...step, options: e.target.value };
-              setSteps(updatedSteps);
-            }}
-            className="w-full px-3 py-2 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-sans"
-            placeholder="e.g., .pdf,.doc,.jpg (leave blank for all types)"
-          />
-        </div>
-      )}
-      
-      <div className="flex items-center">
-        <label className="flex items-center">
-          <input
-            type="checkbox"
-            checked={step.is_required}
-            onChange={(e) => {
-              const updatedSteps = [...steps];
-              updatedSteps[index] = { ...step, is_required: e.target.checked };
-              setSteps(updatedSteps);
-            }}
-            className="mr-2 text-blue-600 focus:ring-blue-500"
-          />
-          <span className="text-sm text-blue-800 font-sans">Required step</span>
-        </label>
-      </div>
-    </div>
-  );
-
-  const renderAddStepForm = () => (
-    <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 space-y-4">
-      <div className="flex items-center justify-between">
-        <h4 className="font-medium text-emerald-900 font-sans">Add New Step</h4>
-        <button
-          onClick={() => {
-            setShowAddStepForm(false);
-            setNewStep({
-              title: '',
-              description: '',
-              step_type: 'checkbox',
-              options: '',
-              is_required: true,
-              order_index: 0,
-            });
-          }}
-          className="text-emerald-600 hover:text-emerald-800 transition-colors"
-        >
-          <X className="w-4 h-4" />
-        </button>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-emerald-800 mb-1 font-sans">
-            Step Title
-          </label>
-          <input
-            type="text"
-            value={newStep.title}
-            onChange={(e) => setNewStep(prev => ({ ...prev, title: e.target.value }))}
-            className="w-full px-3 py-2 border border-emerald-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
-            placeholder="e.g., Complete your profile"
-            required
-          />
-        </div>
-        
-        <div>
-          <label className="block text-sm font-medium text-emerald-800 mb-1 font-sans">
-            Step Type
-          </label>
-          <select
-            value={newStep.step_type}
-            onChange={(e) => setNewStep(prev => ({ ...prev, step_type: e.target.value as StepType }))}
-            className="w-full px-3 py-2 border border-emerald-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
-          >
-            <option value="checkbox">Simple Checkbox</option>
-            <option value="text">Text Input</option>
-            <option value="textarea">Long Text</option>
-            <option value="file_upload">File Upload</option>
-            <option value="url">Website URL</option>
-            <option value="email">Email Address</option>
-          </select>
-        </div>
-      </div>
-      
-      <div>
-        <label className="block text-sm font-medium text-emerald-800 mb-1 font-sans">
-          Description (optional)
-        </label>
-        <textarea
-          value={newStep.description}
-          onChange={(e) => setNewStep(prev => ({ ...prev, description: e.target.value }))}
-          className="w-full px-3 py-2 border border-emerald-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
-          placeholder="Additional instructions or details"
-          rows={2}
-        />
-      </div>
-      
-      {(newStep.step_type === 'text' || newStep.step_type === 'textarea') && (
-        <div>
-          <label className="block text-sm font-medium text-emerald-800 mb-1 font-sans">
-            Placeholder Text
-          </label>
-          <input
-            type="text"
-            value={newStep.options || ''}
-            onChange={(e) => setNewStep(prev => ({ ...prev, options: e.target.value }))}
-            className="w-full px-3 py-2 border border-emerald-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
-            placeholder="Enter placeholder text..."
-          />
-        </div>
-      )}
-      
-      {newStep.step_type === 'file_upload' && (
-        <div>
-          <label className="block text-sm font-medium text-emerald-800 mb-1 font-sans">
-            Accepted File Types
-          </label>
-          <input
-            type="text"
-            value={newStep.options || ''}
-            onChange={(e) => setNewStep(prev => ({ ...prev, options: e.target.value }))}
-            className="w-full px-3 py-2 border border-emerald-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
-            placeholder="e.g., .pdf,.doc,.jpg (leave blank for all types)"
-          />
-        </div>
-      )}
-      
-      <div className="flex items-center justify-between">
-        <label className="flex items-center">
-          <input
-            type="checkbox"
-            checked={newStep.is_required}
-            onChange={(e) => setNewStep(prev => ({ ...prev, is_required: e.target.checked }))}
-            className="mr-2 text-emerald-600 focus:ring-emerald-500"
-          />
-          <span className="text-sm text-emerald-800 font-sans">Required step</span>
-        </label>
-        <button
-          type="button"
-          onClick={handleAddStep}
-          disabled={!newStep.title.trim()}
-          className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 font-sans"
-        >
-          Add Step
-        </button>
-      </div>
-    </div>
-  );
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-xl max-w-6xl w-full max-h-[90vh] overflow-hidden">
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 font-sans">
-              {isCreating ? (template ? `Create from Template: ${template.name}` : 'Create New Checklist') : 'Edit Checklist'}
-            </h2>
-            <p className="text-sm text-gray-600 mt-1 font-sans">
-              Navigate between tabs freely • All changes saved when you click "Save Checklist"
-            </p>
-          </div>
-          <button
-            onClick={onClose}
-            className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors"
-          >
-            <X className="w-6 h-6" />
-          </button>
-        </div>
-
-        {/* Tab Navigation */}
-        <div className="border-b border-gray-200 bg-gray-50">
-          <nav className="flex">
-            <button
-              onClick={() => setActiveTab('settings')}
-              className={`px-6 py-3 font-medium text-sm transition-colors font-sans relative ${
-                activeTab === 'settings'
-                  ? 'border-b-2 border-emerald-500 text-emerald-600 bg-white'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              Settings
-            </button>
-            <button
-              onClick={() => setActiveTab('steps')}
-              className={`px-6 py-3 font-medium text-sm transition-colors font-sans relative ${
-                activeTab === 'steps'
-                  ? 'border-b-2 border-emerald-500 text-emerald-600 bg-white'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              Steps 
-              <span className="ml-2 px-2 py-0.5 bg-gray-200 text-gray-700 rounded-full text-xs">
-                {steps.length}
-              </span>
-            </button>
-          </nav>
-        </div>
-
-        <div className="h-[calc(90vh-200px)] overflow-y-auto">
-          {/* Settings Tab */}
-          {activeTab === 'settings' && (
-            <div className="p-6 space-y-6">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Left Column - Basic Settings */}
-                <div className="space-y-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">
-                      Checklist Title
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.title}
-                      onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
-                      placeholder="e.g., SaaS Onboarding Checklist"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">
-                      Description
-                    </label>
-                    <textarea
-                      value={formData.description}
-                      onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
-                      placeholder="Brief description of this onboarding flow"
-                      rows={3}
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-3 font-sans">
-                      Visibility
-                    </label>
-                    <div className="space-y-3">
-                      <label className="flex items-center">
-                        <input
-                          type="radio"
-                          name="visibility"
-                          checked={formData.is_public}
-                          onChange={() => setFormData(prev => ({ ...prev, is_public: true, password: '' }))}
-                          className="mr-3 text-emerald-600 focus:ring-emerald-500"
-                        />
-                        <div className="flex items-center">
-                          <Eye className="w-4 h-4 text-emerald-500 mr-2" />
-                          <span className="font-sans">Public - Anyone with the link can access</span>
-                        </div>
-                      </label>
-                      <label className="flex items-center">
-                        <input
-                          type="radio"
-                          name="visibility"
-                          checked={!formData.is_public}
-                          onChange={() => setFormData(prev => ({ ...prev, is_public: false }))}
-                          className="mr-3 text-emerald-600 focus:ring-emerald-500"
-                        />
-                        <div className="flex items-center">
-                          <Lock className="w-4 h-4 text-gray-500 mr-2" />
-                          <span className="font-sans">Password Protected</span>
-                        </div>
-                      </label>
-                    </div>
-                  </div>
-
-                  {!formData.is_public && (
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">
-                        Password
-                      </label>
-                      <input
-                        type="password"
-                        value={formData.password}
-                        onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
-                        placeholder="Enter password for this checklist"
-                      />
-                    </div>
-                  )}
-                </div>
-
-                {/* Right Column - Completion Message */}
-                <div className="space-y-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">
-                      Completion Message
-                    </label>
-                    <textarea
-                      value={formData.completion_page_content}
-                      onChange={(e) => setFormData(prev => ({ ...prev, completion_page_content: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
-                      placeholder="Message shown when customers complete the checklist"
-                      rows={8}
-                    />
-                    <p className="text-xs text-gray-500 mt-1 font-sans">
-                      This message will be displayed to customers when they complete all steps
-                    </p>
-                  </div>
-
-                  {/* Quick Actions */}
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <h4 className="text-sm font-medium text-blue-800 mb-3 font-sans">Quick Actions</h4>
-                    <div className="space-y-2">
-                      <button
-                        onClick={() => setActiveTab('steps')}
-                        className="w-full text-left px-3 py-2 bg-white border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors text-sm font-sans"
-                      >
-                        → Go to Steps ({steps.length} configured)
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Steps Tab */}
-          {activeTab === 'steps' && (
-            <div className="p-6 space-y-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 font-sans">Checklist Steps</h3>
-                  <p className="text-sm text-gray-600 font-sans">
-                    Add, edit, and reorder the steps customers will complete
-                  </p>
-                </div>
-                <button
-                  onClick={() => setShowAddStepForm(true)}
-                  className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center font-sans"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Step
-                </button>
-              </div>
-
-              {/* Add Step Form */}
-              {showAddStepForm && renderAddStepForm()}
-
-              {/* Steps List */}
-              <div className="space-y-3">
-                {steps.map((step, index) => (
-                  <div key={index}>
-                    {editingStepIndex === index ? (
-                      renderInlineStepEdit(step, index)
-                    ) : (
-                      <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-sm transition-shadow">
-                        <div className="flex items-start">
-                          <div className="flex items-center mr-3 mt-1">
-                            <span className="text-sm text-gray-500 mr-2 font-sans">{index + 1}</span>
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex items-start justify-between">
-                              <div className="flex-1">
-                                <div className="flex items-center mb-1">
-                                  <span className="text-sm mr-2">{getStepTypeIcon(step.step_type)}</span>
-                                  <h4 className="font-medium text-gray-900 font-sans">{step.title}</h4>
-                                </div>
-                                {step.description && (
-                                  <p className="text-sm text-gray-600 mt-1 font-sans">{step.description}</p>
-                                )}
-                                <div className="flex items-center mt-2">
-                                  <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium font-sans mr-2">
-                                    {getStepTypeLabel(step.step_type)}
-                                  </span>
-                                  {step.is_required && (
-                                    <span className="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium font-sans">
-                                      Required
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
-                              <div className="flex items-center space-x-1 ml-4">
-                                <button
-                                  onClick={() => moveStep(index, 'up')}
-                                  disabled={index === 0}
-                                  className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                                  title="Move up"
-                                >
-                                  <ArrowUp className="w-4 h-4" />
-                                </button>
-                                <button
-                                  onClick={() => moveStep(index, 'down')}
-                                  disabled={index === steps.length - 1}
-                                  className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                                  title="Move down"
-                                >
-                                  <ArrowDown className="w-4 h-4" />
-                                </button>
-                                <button
-                                  onClick={() => handleEditStep(index)}
-                                  className="p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
-                                  title="Edit step"
-                                >
-                                  <Edit className="w-4 h-4" />
-                                </button>
-                                <button
-                                  onClick={() => handleDeleteStep(index)}
-                                  className="p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
-                                  title="Delete step"
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-
-                {steps.length === 0 && !showAddStepForm && (
-                  <div className="text-center py-12 border-2 border-dashed border-gray-300 rounded-lg">
-                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Plus className="w-8 h-8 text-gray-400" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2 font-sans">No steps added yet</h3>
-                    <p className="text-gray-600 mb-6 font-sans">
-                      Add steps to create your onboarding checklist
-                    </p>
-                    <button
-                      onClick={() => setShowAddStepForm(true)}
-                      className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-lg font-medium transition-colors font-sans"
-                    >
-                      Add First Step
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Footer */}
-        <div className="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50 sticky bottom-0">
-          <div className="text-sm text-gray-600 font-sans">
-            {hasUnsavedChanges && (
-              <span className="text-orange-600 font-medium">● Unsaved changes</span>
-            )}
-          </div>
-          <div className="flex items-center space-x-3">
-            <button
-              onClick={onClose}
-              className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium transition-colors font-sans"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleSubmit}
-              disabled={loading || !formData.title.trim()}
-              className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 flex items-center font-sans"
-            >
-              <Save className="w-4 h-4 mr-2" />
-              {loading ? 'Saving...' : (isCreating ? 'Create Checklist' : 'Save Changes')}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+    acc[template.category].push(template);
+    return acc;
+  }, {} as Record<string, ChecklistTemplate[]>);
 }
