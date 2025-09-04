@@ -203,7 +203,7 @@ export default function SubmissionsPage() {
 
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2 font-sans">Customer Submissions</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2 font-sans">Customer Sessions</h1>
           <p className="text-gray-600 font-sans">
             Track customer progress across all your onboarding checklists
           </p>
@@ -280,7 +280,7 @@ export default function SubmissionsPage() {
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2 font-sans">No submissions yet</h3>
               <p className="text-gray-600 mb-6 font-sans">
-                Create customer links from your checklists to start tracking submissions. Each link you create will appear here immediately.
+                Create customer links from your checklists to start tracking sessions. Each link you create will appear here immediately.
               </p>
               <button
                 onClick={() => window.location.href = '/checklists'}
@@ -306,7 +306,7 @@ export default function SubmissionsPage() {
                                     value={editingLinkName}
                                     onChange={(e) => setEditingLinkName(e.target.value)}
                                     className="font-medium text-gray-900 bg-white border border-gray-300 rounded px-2 py-1 text-sm font-sans"
-                                    placeholder="Enter submission name"
+                                    placeholder="Enter session name"
                                     autoFocus
                                     onKeyDown={(e) => {
                                       if (e.key === 'Enter') {
@@ -334,7 +334,7 @@ export default function SubmissionsPage() {
                               ) : (
                                 <div className="flex items-center space-x-2">
                                   <h3 className="font-medium text-gray-900 font-sans">
-                                    {session.link_name || 'Unnamed Submission'}
+                                    {session.link_name || 'Unnamed Session'}
                                   </h3>
                                   <button
                                     onClick={() => handleEditLinkName(session)}
