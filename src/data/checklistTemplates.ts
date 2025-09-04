@@ -17,7 +17,7 @@ export interface ChecklistTemplate {
 
 export const checklistTemplates: ChecklistTemplate[] = [
   {
-    id: 'website-development',
+    id: 'web-development',
     name: 'Website Development Project Onboarding',
     description: 'Help us understand your vision and requirements to create the perfect website for your business.',
     category: 'Development',
@@ -622,6 +622,7 @@ export const checklistTemplates: ChecklistTemplate[] = [
       }
     ]
   },
+  // Keep the existing technical templates
   {
     id: 'aws-deployment',
     name: 'AWS Deployment Setup',
@@ -724,59 +725,6 @@ export const checklistTemplates: ChecklistTemplate[] = [
         description: 'Upload compliance certificates, security policies, or audit documents',
         step_type: 'file_upload',
         options: '.pdf,.doc,.docx,.txt',
-        isRequired: false,
-      }
-    ]
-  },
-  {
-    id: 'enterprise-onboarding',
-    name: 'Enterprise Client Onboarding',
-    description: 'Comprehensive onboarding for enterprise clients with security requirements',
-    category: 'Enterprise',
-    icon: '🏢',
-    brandColor: '#1f2937',
-    completionMessage: 'Outstanding! Your enterprise onboarding is complete. Our security team will review all materials and contact you within 24 hours to finalize setup.',
-    steps: [
-      {
-        title: 'Security & Compliance Documentation',
-        description: 'Upload SOC2, ISO certifications, security policies, and compliance documents',
-        step_type: 'file_upload',
-        options: '.pdf,.doc,.docx,.zip',
-        isRequired: true,
-      },
-      {
-        title: 'Network & Infrastructure Details',
-        description: 'Provide network diagrams, IP ranges, firewall rules, and infrastructure requirements',
-        step_type: 'file_upload',
-        options: '.pdf,.vsd,.png,.jpg,.txt,.json',
-        isRequired: true,
-      },
-      {
-        title: 'SSO Configuration',
-        description: 'Upload SAML metadata, OIDC configuration, or Active Directory details',
-        step_type: 'file_upload',
-        options: '.xml,.json,.txt,.csv',
-        isRequired: true,
-      },
-      {
-        title: 'Data Processing Agreement',
-        description: 'Upload signed DPA, privacy policies, and data handling agreements',
-        step_type: 'file_upload',
-        options: '.pdf,.doc,.docx',
-        isRequired: true,
-      },
-      {
-        title: 'Technical Contact Information',
-        description: 'Provide technical team contacts, escalation procedures, and support channels',
-        step_type: 'textarea',
-        options: 'Technical lead contact, IT security contact, escalation procedures...',
-        isRequired: true,
-      },
-      {
-        title: 'Integration Requirements',
-        description: 'Upload API specifications, integration requirements, and technical documentation',
-        step_type: 'file_upload',
-        options: '.pdf,.json,.yaml,.yml,.txt,.zip',
         isRequired: false,
       }
     ]
