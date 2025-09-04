@@ -64,7 +64,7 @@ export default function Header() {
                     Checklists
                   </Link>
                   <Link to="/submissions" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
-                    Submissions
+                    Sessions
                   </Link>
                   <Link to="/branding" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
                     Branding
@@ -156,7 +156,7 @@ export default function Header() {
                 Checklists
               </Link>
               <Link to="/submissions" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
-                Submissions
+                Sessions
               </Link>
               <Link to="/branding" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
                 Branding
