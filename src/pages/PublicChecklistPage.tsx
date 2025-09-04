@@ -83,6 +83,7 @@ export default function PublicChecklistPage() {
     getStepProgress,
     getCompletionPercentage,
     updateSessionInfo,
+    getSecureText,
   } = useSessionProgress({ 
     checklistId: checklistId || '', 
     sessionToken 
@@ -429,66 +430,6 @@ export default function PublicChecklistPage() {
                 folder={session?.id}
                 placeholder="Drop files here or click to upload"
               />
-            </div>
-          </div>
-        );
-
-      case 'secure_text':
-        const expiryHours = parseInt(step.options || '24');
-        const isExpired = stepProgress && stepProgress.completed_at && 
-          new Date().getTime() - new Date(stepProgress.completed_at).getTime() > (expiryHours * 60 * 60 * 1000);
-        
-        return (
-          <div className="space-y-4">
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-              <div className="flex items-center mb-3">
-                <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center mr-3">
-                  <Lock className="w-4 h-4 text-red-600" />
-                </div>
-                <div>
-                  <label className="block text-lg font-medium text-gray-900 font-sans">{step.title}</label>
-                  <div className="flex items-center space-x-2 mt-1">
-                    <span className="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium font-sans">
-                      🔒 Secure & Auto-expires
-                    </span>
-                    <span className="text-xs text-red-600 font-sans">
-                      Deletes after {expiryHours}h
-                    </span>
-                  </div>
-                </div>
-              </div>
-              
-              {step.description && (
-                <p className="text-gray-700 mb-4 font-sans">{step.description}</p>
-              )}
-              
-              {isExpired ? (
-                <div className="bg-gray-100 border border-gray-300 rounded-lg p-4 text-center">
-                  <Lock className="w-6 h-6 text-gray-400 mx-auto mb-2" />
-                  <p className="text-gray-600 font-medium font-sans">Secure data has expired</p>
-                  <p className="text-sm text-gray-500 font-sans">This sensitive information was automatically deleted for security</p>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  <textarea
-                    value={currentValue}
-                    onChange={(e) => handleStepChange(step.id, e.target.value)}
-                    className="w-full px-4 py-3 border-2 border-red-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 text-gray-900 font-mono text-sm bg-red-50"
-                    placeholder="Enter sensitive data (API keys, passwords, etc.)..."
-                    rows={4}
-                  />
-                  {currentValue && (
-                    <div className="bg-red-100 border border-red-200 rounded-lg p-3">
-                      <div className="flex items-center text-red-700 text-sm">
-                        <Lock className="w-4 h-4 mr-2" />
-                        <span className="font-sans">
-                          This data will be automatically deleted in {expiryHours} hours for security
-                        </span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
             </div>
           </div>
         );
