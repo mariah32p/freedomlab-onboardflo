@@ -220,40 +220,26 @@ export default function PublicChecklistPage() {
       }));
     }
 
-    // Clear existing timeout for this step
-    const existingTimeout = inputTimeouts.current.get(stepId);
-    if (existingTimeout) {
-      clearTimeout(existingTimeout);
-    }
-
-    // For text inputs, debounce the save
     if (typeof value === 'boolean') {
-      // Immediate save for checkboxes
       if (value) {
         await saveStepProgress(stepId, '');
       } else {
         await removeStepProgress(stepId);
       }
     } else {
-      // Reduced debounce time for faster saves
-      const timeout = setTimeout(async () => {
-        inputTimeouts.current.delete(stepId);
-        if (value.trim()) {
-          await saveStepProgress(stepId, value);
-        } else {
-          await removeStepProgress(stepId);
-        }
-      }, 800); // Reduced to 800ms for faster saves
-      
-      inputTimeouts.current.set(stepId, timeout);
+      // Save immediately for all text inputs
+      if (value.trim()) {
+        await saveStepProgress(stepId, value);
+      } else {
+        await removeStepProgress(stepId);
+      }
     }
   }, [saveStepProgress, removeStepProgress]);
 
   // Cleanup timeouts on unmount
   useEffect(() => {
     return () => {
-      inputTimeouts.current.forEach(timeout => clearTimeout(timeout));
-      inputTimeouts.current.clear();
+      // No timeouts to cleanup since we save immediately
     };
   }, []);
 

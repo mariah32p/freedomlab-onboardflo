@@ -223,35 +223,7 @@ export function useSessionProgress({ checklistId, sessionToken }: UseSessionProg
   const saveStepProgress = useCallback(async (stepId: string, notes: string = '') => {
     if (!session) return false;
 
-    // Store in pending saves for immediate persistence
-    pendingSaves.current.set(stepId, notes);
-
-    // Clear any existing timeout for this step
-    const existingTimeout = saveTimeouts.current.get(stepId);
-    if (existingTimeout) {
-      clearTimeout(existingTimeout);
-    }
-
-    // Debounce saves to prevent rapid-fire requests
-    const now = Date.now();
-    const lastSave = lastSaveAttempt.current.get(stepId) || 0;
-    const timeSinceLastSave = now - lastSave;
-    
-    // For file uploads (JSON data), save immediately
-    // For text inputs, debounce to prevent spam
-    const isFileData = notes.startsWith('[') && notes.endsWith(']');
-    
-    if (!isFileData && timeSinceLastSave < 500) { // Reduced to 500ms for faster saves
-      return new Promise<boolean>((resolve) => {
-        const timeout = setTimeout(async () => {
-          saveTimeouts.current.delete(stepId);
-          const result = await performSave(stepId, notes);
-          resolve(result);
-        }, 500 - timeSinceLastSave);
-        saveTimeouts.current.set(stepId, timeout);
-      });
-    }
-
+    // Save immediately without debouncing
     return performSave(stepId, notes);
   }, [session]);
 
