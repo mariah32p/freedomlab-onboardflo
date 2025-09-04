@@ -317,7 +317,6 @@ export const checklistTemplates: ChecklistTemplate[] = [
         isRequired: true,
       }
     ]
-  }
   },
   {
     id: 'aws-deployment',
@@ -477,6 +476,7 @@ export const checklistTemplates: ChecklistTemplate[] = [
         isRequired: false,
       }
     ]
+  }
 ];
 
 export function getTemplateById(id: string): ChecklistTemplate | undefined {
