@@ -132,7 +132,7 @@ export default function ChecklistsPage() {
               onClick={() => setShowWizard(true)}
               className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors font-sans"
             >
-              Create Your First Checklist
+              Create Checklist
             </button>
           </div>
         ) : (
