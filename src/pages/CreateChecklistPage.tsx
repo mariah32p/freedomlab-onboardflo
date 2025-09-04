@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { checklistTemplates, ChecklistTemplate } from '../data/checklistTemplates';
 import { useAuth } from '../contexts/AuthContext';
 import { useSubscription } from '../hooks/useSubscription';
 import { useChecklists } from '../hooks/useChecklists';
@@ -33,115 +34,6 @@ interface StepData {
   order_index: number;
 }
 
-interface Template {
-  id: string;
-  name: string;
-  description: string;
-  category: string;
-  icon: string;
-  brandColor: string;
-  completionMessage: string;
-  steps: Omit<StepData, 'order_index'>[];
-}
-
-const templates: Template[] = [
-  {
-    id: 'website-development',
-    name: 'Website Development Project',
-    description: 'Complete onboarding for website design and development clients',
-    category: 'Development',
-    icon: '💻',
-    brandColor: '#3b82f6',
-    completionMessage: 'Thank you! We have everything we need to start building your amazing website. We\'ll be in touch within 24 hours with next steps.',
-    steps: [
-      { title: 'Project Overview', description: 'Tell us about your business and what you want to achieve with this website', step_type: 'textarea', is_required: true },
-      { title: 'Target Audience', description: 'Who is your ideal customer or website visitor?', step_type: 'text', is_required: true },
-      { title: 'Brand Assets', description: 'Upload your logo, brand guidelines, or any existing marketing materials', step_type: 'file_upload', options: '.pdf,.jpg,.png,.ai,.eps,.zip', is_required: false },
-      { title: 'Content Requirements', description: 'What pages do you need? Do you have existing content or need help creating it?', step_type: 'textarea', is_required: true },
-      { title: 'Inspiration Websites', description: 'Share 2-3 websites you like the design or functionality of', step_type: 'url', is_required: false },
-      { title: 'Technical Preferences', description: 'WordPress, Custom CMS, E-commerce, Blog, Contact Forms, Newsletter Signup', step_type: 'checkbox', is_required: true }
-    ]
-  },
-  {
-    id: 'ecommerce-development',
-    name: 'E-commerce Store Development',
-    description: 'Build online stores that convert visitors into customers',
-    category: 'E-commerce',
-    icon: '🛒',
-    brandColor: '#f59e0b',
-    completionMessage: 'Perfect! Your e-commerce journey starts now. We\'ll send you a detailed development roadmap within 24 hours.',
-    steps: [
-      { title: 'Store Overview', description: 'What products will you sell? Describe your business and target market', step_type: 'textarea', is_required: true },
-      { title: 'Product Categories', description: 'List the main product categories you\'ll offer', step_type: 'text', is_required: true },
-      { title: 'Product Information', description: 'Upload product catalogs, images, or inventory lists if available', step_type: 'file_upload', options: '.pdf,.xlsx,.csv,.jpg,.png,.zip', is_required: false },
-      { title: 'Payment Methods', description: 'PayPal, Stripe, Square, Apple Pay, Crypto, Bank Transfer', step_type: 'checkbox', is_required: true },
-      { title: 'Shipping Requirements', description: 'Describe your shipping zones, rates, and fulfillment process', step_type: 'textarea', is_required: true }
-    ]
-  },
-  {
-    id: 'custom-software',
-    name: 'Custom Software Development',
-    description: 'Gather technical requirements for custom software projects',
-    category: 'Development',
-    icon: '⚙️',
-    brandColor: '#6366f1',
-    completionMessage: 'Excellent! We have all the details needed to create your custom solution. Our development team will review and send you a detailed project plan within 48 hours.',
-    steps: [
-      { title: 'Project Scope', description: 'Describe the software you need built. What problem does it solve?', step_type: 'textarea', is_required: true },
-      { title: 'Requirements Documentation', description: 'Upload wireframes, mockups, technical specifications, or requirement documents', step_type: 'file_upload', options: '.pdf,.doc,.docx,.jpg,.png,.fig,.sketch,.xd,.zip', is_required: false },
-      { title: 'Platform Requirements', description: 'Web Application, Mobile App (iOS), Mobile App (Android), Desktop Application, API/Backend Only', step_type: 'checkbox', is_required: true },
-      { title: 'User Types & Features', description: 'Who will use this software? What are the main features for each user type?', step_type: 'textarea', is_required: true },
-      { title: 'System Access', description: 'If we need access to existing systems or APIs for integration, provide credentials here', step_type: 'secure_text', options: '48', is_required: false }
-    ]
-  },
-  {
-    id: 'brand-identity',
-    name: 'Brand Identity Design',
-    description: 'Create brand identities that represent your business perfectly',
-    category: 'Design',
-    icon: '🎨',
-    brandColor: '#ec4899',
-    completionMessage: 'Amazing! We\'re excited to bring your brand vision to life. Expect initial concepts within 3-5 business days.',
-    steps: [
-      { title: 'Company Story', description: 'Tell us about your company - what you do, your mission, and what makes you unique', step_type: 'textarea', is_required: true },
-      { title: 'Target Audience', description: 'Describe your ideal customer - demographics, preferences, and what matters to them', step_type: 'textarea', is_required: true },
-      { title: 'Brand Personality', description: 'Professional, Playful, Luxurious, Trustworthy, Innovative, Traditional, Bold, Minimalist', step_type: 'checkbox', is_required: true },
-      { title: 'Visual References', description: 'Upload images, colors, or design styles that inspire you', step_type: 'file_upload', options: '.jpg,.png,.pdf,.ai,.psd,.sketch', is_required: false },
-      { title: 'Logo Requirements', description: 'Any specific requirements for the logo? Text to include, symbols to avoid?', step_type: 'textarea', is_required: true }
-    ]
-  },
-  {
-    id: 'seo-content-marketing',
-    name: 'SEO & Content Marketing',
-    description: 'Optimize online presence and create content that attracts customers',
-    category: 'Marketing',
-    icon: '📈',
-    brandColor: '#10b981',
-    completionMessage: 'Great! We\'re ready to boost your search rankings and online visibility. Your SEO strategy will be ready within 3 business days.',
-    steps: [
-      { title: 'Current Website', description: 'What\'s your current website URL?', step_type: 'url', is_required: true },
-      { title: 'Google Analytics Access', description: 'Share Google Analytics login or add our email as an admin', step_type: 'secure_text', options: '168', is_required: true },
-      { title: 'Business Goals', description: 'What are your main business objectives? What keywords do customers use to find you?', step_type: 'textarea', is_required: true },
-      { title: 'Content Types', description: 'Blog Posts, Service Pages, Product Descriptions, Case Studies, FAQs, Local Pages', step_type: 'checkbox', is_required: true }
-    ]
-  },
-  {
-    id: 'social-media-management',
-    name: 'Social Media Management',
-    description: 'Create social media strategies that engage audiences and grow brands',
-    category: 'Social Media',
-    icon: '📱',
-    brandColor: '#8b5cf6',
-    completionMessage: 'Perfect! We\'re ready to elevate your social media presence. Your content calendar and strategy will be ready within 2 business days.',
-    steps: [
-      { title: 'Social Platforms', description: 'Facebook, Instagram, LinkedIn, Twitter, TikTok, YouTube, Pinterest', step_type: 'checkbox', is_required: true },
-      { title: 'Account Access', description: 'Share login credentials for the social accounts we\'ll be managing', step_type: 'secure_text', options: '72', is_required: true },
-      { title: 'Brand Voice', description: 'How should your brand sound on social media? Professional, casual, humorous, inspirational?', step_type: 'textarea', is_required: true },
-      { title: 'Content Themes', description: 'Industry news, behind-the-scenes, products, tips, customer stories', step_type: 'textarea', is_required: true }
-    ]
-  }
-];
-
 const STEP_TYPE_OPTIONS = [
   { value: 'checkbox', label: 'Checkbox', description: 'Simple yes/no confirmation' },
   { value: 'text', label: 'Text Input', description: 'Short text response' },
@@ -160,7 +52,7 @@ export default function CreateChecklistPage() {
   const { createChecklist } = useChecklists();
   
   const [currentStep, setCurrentStep] = useState<'welcome' | 'choose' | 'customize' | 'launch'>('welcome');
-  const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
+  const [selectedTemplate, setSelectedTemplate] = useState<ChecklistTemplate | null>(null);
   const [loading, setLoading] = useState(false);
   const [editingStepIndex, setEditingStepIndex] = useState<number | null>(null);
   
@@ -178,7 +70,7 @@ export default function CreateChecklistPage() {
   useEffect(() => {
     const templateId = searchParams.get('template');
     if (templateId) {
-      const template = templates.find(t => t.id === templateId);
+      const template = checklistTemplates.find(t => t.id === templateId);
       if (template) {
         handleTemplateSelect(template);
         setCurrentStep('customize');
@@ -186,7 +78,7 @@ export default function CreateChecklistPage() {
     }
   }, [searchParams]);
 
-  const handleTemplateSelect = (template: Template) => {
+  const handleTemplateSelect = (template: ChecklistTemplate) => {
     setSelectedTemplate(template);
     setFormData({
       title: template.name,
@@ -198,6 +90,7 @@ export default function CreateChecklistPage() {
     
     const templateSteps: StepData[] = template.steps.map((step, index) => ({
       ...step,
+      is_required: step.isRequired,
       order_index: index,
     }));
     
@@ -337,7 +230,7 @@ export default function CreateChecklistPage() {
   );
 
   const renderChoose = () => {
-    const categories = Array.from(new Set(templates.map(t => t.category)));
+    const categories = Array.from(new Set(checklistTemplates.map(t => t.category)));
     
     return (
       <div className="space-y-8">
@@ -365,7 +258,7 @@ export default function CreateChecklistPage() {
           </div>
 
           {/* Templates */}
-          {templates.map((template) => (
+          {checklistTemplates.map((template) => (
             <div
               key={template.id}
               onClick={() => {
