@@ -1,467 +1,746 @@
-import React, { useState } from 'react';
-import { Plus, Edit, Trash2, Sparkles, ExternalLink, Copy, Check, X, Users, Link as LinkIcon, Info } from 'lucide-react';
-import { useChecklists } from '../../hooks/useChecklists';
-import { useChecklistSteps } from '../../hooks/useChecklists';
-import { useCustomerSessions } from '../../hooks/useCustomerSessions';
-import { useSubscription } from '../../hooks/useSubscription';
-import { Checklist } from '../../types/checklist';
-import TemplateSelector from './TemplateSelector';
-import { ChecklistTemplate } from '../../data/checklistTemplates';
-
-interface ChecklistListProps {
-  onEditChecklist: (checklist: Checklist) => void;
-  onCreateNew: (template?: ChecklistTemplate) => void;
+export interface ChecklistTemplate {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  icon: string;
+  brandColor: string;
+  completionMessage: string;
+  steps: {
+    title: string;
+    description: string;
+    step_type: 'checkbox' | 'text' | 'textarea' | 'file_upload' | 'url' | 'email' | 'secure_text';
+    options?: string;
+    isRequired: boolean;
+  }[];
 }
 
-interface ShareLinkModalProps {
-  checklist: Checklist;
-  onClose: () => void;
-}
-
-function ShareLinkModal({ checklist, onClose }: ShareLinkModalProps) {
-  const [linkName, setLinkName] = useState('');
-  const [copied, setCopied] = useState(false);
-  const [creating, setCreating] = useState(false);
-  const { createPendingSubmission } = useCustomerSessions();
-  const [generatedUrl, setGeneratedUrl] = useState<string>('');
-
-  const handleCreateAndCopyLink = async () => {
-    setCreating(true);
-    try {
-      // Create pending submission in database
-      const sessionToken = await createPendingSubmission(checklist.id, linkName.trim());
-      
-      if (!sessionToken) {
-        throw new Error('Failed to create customer link');
+export const checklistTemplates: ChecklistTemplate[] = [
+  {
+    id: 'web-development',
+    name: 'Website Development Project Onboarding',
+    description: 'Help us understand your vision and requirements to create the perfect website for your business.',
+    category: 'Development',
+    icon: '💻',
+    brandColor: '#3b82f6',
+    completionMessage: 'Thank you! We have everything we need to start building your amazing website. We\'ll be in touch within 24 hours with next steps.',
+    steps: [
+      {
+        title: 'Project Overview',
+        description: 'Tell us about your business and what you want to achieve with this website. What are your main goals?',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Target Audience',
+        description: 'Who is your ideal customer or website visitor?',
+        step_type: 'text',
+        isRequired: true,
+      },
+      {
+        title: 'Brand Assets',
+        description: 'Upload your logo, brand guidelines, or any existing marketing materials',
+        step_type: 'file_upload',
+        options: '.pdf,.jpg,.png,.ai,.eps,.zip',
+        isRequired: false,
+      },
+      {
+        title: 'Content Requirements',
+        description: 'What pages do you need? Do you have existing content or need help creating it?',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Inspiration Websites',
+        description: 'Share 2-3 websites you like the design or functionality of',
+        step_type: 'url',
+        isRequired: false,
+      },
+      {
+        title: 'Technical Preferences',
+        description: 'Check all that apply: WordPress, Custom CMS, E-commerce, Blog, Contact Forms, Newsletter Signup',
+        step_type: 'checkbox',
+        isRequired: true,
+      },
+      {
+        title: 'Domain & Hosting',
+        description: 'Do you have a domain name? Where would you like to host the site?',
+        step_type: 'text',
+        isRequired: false,
+      },
+      {
+        title: 'Access Credentials',
+        description: 'If you have existing hosting, CMS, or domain registrar accounts, share login details here',
+        step_type: 'secure_text',
+        options: '72',
+        isRequired: false,
       }
+    ]
+  },
+  {
+    id: 'ecommerce-development',
+    name: 'E-commerce Store Development',
+    description: 'Let\'s build your online store that converts visitors into customers and grows your business.',
+    category: 'E-commerce',
+    icon: '🛒',
+    brandColor: '#f59e0b',
+    completionMessage: 'Perfect! Your e-commerce journey starts now. We\'ll send you a detailed development roadmap within 24 hours.',
+    steps: [
+      {
+        title: 'Store Overview',
+        description: 'What products will you sell? Describe your business and target market.',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Product Categories',
+        description: 'List the main product categories you\'ll offer',
+        step_type: 'text',
+        isRequired: true,
+      },
+      {
+        title: 'Product Information',
+        description: 'Upload product catalogs, images, or inventory lists if available',
+        step_type: 'file_upload',
+        options: '.pdf,.xlsx,.csv,.jpg,.png,.zip',
+        isRequired: false,
+      },
+      {
+        title: 'Payment Methods',
+        description: 'Select preferred payment options: PayPal, Stripe, Square, Apple Pay, Crypto, Bank Transfer',
+        step_type: 'checkbox',
+        isRequired: true,
+      },
+      {
+        title: 'Shipping Requirements',
+        description: 'Describe your shipping zones, rates, and fulfillment process',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'E-commerce Features',
+        description: 'Select needed features: Inventory Management, Customer Accounts, Reviews, Wishlist, Abandoned Cart Recovery',
+        step_type: 'checkbox',
+        isRequired: true,
+      },
+      {
+        title: 'Tax Configuration',
+        description: 'What tax requirements do you have? (state, country, VAT, etc.)',
+        step_type: 'text',
+        isRequired: true,
+      },
+      {
+        title: 'Competitor Analysis',
+        description: 'Share 2-3 competitor websites for reference',
+        step_type: 'url',
+        isRequired: false,
+      }
+    ]
+  },
+  {
+    id: 'custom-software',
+    name: 'Custom Software Development Onboarding',
+    description: 'Let\'s gather the technical requirements and specifications for your custom software project.',
+    category: 'Development',
+    icon: '⚙️',
+    brandColor: '#6366f1',
+    completionMessage: 'Excellent! We have all the details needed to create your custom solution. Our development team will review and send you a detailed project plan within 48 hours.',
+    steps: [
+      {
+        title: 'Project Scope',
+        description: 'Describe the software you need built. What problem does it solve?',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Requirements Documentation',
+        description: 'Upload any wireframes, mockups, technical specifications, or requirement documents',
+        step_type: 'file_upload',
+        options: '.pdf,.doc,.docx,.jpg,.png,.fig,.sketch,.xd,.zip',
+        isRequired: false,
+      },
+      {
+        title: 'Platform Requirements',
+        description: 'Select target platforms: Web Application, Mobile App (iOS), Mobile App (Android), Desktop Application, API/Backend Only',
+        step_type: 'checkbox',
+        isRequired: true,
+      },
+      {
+        title: 'User Types & Features',
+        description: 'Who will use this software? What are the main features for each user type?',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Technical Stack Preferences',
+        description: 'Any preferred programming languages, frameworks, or technologies?',
+        step_type: 'text',
+        isRequired: false,
+      },
+      {
+        title: 'Integration Requirements',
+        description: 'Does this need to connect to existing systems, APIs, or databases?',
+        step_type: 'textarea',
+        isRequired: false,
+      },
+      {
+        title: 'Compliance & Security',
+        description: 'Check requirements: GDPR Compliance, HIPAA Compliance, SOC 2, PCI DSS, Custom Security Requirements',
+        step_type: 'checkbox',
+        isRequired: false,
+      },
+      {
+        title: 'System Access',
+        description: 'If we need access to existing systems or APIs for integration, provide credentials here',
+        step_type: 'secure_text',
+        options: '48',
+        isRequired: false,
+      }
+    ]
+  },
+  {
+    id: 'brand-identity',
+    name: 'Brand Identity Design Project',
+    description: 'Help us create a brand identity that perfectly represents your business and connects with your audience.',
+    category: 'Design',
+    icon: '🎨',
+    brandColor: '#ec4899',
+    completionMessage: 'Amazing! We\'re excited to bring your brand vision to life. Expect initial concepts within 3-5 business days.',
+    steps: [
+      {
+        title: 'Company Story',
+        description: 'Tell us about your company - what you do, your mission, and what makes you unique',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Industry & Competitors',
+        description: 'What industry are you in? Who are your main competitors?',
+        step_type: 'text',
+        isRequired: true,
+      },
+      {
+        title: 'Target Audience',
+        description: 'Describe your ideal customer - demographics, preferences, and what matters to them',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Brand Personality',
+        description: 'How should your brand feel? Professional, Playful, Luxurious, Trustworthy, Innovative, Traditional, Bold, Minimalist',
+        step_type: 'checkbox',
+        isRequired: true,
+      },
+      {
+        title: 'Visual References',
+        description: 'Upload any images, colors, or design styles that inspire you or represent your vision',
+        step_type: 'file_upload',
+        options: '.jpg,.png,.pdf,.ai,.psd,.sketch',
+        isRequired: false,
+      },
+      {
+        title: 'Logo Requirements',
+        description: 'Any specific requirements for the logo? Text to include, symbols to avoid, where it will be used?',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Deliverables Needed',
+        description: 'Select what you need: Logo Design, Color Palette, Typography, Business Cards, Letterhead, Brand Guidelines, Social Media Templates',
+        step_type: 'checkbox',
+        isRequired: true,
+      },
+      {
+        title: 'Timeline',
+        description: 'When do you need the brand identity completed?',
+        step_type: 'text',
+        isRequired: true,
+      }
+    ]
+  },
+  {
+    id: 'seo-content-marketing',
+    name: 'SEO & Content Marketing Setup',
+    description: 'Let\'s optimize your online presence and create content that attracts your ideal customers.',
+    category: 'Marketing',
+    icon: '📈',
+    brandColor: '#10b981',
+    completionMessage: 'Great! We\'re ready to boost your search rankings and online visibility. Your SEO strategy will be ready within 3 business days.',
+    steps: [
+      {
+        title: 'Current Website',
+        description: 'What\'s your current website URL?',
+        step_type: 'url',
+        isRequired: true,
+      },
+      {
+        title: 'Google Analytics Access',
+        description: 'Share Google Analytics login or add our email as an admin',
+        step_type: 'secure_text',
+        options: '168',
+        isRequired: true,
+      },
+      {
+        title: 'Business Goals',
+        description: 'What are your main business objectives? What keywords do customers use to find businesses like yours?',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Geographic Focus',
+        description: 'Are you targeting local, national, or international customers? Specify locations.',
+        step_type: 'text',
+        isRequired: true,
+      },
+      {
+        title: 'Competitor Analysis',
+        description: 'Who are your main competitors? Which ones rank well in search results?',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Content Types',
+        description: 'What content should we create? Blog Posts, Service Pages, Product Descriptions, Case Studies, FAQs, Local Pages',
+        step_type: 'checkbox',
+        isRequired: true,
+      },
+      {
+        title: 'Existing Content',
+        description: 'Upload any existing content, keyword lists, or previous SEO reports',
+        step_type: 'file_upload',
+        options: '.pdf,.doc,.docx,.xlsx,.csv,.txt',
+        isRequired: false,
+      },
+      {
+        title: 'Content Budget',
+        description: 'How many pieces of content per month fit your budget?',
+        step_type: 'text',
+        isRequired: true,
+      }
+    ]
+  },
+  {
+    id: 'social-media-management',
+    name: 'Social Media Management Onboarding',
+    description: 'Let\'s create a social media strategy that engages your audience and grows your brand.',
+    category: 'Social Media',
+    icon: '📱',
+    brandColor: '#8b5cf6',
+    completionMessage: 'Perfect! We\'re ready to elevate your social media presence. Your content calendar and strategy will be ready within 2 business days.',
+    steps: [
+      {
+        title: 'Social Platforms',
+        description: 'Which platforms should we manage? Facebook, Instagram, LinkedIn, Twitter, TikTok, YouTube, Pinterest',
+        step_type: 'checkbox',
+        isRequired: true,
+      },
+      {
+        title: 'Account Access',
+        description: 'Share login credentials for the social accounts we\'ll be managing',
+        step_type: 'secure_text',
+        options: '72',
+        isRequired: true,
+      },
+      {
+        title: 'Brand Voice',
+        description: 'How should your brand sound on social media? Professional, casual, humorous, inspirational?',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Brand Assets',
+        description: 'Upload logos, brand colors, fonts, and any existing social media graphics',
+        step_type: 'file_upload',
+        options: '.jpg,.png,.pdf,.ai,.psd,.svg,.zip',
+        isRequired: true,
+      },
+      {
+        title: 'Content Themes',
+        description: 'What topics should we post about? Industry news, behind-the-scenes, products, tips, customer stories?',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Posting Frequency',
+        description: 'How often should we post on each platform? (e.g., 5x/week on Instagram, 3x/week on LinkedIn)',
+        step_type: 'text',
+        isRequired: true,
+      },
+      {
+        title: 'Content Types',
+        description: 'Select content formats: Photos, Videos, Stories, Reels, Carousels, User-generated content, Live videos',
+        step_type: 'checkbox',
+        isRequired: true,
+      },
+      {
+        title: 'Competitors & Inspiration',
+        description: 'Share social accounts you admire or competitors we should be aware of',
+        step_type: 'textarea',
+        isRequired: false,
+      }
+    ]
+  },
+  {
+    id: 'mobile-app-development',
+    name: 'Mobile App Development Project',
+    description: 'Let\'s bring your mobile app idea to life with a user-friendly design and robust functionality.',
+    category: 'Development',
+    icon: '📱',
+    brandColor: '#06b6d4',
+    completionMessage: 'Fantastic! We have everything needed to start developing your mobile app. Expect a detailed project timeline within 48 hours.',
+    steps: [
+      {
+        title: 'App Concept',
+        description: 'Describe your app idea. What problem does it solve? What\'s the main purpose?',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Platform Priority',
+        description: 'Which platforms are most important? iOS (iPhone/iPad), Android, Cross-platform (React Native/Flutter)',
+        step_type: 'checkbox',
+        isRequired: true,
+      },
+      {
+        title: 'Design References',
+        description: 'Upload wireframes, mockups, or screenshots of apps with designs you like',
+        step_type: 'file_upload',
+        options: '.jpg,.png,.pdf,.fig,.sketch,.xd,.zip',
+        isRequired: false,
+      },
+      {
+        title: 'Core Features',
+        description: 'List the essential features your app must have for launch',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'User Journey',
+        description: 'Describe how users will interact with your app from download to main goal completion',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Technical Requirements',
+        description: 'Select needed features: User Accounts, Push Notifications, In-App Purchases, Social Login, Camera, GPS, Offline Mode',
+        step_type: 'checkbox',
+        isRequired: true,
+      },
+      {
+        title: 'Monetization Strategy',
+        description: 'How will the app make money? Free, paid, freemium, ads, subscriptions?',
+        step_type: 'text',
+        isRequired: true,
+      },
+      {
+        title: 'Integration Needs',
+        description: 'Does the app need to connect to existing systems, APIs, or third-party services?',
+        step_type: 'textarea',
+        isRequired: false,
+      }
+    ]
+  },
+  {
+    id: 'ui-ux-design',
+    name: 'UI/UX Design Project Onboarding',
+    description: 'Let\'s create an exceptional user experience that delights your customers and achieves your business goals.',
+    category: 'Design',
+    icon: '🎯',
+    brandColor: '#ef4444',
+    completionMessage: 'Wonderful! We\'re excited to design an amazing user experience for your project. Initial wireframes will be ready within 5 business days.',
+    steps: [
+      {
+        title: 'Project Overview',
+        description: 'What are we designing? Website, app, software interface? What are the main business goals?',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Current Design',
+        description: 'Upload screenshots of existing designs or competitor references',
+        step_type: 'file_upload',
+        options: '.jpg,.png,.pdf,.fig,.sketch,.xd',
+        isRequired: false,
+      },
+      {
+        title: 'User Research',
+        description: 'Who are your users? What are their main goals, pain points, and preferences?',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Design Scope',
+        description: 'What do you need? User Research, Wireframes, UI Design, Prototyping, Usability Testing, Design System',
+        step_type: 'checkbox',
+        isRequired: true,
+      },
+      {
+        title: 'Key User Flows',
+        description: 'What are the most important user journeys we need to optimize?',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Device Requirements',
+        description: 'What devices/screens should we design for? Desktop, Tablet, Mobile, Smartwatch, Other',
+        step_type: 'checkbox',
+        isRequired: true,
+      },
+      {
+        title: 'Brand Guidelines',
+        description: 'Upload existing brand guidelines, style guides, or design system documentation',
+        step_type: 'file_upload',
+        options: '.pdf,.ai,.sketch,.fig,.zip',
+        isRequired: false,
+      },
+      {
+        title: 'Accessibility Needs',
+        description: 'Accessibility requirements: WCAG 2.1 AA, Screen Reader Support, Color Blind Friendly, Keyboard Navigation',
+        step_type: 'checkbox',
+        isRequired: false,
+      }
+    ]
+  },
+  {
+    id: 'digital-marketing-campaign',
+    name: 'Digital Marketing Campaign Launch',
+    description: 'Let\'s create and launch marketing campaigns that drive results and grow your business.',
+    category: 'Marketing',
+    icon: '🚀',
+    brandColor: '#f97316',
+    completionMessage: 'Excellent! We\'re ready to launch campaigns that will boost your business growth. Your marketing strategy will be ready within 2 business days.',
+    steps: [
+      {
+        title: 'Campaign Goals',
+        description: 'What do you want to achieve? Increase sales, generate leads, boost brand awareness, drive website traffic?',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Monthly Budget',
+        description: 'What\'s your total monthly marketing budget for ads and campaigns?',
+        step_type: 'text',
+        isRequired: true,
+      },
+      {
+        title: 'Marketing Channels',
+        description: 'Which channels should we use? Google Ads, Facebook Ads, Instagram Ads, LinkedIn Ads, Email Marketing, Content Marketing',
+        step_type: 'checkbox',
+        isRequired: true,
+      },
+      {
+        title: 'Target Audience',
+        description: 'Describe your ideal customer - demographics, interests, online behavior, pain points',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Landing Pages',
+        description: 'What website or landing pages should we drive traffic to?',
+        step_type: 'url',
+        isRequired: true,
+      },
+      {
+        title: 'Marketing Assets',
+        description: 'Upload logos, product images, brand guidelines, existing ads, or marketing materials',
+        step_type: 'file_upload',
+        options: '.jpg,.png,.pdf,.ai,.psd,.mp4,.zip',
+        isRequired: false,
+      },
+      {
+        title: 'Analytics Access',
+        description: 'Email address for Google Analytics, Facebook Business Manager access',
+        step_type: 'email',
+        isRequired: true,
+      },
+      {
+        title: 'Account Credentials',
+        description: 'Login details for existing ad accounts, social media, or analytics platforms',
+        step_type: 'secure_text',
+        options: '72',
+        isRequired: false,
+      }
+    ]
+  },
+  {
+    id: 'business-consulting',
+    name: 'Business Consulting Engagement',
+    description: 'Let\'s understand your business challenges and goals to create a strategic roadmap for growth and success.',
+    category: 'Consulting',
+    icon: '💼',
+    brandColor: '#1f2937',
+    completionMessage: 'Thank you! We have all the information needed to begin analyzing your business situation. Expect a comprehensive strategy proposal within 5 business days.',
+    steps: [
+      {
+        title: 'Business Overview',
+        description: 'Tell us about your business - what you do, how long you\'ve been operating, and your current position in the market',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Current Challenges',
+        description: 'What are the main problems or obstacles your business is facing right now?',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Business Goals',
+        description: 'What do you want to achieve in the next 6-12 months? What does success look like for your business?',
+        step_type: 'textarea',
+        isRequired: true,
+      },
+      {
+        title: 'Consulting Areas',
+        description: 'Which areas need attention? Business Strategy, Operations, Marketing, Sales, Financial Planning, Team Management, Technology, Market Expansion',
+        step_type: 'checkbox',
+        isRequired: true,
+      },
+      {
+        title: 'Annual Revenue',
+        description: 'What\'s your current annual revenue range? (This helps us understand your business scale)',
+        step_type: 'text',
+        isRequired: true,
+      },
+      {
+        title: 'Team Size',
+        description: 'How many employees/contractors do you currently have?',
+        step_type: 'text',
+        isRequired: true,
+      },
+      {
+        title: 'Business Documents',
+        description: 'Upload relevant documents: business plan, financial statements, org charts, marketing materials, or previous consulting reports',
+        step_type: 'file_upload',
+        options: '.pdf,.doc,.docx,.xlsx,.ppt,.pptx,.zip',
+        isRequired: false,
+      },
+      {
+        title: 'Preferred Deliverables',
+        description: 'What outcomes do you expect? Strategic Plan, Process Improvements, Market Analysis, Financial Projections, Implementation Roadmap, Training Materials',
+        step_type: 'checkbox',
+        isRequired: true,
+      }
+    ]
+  },
+  // Keep the existing technical templates
+  {
+    id: 'aws-deployment',
+    name: 'AWS Deployment Setup',
+    description: 'Secure collection of AWS credentials and deployment configuration',
+    category: 'DevOps',
+    icon: '☁️',
+    brandColor: '#ff9900',
+    completionMessage: 'Perfect! We have all your AWS credentials and configuration. Your deployment pipeline will be set up within 24 hours.',
+    steps: [
+      {
+        title: 'AWS Access Credentials',
+        description: 'Upload your AWS credentials file or provide access keys',
+        step_type: 'file_upload',
+        options: '.csv,.json,.txt,.pem',
+        isRequired: true,
+      },
+      {
+        title: 'AWS Account ID & Region',
+        description: 'Provide your AWS account details and preferred deployment region',
+        step_type: 'textarea',
+        options: 'AWS Account ID, preferred region (e.g., us-east-1), and any specific availability zones...',
+        isRequired: true,
+      },
+      {
+        title: 'SSL Certificates',
+        description: 'Upload SSL certificates and private keys for HTTPS setup',
+        step_type: 'file_upload',
+        options: '.pem,.crt,.key,.p12,.pfx',
+        isRequired: false,
+      },
+      {
+        title: 'Environment Variables',
+        description: 'Provide production environment variables and secrets',
+        step_type: 'secure_text',
+        options: '72',
+        isRequired: true,
+      },
+      {
+        title: 'Database Connection Details',
+        description: 'Database credentials and connection strings for production',
+        step_type: 'secure_text',
+        options: '48',
+        isRequired: true,
+      },
+      {
+        title: 'Deployment Configuration',
+        description: 'Upload Docker files, deployment scripts, or configuration files',
+        step_type: 'file_upload',
+        options: '.dockerfile,.yaml,.yml,.json,.sh,.ps1,.zip',
+        isRequired: false,
+      }
+    ]
+  },
+  {
+    id: 'saas-integration',
+    name: 'SaaS Platform Integration',
+    description: 'Collect API keys and credentials for third-party integrations',
+    category: 'Integration',
+    icon: '🔗',
+    brandColor: '#6366f1',
+    completionMessage: 'Excellent! We have all the API credentials needed to set up your integrations. Your connected workflow will be live within 48 hours.',
+    steps: [
+      {
+        title: 'Primary Platform API Keys',
+        description: 'Provide API keys for your main platform (Stripe, Salesforce, HubSpot, etc.)',
+        step_type: 'secure_text',
+        options: '48',
+        isRequired: true,
+      },
+      {
+        title: 'Authentication Credentials',
+        description: 'Upload OAuth credentials, service account files, or API certificates',
+        step_type: 'file_upload',
+        options: '.json,.pem,.p12,.txt,.csv',
+        isRequired: true,
+      },
+      {
+        title: 'Webhook Configuration',
+        description: 'Webhook endpoints, signing secrets, and event configurations',
+        step_type: 'secure_text',
+        options: '72',
+        isRequired: false,
+      },
+      {
+        title: 'Integration Mapping',
+        description: 'Upload field mapping files or data transformation rules',
+        step_type: 'file_upload',
+        options: '.json,.csv,.xlsx,.yaml,.yml',
+        isRequired: false,
+      },
+      {
+        title: 'Testing Credentials',
+        description: 'Sandbox/testing API keys for development and testing',
+        step_type: 'secure_text',
+        options: '168',
+        isRequired: false,
+      },
+      {
+        title: 'Security & Compliance',
+        description: 'Upload compliance certificates, security policies, or audit documents',
+        step_type: 'file_upload',
+        options: '.pdf,.doc,.docx,.txt',
+        isRequired: false,
+      }
+    ]
+  }
+];
 
-      // Generate the URL
-      const url = `${window.location.origin}/c/${checklist.id}/${sessionToken}`;
-      setGeneratedUrl(url);
-      
-      // Copy to clipboard
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy link:', err);
-    } finally {
-      setCreating(false);
-    }
-  };
-
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  };
-
-  return (
-    <div 
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-      onClick={handleBackdropClick}
-    >
-      <div className="bg-white rounded-xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <div>
-            <h3 className="text-xl font-semibold text-gray-900 font-sans">Create Customer Link</h3>
-            <p className="text-sm text-gray-600 font-sans">{checklist.title}</p>
-          </div>
-          <button
-            onClick={onClose}
-            className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
-        {/* Content */}
-        <div className="p-6 space-y-6">
-          {/* Link Name */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">
-              Link Name <span className="text-gray-500">(Optional)</span>
-            </label>
-            <input
-              type="text"
-              value={linkName}
-              onChange={(e) => setLinkName(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
-              placeholder="e.g., Sarah from TechCorp, Q1 Onboarding Batch"
-            />
-            <p className="text-xs text-gray-500 mt-1 font-sans">
-              Add a name to help you track this link in your submissions dashboard
-            </p>
-          </div>
-
-          {/* Link generation */}
-          <div>
-            {!generatedUrl ? (
-              <div className="text-center">
-                <button
-                  onClick={handleCreateAndCopyLink}
-                  disabled={creating}
-                  className="w-full bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-4 rounded-lg font-semibold transition-colors disabled:opacity-50 font-sans"
-                >
-                  {creating ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white inline-block mr-2"></div>
-                      Creating Link...
-                    </>
-                  ) : (
-                    'Create & Copy Customer Link'
-                  )}
-                </button>
-              </div>
-            ) : (
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                <div className="flex items-center space-x-3 mb-3">
-                  <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">
-                    <Users className="w-4 h-4 text-emerald-600" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="font-medium text-gray-900 text-sm font-sans">Customer Link Created!</div>
-                    <div className="text-xs text-gray-600 font-sans">Ready to send to your customer</div>
-                  </div>
-                </div>
-                <div className="bg-white border border-gray-200 rounded-lg p-3">
-                  <div className="flex items-center space-x-2">
-                    <div className="flex-1 font-mono text-sm text-gray-600 break-all">
-                      {generatedUrl}
-                    </div>
-                    <button
-                      onClick={async () => {
-                        try {
-                          await navigator.clipboard.writeText(generatedUrl);
-                          setCopied(true);
-                          setTimeout(() => setCopied(false), 2000);
-                        } catch (err) {
-                          console.error('Failed to copy:', err);
-                        }
-                      }}
-                      className="flex-shrink-0 bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center font-sans"
-                    >
-                      {copied ? (
-                        <>
-                          <Check className="w-3 h-3 mr-1" />
-                          Copied!
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="w-3 h-3 mr-1" />
-                          Copy
-                        </>
-                      )}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Simple info */}
-          <div className="bg-blue-50 rounded-lg p-4">
-            <div className="flex items-center space-x-2 mb-2">
-              <Info className="w-4 h-4 text-blue-600" />
-              <span className="font-medium text-blue-900 font-sans">How it works</span>
-            </div>
-            <div className="text-sm text-blue-800 space-y-2 font-sans">
-              <p>
-                Each link creates a trackable submission that appears in your dashboard immediately. 
-                Send the link to your customer and monitor their progress in real-time.
-              </p>
-              <p>
-                You can send this link to multiple people on your client team - they'll see each other's 
-                activity and get notified when someone else is editing to prevent conflicts.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50">
-          <div className="text-sm text-gray-600 font-sans">
-            {generatedUrl ? 'Link ready to share' : 'Create a unique tracking link'}
-          </div>
-          <button
-            onClick={onClose}
-            className="px-6 py-2 text-gray-600 hover:text-gray-800 font-medium transition-colors font-sans"
-          >
-            {generatedUrl ? 'Done' : 'Cancel'}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
+export function getTemplateById(id: string): ChecklistTemplate | undefined {
+  return checklistTemplates.find(template => template.id === id);
 }
 
-function ChecklistCard({ checklist, onEdit, onDelete, onPreview, onShare, deletingId }: {
-  checklist: Checklist;
-  onEdit: (checklist: Checklist) => void;
-  onDelete: (id: string) => void;
-  onPreview: (checklist: Checklist) => void;
-  onShare: (checklist: Checklist) => void;
-  deletingId: string | null;
-}) {
-  const { steps, loading: stepsLoading } = useChecklistSteps(checklist.id);
-  const { sessions } = useCustomerSessions();
-  const stepCount = steps.length;
-  const needsSetup = stepCount === 0;
-  
-  // Filter sessions for this specific checklist
-  const checklistSessions = sessions.filter(session => 
-    (session as any).checklist_id === checklist.id
-  );
-  const completedSessions = checklistSessions.filter(session => 
-    session.submission_status === 'completed'
-  );
-  const completionRate = checklistSessions.length > 0 
-    ? Math.round((completedSessions.length / checklistSessions.length) * 100)
-    : 0;
-
-  return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all duration-200 hover:-translate-y-0.5">
-      {/* Header with brand color */}
-      <div 
-        className="h-2 rounded-t-xl"
-        style={{ backgroundColor: checklist.brand_color }}
-      ></div>
-      
-      <div className="p-6">
-        {/* Title and description */}
-        <div className="mb-6">
-          <div className="flex items-start justify-between mb-3">
-            <h3 className="text-xl font-semibold text-gray-900 font-sans line-clamp-2 flex-1">
-              {checklist.title}
-            </h3>
-            {needsSetup && (
-              <span className="ml-3 px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-medium font-sans whitespace-nowrap">
-                Setup Required
-              </span>
-            )}
-          </div>
-          <p className="text-gray-600 font-sans line-clamp-2 leading-relaxed">
-            {checklist.description}
-          </p>
-        </div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="text-center p-3 bg-gray-50 rounded-lg">
-            <div className="text-lg font-bold text-gray-900 font-sans">
-              {stepsLoading ? '...' : stepCount}
-            </div>
-            <div className="text-xs text-gray-600 font-sans">
-              {stepCount === 1 ? 'Step' : 'Steps'}
-            </div>
-          </div>
-          <div className="text-center p-3 bg-gray-50 rounded-lg">
-            <div className="text-lg font-bold text-gray-900 font-sans">{checklistSessions.length}</div>
-            <div className="text-xs text-gray-600 font-sans">Sessions</div>
-          </div>
-          <div className="text-center p-3 bg-gray-50 rounded-lg">
-            <div className="text-lg font-bold text-gray-900 font-sans">{completionRate}%</div>
-            <div className="text-xs text-gray-600 font-sans">Completed</div>
-          </div>
-        </div>
-
-        {/* Primary Action */}
-        <button
-          onClick={() => onShare(checklist)}
-          disabled={needsSetup}
-          className="w-full bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-3 rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed mb-4 font-sans"
-        >
-          {needsSetup ? 'Add Steps to Share' : 'Create Customer Link'}
-        </button>
-
-        {/* Secondary Actions */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-1">
-            <button
-              onClick={() => onPreview(checklist)}
-              disabled={needsSetup}
-              className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              title={needsSetup ? "Add steps before previewing" : "Preview checklist"}
-            >
-              <ExternalLink className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => onEdit(checklist)}
-              className="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
-              title="Edit checklist"
-            >
-              <Edit className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => onDelete(checklist.id)}
-              disabled={deletingId === checklist.id}
-              className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
-              title="Delete checklist"
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
-          </div>
-          
-          <div className="text-xs text-gray-500 font-sans">
-            {new Date(checklist.created_at).toLocaleDateString()}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export default function ChecklistList({ onEditChecklist, onCreateNew }: ChecklistListProps) {
-  const { checklists, loading, error, deleteChecklist } = useChecklists();
-  const { createPendingSubmission } = useCustomerSessions();
-  const { getAccessStatus } = useSubscription();
-  const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [showTemplateSelector, setShowTemplateSelector] = useState(false);
-  const [shareModalChecklist, setShareModalChecklist] = useState<Checklist | null>(null);
-  const accessStatus = getAccessStatus();
-
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this checklist? This action cannot be undone.')) {
-      return;
+export function getTemplatesByCategory(): Record<string, ChecklistTemplate[]> {
+  return checklistTemplates.reduce((acc, template) => {
+    if (!acc[template.category]) {
+      acc[template.category] = [];
     }
-
-    setDeletingId(id);
-    const success = await deleteChecklist(id);
-    if (!success) {
-      // Error is handled by the hook
-    }
-    setDeletingId(null);
-  };
-
-  const handleCreateFromTemplate = () => {
-    setShowTemplateSelector(true);
-  };
-
-  const handleSelectTemplate = (template: ChecklistTemplate) => {
-    setShowTemplateSelector(false);
-    onCreateNew(template);
-  };
-
-  const handleCreateBlank = () => {
-    setShowTemplateSelector(false);
-    onCreateNew();
-  };
-
-  const handlePreview = (checklist: Checklist) => {
-    const sessionToken = Math.random().toString(36).substring(2, 10);
-    const url = `${window.location.origin}/c/${checklist.id}/${sessionToken}`;
-    window.open(url, '_blank');
-  };
-
-  const handleShare = (checklist: Checklist) => {
-    setShareModalChecklist(checklist);
-  };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-        <p className="text-red-600 text-sm font-sans">{error}</p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 font-sans">Your Checklists</h2>
-          <p className="text-gray-600 font-sans">Create and manage onboarding flows for your customers</p>
-        </div>
-        <div className="flex items-center space-x-3">
-          <button
-            onClick={handleCreateFromTemplate}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center shadow-sm hover:shadow-md font-sans"
-          >
-            <Sparkles className="w-5 h-5 mr-2" />
-            Use Template
-          </button>
-          <button
-            onClick={() => onCreateNew()}
-            className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center shadow-sm hover:shadow-md font-sans"
-          >
-            <Plus className="w-5 h-5 mr-2" />
-            Create Custom
-          </button>
-        </div>
-      </div>
-
-      {/* Checklists Grid */}
-      {checklists.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-16 text-center">
-          <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Plus className="w-10 h-10 text-emerald-600" />
-          </div>
-          <h3 className="text-2xl font-bold text-gray-900 mb-3 font-sans">Create Your First Checklist</h3>
-          <p className="text-gray-600 mb-8 max-w-md mx-auto font-sans">
-            Start with a proven template or build a custom onboarding flow from scratch
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={handleCreateFromTemplate}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-4 rounded-lg font-semibold transition-colors flex items-center justify-center shadow-sm hover:shadow-md font-sans"
-            >
-              <Sparkles className="w-5 h-5 mr-2" />
-              Browse Templates
-            </button>
-            <button
-              onClick={() => onCreateNew()}
-              className="bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-4 rounded-lg font-semibold transition-colors flex items-center justify-center shadow-sm hover:shadow-md font-sans"
-            >
-              <Plus className="w-5 h-5 mr-2" />
-              Start from Scratch
-            </button>
-          </div>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {checklists.map((checklist) => (
-            <ChecklistCard
-              key={checklist.id}
-              checklist={checklist}
-              onEdit={onEditChecklist}
-              onDelete={handleDelete}
-              onPreview={handlePreview}
-              onShare={handleShare}
-              deletingId={deletingId}
-            />
-          ))}
-        </div>
-      )}
-
-      {/* Template Selector Modal */}
-      {showTemplateSelector && (
-        <TemplateSelector
-          onSelectTemplate={handleSelectTemplate}
-          onClose={() => setShowTemplateSelector(false)}
-          onCreateBlank={handleCreateBlank}
-        />
-      )}
-
-      {/* Share Link Modal */}
-      {shareModalChecklist && (
-        <ShareLinkModal
-          checklist={shareModalChecklist}
-          onClose={() => {
-            setShareModalChecklist(null);
-          }}
-        />
-      )}
-    </div>
-  );
+    acc[template.category].push(template);
+    return acc;
+  }, {} as Record<string, ChecklistTemplate[]>);
 }
