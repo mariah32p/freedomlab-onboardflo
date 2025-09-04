@@ -256,6 +256,7 @@ export function useSessionProgress({ checklistId, sessionToken }: UseSessionProg
           completed_at: new Date().toISOString(),
           last_activity: new Date().toISOString(),
           is_active: false,
+          submission_status: 'completed',
         })
         .eq('id', session.id);
 
@@ -265,6 +266,7 @@ export function useSessionProgress({ checklistId, sessionToken }: UseSessionProg
         ...prev,
         completed_at: new Date().toISOString(),
         is_active: false,
+        submission_status: 'completed',
       } : null);
 
       return true;
