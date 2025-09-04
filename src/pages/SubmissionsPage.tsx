@@ -264,7 +264,10 @@ export default function SubmissionsPage() {
                           <div>
                             <div className="flex items-center space-x-2 mb-1">
                               <h3 className="font-medium text-gray-900 font-sans">
-                                {session.name || (session.submission_status === 'pending' ? 'Pending Customer' : 'Anonymous')}
+                                {session.name && session.name !== 'Anonymous' 
+                                  ? session.name 
+                                  : session.company || (session.submission_status === 'pending' ? 'Pending Customer' : 'Anonymous Customer')
+                                }
                               </h3>
                               {session.link_name && (
                                 <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium font-sans">
