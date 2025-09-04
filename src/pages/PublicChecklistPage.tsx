@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useCallback, useRef } from 'react';
 import { supabase } from '../lib/supabase';
 import { useSessionProgress } from '../hooks/useSessionProgress';
 import ConcurrentEditNotification from '../components/ConcurrentEditNotification';
@@ -46,6 +47,7 @@ export default function PublicChecklistPage() {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [showCustomerForm, setShowCustomerForm] = useState(true);
   const [sessionToken, setSessionToken] = useState<string>('');
+  const inputTimeouts = useRef<Map<string, NodeJS.Timeout>>(new Map());
   
   const [customerData, setCustomerData] = useState<CustomerData>({
     email: '',
@@ -199,21 +201,43 @@ export default function PublicChecklistPage() {
     }
   };
 
-  const handleStepChange = async (stepId: string, value: string | boolean, file?: File) => {
+  const handleStepChange = useCallback(async (stepId: string, value: string | boolean, file?: File) => {
+    // Clear existing timeout for this step
+    const existingTimeout = inputTimeouts.current.get(stepId);
+    if (existingTimeout) {
+      clearTimeout(existingTimeout);
+    }
+
+    // For text inputs, debounce the save
     if (typeof value === 'boolean') {
+      // Immediate save for checkboxes
       if (value) {
         await saveStepProgress(stepId, '');
       } else {
         await removeStepProgress(stepId);
       }
     } else {
-      if (value.trim()) {
-        await saveStepProgress(stepId, value);
-      } else {
-        await removeStepProgress(stepId);
-      }
+      // Debounced save for text inputs
+      const timeout = setTimeout(async () => {
+        inputTimeouts.current.delete(stepId);
+        if (value.trim()) {
+          await saveStepProgress(stepId, value);
+        } else {
+          await removeStepProgress(stepId);
+        }
+      }, 1500); // Wait 1.5 seconds after user stops typing
+      
+      inputTimeouts.current.set(stepId, timeout);
     }
-  };
+  }, [saveStepProgress, removeStepProgress]);
+
+  // Cleanup timeouts on unmount
+  useEffect(() => {
+    return () => {
+      inputTimeouts.current.forEach(timeout => clearTimeout(timeout));
+      inputTimeouts.current.clear();
+    };
+  }, []);
 
   const handleComplete = async () => {
     if (!checklist || !session) return;
@@ -289,7 +313,28 @@ export default function PublicChecklistPage() {
               <input
                 type="text"
                 value={stepProgress?.notes || ''}
-                onChange={(e) => handleStepChange(step.id, e.target.value)}
+                onChange={(e) => {
+                  // Update local state immediately for responsive UI
+                  const newProgress = progress.map(p => 
+                    p.step_id === step.id 
+                      ? { ...p, notes: e.target.value }
+                      : p
+                  );
+                  if (!progress.find(p => p.step_id === step.id) && e.target.value) {
+                    newProgress.push({
+                      id: crypto.randomUUID(),
+                      session_id: session?.id || '',
+                      step_id: step.id,
+                      notes: e.target.value,
+                      completed_at: new Date().toISOString(),
+                      created_at: new Date().toISOString(),
+                    });
+                  }
+                  // Don't update progress state here to avoid conflicts
+                  
+                  // Trigger debounced save
+                  handleStepChange(step.id, e.target.value);
+                }}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent text-gray-900 font-sans"
                 placeholder={step.options || 'Enter text...'}
               />
@@ -307,7 +352,10 @@ export default function PublicChecklistPage() {
               )}
               <textarea
                 value={stepProgress?.notes || ''}
-                onChange={(e) => handleStepChange(step.id, e.target.value)}
+                onChange={(e) => {
+                  // Trigger debounced save
+                  handleStepChange(step.id, e.target.value);
+                }}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent text-gray-900 font-sans"
                 placeholder={step.options || 'Enter details...'}
                 rows={4}
@@ -331,7 +379,10 @@ export default function PublicChecklistPage() {
                 <input
                   type="email"
                   value={stepProgress?.notes || ''}
-                  onChange={(e) => handleStepChange(step.id, e.target.value)}
+                  onChange={(e) => {
+                    // Trigger debounced save
+                    handleStepChange(step.id, e.target.value);
+                  }}
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent text-gray-900 font-sans"
                   placeholder="Enter email address..."
                 />
@@ -355,7 +406,10 @@ export default function PublicChecklistPage() {
                 <input
                   type="url"
                   value={stepProgress?.notes || ''}
-                  onChange={(e) => handleStepChange(step.id, e.target.value)}
+                  onChange={(e) => {
+                    // Trigger debounced save
+                    handleStepChange(step.id, e.target.value);
+                  }}
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent text-gray-900 font-sans"
                   placeholder="https://example.com"
                 />
