@@ -17,7 +17,7 @@ export interface ChecklistTemplate {
 
 export const checklistTemplates: ChecklistTemplate[] = [
   {
-    id: 'web-development',
+    id: 'website-development',
     name: 'Website Development Project Onboarding',
     description: 'Help us understand your vision and requirements to create the perfect website for your business.',
     category: 'Development',
@@ -622,7 +622,6 @@ export const checklistTemplates: ChecklistTemplate[] = [
       }
     ]
   },
-  // Keep the existing technical templates
   {
     id: 'aws-deployment',
     name: 'AWS Deployment Setup',
