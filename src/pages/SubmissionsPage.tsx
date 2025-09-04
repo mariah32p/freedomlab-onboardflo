@@ -20,7 +20,9 @@ import {
   Link as LinkIcon,
   Eye,
   Copy,
-  Check
+  Check,
+  Edit,
+  X
 } from 'lucide-react';
 
 export default function SubmissionsPage() {
@@ -30,6 +32,8 @@ export default function SubmissionsPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [copiedSessionId, setCopiedSessionId] = useState<string | null>(null);
+  const [editingSessionId, setEditingSessionId] = useState<string | null>(null);
+  const [editingLinkName, setEditingLinkName] = useState('');
   const accessStatus = getAccessStatus();
 
   // Track progress for each session
@@ -101,6 +105,38 @@ export default function SubmissionsPage() {
     } catch (err) {
       console.error('Failed to copy URL:', err);
     }
+  };
+
+  const handleEditLinkName = (session: any) => {
+    setEditingSessionId(session.id);
+    setEditingLinkName(session.link_name || '');
+  };
+
+  const handleSaveLinkName = async (sessionId: string) => {
+    try {
+      const { error } = await supabase
+        .from('customer_sessions')
+        .update({ link_name: editingLinkName.trim() })
+        .eq('id', sessionId);
+
+      if (error) throw error;
+
+      // Update local state
+      // Note: This would normally trigger a refetch, but for immediate UI update:
+      setEditingSessionId(null);
+      setEditingLinkName('');
+      
+      // Refresh the sessions list
+      window.location.reload();
+    } catch (err) {
+      console.error('Error updating link name:', err);
+      alert('Failed to update link name');
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingSessionId(null);
+    setEditingLinkName('');
   };
 
   const getStatusColor = (session: any) => {
@@ -257,15 +293,58 @@ export default function SubmissionsPage() {
             <div className="p-6">
               <div className="space-y-4">
                 {sessions.map((session) => (
-                  <div key={session.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                  <div key={session.id} className="group flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                     <div className="flex items-center flex-1">
                       <div className="flex-1">
                         <div className="flex items-start justify-between">
                           <div>
                             <div className="flex items-center space-x-2 mb-1">
-                              <h3 className="font-medium text-gray-900 font-sans">
-                                {session.link_name || 'Unnamed Submission'}
-                              </h3>
+                              {editingSessionId === session.id ? (
+                                <div className="flex items-center space-x-2">
+                                  <input
+                                    type="text"
+                                    value={editingLinkName}
+                                    onChange={(e) => setEditingLinkName(e.target.value)}
+                                    className="font-medium text-gray-900 bg-white border border-gray-300 rounded px-2 py-1 text-sm font-sans"
+                                    placeholder="Enter submission name"
+                                    autoFocus
+                                    onKeyDown={(e) => {
+                                      if (e.key === 'Enter') {
+                                        handleSaveLinkName(session.id);
+                                      } else if (e.key === 'Escape') {
+                                        handleCancelEdit();
+                                      }
+                                    }}
+                                  />
+                                  <button
+                                    onClick={() => handleSaveLinkName(session.id)}
+                                    className="text-emerald-600 hover:text-emerald-700 p-1"
+                                    title="Save"
+                                  >
+                                    <Check className="w-4 h-4" />
+                                  </button>
+                                  <button
+                                    onClick={handleCancelEdit}
+                                    className="text-gray-400 hover:text-gray-600 p-1"
+                                    title="Cancel"
+                                  >
+                                    <X className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              ) : (
+                                <div className="flex items-center space-x-2">
+                                  <h3 className="font-medium text-gray-900 font-sans">
+                                    {session.link_name || 'Unnamed Submission'}
+                                  </h3>
+                                  <button
+                                    onClick={() => handleEditLinkName(session)}
+                                    className="text-gray-400 hover:text-gray-600 p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                    title="Edit name"
+                                  >
+                                    <Edit className="w-3 h-3" />
+                                  </button>
+                                </div>
+                              )}
                             </div>
                             <div className="flex items-center space-x-4 text-sm text-gray-600 mb-1">
                               <div className="flex items-center">
