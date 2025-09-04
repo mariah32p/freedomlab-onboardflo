@@ -1,49 +1,3 @@
-import React, { useState } from 'react';
-import { Plus } from 'lucide-react';
-import ChecklistList from '../components/checklist/ChecklistList';
-import ChecklistWizard from '../components/checklist/ChecklistWizard';
-
-export default function ChecklistsPage() {
-  const [showWizard, setShowWizard] = useState(false);
-
-  if (showWizard) {
-    return (
-      <ChecklistWizard 
-        onClose={() => setShowWizard(false)}
-        onComplete={() => {
-          setShowWizard(false);
-          // Refresh the checklist list
-          window.location.reload();
-        }}
-      />
-    );
-  }
-
-  return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Your Checklists</h1>
-            <p className="mt-2 text-gray-600">
-              Create and manage customer onboarding checklists
-            </p>
-          </div>
-          <button
-            onClick={() => setShowWizard(true)}
-            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Create Checklist
-          </button>
-        </div>
-        
-        <ChecklistList />
-      </div>
-    </div>
-  );
-}
-
 export interface ChecklistTemplate {
   id: string;
   name: string;
@@ -665,6 +619,113 @@ export const checklistTemplates: ChecklistTemplate[] = [
         description: 'What outcomes do you expect? Strategic Plan, Process Improvements, Market Analysis, Financial Projections, Implementation Roadmap, Training Materials',
         step_type: 'checkbox',
         isRequired: true,
+      }
+    ]
+  },
+  // Keep the existing technical templates
+  {
+    id: 'aws-deployment',
+    name: 'AWS Deployment Setup',
+    description: 'Secure collection of AWS credentials and deployment configuration',
+    category: 'DevOps',
+    icon: '☁️',
+    brandColor: '#ff9900',
+    completionMessage: 'Perfect! We have all your AWS credentials and configuration. Your deployment pipeline will be set up within 24 hours.',
+    steps: [
+      {
+        title: 'AWS Access Credentials',
+        description: 'Upload your AWS credentials file or provide access keys',
+        step_type: 'file_upload',
+        options: '.csv,.json,.txt,.pem',
+        isRequired: true,
+      },
+      {
+        title: 'AWS Account ID & Region',
+        description: 'Provide your AWS account details and preferred deployment region',
+        step_type: 'textarea',
+        options: 'AWS Account ID, preferred region (e.g., us-east-1), and any specific availability zones...',
+        isRequired: true,
+      },
+      {
+        title: 'SSL Certificates',
+        description: 'Upload SSL certificates and private keys for HTTPS setup',
+        step_type: 'file_upload',
+        options: '.pem,.crt,.key,.p12,.pfx',
+        isRequired: false,
+      },
+      {
+        title: 'Environment Variables',
+        description: 'Provide production environment variables and secrets',
+        step_type: 'secure_text',
+        options: '72',
+        isRequired: true,
+      },
+      {
+        title: 'Database Connection Details',
+        description: 'Database credentials and connection strings for production',
+        step_type: 'secure_text',
+        options: '48',
+        isRequired: true,
+      },
+      {
+        title: 'Deployment Configuration',
+        description: 'Upload Docker files, deployment scripts, or configuration files',
+        step_type: 'file_upload',
+        options: '.dockerfile,.yaml,.yml,.json,.sh,.ps1,.zip',
+        isRequired: false,
+      }
+    ]
+  },
+  {
+    id: 'saas-integration',
+    name: 'SaaS Platform Integration',
+    description: 'Collect API keys and credentials for third-party integrations',
+    category: 'Integration',
+    icon: '🔗',
+    brandColor: '#6366f1',
+    completionMessage: 'Excellent! We have all the API credentials needed to set up your integrations. Your connected workflow will be live within 48 hours.',
+    steps: [
+      {
+        title: 'Primary Platform API Keys',
+        description: 'Provide API keys for your main platform (Stripe, Salesforce, HubSpot, etc.)',
+        step_type: 'secure_text',
+        options: '48',
+        isRequired: true,
+      },
+      {
+        title: 'Authentication Credentials',
+        description: 'Upload OAuth credentials, service account files, or API certificates',
+        step_type: 'file_upload',
+        options: '.json,.pem,.p12,.txt,.csv',
+        isRequired: true,
+      },
+      {
+        title: 'Webhook Configuration',
+        description: 'Webhook endpoints, signing secrets, and event configurations',
+        step_type: 'secure_text',
+        options: '72',
+        isRequired: false,
+      },
+      {
+        title: 'Integration Mapping',
+        description: 'Upload field mapping files or data transformation rules',
+        step_type: 'file_upload',
+        options: '.json,.csv,.xlsx,.yaml,.yml',
+        isRequired: false,
+      },
+      {
+        title: 'Testing Credentials',
+        description: 'Sandbox/testing API keys for development and testing',
+        step_type: 'secure_text',
+        options: '168',
+        isRequired: false,
+      },
+      {
+        title: 'Security & Compliance',
+        description: 'Upload compliance certificates, security policies, or audit documents',
+        step_type: 'file_upload',
+        options: '.pdf,.doc,.docx,.txt',
+        isRequired: false,
       }
     ]
   }
