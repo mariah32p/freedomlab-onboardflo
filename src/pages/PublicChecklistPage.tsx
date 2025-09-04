@@ -49,6 +49,9 @@ export default function PublicChecklistPage() {
   const [sessionToken, setSessionToken] = useState<string>('');
   const inputTimeouts = useRef<Map<string, NodeJS.Timeout>>(new Map());
   
+  // Local state for immediate UI updates
+  const [localStepValues, setLocalStepValues] = useState<Record<string, string>>({});
+  
   const [customerData, setCustomerData] = useState<CustomerData>({
     email: '',
     name: '',
@@ -104,6 +107,15 @@ export default function PublicChecklistPage() {
       setShowCustomerForm(false);
     }
   }, [session]);
+
+  // Initialize local values from progress
+  useEffect(() => {
+    const initialValues: Record<string, string> = {};
+    progress.forEach(p => {
+      initialValues[p.step_id] = p.notes;
+    });
+    setLocalStepValues(initialValues);
+  }, [progress]);
 
   const fetchChecklistData = async () => {
     if (!checklistId) return;
@@ -208,6 +220,14 @@ export default function PublicChecklistPage() {
       clearTimeout(existingTimeout);
     }
 
+    // Update local state immediately for responsive UI
+    if (typeof value === 'string') {
+      setLocalStepValues(prev => ({
+        ...prev,
+        [stepId]: value
+      }));
+    }
+
     // For text inputs, debounce the save
     if (typeof value === 'boolean') {
       // Immediate save for checkboxes
@@ -261,6 +281,7 @@ export default function PublicChecklistPage() {
     const stepProgress = getStepProgress(step.id);
     const isCompleted = isStepCompleted(step.id);
     const primaryColor = branding?.primary_color || checklist?.brand_color || '#10b981';
+    const currentValue = localStepValues[step.id] ?? stepProgress?.notes ?? '';
 
     switch (step.step_type) {
       case 'checkbox':
@@ -312,27 +333,8 @@ export default function PublicChecklistPage() {
               )}
               <input
                 type="text"
-                value={stepProgress?.notes || ''}
+                value={currentValue}
                 onChange={(e) => {
-                  // Update local state immediately for responsive UI
-                  const newProgress = progress.map(p => 
-                    p.step_id === step.id 
-                      ? { ...p, notes: e.target.value }
-                      : p
-                  );
-                  if (!progress.find(p => p.step_id === step.id) && e.target.value) {
-                    newProgress.push({
-                      id: crypto.randomUUID(),
-                      session_id: session?.id || '',
-                      step_id: step.id,
-                      notes: e.target.value,
-                      completed_at: new Date().toISOString(),
-                      created_at: new Date().toISOString(),
-                    });
-                  }
-                  // Don't update progress state here to avoid conflicts
-                  
-                  // Trigger debounced save
                   handleStepChange(step.id, e.target.value);
                 }}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent text-gray-900 font-sans"
@@ -351,9 +353,8 @@ export default function PublicChecklistPage() {
                 <p className="text-gray-600 mb-4 font-sans">{step.description}</p>
               )}
               <textarea
-                value={stepProgress?.notes || ''}
+                value={currentValue}
                 onChange={(e) => {
-                  // Trigger debounced save
                   handleStepChange(step.id, e.target.value);
                 }}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent text-gray-900 font-sans"
@@ -378,9 +379,8 @@ export default function PublicChecklistPage() {
                 </div>
                 <input
                   type="email"
-                  value={stepProgress?.notes || ''}
+                  value={currentValue}
                   onChange={(e) => {
-                    // Trigger debounced save
                     handleStepChange(step.id, e.target.value);
                   }}
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent text-gray-900 font-sans"
@@ -405,9 +405,8 @@ export default function PublicChecklistPage() {
                 </div>
                 <input
                   type="url"
-                  value={stepProgress?.notes || ''}
+                  value={currentValue}
                   onChange={(e) => {
-                    // Trigger debounced save
                     handleStepChange(step.id, e.target.value);
                   }}
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent text-gray-900 font-sans"
