@@ -69,6 +69,12 @@ export function useCustomerSessions() {
   };
 
   const getSessionProgress = async (sessionId: string) => {
+    // Validate sessionId before making the query
+    if (!sessionId || typeof sessionId !== 'string' || sessionId.trim() === '') {
+      console.warn('Invalid sessionId provided to getSessionProgress');
+      return [];
+    }
+
     try {
       const { data, error } = await supabase
         .from('session_progress')
@@ -79,6 +85,7 @@ export function useCustomerSessions() {
       return data || [];
     } catch (err) {
       console.error('Error fetching session progress:', err);
+      // Return empty array instead of throwing to prevent UI crashes
       return [];
     }
   };
