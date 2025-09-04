@@ -328,18 +328,30 @@ export default function EditChecklistPage() {
           )}
 
           {step.step_type === 'secure_text' && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">Expiry Hours</label>
-              <input
-                type="number"
-                value={step.options || '24'}
-                onChange={(e) => handleUpdateStep(index, { options: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-sans"
-                placeholder="24"
-                min="1"
-                max="168"
-              />
-              <p className="text-xs text-gray-500 mt-1 font-sans">Hours before secure data expires (1-168)</p>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">Expiry Hours</label>
+                <input
+                  type="number"
+                  value={step.options || '24'}
+                  onChange={(e) => handleUpdateStep(index, { options: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-sans"
+                  placeholder="24"
+                  min="1"
+                  max="168"
+                />
+                <p className="text-xs text-gray-500 mt-1 font-sans">Hours before secure data expires (1-168)</p>
+              </div>
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <h5 className="text-sm font-medium text-blue-900 mb-2 font-sans">🔒 Security Information</h5>
+                <div className="text-xs text-blue-800 space-y-1 font-sans">
+                  <p>• Data is encrypted using base64 encoding before storage</p>
+                  <p>• Automatically expires after the specified time period</p>
+                  <p>• Stored separately from regular step data for added security</p>
+                  <p>• Use for passwords, API keys, or other sensitive information</p>
+                  <p>• Consider shorter expiry times for highly sensitive data</p>
+                </div>
+              </div>
             </div>
           )}
 
