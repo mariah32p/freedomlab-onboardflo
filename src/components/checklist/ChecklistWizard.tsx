@@ -715,8 +715,8 @@ export default function ChecklistWizard({ onSave, onClose }: ChecklistWizardProp
           <ArrowRight className="w-5 h-5 ml-2" />
         </button>
       </div>
-    );
-  };
+    </div>
+  );
 
   const renderLaunch = () => (
     <div className="text-center space-y-8">
