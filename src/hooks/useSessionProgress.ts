@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase';
 import { CustomerSession, SessionProgress } from '../types/checklist';
 import { useCallback } from 'react';
+import { useSecureText } from './useSecureText';
 
 interface UseSessionProgressProps {
   checklistId: string;
@@ -21,6 +22,8 @@ export function useSessionProgress({ checklistId, sessionToken }: UseSessionProg
   const realtimeChannel = useRef<any>(null);
   const saveTimeouts = useRef<Map<string, NodeJS.Timeout>>(new Map());
   const lastSaveAttempt = useRef<Map<string, number>>(new Map());
+  
+  const { getSecureText } = useSecureText(session?.id || '');
 
   useEffect(() => {
     if (checklistId && sessionToken) {
