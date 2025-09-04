@@ -247,34 +247,34 @@ export default function FileUpload({
                     <div className="font-medium text-gray-900 text-sm truncate font-sans">
                       {file.name}
                     </div>
-                        {formatFileSize(file.size)} • {new Date(file.uploadedAt).toLocaleDateString()}
-                        {file.url ? (
-                          <span className="ml-2 text-emerald-600">✓ Uploaded</span>
-                        ) : (
-                          <span className="ml-2 text-blue-600">📎 Tracked</span>
-                        )}
+                    <div className="text-xs text-gray-500 font-sans">
                       {formatFileSize(file.size)} • {new Date(file.uploadedAt).toLocaleDateString()}
+                      {file.url ? (
+                        <span className="ml-2 text-emerald-600">✓ Uploaded</span>
+                      ) : (
+                        <span className="ml-2 text-blue-600">📎 Tracked</span>
+                      )}
                     </div>
                   </div>
                 </div>
                 <div className="flex items-center space-x-1">
-                  <button
-                    onClick={() => downloadFile(file)}
-                    className="p-1 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-100 rounded transition-colors"
-                    title="Download file"
-                  >
-                    <Download className="w-4 h-4" />
-                  </button>
+                  {file.url && (
+                    <button
+                      onClick={() => downloadFile(file)}
+                      className="p-1 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-100 rounded transition-colors"
+                      title="Download file"
+                    >
+                      <Download className="w-4 h-4" />
+                    </button>
+                  )}
                   {!disabled && (
-                    {file.url && (
-                      <button
-                        onClick={() => downloadFile(file)}
-                        className="p-1 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-100 rounded transition-colors"
-                        title="Download file"
-                      >
-                        <Download className="w-4 h-4" />
-                      </button>
-                    )}
+                    <button
+                      onClick={() => removeFile(index)}
+                      className="p-1 text-red-600 hover:text-red-700 hover:bg-red-100 rounded transition-colors"
+                      title="Remove file"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
                   )}
                 </div>
               </div>
