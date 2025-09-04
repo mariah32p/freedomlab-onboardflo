@@ -591,7 +591,7 @@ export default function CreateChecklistPage() {
             </button>
           </div>
           
-          <div className="space-y-3 max-h-96 overflow-y-auto">
+          <div className="space-y-3 max-h-[600px] overflow-y-auto">
             {steps.map((step, index) => (
               <div key={index}>
                 {renderStepEditor(step, index)}
