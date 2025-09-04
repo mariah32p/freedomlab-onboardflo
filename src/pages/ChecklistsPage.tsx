@@ -180,6 +180,13 @@ export default function ChecklistsPage() {
                       <Eye className="w-4 h-4" />
                     </button>
                     <button
+                      onClick={() => navigate(`/checklists/edit/${checklist.id}`)}
+                      className="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
+                      title="Edit checklist"
+                    >
+                      <Edit className="w-4 h-4" />
+                    </button>
+                    <button
                       onClick={() => window.location.href = '/submissions'}
                       className="p-2 text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
                       title="View sessions"
