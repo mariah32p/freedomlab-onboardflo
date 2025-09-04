@@ -621,6 +621,7 @@ export const checklistTemplates: ChecklistTemplate[] = [
         isRequired: true,
       }
     ]
+  }
   { value: 'secure_text', label: 'Secure Text', description: 'Encrypted, auto-expiring sensitive data' }
 ];
 
