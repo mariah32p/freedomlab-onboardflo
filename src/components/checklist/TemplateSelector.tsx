@@ -1,3 +1,6 @@
+import React, { useState } from 'react';
+import { X, Search, Star, ArrowRight, Plus, Sparkles, ChevronRight } from 'lucide-react';
+
 export interface ChecklistTemplate {
   id: string;
   name: string;
@@ -15,11 +18,11 @@ export interface ChecklistTemplate {
   }[];
 }
 
-export const checklistTemplates: ChecklistTemplate[] = [
+const templates: ChecklistTemplate[] = [
   {
-    id: 'web-development',
-    name: 'Website Development Project Onboarding',
-    description: 'Help us understand your vision and requirements to create the perfect website for your business.',
+    id: 'website-development',
+    name: 'Website Development Project',
+    description: 'Complete onboarding for website design and development clients',
     category: 'Development',
     icon: '💻',
     brandColor: '#3b82f6',
@@ -27,7 +30,7 @@ export const checklistTemplates: ChecklistTemplate[] = [
     steps: [
       {
         title: 'Project Overview',
-        description: 'Tell us about your business and what you want to achieve with this website. What are your main goals?',
+        description: 'Tell us about your business and what you want to achieve with this website',
         step_type: 'textarea',
         isRequired: true,
       },
@@ -58,29 +61,16 @@ export const checklistTemplates: ChecklistTemplate[] = [
       },
       {
         title: 'Technical Preferences',
-        description: 'Check all that apply: WordPress, Custom CMS, E-commerce, Blog, Contact Forms, Newsletter Signup',
+        description: 'WordPress, Custom CMS, E-commerce, Blog, Contact Forms, Newsletter Signup',
         step_type: 'checkbox',
         isRequired: true,
-      },
-      {
-        title: 'Domain & Hosting',
-        description: 'Do you have a domain name? Where would you like to host the site?',
-        step_type: 'text',
-        isRequired: false,
-      },
-      {
-        title: 'Access Credentials',
-        description: 'If you have existing hosting, CMS, or domain registrar accounts, share login details here',
-        step_type: 'secure_text',
-        options: '72',
-        isRequired: false,
       }
     ]
   },
   {
     id: 'ecommerce-development',
     name: 'E-commerce Store Development',
-    description: 'Let\'s build your online store that converts visitors into customers and grows your business.',
+    description: 'Build online stores that convert visitors into customers',
     category: 'E-commerce',
     icon: '🛒',
     brandColor: '#f59e0b',
@@ -88,7 +78,7 @@ export const checklistTemplates: ChecklistTemplate[] = [
     steps: [
       {
         title: 'Store Overview',
-        description: 'What products will you sell? Describe your business and target market.',
+        description: 'What products will you sell? Describe your business and target market',
         step_type: 'textarea',
         isRequired: true,
       },
@@ -107,7 +97,7 @@ export const checklistTemplates: ChecklistTemplate[] = [
       },
       {
         title: 'Payment Methods',
-        description: 'Select preferred payment options: PayPal, Stripe, Square, Apple Pay, Crypto, Bank Transfer',
+        description: 'PayPal, Stripe, Square, Apple Pay, Crypto, Bank Transfer',
         step_type: 'checkbox',
         isRequired: true,
       },
@@ -116,31 +106,13 @@ export const checklistTemplates: ChecklistTemplate[] = [
         description: 'Describe your shipping zones, rates, and fulfillment process',
         step_type: 'textarea',
         isRequired: true,
-      },
-      {
-        title: 'E-commerce Features',
-        description: 'Select needed features: Inventory Management, Customer Accounts, Reviews, Wishlist, Abandoned Cart Recovery',
-        step_type: 'checkbox',
-        isRequired: true,
-      },
-      {
-        title: 'Tax Configuration',
-        description: 'What tax requirements do you have? (state, country, VAT, etc.)',
-        step_type: 'text',
-        isRequired: true,
-      },
-      {
-        title: 'Competitor Analysis',
-        description: 'Share 2-3 competitor websites for reference',
-        step_type: 'url',
-        isRequired: false,
       }
     ]
   },
   {
     id: 'custom-software',
-    name: 'Custom Software Development Onboarding',
-    description: 'Let\'s gather the technical requirements and specifications for your custom software project.',
+    name: 'Custom Software Development',
+    description: 'Gather technical requirements for custom software projects',
     category: 'Development',
     icon: '⚙️',
     brandColor: '#6366f1',
@@ -154,14 +126,14 @@ export const checklistTemplates: ChecklistTemplate[] = [
       },
       {
         title: 'Requirements Documentation',
-        description: 'Upload any wireframes, mockups, technical specifications, or requirement documents',
+        description: 'Upload wireframes, mockups, technical specifications, or requirement documents',
         step_type: 'file_upload',
         options: '.pdf,.doc,.docx,.jpg,.png,.fig,.sketch,.xd,.zip',
         isRequired: false,
       },
       {
         title: 'Platform Requirements',
-        description: 'Select target platforms: Web Application, Mobile App (iOS), Mobile App (Android), Desktop Application, API/Backend Only',
+        description: 'Web Application, Mobile App (iOS), Mobile App (Android), Desktop Application, API/Backend Only',
         step_type: 'checkbox',
         isRequired: true,
       },
@@ -170,24 +142,6 @@ export const checklistTemplates: ChecklistTemplate[] = [
         description: 'Who will use this software? What are the main features for each user type?',
         step_type: 'textarea',
         isRequired: true,
-      },
-      {
-        title: 'Technical Stack Preferences',
-        description: 'Any preferred programming languages, frameworks, or technologies?',
-        step_type: 'text',
-        isRequired: false,
-      },
-      {
-        title: 'Integration Requirements',
-        description: 'Does this need to connect to existing systems, APIs, or databases?',
-        step_type: 'textarea',
-        isRequired: false,
-      },
-      {
-        title: 'Compliance & Security',
-        description: 'Check requirements: GDPR Compliance, HIPAA Compliance, SOC 2, PCI DSS, Custom Security Requirements',
-        step_type: 'checkbox',
-        isRequired: false,
       },
       {
         title: 'System Access',
@@ -200,8 +154,8 @@ export const checklistTemplates: ChecklistTemplate[] = [
   },
   {
     id: 'brand-identity',
-    name: 'Brand Identity Design Project',
-    description: 'Help us create a brand identity that perfectly represents your business and connects with your audience.',
+    name: 'Brand Identity Design',
+    description: 'Create brand identities that represent your business perfectly',
     category: 'Design',
     icon: '🎨',
     brandColor: '#ec4899',
@@ -214,12 +168,6 @@ export const checklistTemplates: ChecklistTemplate[] = [
         isRequired: true,
       },
       {
-        title: 'Industry & Competitors',
-        description: 'What industry are you in? Who are your main competitors?',
-        step_type: 'text',
-        isRequired: true,
-      },
-      {
         title: 'Target Audience',
         description: 'Describe your ideal customer - demographics, preferences, and what matters to them',
         step_type: 'textarea',
@@ -227,41 +175,29 @@ export const checklistTemplates: ChecklistTemplate[] = [
       },
       {
         title: 'Brand Personality',
-        description: 'How should your brand feel? Professional, Playful, Luxurious, Trustworthy, Innovative, Traditional, Bold, Minimalist',
+        description: 'Professional, Playful, Luxurious, Trustworthy, Innovative, Traditional, Bold, Minimalist',
         step_type: 'checkbox',
         isRequired: true,
       },
       {
         title: 'Visual References',
-        description: 'Upload any images, colors, or design styles that inspire you or represent your vision',
+        description: 'Upload images, colors, or design styles that inspire you',
         step_type: 'file_upload',
         options: '.jpg,.png,.pdf,.ai,.psd,.sketch',
         isRequired: false,
       },
       {
         title: 'Logo Requirements',
-        description: 'Any specific requirements for the logo? Text to include, symbols to avoid, where it will be used?',
+        description: 'Any specific requirements for the logo? Text to include, symbols to avoid?',
         step_type: 'textarea',
-        isRequired: true,
-      },
-      {
-        title: 'Deliverables Needed',
-        description: 'Select what you need: Logo Design, Color Palette, Typography, Business Cards, Letterhead, Brand Guidelines, Social Media Templates',
-        step_type: 'checkbox',
-        isRequired: true,
-      },
-      {
-        title: 'Timeline',
-        description: 'When do you need the brand identity completed?',
-        step_type: 'text',
         isRequired: true,
       }
     ]
   },
   {
     id: 'seo-content-marketing',
-    name: 'SEO & Content Marketing Setup',
-    description: 'Let\'s optimize your online presence and create content that attracts your ideal customers.',
+    name: 'SEO & Content Marketing',
+    description: 'Optimize online presence and create content that attracts customers',
     category: 'Marketing',
     icon: '📈',
     brandColor: '#10b981',
@@ -282,47 +218,22 @@ export const checklistTemplates: ChecklistTemplate[] = [
       },
       {
         title: 'Business Goals',
-        description: 'What are your main business objectives? What keywords do customers use to find businesses like yours?',
-        step_type: 'textarea',
-        isRequired: true,
-      },
-      {
-        title: 'Geographic Focus',
-        description: 'Are you targeting local, national, or international customers? Specify locations.',
-        step_type: 'text',
-        isRequired: true,
-      },
-      {
-        title: 'Competitor Analysis',
-        description: 'Who are your main competitors? Which ones rank well in search results?',
+        description: 'What are your main business objectives? What keywords do customers use to find you?',
         step_type: 'textarea',
         isRequired: true,
       },
       {
         title: 'Content Types',
-        description: 'What content should we create? Blog Posts, Service Pages, Product Descriptions, Case Studies, FAQs, Local Pages',
+        description: 'Blog Posts, Service Pages, Product Descriptions, Case Studies, FAQs, Local Pages',
         step_type: 'checkbox',
-        isRequired: true,
-      },
-      {
-        title: 'Existing Content',
-        description: 'Upload any existing content, keyword lists, or previous SEO reports',
-        step_type: 'file_upload',
-        options: '.pdf,.doc,.docx,.xlsx,.csv,.txt',
-        isRequired: false,
-      },
-      {
-        title: 'Content Budget',
-        description: 'How many pieces of content per month fit your budget?',
-        step_type: 'text',
         isRequired: true,
       }
     ]
   },
   {
     id: 'social-media-management',
-    name: 'Social Media Management Onboarding',
-    description: 'Let\'s create a social media strategy that engages your audience and grows your brand.',
+    name: 'Social Media Management',
+    description: 'Create social media strategies that engage audiences and grow brands',
     category: 'Social Media',
     icon: '📱',
     brandColor: '#8b5cf6',
@@ -330,7 +241,7 @@ export const checklistTemplates: ChecklistTemplate[] = [
     steps: [
       {
         title: 'Social Platforms',
-        description: 'Which platforms should we manage? Facebook, Instagram, LinkedIn, Twitter, TikTok, YouTube, Pinterest',
+        description: 'Facebook, Instagram, LinkedIn, Twitter, TikTok, YouTube, Pinterest',
         step_type: 'checkbox',
         isRequired: true,
       },
@@ -348,42 +259,17 @@ export const checklistTemplates: ChecklistTemplate[] = [
         isRequired: true,
       },
       {
-        title: 'Brand Assets',
-        description: 'Upload logos, brand colors, fonts, and any existing social media graphics',
-        step_type: 'file_upload',
-        options: '.jpg,.png,.pdf,.ai,.psd,.svg,.zip',
-        isRequired: true,
-      },
-      {
         title: 'Content Themes',
-        description: 'What topics should we post about? Industry news, behind-the-scenes, products, tips, customer stories?',
+        description: 'Industry news, behind-the-scenes, products, tips, customer stories',
         step_type: 'textarea',
         isRequired: true,
-      },
-      {
-        title: 'Posting Frequency',
-        description: 'How often should we post on each platform? (e.g., 5x/week on Instagram, 3x/week on LinkedIn)',
-        step_type: 'text',
-        isRequired: true,
-      },
-      {
-        title: 'Content Types',
-        description: 'Select content formats: Photos, Videos, Stories, Reels, Carousels, User-generated content, Live videos',
-        step_type: 'checkbox',
-        isRequired: true,
-      },
-      {
-        title: 'Competitors & Inspiration',
-        description: 'Share social accounts you admire or competitors we should be aware of',
-        step_type: 'textarea',
-        isRequired: false,
       }
     ]
   },
   {
     id: 'mobile-app-development',
-    name: 'Mobile App Development Project',
-    description: 'Let\'s bring your mobile app idea to life with a user-friendly design and robust functionality.',
+    name: 'Mobile App Development',
+    description: 'Bring mobile app ideas to life with user-friendly design and functionality',
     category: 'Development',
     icon: '📱',
     brandColor: '#06b6d4',
@@ -391,22 +277,15 @@ export const checklistTemplates: ChecklistTemplate[] = [
     steps: [
       {
         title: 'App Concept',
-        description: 'Describe your app idea. What problem does it solve? What\'s the main purpose?',
+        description: 'Describe your app idea. What problem does it solve?',
         step_type: 'textarea',
         isRequired: true,
       },
       {
         title: 'Platform Priority',
-        description: 'Which platforms are most important? iOS (iPhone/iPad), Android, Cross-platform (React Native/Flutter)',
+        description: 'iOS (iPhone/iPad), Android, Cross-platform (React Native/Flutter)',
         step_type: 'checkbox',
         isRequired: true,
-      },
-      {
-        title: 'Design References',
-        description: 'Upload wireframes, mockups, or screenshots of apps with designs you like',
-        step_type: 'file_upload',
-        options: '.jpg,.png,.pdf,.fig,.sketch,.xd,.zip',
-        isRequired: false,
       },
       {
         title: 'Core Features',
@@ -415,35 +294,17 @@ export const checklistTemplates: ChecklistTemplate[] = [
         isRequired: true,
       },
       {
-        title: 'User Journey',
-        description: 'Describe how users will interact with your app from download to main goal completion',
-        step_type: 'textarea',
-        isRequired: true,
-      },
-      {
         title: 'Technical Requirements',
-        description: 'Select needed features: User Accounts, Push Notifications, In-App Purchases, Social Login, Camera, GPS, Offline Mode',
+        description: 'User Accounts, Push Notifications, In-App Purchases, Social Login, Camera, GPS',
         step_type: 'checkbox',
         isRequired: true,
-      },
-      {
-        title: 'Monetization Strategy',
-        description: 'How will the app make money? Free, paid, freemium, ads, subscriptions?',
-        step_type: 'text',
-        isRequired: true,
-      },
-      {
-        title: 'Integration Needs',
-        description: 'Does the app need to connect to existing systems, APIs, or third-party services?',
-        step_type: 'textarea',
-        isRequired: false,
       }
     ]
   },
   {
     id: 'ui-ux-design',
-    name: 'UI/UX Design Project Onboarding',
-    description: 'Let\'s create an exceptional user experience that delights your customers and achieves your business goals.',
+    name: 'UI/UX Design Project',
+    description: 'Create exceptional user experiences that delight customers',
     category: 'Design',
     icon: '🎯',
     brandColor: '#ef4444',
@@ -451,178 +312,30 @@ export const checklistTemplates: ChecklistTemplate[] = [
     steps: [
       {
         title: 'Project Overview',
-        description: 'What are we designing? Website, app, software interface? What are the main business goals?',
+        description: 'What are we designing? Website, app, software interface?',
         step_type: 'textarea',
         isRequired: true,
       },
       {
-        title: 'Current Design',
-        description: 'Upload screenshots of existing designs or competitor references',
-        step_type: 'file_upload',
-        options: '.jpg,.png,.pdf,.fig,.sketch,.xd',
-        isRequired: false,
-      },
-      {
         title: 'User Research',
-        description: 'Who are your users? What are their main goals, pain points, and preferences?',
+        description: 'Who are your users? What are their main goals and pain points?',
         step_type: 'textarea',
         isRequired: true,
       },
       {
         title: 'Design Scope',
-        description: 'What do you need? User Research, Wireframes, UI Design, Prototyping, Usability Testing, Design System',
+        description: 'User Research, Wireframes, UI Design, Prototyping, Usability Testing, Design System',
         step_type: 'checkbox',
-        isRequired: true,
-      },
-      {
-        title: 'Key User Flows',
-        description: 'What are the most important user journeys we need to optimize?',
-        step_type: 'textarea',
         isRequired: true,
       },
       {
         title: 'Device Requirements',
-        description: 'What devices/screens should we design for? Desktop, Tablet, Mobile, Smartwatch, Other',
-        step_type: 'checkbox',
-        isRequired: true,
-      },
-      {
-        title: 'Brand Guidelines',
-        description: 'Upload existing brand guidelines, style guides, or design system documentation',
-        step_type: 'file_upload',
-        options: '.pdf,.ai,.sketch,.fig,.zip',
-        isRequired: false,
-      },
-      {
-        title: 'Accessibility Needs',
-        description: 'Accessibility requirements: WCAG 2.1 AA, Screen Reader Support, Color Blind Friendly, Keyboard Navigation',
-        step_type: 'checkbox',
-        isRequired: false,
-      }
-    ]
-  },
-  {
-    id: 'digital-marketing-campaign',
-    name: 'Digital Marketing Campaign Launch',
-    description: 'Let\'s create and launch marketing campaigns that drive results and grow your business.',
-    category: 'Marketing',
-    icon: '🚀',
-    brandColor: '#f97316',
-    completionMessage: 'Excellent! We\'re ready to launch campaigns that will boost your business growth. Your marketing strategy will be ready within 2 business days.',
-    steps: [
-      {
-        title: 'Campaign Goals',
-        description: 'What do you want to achieve? Increase sales, generate leads, boost brand awareness, drive website traffic?',
-        step_type: 'textarea',
-        isRequired: true,
-      },
-      {
-        title: 'Monthly Budget',
-        description: 'What\'s your total monthly marketing budget for ads and campaigns?',
-        step_type: 'text',
-        isRequired: true,
-      },
-      {
-        title: 'Marketing Channels',
-        description: 'Which channels should we use? Google Ads, Facebook Ads, Instagram Ads, LinkedIn Ads, Email Marketing, Content Marketing',
-        step_type: 'checkbox',
-        isRequired: true,
-      },
-      {
-        title: 'Target Audience',
-        description: 'Describe your ideal customer - demographics, interests, online behavior, pain points',
-        step_type: 'textarea',
-        isRequired: true,
-      },
-      {
-        title: 'Landing Pages',
-        description: 'What website or landing pages should we drive traffic to?',
-        step_type: 'url',
-        isRequired: true,
-      },
-      {
-        title: 'Marketing Assets',
-        description: 'Upload logos, product images, brand guidelines, existing ads, or marketing materials',
-        step_type: 'file_upload',
-        options: '.jpg,.png,.pdf,.ai,.psd,.mp4,.zip',
-        isRequired: false,
-      },
-      {
-        title: 'Analytics Access',
-        description: 'Email address for Google Analytics, Facebook Business Manager access',
-        step_type: 'email',
-        isRequired: true,
-      },
-      {
-        title: 'Account Credentials',
-        description: 'Login details for existing ad accounts, social media, or analytics platforms',
-        step_type: 'secure_text',
-        options: '72',
-        isRequired: false,
-      }
-    ]
-  },
-  {
-    id: 'business-consulting',
-    name: 'Business Consulting Engagement',
-    description: 'Let\'s understand your business challenges and goals to create a strategic roadmap for growth and success.',
-    category: 'Consulting',
-    icon: '💼',
-    brandColor: '#1f2937',
-    completionMessage: 'Thank you! We have all the information needed to begin analyzing your business situation. Expect a comprehensive strategy proposal within 5 business days.',
-    steps: [
-      {
-        title: 'Business Overview',
-        description: 'Tell us about your business - what you do, how long you\'ve been operating, and your current position in the market',
-        step_type: 'textarea',
-        isRequired: true,
-      },
-      {
-        title: 'Current Challenges',
-        description: 'What are the main problems or obstacles your business is facing right now?',
-        step_type: 'textarea',
-        isRequired: true,
-      },
-      {
-        title: 'Business Goals',
-        description: 'What do you want to achieve in the next 6-12 months? What does success look like for your business?',
-        step_type: 'textarea',
-        isRequired: true,
-      },
-      {
-        title: 'Consulting Areas',
-        description: 'Which areas need attention? Business Strategy, Operations, Marketing, Sales, Financial Planning, Team Management, Technology, Market Expansion',
-        step_type: 'checkbox',
-        isRequired: true,
-      },
-      {
-        title: 'Annual Revenue',
-        description: 'What\'s your current annual revenue range? (This helps us understand your business scale)',
-        step_type: 'text',
-        isRequired: true,
-      },
-      {
-        title: 'Team Size',
-        description: 'How many employees/contractors do you currently have?',
-        step_type: 'text',
-        isRequired: true,
-      },
-      {
-        title: 'Business Documents',
-        description: 'Upload relevant documents: business plan, financial statements, org charts, marketing materials, or previous consulting reports',
-        step_type: 'file_upload',
-        options: '.pdf,.doc,.docx,.xlsx,.ppt,.pptx,.zip',
-        isRequired: false,
-      },
-      {
-        title: 'Preferred Deliverables',
-        description: 'What outcomes do you expect? Strategic Plan, Process Improvements, Market Analysis, Financial Projections, Implementation Roadmap, Training Materials',
+        description: 'Desktop, Tablet, Mobile, Smartwatch, Other',
         step_type: 'checkbox',
         isRequired: true,
       }
     ]
   },
-  // Keep the existing technical templates
   {
     id: 'aws-deployment',
     name: 'AWS Deployment Setup',
@@ -640,18 +353,10 @@ export const checklistTemplates: ChecklistTemplate[] = [
         isRequired: true,
       },
       {
-        title: 'AWS Account ID & Region',
-        description: 'Provide your AWS account details and preferred deployment region',
+        title: 'AWS Account Details',
+        description: 'AWS Account ID, preferred region, and availability zones',
         step_type: 'textarea',
-        options: 'AWS Account ID, preferred region (e.g., us-east-1), and any specific availability zones...',
         isRequired: true,
-      },
-      {
-        title: 'SSL Certificates',
-        description: 'Upload SSL certificates and private keys for HTTPS setup',
-        step_type: 'file_upload',
-        options: '.pem,.crt,.key,.p12,.pfx',
-        isRequired: false,
       },
       {
         title: 'Environment Variables',
@@ -661,18 +366,11 @@ export const checklistTemplates: ChecklistTemplate[] = [
         isRequired: true,
       },
       {
-        title: 'Database Connection Details',
+        title: 'Database Credentials',
         description: 'Database credentials and connection strings for production',
         step_type: 'secure_text',
         options: '48',
         isRequired: true,
-      },
-      {
-        title: 'Deployment Configuration',
-        description: 'Upload Docker files, deployment scripts, or configuration files',
-        step_type: 'file_upload',
-        options: '.dockerfile,.yaml,.yml,.json,.sh,.ps1,.zip',
-        isRequired: false,
       }
     ]
   },
@@ -712,35 +410,360 @@ export const checklistTemplates: ChecklistTemplate[] = [
         step_type: 'file_upload',
         options: '.json,.csv,.xlsx,.yaml,.yml',
         isRequired: false,
-      },
-      {
-        title: 'Testing Credentials',
-        description: 'Sandbox/testing API keys for development and testing',
-        step_type: 'secure_text',
-        options: '168',
-        isRequired: false,
-      },
-      {
-        title: 'Security & Compliance',
-        description: 'Upload compliance certificates, security policies, or audit documents',
-        step_type: 'file_upload',
-        options: '.pdf,.doc,.docx,.txt',
-        isRequired: false,
       }
     ]
   }
 ];
 
-export function getTemplateById(id: string): ChecklistTemplate | undefined {
-  return checklistTemplates.find(template => template.id === id);
+interface TemplateSelectorProps {
+  onSelectTemplate: (template: ChecklistTemplate) => void;
+  onClose: () => void;
+  onCreateBlank: () => void;
 }
 
-export function getTemplatesByCategory(): Record<string, ChecklistTemplate[]> {
-  return checklistTemplates.reduce((acc, template) => {
-    if (!acc[template.category]) {
-      acc[template.category] = [];
+export default function TemplateSelector({ onSelectTemplate, onClose, onCreateBlank }: TemplateSelectorProps) {
+  const [currentStep, setCurrentStep] = useState<'category' | 'template' | 'preview'>('category');
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [selectedTemplate, setSelectedTemplate] = useState<ChecklistTemplate | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Get unique categories
+  const categories = Array.from(new Set(templates.map(t => t.category)));
+  
+  // Filter templates by category and search
+  const filteredTemplates = templates.filter(template => {
+    const matchesCategory = !selectedCategory || template.category === selectedCategory;
+    const matchesSearch = !searchTerm || 
+      template.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      template.description.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
+
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onClose();
     }
-    acc[template.category].push(template);
-    return acc;
-  }, {} as Record<string, ChecklistTemplate[]>);
+  };
+
+  const handleCategorySelect = (category: string) => {
+    setSelectedCategory(category);
+    setCurrentStep('template');
+  };
+
+  const handleTemplateSelect = (template: ChecklistTemplate) => {
+    setSelectedTemplate(template);
+    setCurrentStep('preview');
+  };
+
+  const handleConfirmTemplate = () => {
+    if (selectedTemplate) {
+      onSelectTemplate(selectedTemplate);
+    }
+  };
+
+  const handleBack = () => {
+    if (currentStep === 'preview') {
+      setCurrentStep('template');
+      setSelectedTemplate(null);
+    } else if (currentStep === 'template') {
+      setCurrentStep('category');
+      setSelectedCategory('');
+    }
+  };
+
+  const renderCategorySelection = () => (
+    <div className="space-y-6">
+      <div className="text-center">
+        <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+          <Sparkles className="w-8 h-8 text-white" />
+        </div>
+        <h3 className="text-2xl font-bold text-gray-900 mb-2 font-sans">Choose Your Industry</h3>
+        <p className="text-gray-600 font-sans">Select the category that best matches your business</p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {categories.map((category) => {
+          const categoryTemplates = templates.filter(t => t.category === category);
+          const categoryIcon = categoryTemplates[0]?.icon || '📋';
+          
+          return (
+            <button
+              key={category}
+              onClick={() => handleCategorySelect(category)}
+              className="group p-6 bg-white border-2 border-gray-200 rounded-xl hover:border-emerald-300 hover:shadow-lg transition-all duration-200 text-left"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <div className="text-3xl">{categoryIcon}</div>
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-900 group-hover:text-emerald-600 transition-colors font-sans">
+                      {category}
+                    </h4>
+                    <p className="text-sm text-gray-600 font-sans">
+                      {categoryTemplates.length} template{categoryTemplates.length !== 1 ? 's' : ''} available
+                    </p>
+                  </div>
+                </div>
+                <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-emerald-500 transition-colors" />
+              </div>
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="text-center pt-6 border-t border-gray-200">
+        <button
+          onClick={onCreateBlank}
+          className="inline-flex items-center px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors font-sans"
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          Start from Scratch
+        </button>
+      </div>
+    </div>
+  );
+
+  const renderTemplateSelection = () => (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-2xl font-bold text-gray-900 font-sans">{selectedCategory} Templates</h3>
+          <p className="text-gray-600 font-sans">Choose a template to customize for your needs</p>
+        </div>
+        <button
+          onClick={handleBack}
+          className="text-gray-600 hover:text-gray-800 font-medium font-sans"
+        >
+          ← Back to Categories
+        </button>
+      </div>
+
+      {/* Search */}
+      <div className="relative">
+        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <Search className="h-5 w-5 text-gray-400" />
+        </div>
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 font-sans"
+          placeholder="Search templates..."
+        />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {filteredTemplates.map((template) => (
+          <div
+            key={template.id}
+            className="bg-white border-2 border-gray-200 rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-lg hover:border-emerald-300"
+            onClick={() => handleTemplateSelect(template)}
+          >
+            <div className="flex items-center mb-4">
+              <div 
+                className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl mr-4"
+                style={{ backgroundColor: `${template.brandColor}20` }}
+              >
+                {template.icon}
+              </div>
+              <div className="flex-1">
+                <h4 className="text-lg font-semibold text-gray-900 font-sans">{template.name}</h4>
+                <span 
+                  className="inline-block px-2 py-1 rounded-full text-xs font-medium text-white"
+                  style={{ backgroundColor: template.brandColor }}
+                >
+                  {template.category}
+                </span>
+              </div>
+            </div>
+
+            <p className="text-gray-600 text-sm mb-4 font-sans">{template.description}</p>
+
+            <div className="flex items-center justify-between">
+              <div className="text-sm text-gray-500 font-sans">{template.steps.length} steps</div>
+              <div className="flex items-center">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-3 h-3 text-yellow-400 fill-current" />
+                ))}
+                <span className="text-xs text-gray-500 ml-1 font-sans">(4.9)</span>
+              </div>
+            </div>
+
+            <button className="w-full mt-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-colors font-sans">
+              Preview Template
+            </button>
+          </div>
+        ))}
+      </div>
+
+      {filteredTemplates.length === 0 && (
+        <div className="text-center py-12">
+          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Search className="w-8 h-8 text-gray-400" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2 font-sans">No templates found</h3>
+          <p className="text-gray-600 font-sans">Try adjusting your search or browse all categories</p>
+        </div>
+      )}
+    </div>
+  );
+
+  const renderTemplatePreview = () => {
+    if (!selectedTemplate) return null;
+
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-2xl font-bold text-gray-900 font-sans">{selectedTemplate.name}</h3>
+            <p className="text-gray-600 font-sans">Preview and customize this template</p>
+          </div>
+          <button
+            onClick={handleBack}
+            className="text-gray-600 hover:text-gray-800 font-medium font-sans"
+          >
+            ← Back to Templates
+          </button>
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-8">
+          {/* Template Info */}
+          <div className="space-y-6">
+            <div className="bg-white border border-gray-200 rounded-xl p-6">
+              <div className="flex items-center mb-4">
+                <div 
+                  className="w-16 h-16 rounded-xl flex items-center justify-center text-3xl mr-4"
+                  style={{ backgroundColor: `${selectedTemplate.brandColor}20` }}
+                >
+                  {selectedTemplate.icon}
+                </div>
+                <div>
+                  <h4 className="text-xl font-bold text-gray-900 font-sans">{selectedTemplate.name}</h4>
+                  <span 
+                    className="inline-block px-3 py-1 rounded-full text-sm font-medium text-white"
+                    style={{ backgroundColor: selectedTemplate.brandColor }}
+                  >
+                    {selectedTemplate.category}
+                  </span>
+                </div>
+              </div>
+              
+              <p className="text-gray-600 mb-6 font-sans">{selectedTemplate.description}</p>
+              
+              <div className="bg-gray-50 rounded-lg p-4">
+                <h5 className="font-semibold text-gray-900 mb-2 font-sans">Completion Message</h5>
+                <p className="text-sm text-gray-600 font-sans">{selectedTemplate.completionMessage}</p>
+              </div>
+            </div>
+
+            <div className="flex space-x-3">
+              <button
+                onClick={handleConfirmTemplate}
+                className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white py-3 px-6 rounded-lg font-semibold transition-colors flex items-center justify-center font-sans"
+              >
+                Use This Template
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </button>
+            </div>
+          </div>
+
+          {/* Steps Preview */}
+          <div className="bg-gray-50 rounded-xl p-6">
+            <h5 className="font-semibold text-gray-900 mb-4 font-sans">
+              Template Steps ({selectedTemplate.steps.length})
+            </h5>
+            <div className="space-y-3 max-h-96 overflow-y-auto">
+              {selectedTemplate.steps.map((step, index) => (
+                <div key={index} className="bg-white border border-gray-200 rounded-lg p-4">
+                  <div className="flex items-start">
+                    <span className="text-sm text-gray-500 mr-3 mt-1 font-sans">{index + 1}</span>
+                    <div className="flex-1">
+                      <div className="flex items-center mb-2">
+                        <h6 className="font-medium text-gray-900 font-sans">{step.title}</h6>
+                        {step.isRequired && (
+                          <span className="ml-2 px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium font-sans">
+                            Required
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-sm text-gray-600 mb-2 font-sans">{step.description}</p>
+                      <span className="inline-block px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium font-sans">
+                        {step.step_type === 'textarea' ? 'Long Text' : 
+                         step.step_type === 'file_upload' ? 'File Upload' : 
+                         step.step_type === 'secure_text' ? 'Secure Text' :
+                         step.step_type === 'url' ? 'Website URL' :
+                         step.step_type === 'email' ? 'Email' :
+                         step.step_type === 'text' ? 'Text Input' : 'Checkbox'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      onClick={handleBackdropClick}
+    >
+      <div className="bg-white rounded-xl shadow-xl max-w-6xl w-full max-h-[90vh] overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 font-sans">
+              {currentStep === 'category' ? 'Choose Template Category' :
+               currentStep === 'template' ? `${selectedCategory} Templates` :
+               'Template Preview'}
+            </h2>
+            <p className="text-sm text-gray-600 mt-1 font-sans">
+              {currentStep === 'category' ? `${templates.length} professional templates available` :
+               currentStep === 'template' ? `${filteredTemplates.length} templates in ${selectedCategory}` :
+               'Review template details before creating your checklist'}
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors"
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="p-6 max-h-[calc(90vh-200px)] overflow-y-auto">
+          {currentStep === 'category' && renderCategorySelection()}
+          {currentStep === 'template' && renderTemplateSelection()}
+          {currentStep === 'preview' && renderTemplatePreview()}
+        </div>
+
+        {/* Footer */}
+        <div className="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50">
+          <div className="text-sm text-gray-600 font-sans">
+            Step {currentStep === 'category' ? '1' : currentStep === 'template' ? '2' : '3'} of 3
+          </div>
+          <div className="flex items-center space-x-3">
+            {currentStep !== 'category' && (
+              <button
+                onClick={handleBack}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium transition-colors font-sans"
+              >
+                Back
+              </button>
+            )}
+            <button
+              onClick={onClose}
+              className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium transition-colors font-sans"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
