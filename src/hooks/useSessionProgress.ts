@@ -22,6 +22,8 @@ export function useSessionProgress({ checklistId, sessionToken }: UseSessionProg
   const realtimeChannel = useRef<any>(null);
   const saveTimeouts = useRef<Map<string, NodeJS.Timeout>>(new Map());
   const lastSaveAttempt = useRef<Map<string, number>>(new Map());
+  const pendingSaves = useRef<Map<string, string>>(new Map());
+  const saveQueue = useRef<Array<{ stepId: string; notes: string; timestamp: number }>>([]); 
   
   const { getSecureText } = useSecureText(session?.id || '');
 
@@ -30,6 +32,8 @@ export function useSessionProgress({ checklistId, sessionToken }: UseSessionProg
       initializeSession();
       setupRealtimeSubscription();
       startActivityHeartbeat();
+      setupBeforeUnloadHandler();
+      setupVisibilityHandler();
     }
 
     return () => {
@@ -47,6 +51,8 @@ export function useSessionProgress({ checklistId, sessionToken }: UseSessionProg
     // Clear all pending save timeouts
     saveTimeouts.current.forEach(timeout => clearTimeout(timeout));
     saveTimeouts.current.clear();
+    // Process any pending saves before cleanup
+    processPendingSaves();
     // Mark session as inactive when leaving
     if (session) {
       updateSessionActivity(false);
@@ -85,6 +91,82 @@ export function useSessionProgress({ checklistId, sessionToken }: UseSessionProg
       setError('Failed to load session');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const setupBeforeUnloadHandler = () => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      // Save any pending changes before user leaves
+      processPendingSaves();
+      
+      // If there are unsaved changes, warn the user
+      if (pendingSaves.current.size > 0) {
+        e.preventDefault();
+        e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+        return e.returnValue;
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  };
+
+  const setupVisibilityHandler = () => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        // Page is being hidden, save any pending changes
+        processPendingSaves();
+      } else if (document.visibilityState === 'visible') {
+        // Page is visible again, resume normal operation
+        if (session) {
+          updateSessionActivity(true);
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  };
+
+  const processPendingSaves = async () => {
+    // Process all pending saves immediately
+    const saves = Array.from(pendingSaves.current.entries());
+    pendingSaves.current.clear();
+    
+    for (const [stepId, notes] of saves) {
+      try {
+        await performSave(stepId, notes);
+      } catch (err) {
+        console.error('Failed to save pending change:', err);
+        // Add back to queue for retry
+        saveQueue.current.push({ stepId, notes, timestamp: Date.now() });
+      }
+    }
+    
+    // Process any queued saves
+    await processQueuedSaves();
+  };
+
+  const processQueuedSaves = async () => {
+    const queue = [...saveQueue.current];
+    saveQueue.current = [];
+    
+    for (const item of queue) {
+      try {
+        await performSave(item.stepId, item.notes);
+      } catch (err) {
+        console.error('Failed to process queued save:', err);
+        // If it's been less than 5 minutes, try again later
+        if (Date.now() - item.timestamp < 5 * 60 * 1000) {
+          saveQueue.current.push(item);
+        }
+      }
     }
   };
 
@@ -141,6 +223,9 @@ export function useSessionProgress({ checklistId, sessionToken }: UseSessionProg
   const saveStepProgress = useCallback(async (stepId: string, notes: string = '') => {
     if (!session) return false;
 
+    // Store in pending saves for immediate persistence
+    pendingSaves.current.set(stepId, notes);
+
     // Clear any existing timeout for this step
     const existingTimeout = saveTimeouts.current.get(stepId);
     if (existingTimeout) {
@@ -156,13 +241,13 @@ export function useSessionProgress({ checklistId, sessionToken }: UseSessionProg
     // For text inputs, debounce to prevent spam
     const isFileData = notes.startsWith('[') && notes.endsWith(']');
     
-    if (!isFileData && timeSinceLastSave < 1000) { // Minimum 1 second between saves for text
+    if (!isFileData && timeSinceLastSave < 500) { // Reduced to 500ms for faster saves
       return new Promise<boolean>((resolve) => {
         const timeout = setTimeout(async () => {
           saveTimeouts.current.delete(stepId);
           const result = await performSave(stepId, notes);
           resolve(result);
-        }, 1000 - timeSinceLastSave);
+        }, 500 - timeSinceLastSave);
         saveTimeouts.current.set(stepId, timeout);
       });
     }
@@ -177,6 +262,9 @@ export function useSessionProgress({ checklistId, sessionToken }: UseSessionProg
     setSaving(true);
     
     try {
+      // Remove from pending saves since we're processing it
+      pendingSaves.current.delete(stepId);
+      
       const { error } = await supabase
         .from('session_progress')
         .upsert({
@@ -215,8 +303,9 @@ export function useSessionProgress({ checklistId, sessionToken }: UseSessionProg
       return true;
     } catch (err) {
       console.error('Error saving step progress:', err);
-      // Don't show error for auto-save failures, just log them
-      console.warn('Auto-save failed, will retry on next change');
+      // Add to queue for retry
+      saveQueue.current.push({ stepId, notes, timestamp: Date.now() });
+      console.warn('Auto-save failed, added to retry queue');
       return false;
     } finally {
       setSaving(false);
@@ -231,6 +320,7 @@ export function useSessionProgress({ checklistId, sessionToken }: UseSessionProg
     if (existingTimeout) {
       clearTimeout(existingTimeout);
       saveTimeouts.current.delete(stepId);
+      pendingSaves.current.delete(stepId);
     }
 
     try {
@@ -380,25 +470,14 @@ export function useSessionProgress({ checklistId, sessionToken }: UseSessionProg
   };
 
   const startActivityHeartbeat = () => {
-    // Update activity every 30 seconds while user is active
+    // Update activity every 30 seconds while user is active and process any queued saves
     activityInterval.current = setInterval(() => {
       if (session && document.visibilityState === 'visible' && document.hasFocus()) {
         updateSessionActivity(true);
+        // Process any queued saves during heartbeat
+        processQueuedSaves();
       }
-    }, 45000); // Reduced frequency to 45 seconds
-
-    // Handle page visibility changes
-    const handleVisibilityChange = () => {
-      if (session) {
-        updateSessionActivity(document.visibilityState === 'visible' && document.hasFocus());
-      }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
+    }, 30000); // Every 30 seconds
   };
 
   const getStepProgress = (stepId: string) => {

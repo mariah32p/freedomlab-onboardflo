@@ -212,18 +212,18 @@ export default function PublicChecklistPage() {
   };
 
   const handleStepChange = useCallback(async (stepId: string, value: string | boolean, file?: File) => {
-    // Clear existing timeout for this step
-    const existingTimeout = inputTimeouts.current.get(stepId);
-    if (existingTimeout) {
-      clearTimeout(existingTimeout);
-    }
-
     // Update local state immediately for responsive UI
     if (typeof value === 'string') {
       setLocalStepValues(prev => ({
         ...prev,
         [stepId]: value
       }));
+    }
+
+    // Clear existing timeout for this step
+    const existingTimeout = inputTimeouts.current.get(stepId);
+    if (existingTimeout) {
+      clearTimeout(existingTimeout);
     }
 
     // For text inputs, debounce the save
@@ -235,7 +235,7 @@ export default function PublicChecklistPage() {
         await removeStepProgress(stepId);
       }
     } else {
-      // Debounced save for text inputs
+      // Reduced debounce time for faster saves
       const timeout = setTimeout(async () => {
         inputTimeouts.current.delete(stepId);
         if (value.trim()) {
@@ -243,7 +243,7 @@ export default function PublicChecklistPage() {
         } else {
           await removeStepProgress(stepId);
         }
-      }, 1500); // Wait 1.5 seconds after user stops typing
+      }, 800); // Reduced to 800ms for faster saves
       
       inputTimeouts.current.set(stepId, timeout);
     }
