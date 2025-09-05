@@ -597,7 +597,7 @@ export default function SubmissionsPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">
-                    Session Name
+                    Session Name *
                   </label>
                   <input
                     type="text"
@@ -605,46 +605,36 @@ export default function SubmissionsPage() {
                     onChange={(e) => setCreateSessionData(prev => ({ ...prev, sessionName: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 font-sans"
                     placeholder="e.g., John's Website Project"
+                    required
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">
-                    Customer Email *
+                    Description
                   </label>
-                  <input
-                    type="email"
-                    value={createSessionData.email}
-                    onChange={(e) => setCreateSessionData(prev => ({ ...prev, email: e.target.value }))}
+                  <textarea
+                    value={createSessionData.sessionDescription}
+                    onChange={(e) => setCreateSessionData(prev => ({ ...prev, sessionDescription: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 font-sans"
-                    placeholder="customer@email.com"
-                    required
+                    placeholder="Brief description of this session"
+                    rows={2}
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">
-                      Customer Name
-                    </label>
-                    <input
-                      type="text"
-                      value={createSessionData.name}
-                      onChange={(e) => setCreateSessionData(prev => ({ ...prev, name: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 font-sans"
-                      placeholder="John Doe"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">
-                      Company
-                    </label>
-                    <input
-                      type="text"
-                      value={createSessionData.company}
-                      onChange={(e) => setCreateSessionData(prev => ({ ...prev, company: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 font-sans"
-                      placeholder="Acme Corp"
-                    />
-                  </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">
+                    Email Recipients *
+                  </label>
+                  <textarea
+                    value={createSessionData.sessionEmails}
+                    onChange={(e) => setCreateSessionData(prev => ({ ...prev, sessionEmails: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 font-sans"
+                    placeholder="john@company.com, sarah@company.com, team@company.com"
+                    rows={2}
+                    required
+                  />
+                  <p className="text-xs text-gray-500 mt-1 font-sans">
+                    Comma-separated list of email addresses who will receive this session link
+                  </p>
                 </div>
                 <div className="flex space-x-3 pt-4">
                   <button
