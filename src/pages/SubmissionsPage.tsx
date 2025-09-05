@@ -55,28 +55,45 @@ export default function SubmissionsPage() {
   // Load progress for all sessions
   useEffect(() => {
     const loadAllProgress = async () => {
-      const progressData: Record<string, number> = {};
-      
-      for (const session of sessions) {
-        // Calculate progress for all sessions that might have progress data
-        if (session.submission_status !== 'pending' || session.started_at) {
-          const progress = await getSessionProgress(session.id);
-          
-          // Get total steps for this checklist
-          const { data: steps } = await supabase
-            .from('checklist_steps')
-            .select('id')
-            .eq('checklist_id', session.checklist_id);
-          
-          const totalSteps = steps?.length || 0;
-          const completedSteps = progress.length;
-          const percentage = totalSteps > 0 ? Math.round((completedSteps / totalSteps) * 100) : 0;
-          
-          progressData[session.id] = percentage;
+      try {
+        const progressData: Record<string, number> = {};
+        
+        for (const session of sessions) {
+          // Calculate progress for all sessions that might have progress data
+          if (session.submission_status !== 'pending' || session.started_at) {
+            try {
+              const progress = await getSessionProgress(session.id);
+              
+              // Get total steps for this checklist
+              const { data: steps, error: stepsError } = await supabase
+                .from('checklist_steps')
+                .select('id')
+                .eq('checklist_id', session.checklist_id);
+              
+              if (stepsError) {
+                console.warn(`Error fetching steps for checklist ${session.checklist_id}:`, stepsError);
+                continue;
+              }
+              
+              const totalSteps = steps?.length || 0;
+              const completedSteps = progress.length;
+              const percentage = totalSteps > 0 ? Math.round((completedSteps / totalSteps) * 100) : 0;
+              
+              progressData[session.id] = percentage;
+            } catch (sessionError) {
+              console.warn(`Error loading progress for session ${session.id}:`, sessionError);
+              // Continue with other sessions instead of failing completely
+              progressData[session.id] = 0;
+            }
+          }
         }
+        
+        setSessionProgress(progressData);
+      } catch (err) {
+        console.error('Error in loadAllProgress:', err);
+        // Set empty progress data to prevent UI crashes
+        setSessionProgress({});
       }
-      
-      setSessionProgress(progressData);
     };
 
     if (sessions.length > 0) {

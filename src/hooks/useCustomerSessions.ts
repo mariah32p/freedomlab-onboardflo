@@ -91,7 +91,7 @@ export function useCustomerSessions() {
       if (error) throw error;
       return data || [];
     } catch (err) {
-      // Handle fetch errors gracefully
+      // Handle different types of errors gracefully
       if (err instanceof TypeError && err.message.includes('Failed to fetch')) {
         console.error('=== SUPABASE CONNECTION ERROR ===');
         console.error('Failed to connect to Supabase. Please check:');
@@ -99,6 +99,8 @@ export function useCustomerSessions() {
         console.error('2. Your Supabase project is active and accessible');
         console.error('3. CORS settings allow localhost:5173 in Supabase project settings');
         console.error('4. Restart your dev server after making .env changes');
+        console.error('Current URL:', import.meta.env.VITE_SUPABASE_URL);
+        console.error('Has Anon Key:', !!import.meta.env.VITE_SUPABASE_ANON_KEY);
       } else {
         console.error('Error fetching session progress:', err);
       }
