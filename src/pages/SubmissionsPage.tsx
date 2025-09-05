@@ -34,6 +34,7 @@ export default function SubmissionsPage() {
   const [copiedSessionId, setCopiedSessionId] = useState<string | null>(null);
   const [editingSessionId, setEditingSessionId] = useState<string | null>(null);
   const [editingLinkName, setEditingLinkName] = useState('');
+  const [checklists, setChecklists] = useState<any[]>([]);
   const [showCreateSessionModal, setShowCreateSessionModal] = useState(false);
   const [createSessionData, setCreateSessionData] = useState({
     checklistId: '',
