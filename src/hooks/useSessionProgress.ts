@@ -37,11 +37,10 @@ export function useSessionProgress({ checklistId, sessionToken }: UseSessionProg
     }
 
     return () => {
-      cleanup();
+      void cleanup();
     };
   }, [checklistId, sessionToken]);
-
-  const cleanup = () => {
+  const cleanup = async () => {
     if (activityInterval.current) {
       clearInterval(activityInterval.current);
     }
@@ -52,10 +51,10 @@ export function useSessionProgress({ checklistId, sessionToken }: UseSessionProg
     saveTimeouts.current.forEach(timeout => clearTimeout(timeout));
     saveTimeouts.current.clear();
     // Process any pending saves before cleanup
-    processPendingSaves();
+    await processPendingSaves();
     // Mark session as inactive when leaving
     if (session) {
-      updateSessionActivity(false);
+      await updateSessionActivity(false);
     }
   };
 
@@ -97,10 +96,10 @@ export function useSessionProgress({ checklistId, sessionToken }: UseSessionProg
   const setupBeforeUnloadHandler = () => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       // Save any pending changes before user leaves
-      processPendingSaves();
-      
+      void processPendingSaves();
+
       // If there are unsaved changes, warn the user
-      if (pendingSaves.current.size > 0) {
+      if (pendingSaves.current.size > 0 || saveQueue.current.length > 0) {
         e.preventDefault();
         e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
         return e.returnValue;
@@ -118,7 +117,7 @@ export function useSessionProgress({ checklistId, sessionToken }: UseSessionProg
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'hidden') {
         // Page is being hidden, save any pending changes
-        processPendingSaves();
+        void processPendingSaves();
       } else if (document.visibilityState === 'visible') {
         // Page is visible again, resume normal operation
         if (session) {
@@ -136,19 +135,17 @@ export function useSessionProgress({ checklistId, sessionToken }: UseSessionProg
 
   const processPendingSaves = async () => {
     // Process all pending saves immediately
-    const saves = Array.from(pendingSaves.current.entries());
-    pendingSaves.current.clear();
-    
-    for (const [stepId, notes] of saves) {
+    for (const [stepId, notes] of Array.from(pendingSaves.current.entries())) {
       try {
         await performSave(stepId, notes);
+        pendingSaves.current.delete(stepId);
       } catch (err) {
         console.error('Failed to save pending change:', err);
-        // Add back to queue for retry
+        // Add to queue for retry
         saveQueue.current.push({ stepId, notes, timestamp: Date.now() });
       }
     }
-    
+
     // Process any queued saves
     await processQueuedSaves();
   };
@@ -220,10 +217,13 @@ export function useSessionProgress({ checklistId, sessionToken }: UseSessionProg
     }
   };
 
+  const markPendingSave = (stepId: string, notes: string = '') => {
+    pendingSaves.current.set(stepId, notes);
+  };
+
   const saveStepProgress = useCallback(async (stepId: string, notes: string = '') => {
     if (!session) return false;
 
-    // Save immediately without debouncing
     return performSave(stepId, notes);
   }, [session]);
 
@@ -234,9 +234,6 @@ export function useSessionProgress({ checklistId, sessionToken }: UseSessionProg
     setSaving(true);
     
     try {
-      // Remove from pending saves since we're processing it
-      pendingSaves.current.delete(stepId);
-      
       const { error } = await supabase
         .from('session_progress')
         .upsert({
@@ -276,6 +273,7 @@ export function useSessionProgress({ checklistId, sessionToken }: UseSessionProg
       if (typeof window !== 'undefined') {
         localStorage.removeItem(`progress-${checklistId}-${stepId}`);
       }
+      pendingSaves.current.delete(stepId);
 
       return true;
     } catch (err) {
@@ -479,6 +477,7 @@ export function useSessionProgress({ checklistId, sessionToken }: UseSessionProg
     otherActiveUsers,
     showConcurrentEditNotification,
     createSession,
+    markPendingSave,
     saveStepProgress,
     removeStepProgress,
     completeSession,

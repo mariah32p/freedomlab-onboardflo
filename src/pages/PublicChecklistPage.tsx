@@ -86,9 +86,10 @@ export default function PublicChecklistPage() {
     getCompletionPercentage,
     updateSessionInfo,
     getSecureText,
-  } = useSessionProgress({ 
-    checklistId: checklistId || '', 
-    sessionToken 
+    markPendingSave,
+  } = useSessionProgress({
+    checklistId: checklistId || '',
+    sessionToken
   });
 
   useEffect(() => {
@@ -134,9 +135,12 @@ export default function PublicChecklistPage() {
     const initialValues: Record<string, string> = {};
     progress.forEach(p => {
       initialValues[p.step_id] = p.notes;
+      if (checklistId && typeof window !== 'undefined') {
+        localStorage.removeItem(`progress-${checklistId}-${p.step_id}`);
+      }
     });
     setLocalStepValues(prev => ({ ...initialValues, ...prev }));
-  }, [progress]);
+  }, [progress, checklistId]);
 
   const fetchChecklistData = async () => {
     if (!checklistId) return;
@@ -263,6 +267,9 @@ export default function PublicChecklistPage() {
       }
     }
 
+    // Mark this change as pending for beforeunload protection
+    markPendingSave(stepId, typeof value === 'string' ? value : '');
+
     // Clear existing timeout for this step
     const existingTimeout = inputTimeouts.current.get(stepId);
     if (existingTimeout) {
@@ -288,7 +295,7 @@ export default function PublicChecklistPage() {
     }, 800);
 
     inputTimeouts.current.set(stepId, timeout);
-  }, [checklistId, saveStepProgress, removeStepProgress]);
+  }, [checklistId, saveStepProgress, removeStepProgress, markPendingSave]);
 
   // Cleanup timeouts on unmount
   useEffect(() => {
