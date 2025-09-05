@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { checklistTemplates, ChecklistTemplate } from '../data/checklistTemplates';
 import { useAuth } from '../contexts/AuthContext';
@@ -44,6 +44,8 @@ const STEP_TYPE_OPTIONS = [
   { value: 'secure_text', label: 'Secure Text', description: 'Sensitive information' }
 ];
 
+const DRAFT_STORAGE_KEY = 'create-checklist-draft';
+
 export default function CreateChecklistPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -77,6 +79,49 @@ export default function CreateChecklistPage() {
       }
     }
   }, [searchParams]);
+
+  // Load any saved draft
+  useEffect(() => {
+    const stored = localStorage.getItem(DRAFT_STORAGE_KEY);
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        if (parsed.formData) setFormData(parsed.formData);
+        if (parsed.steps) setSteps(parsed.steps);
+        if (parsed.currentStep) setCurrentStep(parsed.currentStep);
+        if (typeof parsed.editingStepIndex === 'number') setEditingStepIndex(parsed.editingStepIndex);
+        if (parsed.templateId) {
+          const template = checklistTemplates.find(t => t.id === parsed.templateId);
+          if (template) setSelectedTemplate(template);
+        }
+      } catch {}
+    }
+  }, []);
+
+  const saveDraft = useCallback(() => {
+    const templateId = selectedTemplate?.id ?? null;
+    localStorage.setItem(
+      DRAFT_STORAGE_KEY,
+      JSON.stringify({ formData, steps, currentStep, editingStepIndex, templateId })
+    );
+  }, [formData, steps, currentStep, editingStepIndex, selectedTemplate]);
+
+  useEffect(() => {
+    saveDraft();
+  }, [saveDraft]);
+
+  useEffect(() => {
+    const handleBeforeUnload = () => saveDraft();
+    const handleVisibilityChange = () => {
+      if (document.hidden) saveDraft();
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [saveDraft]);
 
   const handleTemplateSelect = (template: ChecklistTemplate) => {
     setSelectedTemplate(template);
@@ -165,6 +210,7 @@ export default function CreateChecklistPage() {
     try {
       const success = await createChecklist({ ...formData, steps });
       if (success) {
+        localStorage.removeItem(DRAFT_STORAGE_KEY);
         navigate('/checklists');
       }
     } finally {
