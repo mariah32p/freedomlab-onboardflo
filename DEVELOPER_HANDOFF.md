@@ -38,7 +38,7 @@ OnboardFlo is a SaaS platform that helps businesses create trackable customer on
 ```typescript
 Standard Plan ($29/month):
 - Up to 3 active checklists
-- Up to 100 customer submissions per month
+- Up to 50 customer submissions per month
 - Basic branding (logo + colors)
 - Shareable customer links
 
@@ -225,9 +225,9 @@ Footer: "Sent by [Business Name] via OnboardFlo"
 
 ### Standard Plan Limits
 - **Checklists**: Maximum 3 active
-- **Submissions**: 100 per month
+- **Submissions**: 50 per month
 - **Branding**: Logo + colors only
-- **Sessions**: Public only
+- **Sessions**: Public only (no password protection)
 
 ### Pro Plan Features
 - **Checklists**: Unlimited
@@ -258,7 +258,10 @@ if (isPro) {
     canCreate: checklistCount < 3,
     canUsePasswordProtection: false,
     canCustomizeFonts: false,
-    hasReachedSubmissionLimit: monthlySubmissions >= 100
+    canSetBusinessName: false,
+    canCustomizeCompletionPages: false,
+    canCustomizeFonts: false,
+    hasReachedSubmissionLimit: monthlySubmissions >= 50
   };
 }
 ```
@@ -443,14 +446,39 @@ Plan Changes:
 - **Plan Upgrade/Downgrade**: UI exists but functionality not implemented
 
 ### ❌ Not Implemented
-- Plan-specific feature restrictions
-- Usage limit enforcement (checklist count, submission limits)
+- **Plan-specific feature restrictions**: All features currently available regardless of plan
+- **Usage limit enforcement**: No limits on checklist count or submission limits
+- **Feature gating implementation**: Standard vs Pro restrictions not enforced
 - Analytics and reporting
 - Advanced email automation
 - Mobile app optimization
 - SEO optimization
 
 ## Critical Business Logic
+
+### Plan Feature Restrictions (To Be Implemented)
+```typescript
+// Standard Plan Restrictions
+const STANDARD_LIMITS = {
+  MAX_CHECKLISTS: 3,
+  MAX_MONTHLY_SUBMISSIONS: 50,
+  FEATURES: {
+    PASSWORD_PROTECTION: false,
+    FONT_CUSTOMIZATION: false,
+    BUSINESS_NAME_BRANDING: false,
+    CUSTOM_COMPLETION_PAGES: false
+  }
+};
+
+// Pro Plan Features
+const PRO_FEATURES = {
+  UNLIMITED_CHECKLISTS: true,
+  UNLIMITED_SUBMISSIONS: true,
+  FULL_BRANDING: true,
+  PASSWORD_PROTECTION: true,
+  CUSTOM_COMPLETION_PAGES: true
+};
+```
 
 ### Subscription State Management
 ```typescript
