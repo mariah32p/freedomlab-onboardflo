@@ -610,44 +610,19 @@ export default function CreateChecklistPage() {
                       type="radio"
                       name="visibility"
                       checked={formData.is_public}
-                      onChange={() => setFormData(prev => ({ ...prev, is_public: true, password: '' }))}
+                      onChange={() => setFormData(prev => ({ ...prev, is_public: true }))}
                       className="mr-3 text-emerald-600 focus:ring-emerald-500"
                     />
                     <div className="flex items-center">
                       <Globe className="w-4 h-4 text-emerald-500 mr-2" />
-                      <span className="font-sans">Public - Anyone with the link can access</span>
-                    </div>
-                  </label>
-                  <label className="flex items-center">
-                    <input
-                      type="radio"
-                      name="visibility"
-                      checked={!formData.is_public}
-                      onChange={() => setFormData(prev => ({ ...prev, is_public: false }))}
-                      className="mr-3 text-emerald-600 focus:ring-emerald-500"
-                    />
-                    <div className="flex items-center">
-                      <Lock className="w-4 h-4 text-gray-500 mr-2" />
-                      <span className="font-sans">Password Protected</span>
+                      <span className="font-sans">Public - Sessions can be public or password-protected</span>
                     </div>
                   </label>
                 </div>
+                <p className="text-xs text-gray-500 mt-2 font-sans">
+                  Password protection is now set when creating individual customer sessions
+                </p>
               </div>
-
-              {!formData.is_public && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">
-                    Password
-                  </label>
-                  <input
-                    type="password"
-                    value={formData.password}
-                    onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
-                    placeholder="Enter password for this checklist"
-                  />
-                </div>
-              )}
             </div>
           </div>
 

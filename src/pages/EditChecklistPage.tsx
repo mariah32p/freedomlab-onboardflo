@@ -503,23 +503,13 @@ export default function EditChecklistPage() {
                           <span className="font-sans">Password Protected</span>
                         </div>
                       </label>
-                    </div>
+                        <span className="font-sans">Public - Sessions can be public or password-protected</span>
                   </div>
 
-                  {!formData.is_public && (
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">
-                        Password
-                      </label>
-                      <input
-                        type="password"
-                        value={formData.password}
-                        onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
-                        placeholder="Enter password for this checklist"
-                      />
-                    </div>
                   )}
+                  <p className="text-xs text-gray-500 mt-2 font-sans">
+                    Password protection is now set when creating individual customer sessions
+                  </p>
                 </div>
               </div>
 
@@ -557,21 +547,6 @@ export default function EditChecklistPage() {
                 {steps.map((step, index) => (
                   <div key={step.id || index}>
                     {renderStepEditor(step, index)}
-                  </div>
-                ))}
-                
-                {steps.length === 0 && (
-                  <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
-                    <Plus className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                    <p className="text-gray-500 font-sans">No steps added yet</p>
-                    <button
-                      onClick={handleAddStep}
-                      className="mt-4 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium font-sans"
-                    >
-                      Add First Step
-                    </button>
-                  </div>
-                )}
               </div>
             </div>
           </div>
