@@ -582,6 +582,7 @@ export default function SubmissionsPage() {
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4 font-sans">Timeline</h3>
                 <div className="space-y-4">
+                  {/* Session Created */}
                   <div className="flex items-center space-x-3">
                     <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
                       <Plus className="w-4 h-4 text-blue-600" />
@@ -592,7 +593,8 @@ export default function SubmissionsPage() {
                     </div>
                   </div>
                   
-                  {selectedSession.started_at && (
+                  {/* Customer Started - only show if actually started */}
+                  {selectedSession.started_at && selectedSession.submission_status !== 'pending' && (
                     <div className="flex items-center space-x-3">
                       <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">
                         <Play className="w-4 h-4 text-emerald-600" />
@@ -604,7 +606,8 @@ export default function SubmissionsPage() {
                     </div>
                   )}
                   
-                  {selectedSession.completed_at && (
+                  {/* Completed - only show if actually completed */}
+                  {selectedSession.completed_at && selectedSession.submission_status === 'completed' && (
                     <div className="flex items-center space-x-3">
                       <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
                         <CheckCircle className="w-4 h-4 text-green-600" />
@@ -616,15 +619,25 @@ export default function SubmissionsPage() {
                     </div>
                   )}
                   
-                  <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                      <Clock className="w-4 h-4 text-gray-600" />
+                  {/* Last Activity - only show if there's been activity */}
+                  {selectedSession.last_activity && selectedSession.submission_status !== 'pending' && (
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                        <Clock className="w-4 h-4 text-gray-600" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900 font-sans">Last Activity</p>
+                        <p className="text-sm text-gray-600 font-sans">{getTimeSince(selectedSession.last_activity)}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-medium text-gray-900 font-sans">Last Activity</p>
-                      <p className="text-sm text-gray-600 font-sans">{getTimeSince(selectedSession.last_activity)}</p>
+                  )}
+                  
+                  {/* Show message for pending sessions */}
+                  {selectedSession.submission_status === 'pending' && (
+                    <div className="text-center py-4 text-gray-500">
+                      <p className="font-sans">Customer hasn't started yet</p>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -740,9 +753,16 @@ export default function SubmissionsPage() {
             {sessions.map((session) => (
               <div
                 key={session.id}
-                className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-all duration-200 cursor-pointer"
+                className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-lg hover:border-emerald-300 transition-all duration-200 cursor-pointer group relative"
                 onClick={() => setSelectedSession(session)}
               >
+                {/* Click indicator */}
+                <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <div className="bg-emerald-100 text-emerald-600 px-2 py-1 rounded-full text-xs font-medium font-sans">
+                    Click to view details
+                  </div>
+                </div>
+                
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
                     <h3 className="text-lg font-semibold text-gray-900 mb-2 font-sans">
