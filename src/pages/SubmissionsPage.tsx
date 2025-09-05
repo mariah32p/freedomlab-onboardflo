@@ -35,6 +35,7 @@ export default function SubmissionsPage() {
   const [copiedSessionId, setCopiedSessionId] = useState<string | null>(null);
   const [editingSessionId, setEditingSessionId] = useState<string | null>(null);
   const [editingLinkName, setEditingLinkName] = useState('');
+  const [sessionActions, setSessionActions] = useState<Record<string, 'saved' | 'sent' | 'scheduled'>>({});
   const [showCreateSessionModal, setShowCreateSessionModal] = useState(false);
   const [createSessionData, setCreateSessionData] = useState({
     checklistId: '',
@@ -221,7 +222,8 @@ export default function SubmissionsPage() {
       const sessionUrl = `${window.location.origin}/c/${createSessionData.checklistId}/${sessionToken}`;
       await navigator.clipboard.writeText(sessionUrl);
       
-      alert(`Session created successfully! The link has been copied to your clipboard:\n\n${sessionUrl}`);
+      // Mark session as saved
+      setSessionActions(prev => ({ ...prev, [newSession.id]: 'saved' }));
       
       // Reset form and close modal
       setCreateSessionData({
@@ -523,6 +525,38 @@ export default function SubmissionsPage() {
                       </div>
                     </div>
                     <div className="flex items-center space-x-2 ml-4">
+                      {/* Show action buttons for newly created sessions */}
+                      {sessionActions[session.id] === 'saved' && (
+                        <div className="flex items-center space-x-2 mr-2">
+                          <button
+                            onClick={() => handleSendWelcomeEmail(session)}
+                            className="px-3 py-1 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg text-xs font-medium transition-colors font-sans"
+                          >
+                            Send Welcome Email
+                          </button>
+                          <button
+                            onClick={() => handleCopyUrl(session)}
+                            className="px-3 py-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-lg text-xs font-medium transition-colors font-sans"
+                          >
+                            Copy Link
+                          </button>
+                        </div>
+                      )}
+                      {sessionActions[session.id] === 'sent' && (
+                        <div className="flex items-center space-x-2 mr-2">
+                          <button
+                            onClick={() => handleScheduleReminders(session)}
+                            className="px-3 py-1 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg text-xs font-medium transition-colors font-sans"
+                          >
+                            Schedule Reminders
+                          </button>
+                        </div>
+                      )}
+                      {sessionActions[session.id] === 'scheduled' && (
+                        <div className="px-3 py-1 bg-green-100 text-green-700 rounded-lg text-xs font-medium font-sans">
+                          ✓ Reminders Scheduled
+                        </div>
+                      )}
                       <button 
                         onClick={() => handlePreviewSession(session)}
                         className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" 
@@ -633,12 +667,12 @@ export default function SubmissionsPage() {
                     value={createSessionData.sessionEmails}
                     onChange={(e) => setCreateSessionData(prev => ({ ...prev, sessionEmails: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 font-sans"
-                    placeholder="john@company.com&#10;sarah@company.com&#10;team@company.com"
+                    placeholder="john@company.com, sarah@company.com&#10;or one email per line:&#10;john@company.com&#10;sarah@company.com"
                     rows={4}
                     required
                   />
                   <p className="text-xs text-gray-500 mt-1 font-sans">
-                    <strong>Important:</strong> Enter email addresses separated by commas or new lines. All recipients will receive the SAME session link and can collaborate together on this specific checklist. This is NOT for bulk sending - it's for team collaboration on one shared session.
+                    <strong>Collaboration Link:</strong> Enter email addresses separated by commas or line breaks. All recipients will receive the SAME session link to collaborate on this specific checklist together. This is NOT bulk sending - it's one shared session for team collaboration.
                   </p>
                 </div>
                 <div className="flex space-x-3 pt-4">
@@ -654,7 +688,7 @@ export default function SubmissionsPage() {
                     disabled={creatingSession}
                     className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors disabled:opacity-50 font-sans"
                   >
-                    {creatingSession ? 'Creating...' : 'Create Session'}
+                    {creatingSession ? 'Creating...' : 'Save Session'}
                   </button>
                 </div>
               </form>
