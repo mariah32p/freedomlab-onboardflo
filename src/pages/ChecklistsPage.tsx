@@ -190,16 +190,13 @@ export default function ChecklistsPage() {
                     </button>
                     <button
                       onClick={() => handleCopyUrl(checklist)}
-                      disabled={creatingSessionId === checklist.id}
                       className="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
                       title="Copy checklist URL"
                     >
-                      {creatingSession === checklist.id ? (
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-emerald-600"></div>
-                      ) : copiedId === checklist.id ? (
+                      {copiedId === checklist.id ? (
                         <Check className="w-4 h-4 text-emerald-600" />
                       ) : (
-                       <Copy className="w-4 h-4" />
+                        <Copy className="w-4 h-4" />
                       )}
                     </button>
                   </div>
