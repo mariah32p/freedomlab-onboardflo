@@ -621,7 +621,7 @@ export default function SubmissionsPage() {
                     onChange={(e) => setCreateSessionData(prev => ({ ...prev, email: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 font-sans"
                     placeholder="john@company.com, sarah@company.com"
-                    rows={3}
+                    required
                   />
                   <p className="text-xs text-gray-500 mt-1 font-sans">
                     Comma-separated email addresses. Each person will receive the same session link to collaborate on this specific form.
