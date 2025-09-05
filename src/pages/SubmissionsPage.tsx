@@ -45,6 +45,8 @@ export default function SubmissionsPage() {
   });
   const [creatingSession, setCreatingSession] = useState(false);
   const [checklists, setChecklists] = useState<any[]>([]);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [newSessionData, setNewSessionData] = useState<any>(null);
   const accessStatus = getAccessStatus();
 
   // Track progress for each session
@@ -220,10 +222,9 @@ export default function SubmissionsPage() {
       
       // Copy the session URL to clipboard
       const sessionUrl = `${window.location.origin}/c/${createSessionData.checklistId}/${sessionToken}`;
-      await navigator.clipboard.writeText(sessionUrl);
       
-      // Mark session as saved
-      setSessionActions(prev => ({ ...prev, [newSession.id]: 'saved' }));
+      // Store session data for popup
+      setNewSessionData({ ...newSession, sessionUrl });
       
       // Reset form and close modal
       setCreateSessionData({
@@ -233,9 +234,8 @@ export default function SubmissionsPage() {
         sessionEmails: ''
       });
       setShowCreateSessionModal(false);
+      setShowSuccessPopup(true);
       
-      // Refresh sessions list
-      window.location.reload();
     } catch (err) {
       console.error('Error creating session:', err);
       alert('Failed to create session. Please try again.');
