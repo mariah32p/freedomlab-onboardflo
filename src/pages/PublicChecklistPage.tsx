@@ -913,155 +913,156 @@ export default function PublicChecklistPage() {
               )}
             </div>
           </div>
+        </div>
 
-          {/* Main Checklist Content */}
-          <div className="space-y-8">
-            {/* Step Navigation Pills */}
-            <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 font-sans">Checklist Steps</h2>
-                <div className="flex items-center space-x-3">
-                  {saving && (
-                    <div className="flex items-center space-x-2 text-sm text-blue-600 bg-blue-50 px-3 py-2 rounded-lg font-sans">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                      <span>Saving...</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-              
-              <div className="flex flex-wrap gap-3">
-                {steps.map((step, index) => (
-                  <button
-                    key={step.id}
-                    onClick={() => setCurrentStepIndex(index)}
-                    className={`group relative px-6 py-3 rounded-xl font-semibold transition-all duration-200 font-sans ${
-                      currentStepIndex === index
-                        ? 'text-white shadow-lg transform scale-105'
-                        : isStepCompleted(step.id)
-                        ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200 shadow-sm'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 shadow-sm'
-                    }`}
-                    style={{
-                      backgroundColor: currentStepIndex === index ? primaryColor : undefined
-                    }}
-                  >
-                    <div className="flex items-center space-x-2">
-                      <span className="text-lg">{index + 1}</span>
-                      {isStepCompleted(step.id) && (
-                        <CheckCircle className="w-5 h-5" />
-                      )}
-                      {step.is_required && !isStepCompleted(step.id) && (
-                        <span className="text-red-500 text-lg">*</span>
-                      )}
-                    </div>
-                    
-                    {/* Tooltip */}
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-10">
-                      {step.title}
-                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
-                    </div>
-                  </button>
-                ))}
+        {/* Main Checklist Content */}
+        <div className="space-y-8">
+          {/* Step Navigation Pills */}
+          <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 font-sans">Checklist Steps</h2>
+              <div className="flex items-center space-x-3">
+                {saving && (
+                  <div className="flex items-center space-x-2 text-sm text-blue-600 bg-blue-50 px-3 py-2 rounded-lg font-sans">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                    <span>Saving...</span>
+                  </div>
+                )}
               </div>
             </div>
-
-            {/* Current Step Content */}
-            {steps.length > 0 && (
-              <div className="space-y-6">
-                <div className="text-center">
-                  <div className="inline-flex items-center space-x-2 bg-blue-50 px-4 py-2 rounded-full border border-blue-200 mb-4">
-                    <Clock className="w-4 h-4 text-blue-600" />
-                    <span className="text-sm font-medium text-blue-700 font-sans">
-                      Step {currentStepIndex + 1} of {steps.length}
-                    </span>
+            
+            <div className="flex flex-wrap gap-3">
+              {steps.map((step, index) => (
+                <button
+                  key={step.id}
+                  onClick={() => setCurrentStepIndex(index)}
+                  className={`group relative px-6 py-3 rounded-xl font-semibold transition-all duration-200 font-sans ${
+                    currentStepIndex === index
+                      ? 'text-white shadow-lg transform scale-105'
+                      : isStepCompleted(step.id)
+                      ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200 shadow-sm'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200 shadow-sm'
+                  }`}
+                  style={{
+                    backgroundColor: currentStepIndex === index ? primaryColor : undefined
+                  }}
+                >
+                  <div className="flex items-center space-x-2">
+                    <span className="text-lg">{index + 1}</span>
+                    {isStepCompleted(step.id) && (
+                      <CheckCircle className="w-5 h-5" />
+                    )}
+                    {step.is_required && !isStepCompleted(step.id) && (
+                      <span className="text-red-500 text-lg">*</span>
+                    )}
                   </div>
                   
-                  {steps[currentStepIndex].is_required && (
-                    <div className="inline-flex items-center space-x-2 bg-red-50 px-4 py-2 rounded-full border border-red-200">
-                      <span className="w-2 h-2 bg-red-500 rounded-full"></span>
-                      <span className="text-sm font-medium text-red-700 font-sans">Required Step</span>
-                    </div>
-                  )}
+                  {/* Tooltip */}
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-10">
+                    {step.title}
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Current Step Content */}
+          {steps.length > 0 && (
+            <div className="space-y-6">
+              <div className="text-center">
+                <div className="inline-flex items-center space-x-2 bg-blue-50 px-4 py-2 rounded-full border border-blue-200 mb-4">
+                  <Clock className="w-4 h-4 text-blue-600" />
+                  <span className="text-sm font-medium text-blue-700 font-sans">
+                    Step {currentStepIndex + 1} of {steps.length}
+                  </span>
                 </div>
+                
+                {steps[currentStepIndex].is_required && (
+                  <div className="inline-flex items-center space-x-2 bg-red-50 px-4 py-2 rounded-full border border-red-200">
+                    <span className="w-2 h-2 bg-red-500 rounded-full"></span>
+                    <span className="text-sm font-medium text-red-700 font-sans">Required Step</span>
+                  </div>
+                )}
+              </div>
 
-                {/* Step Content */}
-                <div className="space-y-6">
-                  {renderStepInput(steps[currentStepIndex])}
-                </div>
+              {/* Step Content */}
+              <div className="space-y-6">
+                {renderStepInput(steps[currentStepIndex])}
+              </div>
 
-                {/* Navigation */}
-                <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
-                  <div className="flex items-center justify-between">
-                    <button
-                      onClick={() => setCurrentStepIndex(Math.max(0, currentStepIndex - 1))}
-                      disabled={currentStepIndex === 0}
-                      className="flex items-center space-x-2 px-6 py-3 text-gray-600 hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed font-semibold transition-all duration-200 rounded-xl hover:bg-gray-50 font-sans"
-                    >
-                      <ArrowLeft className="w-5 h-5" />
-                      <span>Previous</span>
-                    </button>
+              {/* Navigation */}
+              <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
+                <div className="flex items-center justify-between">
+                  <button
+                    onClick={() => setCurrentStepIndex(Math.max(0, currentStepIndex - 1))}
+                    disabled={currentStepIndex === 0}
+                    className="flex items-center space-x-2 px-6 py-3 text-gray-600 hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed font-semibold transition-all duration-200 rounded-xl hover:bg-gray-50 font-sans"
+                  >
+                    <ArrowLeft className="w-5 h-5" />
+                    <span>Previous</span>
+                  </button>
 
-                    <div className="flex items-center space-x-4">
-                      {currentStepIndex < steps.length - 1 ? (
-                        <button
-                          onClick={() => setCurrentStepIndex(Math.min(steps.length - 1, currentStepIndex + 1))}
-                          className="flex items-center space-x-2 px-8 py-3 text-white rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 font-sans"
-                          style={{ backgroundColor: primaryColor }}
-                        >
-                          <span>Next Step</span>
-                          <ArrowRight className="w-5 h-5" />
-                        </button>
-                      ) : (
-                        <button
-                          onClick={handleComplete}
-                          disabled={saving || !allRequiredCompleted}
-                          className="flex items-center space-x-3 px-8 py-4 text-white rounded-xl font-bold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:transform-none font-sans"
-                          style={{ backgroundColor: secondaryColor }}
-                        >
-                          {saving ? (
-                            <>
-                              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                              <span>Completing...</span>
-                            </>
-                          ) : (
-                            <>
-                              <Sparkles className="w-6 h-6" />
-                              <span>
-                                {allRequiredCompleted ? 'Complete Checklist' : 'Complete Required Steps First'}
-                              </span>
-                            </>
-                          )}
-                        </button>
-                      )}
-                    </div>
+                  <div className="flex items-center space-x-4">
+                    {currentStepIndex < steps.length - 1 ? (
+                      <button
+                        onClick={() => setCurrentStepIndex(Math.min(steps.length - 1, currentStepIndex + 1))}
+                        className="flex items-center space-x-2 px-8 py-3 text-white rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 font-sans"
+                        style={{ backgroundColor: primaryColor }}
+                      >
+                        <span>Next Step</span>
+                        <ArrowRight className="w-5 h-5" />
+                      </button>
+                    ) : (
+                      <button
+                        onClick={handleComplete}
+                        disabled={saving || !allRequiredCompleted}
+                        className="flex items-center space-x-3 px-8 py-4 text-white rounded-xl font-bold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:transform-none font-sans"
+                        style={{ backgroundColor: secondaryColor }}
+                      >
+                        {saving ? (
+                          <>
+                            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                            <span>Completing...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="w-6 h-6" />
+                            <span>
+                              {allRequiredCompleted ? 'Complete Checklist' : 'Complete Required Steps First'}
+                            </span>
+                          </>
+                        )}
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
-            )}
+            </div>
+          )}
 
-            {/* Completed Steps Summary */}
-            {progress.length > 0 && (
-              <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
-                <h3 className="text-xl font-bold text-gray-900 mb-4 font-sans">
-                  ✅ Completed Steps ({progress.length}/{steps.length})
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {progress.map((p) => {
-                    const step = steps.find(s => s.id === p.step_id);
-                    if (!step) return null;
-                    
-                    return (
-                      <div key={p.id} className="flex items-center space-x-3 p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
-                        <CheckCircle className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-                        <span className="text-sm font-medium text-emerald-800 font-sans truncate">{step.title}</span>
-                      </div>
-                    );
-                  })}
-                </div>
+          {/* Completed Steps Summary */}
+          {progress.length > 0 && (
+            <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
+              <h3 className="text-xl font-bold text-gray-900 mb-4 font-sans">
+                ✅ Completed Steps ({progress.length}/{steps.length})
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {progress.map((p) => {
+                  const step = steps.find(s => s.id === p.step_id);
+                  if (!step) return null;
+                  
+                  return (
+                    <div key={p.id} className="flex items-center space-x-3 p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
+                      <CheckCircle className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+                      <span className="text-sm font-medium text-emerald-800 font-sans truncate">{step.title}</span>
+                    </div>
+                  );
+                })}
               </div>
-            )}
-          </div>
+            </div>
+          )}
+        </div>
 
         {/* Error Display */}
         {(error || sessionError) && (
