@@ -77,9 +77,14 @@ export function useCustomerSessions() {
 
     try {
       // Check if Supabase is properly configured
-      if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
-        console.error('Supabase environment variables are missing. Please check your .env file.');
-        console.error('Required: VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY');
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+      
+      if (!supabaseUrl || !supabaseKey || 
+          supabaseUrl === 'your_supabase_url' || 
+          supabaseKey === 'your_supabase_anon_key' ||
+          !supabaseUrl.startsWith('https://')) {
+        console.warn('Supabase not configured - using mock data');
         return [];
       }
 
@@ -91,19 +96,7 @@ export function useCustomerSessions() {
       if (error) throw error;
       return data || [];
     } catch (err) {
-      // Handle different types of errors gracefully
-      if (err instanceof TypeError && err.message.includes('Failed to fetch')) {
-        console.error('=== SUPABASE CONNECTION ERROR ===');
-        console.error('Failed to connect to Supabase. Please check:');
-        console.error('1. Your .env file contains correct VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY');
-        console.error('2. Your Supabase project is active and accessible');
-        console.error('3. CORS settings allow localhost:5173 in Supabase project settings');
-        console.error('4. Restart your dev server after making .env changes');
-        console.error('Current URL:', import.meta.env.VITE_SUPABASE_URL);
-        console.error('Has Anon Key:', !!import.meta.env.VITE_SUPABASE_ANON_KEY);
-      } else {
-        console.error('Error fetching session progress:', err);
-      }
+      console.warn('Error fetching session progress, using fallback:', err);
       return [];
     }
   };

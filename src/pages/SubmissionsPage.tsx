@@ -60,6 +60,18 @@ export default function SubmissionsPage() {
   // Load progress for all sessions
   useEffect(() => {
     const loadAllProgress = async () => {
+      // Check if Supabase is properly configured
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+      
+      if (!supabaseUrl || !supabaseKey || 
+          supabaseUrl === 'your_supabase_url' || 
+          supabaseKey === 'your_supabase_anon_key' ||
+          !supabaseUrl.startsWith('https://')) {
+        console.warn('Supabase not configured - skipping progress loading');
+        return;
+      }
+      
       try {
         const progressData: Record<string, number> = {};
         
@@ -74,7 +86,7 @@ export default function SubmissionsPage() {
                 .eq('checklist_id', session.checklist_id);
               
               if (stepsError) {
-                console.warn(`Error fetching steps for checklist ${session.checklist_id}:`, stepsError);
+                console.warn(`Error fetching steps for checklist ${session.checklist_id}, using fallback`);
                 continue;
               }
               
@@ -84,7 +96,7 @@ export default function SubmissionsPage() {
               
               progressData[session.id] = percentage;
             } catch (sessionError) {
-              console.warn(`Error loading progress for session ${session.id}:`, sessionError);
+              console.warn(`Error loading progress for session ${session.id}, using fallback`);
               progressData[session.id] = 0;
             }
           }
@@ -92,7 +104,7 @@ export default function SubmissionsPage() {
         
         setSessionProgress(progressData);
       } catch (err) {
-        console.error('Error in loadAllProgress:', err);
+        console.warn('Error in loadAllProgress, using fallback:', err);
         setSessionProgress({});
       }
     };
@@ -261,6 +273,18 @@ export default function SubmissionsPage() {
   const handleSendEmail = async (type: 'welcome' | 'reminder') => {
     if (!selectedSession) return;
     
+    // Check if Supabase is properly configured
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    
+    if (!supabaseUrl || !supabaseKey || 
+        supabaseUrl === 'your_supabase_url' || 
+        supabaseKey === 'your_supabase_anon_key' ||
+        !supabaseUrl.startsWith('https://')) {
+      alert('Email functionality requires Supabase configuration. Please set up your environment variables.');
+      return;
+    }
+    
     setSendingEmail(true);
     
     try {
@@ -268,7 +292,8 @@ export default function SubmissionsPage() {
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       
       if (sessionError || !session) {
-        throw new Error('Authentication required to send emails');
+        alert('Please sign in to send emails');
+        return;
       }
       
       // Parse emails from the session_emails field
@@ -308,8 +333,12 @@ export default function SubmissionsPage() {
       
       alert(`${type === 'welcome' ? 'Welcome' : 'Reminder'} email sent to ${emailList.length} recipient(s)!`);
     } catch (err) {
-      console.error('Error sending email:', err);
-      alert(`Failed to send ${type} email. Please try again.`);
+      console.warn('Error sending email:', err);
+      if (err instanceof Error && err.message.includes('Failed to fetch')) {
+        alert('Unable to connect to email service. Please check your Supabase configuration and ensure the send-email function is deployed.');
+      } else {
+        alert(`Failed to send ${type} email: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      }
     } finally {
       setSendingEmail(false);
     }
