@@ -22,7 +22,8 @@ import {
   Copy,
   Check,
   Edit,
-  X
+  X,
+  Plus
 } from 'lucide-react';
 
 export default function SubmissionsPage() {
@@ -34,7 +35,6 @@ export default function SubmissionsPage() {
   const [copiedSessionId, setCopiedSessionId] = useState<string | null>(null);
   const [editingSessionId, setEditingSessionId] = useState<string | null>(null);
   const [editingLinkName, setEditingLinkName] = useState('');
-  const [checklists, setChecklists] = useState<any[]>([]);
   const [showCreateSessionModal, setShowCreateSessionModal] = useState(false);
   const [createSessionData, setCreateSessionData] = useState({
     checklistId: '',
@@ -44,6 +44,7 @@ export default function SubmissionsPage() {
     company: ''
   });
   const [creatingSession, setCreatingSession] = useState(false);
+  const [checklists, setChecklists] = useState<any[]>([]);
   const accessStatus = getAccessStatus();
 
   // Track progress for each session
@@ -51,6 +52,26 @@ export default function SubmissionsPage() {
 
   // Load progress for all sessions
   useEffect(() => {
+    // Fetch user's checklists for the create session modal
+    const fetchChecklists = async () => {
+      if (!user) return;
+      
+      try {
+        const { data, error } = await supabase
+          .from('checklists')
+          .select('id, title')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        setChecklists(data || []);
+      } catch (err) {
+        console.error('Error fetching checklists:', err);
+      }
+    };
+
+    fetchChecklists();
+    
     const loadAllProgress = async () => {
       const progressData: Record<string, number> = {};
       
@@ -79,7 +100,7 @@ export default function SubmissionsPage() {
     if (sessions.length > 0) {
       loadAllProgress();
     }
-  }, [sessions, getSessionProgress]);
+  }, [sessions, getSessionProgress, user]);
 
   const stats = getSessionStats();
 
