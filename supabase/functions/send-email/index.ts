@@ -97,12 +97,13 @@ Deno.serve(async (req) => {
 
     const checklist = (session as any).checklists;
     const finalSessionUrl = sessionUrl || `${req.headers.get('origin') || 'https://your-domain.com'}/c/${checklist.id}/${session.session_token}`;
+    const senderName = businessName || 'OnboardFlo';
 
     let emailSubject: string;
     let emailHtml: string;
 
     if (type === 'welcome') {
-      emailSubject = `Welcome to ${sessionName || checklist.title} - Let's get started!`;
+      emailSubject = `${senderName}: ${sessionName || checklist.title} - Let's get started!`;
       emailHtml = `
         <!DOCTYPE html>
         <html>
@@ -113,7 +114,7 @@ Deno.serve(async (req) => {
         </head>
         <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
           <div style="background: linear-gradient(135deg, #10b981, #3b82f6); padding: 30px; border-radius: 12px; text-align: center; margin-bottom: 30px;">
-            <h1 style="color: white; margin: 0; font-size: 28px; font-weight: bold;">Welcome to OnboardFlo!</h1>
+            <h1 style="color: white; margin: 0; font-size: 28px; font-weight: bold;">Welcome from ${senderName}!</h1>
             <p style="color: #e0f2fe; margin: 10px 0 0 0; font-size: 16px;">Your onboarding session is ready</p>
           </div>
           
@@ -144,7 +145,7 @@ Deno.serve(async (req) => {
 
           <div style="text-align: center; margin-top: 40px; padding-top: 25px; border-top: 1px solid #e5e7eb;">
             <p style="color: #9ca3af; font-size: 14px; margin: 0;">
-              Sent by <strong>OnboardFlo by Freedom Lab</strong><br>
+              Sent by <strong>${senderName}</strong> via <strong>OnboardFlo</strong><br>
               Questions? Just reply to this email.
             </p>
           </div>
@@ -152,7 +153,7 @@ Deno.serve(async (req) => {
         </html>
       `;
     } else { // reminder
-      emailSubject = `Reminder: Complete your ${sessionName || checklist.title} onboarding`;
+      emailSubject = `${senderName}: Reminder to complete ${sessionName || checklist.title}`;
       emailHtml = `
         <!DOCTYPE html>
         <html>
@@ -163,8 +164,8 @@ Deno.serve(async (req) => {
         </head>
         <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
           <div style="background: linear-gradient(135deg, #f59e0b, #ef4444); padding: 30px; border-radius: 12px; text-align: center; margin-bottom: 30px;">
-            <h1 style="color: white; margin: 0; font-size: 28px; font-weight: bold;">Don't forget to complete your onboarding!</h1>
-            <p style="color: #fef3c7; margin: 10px 0 0 0; font-size: 16px;">We're here to help you get started</p>
+            <h1 style="color: white; margin: 0; font-size: 28px; font-weight: bold;">Complete your ${checklist.title} onboarding</h1>
+            <p style="color: #fef3c7; margin: 10px 0 0 0; font-size: 16px;">${senderName} is here to help you get started</p>
           </div>
           
           <div style="background: #f8fafc; padding: 25px; border-radius: 12px; margin-bottom: 25px;">
@@ -193,7 +194,7 @@ Deno.serve(async (req) => {
 
           <div style="text-align: center; margin-top: 40px; padding-top: 25px; border-top: 1px solid #e5e7eb;">
             <p style="color: #9ca3af; font-size: 14px; margin: 0;">
-              Sent by <strong>OnboardFlo by Freedom Lab</strong><br>
+              Sent by <strong>${senderName}</strong> via <strong>OnboardFlo</strong><br>
               Questions? Just reply to this email.
             </p>
           </div>
