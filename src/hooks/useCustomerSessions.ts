@@ -76,6 +76,13 @@ export function useCustomerSessions() {
     }
 
     try {
+      // Check if Supabase is properly configured
+      if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
+        console.error('Supabase environment variables are missing. Please check your .env file.');
+        console.error('Required: VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY');
+        return [];
+      }
+
       const { data, error } = await supabase
         .from('session_progress')
         .select('*')
@@ -85,10 +92,22 @@ export function useCustomerSessions() {
       return data || [];
     } catch (err) {
       console.error('Error fetching session progress:', err);
-      // Check if it's a network/connection error
-      if (err instanceof TypeError && err.message.includes('fetch')) {
-        console.error('Supabase connection error. Please check your environment variables and Supabase project settings.');
+      
+      // Provide specific guidance for different error types
+      if (err instanceof TypeError && err.message.includes('Failed to fetch')) {
+        console.error('=== SUPABASE CONNECTION ERROR ===');
+        console.error('This usually means:');
+        console.error('1. Missing or incorrect environment variables in .env file');
+        console.error('2. Supabase project URL is incorrect');
+        console.error('3. CORS settings in Supabase don\'t allow localhost:5173');
+        console.error('4. Supabase project is paused or deleted');
+        console.error('');
+        console.error('To fix:');
+        console.error('1. Check your .env file has correct VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY');
+        console.error('2. Restart the dev server after updating .env');
+        console.error('3. Check Supabase project settings -> API -> CORS origins includes localhost:5173');
       }
+      
       // Return empty array instead of throwing to prevent UI crashes
       return [];
     }
