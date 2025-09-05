@@ -47,7 +47,6 @@ export default function PublicChecklistPage() {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [showCustomerForm, setShowCustomerForm] = useState(true);
   const [sessionToken, setSessionToken] = useState<string>('');
-  const inputTimeouts = useRef<Map<string, NodeJS.Timeout>>(new Map());
   
   // Local state for immediate UI updates
   const [localStepValues, setLocalStepValues] = useState<Record<string, string>>({});
@@ -113,29 +112,21 @@ export default function PublicChecklistPage() {
   useEffect(() => {
     if (!checklistId) return;
 
-    const storedValues: Record<string, string> = {};
-    if (typeof window !== 'undefined') {
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.startsWith(`progress-${checklistId}-`)) {
-          const stepId = key.replace(`progress-${checklistId}-`, '');
-          const value = localStorage.getItem(key);
-          if (value !== null) {
-            storedValues[stepId] = value;
-          }
-        }
-      }
-    }
-    setLocalStepValues(storedValues);
+    // Initialize from progress data only
+    const initialValues: Record<string, string> = {};
+    progress.forEach(p => {
+      initialValues[p.step_id] = p.notes;
+    });
+    setLocalStepValues(initialValues);
   }, [checklistId]);
 
-  // Initialize local values from progress, prioritizing any locally stored values
+  // Update local values when progress changes
   useEffect(() => {
     const initialValues: Record<string, string> = {};
     progress.forEach(p => {
       initialValues[p.step_id] = p.notes;
     });
-    setLocalStepValues(prev => ({ ...initialValues, ...prev }));
+    setLocalStepValues(initialValues);
   }, [progress]);
 
   const fetchChecklistData = async () => {
@@ -234,69 +225,30 @@ export default function PublicChecklistPage() {
     }
   };
 
-  const handleStepChange = useCallback((stepId: string, value: string | boolean, file?: File) => {
-    const storageKey = checklistId ? `progress-${checklistId}-${stepId}` : '';
-
+  const handleStepChange = useCallback(async (stepId: string, value: string | boolean) => {
     // Update local state immediately for responsive UI
     if (typeof value === 'string') {
       setLocalStepValues(prev => ({
         ...prev,
         [stepId]: value
       }));
-
-      if (checklistId && typeof window !== 'undefined') {
-        if (value.trim()) {
-          localStorage.setItem(storageKey, value);
-        } else {
-          localStorage.removeItem(storageKey);
-        }
-      }
     }
 
+    // Save immediately to database
     if (typeof value === 'boolean') {
-      if (checklistId && typeof window !== 'undefined') {
-        if (value) {
-          localStorage.setItem(storageKey, 'true');
-        } else {
-          localStorage.removeItem(storageKey);
-        }
-      }
-    }
-
-    // Clear existing timeout for this step
-    const existingTimeout = inputTimeouts.current.get(stepId);
-    if (existingTimeout) {
-      clearTimeout(existingTimeout);
-    }
-
-    // Set a new timeout to save progress after a delay
-    const timeout = setTimeout(async () => {
-      if (typeof value === 'boolean') {
-        if (value) {
-          await saveStepProgress(stepId, '');
-        } else {
-          await removeStepProgress(stepId);
-        }
+      if (value) {
+        await saveStepProgress(stepId, '');
       } else {
-        if (value.trim()) {
-          await saveStepProgress(stepId, value);
-        } else {
-          await removeStepProgress(stepId);
-        }
+        await removeStepProgress(stepId);
       }
-      inputTimeouts.current.delete(stepId);
-    }, 800);
-
-    inputTimeouts.current.set(stepId, timeout);
-  }, [checklistId, saveStepProgress, removeStepProgress]);
-
-  // Cleanup timeouts on unmount
-  useEffect(() => {
-    return () => {
-      inputTimeouts.current.forEach(timeout => clearTimeout(timeout));
-      inputTimeouts.current.clear();
-    };
-  }, []);
+    } else {
+      if (value.trim()) {
+        await saveStepProgress(stepId, value);
+      } else {
+        await removeStepProgress(stepId);
+      }
+    }
+  }, [saveStepProgress, removeStepProgress]);
 
   const handleComplete = async () => {
     if (!checklist || !session) return;

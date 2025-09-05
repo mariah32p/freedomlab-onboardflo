@@ -77,11 +77,13 @@ export default function CreateChecklistPage() {
         handleTemplateSelect(template);
         setCurrentStep('customize');
       }
+    } else {
+      // Load draft if no template specified
+      loadDraft();
     }
   }, [searchParams]);
 
-  // Load any saved draft
-  useEffect(() => {
+  const loadDraft = () => {
     const stored = localStorage.getItem(DRAFT_STORAGE_KEY);
     if (stored) {
       try {
@@ -94,34 +96,65 @@ export default function CreateChecklistPage() {
           const template = checklistTemplates.find(t => t.id === parsed.templateId);
           if (template) setSelectedTemplate(template);
         }
-      } catch {}
+      } catch (err) {
+        console.warn('Failed to load draft:', err);
+      }
     }
-  }, []);
+  };
 
   const saveDraft = useCallback(() => {
+    // Only save if we have meaningful data
+    if (!formData.title && steps.length === 0) return;
+    
     const templateId = selectedTemplate?.id ?? null;
-    localStorage.setItem(
-      DRAFT_STORAGE_KEY,
-      JSON.stringify({ formData, steps, currentStep, editingStepIndex, templateId })
-    );
+    try {
+      localStorage.setItem(
+        DRAFT_STORAGE_KEY,
+        JSON.stringify({ formData, steps, currentStep, editingStepIndex, templateId })
+      );
+    } catch (err) {
+      console.warn('Failed to save draft:', err);
+    }
   }, [formData, steps, currentStep, editingStepIndex, selectedTemplate]);
 
+  // Save draft on every change
   useEffect(() => {
     saveDraft();
   }, [saveDraft]);
 
+  // Save draft before leaving page
   useEffect(() => {
-    const handleBeforeUnload = () => saveDraft();
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      saveDraft();
+      // Warn if there's unsaved work
+      if (formData.title || steps.length > 0) {
+        e.preventDefault();
+        e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+        return e.returnValue;
+      }
+    };
+    
     const handleVisibilityChange = () => {
       if (document.hidden) saveDraft();
     };
+    
     window.addEventListener('beforeunload', handleBeforeUnload);
     document.addEventListener('visibilitychange', handleVisibilityChange);
+    
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [saveDraft]);
+
+  // Clear draft when successfully creating checklist
+  const clearDraft = () => {
+    try {
+      localStorage.removeItem(DRAFT_STORAGE_KEY);
+    } catch (err) {
+      console.warn('Failed to clear draft:', err);
+    }
+  };
 
   const handleTemplateSelect = (template: ChecklistTemplate) => {
     setSelectedTemplate(template);
@@ -210,7 +243,7 @@ export default function CreateChecklistPage() {
     try {
       const success = await createChecklist({ ...formData, steps });
       if (success) {
-        localStorage.removeItem(DRAFT_STORAGE_KEY);
+        clearDraft();
         navigate('/checklists');
       }
     } finally {
