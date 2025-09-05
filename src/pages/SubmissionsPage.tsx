@@ -39,12 +39,11 @@ export default function SubmissionsPage() {
   const [createSessionData, setCreateSessionData] = useState({
     checklistId: '',
     sessionName: '',
-    email: '',
-    name: '',
-    company: ''
+    sessionDescription: '',
+    sessionEmails: ''
   });
   const [creatingSession, setCreatingSession] = useState(false);
-  const [checklists, setChecklists] = useState([]);
+  const [checklists, setChecklists] = useState<any[]>([]);
   const accessStatus = getAccessStatus();
 
   // Track progress for each session
@@ -81,6 +80,28 @@ export default function SubmissionsPage() {
       loadAllProgress();
     }
   }, [sessions, getSessionProgress]);
+
+  // Load checklists for the dropdown
+  useEffect(() => {
+    const fetchChecklists = async () => {
+      if (!user) return;
+      
+      try {
+        const { data, error } = await supabase
+          .from('checklists')
+          .select('id, title')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        setChecklists(data || []);
+      } catch (err) {
+        console.error('Error fetching checklists:', err);
+      }
+    };
+
+    fetchChecklists();
+  }, [user]);
 
   const stats = getSessionStats();
 
@@ -152,22 +173,65 @@ export default function SubmissionsPage() {
 
   const handleCreateSession = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!createSessionData.checklistId) {
+      alert('Please select a checklist');
+      return;
+    }
+    
+    if (!createSessionData.sessionEmails.trim()) {
+      alert('Please enter at least one email address');
+      return;
+    }
+    
     setCreatingSession(true);
     
     try {
-      // Create session logic here
-      console.log('Creating session:', createSessionData);
+      // Generate unique session token
+      const sessionToken = Math.random().toString(36).substring(2, 10);
+      
+      // Create session in database
+      const { data: newSession, error: createError } = await supabase
+        .from('customer_sessions')
+        .insert({
+          checklist_id: createSessionData.checklistId,
+          session_token: sessionToken,
+          session_name: createSessionData.sessionName.trim(),
+          session_description: createSessionData.sessionDescription.trim(),
+          session_emails: createSessionData.sessionEmails.trim(),
+          email: '', // Will be filled when customer accesses
+          name: '',
+          company: '',
+          submission_status: 'pending',
+          link_created_by: user?.id,
+          link_created_at: new Date().toISOString(),
+          is_active: false,
+        })
+        .select()
+        .single();
+
+      if (createError) throw createError;
+      
+      // Copy the session URL to clipboard
+      const sessionUrl = `${window.location.origin}/c/${createSessionData.checklistId}/${sessionToken}`;
+      await navigator.clipboard.writeText(sessionUrl);
+      
+      alert(`Session created successfully! The link has been copied to your clipboard:\n\n${sessionUrl}`);
+      
       // Reset form and close modal
       setCreateSessionData({
         checklistId: '',
         sessionName: '',
-        email: '',
-        name: '',
-        company: ''
+        sessionDescription: '',
+        sessionEmails: ''
       });
       setShowCreateSessionModal(false);
+      
+      // Refresh sessions list
+      window.location.reload();
     } catch (err) {
       console.error('Error creating session:', err);
+      alert('Failed to create session. Please try again.');
     } finally {
       setCreatingSession(false);
     }
