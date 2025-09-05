@@ -234,7 +234,7 @@ export default function PublicChecklistPage() {
     }
   };
 
-  const handleStepChange = useCallback(async (stepId: string, value: string | boolean, file?: File) => {
+  const handleStepChange = useCallback((stepId: string, value: string | boolean, file?: File) => {
     const storageKey = checklistId ? `progress-${checklistId}-${stepId}` : '';
 
     // Update local state immediately for responsive UI
@@ -261,26 +261,40 @@ export default function PublicChecklistPage() {
           localStorage.removeItem(storageKey);
         }
       }
-
-      if (value) {
-        await saveStepProgress(stepId, '');
-      } else {
-        await removeStepProgress(stepId);
-      }
-    } else {
-      // Save immediately for all text inputs
-      if (value.trim()) {
-        await saveStepProgress(stepId, value);
-      } else {
-        await removeStepProgress(stepId);
-      }
     }
+
+    // Clear existing timeout for this step
+    const existingTimeout = inputTimeouts.current.get(stepId);
+    if (existingTimeout) {
+      clearTimeout(existingTimeout);
+    }
+
+    // Set a new timeout to save progress after a delay
+    const timeout = setTimeout(async () => {
+      if (typeof value === 'boolean') {
+        if (value) {
+          await saveStepProgress(stepId, '');
+        } else {
+          await removeStepProgress(stepId);
+        }
+      } else {
+        if (value.trim()) {
+          await saveStepProgress(stepId, value);
+        } else {
+          await removeStepProgress(stepId);
+        }
+      }
+      inputTimeouts.current.delete(stepId);
+    }, 800);
+
+    inputTimeouts.current.set(stepId, timeout);
   }, [checklistId, saveStepProgress, removeStepProgress]);
 
   // Cleanup timeouts on unmount
   useEffect(() => {
     return () => {
-      // No timeouts to cleanup since we save immediately
+      inputTimeouts.current.forEach(timeout => clearTimeout(timeout));
+      inputTimeouts.current.clear();
     };
   }, []);
 
