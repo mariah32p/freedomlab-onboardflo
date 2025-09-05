@@ -740,7 +740,7 @@ export default function CreateChecklistPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
         <div className="bg-white border border-gray-200 rounded-xl p-6">
           <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-            <span className="text-2xl">1️⃣</span>
+            <span className="text-xl font-bold text-emerald-600">1</span>
           </div>
           <h3 className="font-semibold text-gray-900 mb-2 font-sans">Create Your Checklist</h3>
           <p className="text-sm text-gray-600 font-sans">
@@ -750,7 +750,7 @@ export default function CreateChecklistPage() {
 
         <div className="bg-white border border-gray-200 rounded-xl p-6">
           <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-            <span className="text-2xl">2️⃣</span>
+            <span className="text-xl font-bold text-blue-600">2</span>
           </div>
           <h3 className="font-semibold text-gray-900 mb-2 font-sans">Generate Customer Sessions</h3>
           <p className="text-sm text-gray-600 font-sans">
@@ -760,7 +760,7 @@ export default function CreateChecklistPage() {
 
         <div className="bg-white border border-gray-200 rounded-xl p-6">
           <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-            <span className="text-2xl">3️⃣</span>
+            <span className="text-xl font-bold text-purple-600">3</span>
           </div>
           <h3 className="font-semibold text-gray-900 mb-2 font-sans">Track Progress</h3>
           <p className="text-sm text-gray-600 font-sans">
