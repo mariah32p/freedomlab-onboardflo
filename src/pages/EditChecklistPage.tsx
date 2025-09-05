@@ -503,13 +503,11 @@ export default function EditChecklistPage() {
                           <span className="font-sans">Password Protected</span>
                         </div>
                       </label>
-                        <span className="font-sans">Public - Sessions can be public or password-protected</span>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-2 font-sans">
+                      Password protection is now set when creating individual customer sessions
+                    </p>
                   </div>
-
-                  )}
-                  <p className="text-xs text-gray-500 mt-2 font-sans">
-                    Password protection is now set when creating individual customer sessions
-                  </p>
                 </div>
               </div>
 
@@ -547,6 +545,8 @@ export default function EditChecklistPage() {
                 {steps.map((step, index) => (
                   <div key={step.id || index}>
                     {renderStepEditor(step, index)}
+                  </div>
+                ))}
               </div>
             </div>
           </div>
