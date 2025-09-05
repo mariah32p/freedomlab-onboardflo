@@ -34,6 +34,15 @@ export default function SubmissionsPage() {
   const [copiedSessionId, setCopiedSessionId] = useState<string | null>(null);
   const [editingSessionId, setEditingSessionId] = useState<string | null>(null);
   const [editingLinkName, setEditingLinkName] = useState('');
+  const [showCreateSessionModal, setShowCreateSessionModal] = useState(false);
+  const [createSessionData, setCreateSessionData] = useState({
+    checklistId: '',
+    sessionName: '',
+    email: '',
+    name: '',
+    company: ''
+  });
+  const [creatingSession, setCreatingSession] = useState(false);
   const accessStatus = getAccessStatus();
 
   // Track progress for each session
@@ -209,6 +218,13 @@ export default function SubmissionsPage() {
           </p>
         </div>
 
+          <button
+            onClick={() => setShowCreateSessionModal(true)}
+            className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center font-sans"
+          >
+            <Plus className="w-5 h-5 mr-2" />
+            Create Session
+          </button>
         {error && (
           <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
             <p className="text-red-600 text-sm font-sans">{error}</p>

@@ -20,7 +20,9 @@ import {
   Sparkles,
   Clock,
   Users,
-  Shield
+  Shield,
+  Plus,
+  Play
 } from 'lucide-react';
 import { Checklist, ChecklistStep } from '../types/checklist';
 
@@ -46,8 +48,8 @@ export default function PublicChecklistPage() {
   const [password, setPassword] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [showCustomerForm, setShowCustomerForm] = useState(true);
-  const [sessionToken, setSessionToken] = useState<string>('');
+  const [showNewSessionForm, setShowNewSessionForm] = useState(false);
+  const [creatingSession, setCreatingSession] = useState(false);
   
   // Local state for immediate UI updates
   const [localStepValues, setLocalStepValues] = useState<Record<string, string>>({});
@@ -58,18 +60,9 @@ export default function PublicChecklistPage() {
     name: '',
   });
 
-  // Initialize session token
-  useEffect(() => {
-    if (urlSessionToken && isValidSessionToken(urlSessionToken)) {
-      setSessionToken(urlSessionToken);
-    } else if (checklistId) {
-      // Generate new session token and redirect
-      const newToken = generateSessionToken();
-      navigate(`/c/${checklistId}/${newToken}`, { replace: true });
-    }
-  }, [checklistId, urlSessionToken, navigate]);
-
-  // Use session progress hook
+  // Only use session progress hook if we have a session token
+  const hasSessionToken = urlSessionToken && isValidSessionToken(urlSessionToken);
+  
   const {
     session,
     progress,
@@ -87,35 +80,25 @@ export default function PublicChecklistPage() {
     updateSessionInfo,
   } = useSessionProgress({ 
     checklistId: checklistId || '', 
-    sessionToken 
+    sessionToken: urlSessionToken || ''
   });
 
   useEffect(() => {
-    if (checklistId && sessionToken) {
+    if (checklistId) {
       fetchChecklistData();
     }
-  }, [checklistId, sessionToken]);
-
-  // Auto-fill customer form if session exists
-  useEffect(() => {
-    if (session) {
-      setCustomerData({
-        email: session.email,
-        company: session.company,
-        name: session.name || '',
-      });
-      setShowCustomerForm(false);
-    }
-  }, [session]);
+  }, [checklistId]);
 
   // Update local values when progress changes
   useEffect(() => {
-    const initialValues: Record<string, string> = {};
-    progress.forEach(p => {
-      initialValues[p.step_id] = p.notes;
-    });
-    setLocalStepValues(initialValues);
-  }, [progress]);
+    if (hasSessionToken) {
+      const initialValues: Record<string, string> = {};
+      progress.forEach(p => {
+        initialValues[p.step_id] = p.notes;
+      });
+      setLocalStepValues(initialValues);
+    }
+  }, [progress, hasSessionToken]);
 
   const fetchChecklistData = async () => {
     if (!checklistId) return;
@@ -191,29 +174,51 @@ export default function PublicChecklistPage() {
     }
   };
 
-  const handleCustomerSubmit = async (e: React.FormEvent) => {
+  const handleCreateNewSession = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!customerData.email.trim()) {
       setError('Email is required');
       return;
     }
 
-    if (session) {
-      // Update existing session
-      const success = await updateSessionInfo(customerData);
-      if (success) {
-        setShowCustomerForm(false);
-      }
-    } else {
-      // Create new session
-      const newSession = await createSession(customerData);
-      if (newSession) {
-        setShowCustomerForm(false);
-      }
+    setCreatingSession(true);
+    setError(null);
+
+    try {
+      // Generate new session token
+      const newSessionToken = generateSessionToken();
+
+      // Create session in database
+      const { data: newSession, error: createError } = await supabase
+        .from('customer_sessions')
+        .insert({
+          checklist_id: checklistId,
+          session_token: newSessionToken,
+          email: customerData.email,
+          name: customerData.name,
+          company: customerData.company,
+          submission_status: 'started',
+          started_at: new Date().toISOString(),
+          is_active: true,
+        })
+        .select()
+        .single();
+
+      if (createError) throw createError;
+
+      // Redirect to the session URL
+      navigate(`/c/${checklistId}/${newSessionToken}`, { replace: true });
+    } catch (err) {
+      console.error('Error creating session:', err);
+      setError('Failed to create session. Please try again.');
+    } finally {
+      setCreatingSession(false);
     }
   };
 
   const handleStepChange = async (stepId: string, value: string | boolean) => {
+    if (!hasSessionToken) return;
+
     // Update local state immediately for responsive UI
     if (typeof value === 'string') {
       setLocalStepValues(prev => ({
@@ -450,7 +455,7 @@ export default function PublicChecklistPage() {
           <div className="w-16 h-16 bg-white rounded-2xl shadow-lg flex items-center justify-center mx-auto mb-6">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
           </div>
-          <p className="text-gray-600 font-sans text-lg">Loading your checklist...</p>
+          <p className="text-gray-600 font-sans text-lg">Loading checklist...</p>
         </div>
       </div>
     );
@@ -539,8 +544,8 @@ export default function PublicChecklistPage() {
     );
   }
 
-  // Show completion page
-  if (session?.completed_at) {
+  // Show completion page if session is completed
+  if (hasSessionToken && session?.completed_at) {
     const primaryColor = branding?.primary_color || checklist.brand_color;
     const fontFamily = branding?.font_family || 'Montserrat';
 
@@ -627,6 +632,180 @@ export default function PublicChecklistPage() {
     );
   }
 
+  // Show new session creation form if no session token
+  if (!hasSessionToken) {
+    const primaryColor = branding?.primary_color || checklist.brand_color || '#10b981';
+    const fontFamily = branding?.font_family || 'Montserrat';
+
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50" style={{ fontFamily }}>
+        <div className="max-w-4xl mx-auto px-4 py-8">
+          {/* Checklist Header */}
+          <div className="bg-white rounded-3xl shadow-xl overflow-hidden mb-8 border border-gray-200">
+            <div 
+              className="h-3"
+              style={{ backgroundColor: primaryColor }}
+            ></div>
+            
+            <div 
+              className="px-8 py-12 text-center relative overflow-hidden"
+              style={{ backgroundColor: `${primaryColor}08` }}
+            >
+              {branding?.logo_url && (
+                <div className="flex justify-center mb-8">
+                  <img 
+                    src={branding.logo_url} 
+                    alt="Logo" 
+                    className="h-20 max-w-80 object-contain"
+                  />
+                </div>
+              )}
+              
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 font-sans">{checklist.title}</h1>
+              <p className="text-gray-600 text-xl leading-relaxed max-w-2xl mx-auto mb-8 font-sans">{checklist.description}</p>
+              
+              <div className="flex items-center justify-center space-x-8 text-sm text-gray-600">
+                <div className="flex items-center">
+                  <CheckCircle className="w-5 h-5 mr-2 text-emerald-500" />
+                  <span className="font-sans">{steps.length} steps</span>
+                </div>
+                <div className="flex items-center">
+                  <Clock className="w-5 h-5 mr-2 text-blue-500" />
+                  <span className="font-sans">~15 minutes</span>
+                </div>
+                <div className="flex items-center">
+                  <Users className="w-5 h-5 mr-2 text-purple-500" />
+                  <span className="font-sans">Collaborative</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* New Session Form */}
+          <div className="bg-white rounded-3xl shadow-xl p-8 border border-gray-200">
+            <div className="text-center mb-8">
+              <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <Play className="w-8 h-8 text-white" />
+              </div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-3 font-sans">Start Your Session</h2>
+              <p className="text-gray-600 text-lg font-sans">Create a new session to begin working on this checklist</p>
+            </div>
+            
+            <form onSubmit={handleCreateNewSession} className="space-y-6 max-w-2xl mx-auto">
+              {error && (
+                <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+                  <p className="text-red-600 text-sm font-sans">{error}</p>
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-3 font-sans">
+                    Email Address *
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                      <Mail className="h-5 w-5 text-gray-400" />
+                    </div>
+                    <input
+                      type="email"
+                      value={customerData.email}
+                      onChange={(e) => setCustomerData(prev => ({ ...prev, email: e.target.value }))}
+                      className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all duration-200 font-sans"
+                      placeholder="your@email.com"
+                      required
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-3 font-sans">
+                    Your Name
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                      <User className="h-5 w-5 text-gray-400" />
+                    </div>
+                    <input
+                      type="text"
+                      value={customerData.name}
+                      onChange={(e) => setCustomerData(prev => ({ ...prev, name: e.target.value }))}
+                      className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all duration-200 font-sans"
+                      placeholder="Your Name"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-3 font-sans">
+                  Company (Optional)
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <Building className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    type="text"
+                    value={customerData.company}
+                    onChange={(e) => setCustomerData(prev => ({ ...prev, company: e.target.value }))}
+                    className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all duration-200 font-sans"
+                    placeholder="Your Company"
+                  />
+                </div>
+              </div>
+              
+              <div className="flex justify-center pt-4">
+                <button
+                  type="submit"
+                  disabled={creatingSession}
+                  className="bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white px-10 py-4 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 font-sans"
+                >
+                  {creatingSession ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2 inline-block"></div>
+                      Creating Session...
+                    </>
+                  ) : (
+                    <>
+                      <Play className="w-5 h-5 mr-2 inline-block" />
+                      Start New Session
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+
+            <div className="mt-8 bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-6 border border-blue-200">
+              <h3 className="font-semibold text-gray-900 mb-3 font-sans">💡 How it works</h3>
+              <div className="space-y-2 text-sm text-gray-700">
+                <div className="flex items-center">
+                  <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                    <span className="text-white text-xs font-bold">1</span>
+                  </div>
+                  <p className="font-sans">Create your session with basic info</p>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                    <span className="text-white text-xs font-bold">2</span>
+                  </div>
+                  <p className="font-sans">Complete steps at your own pace</p>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                    <span className="text-white text-xs font-bold">3</span>
+                  </div>
+                  <p className="font-sans">Your progress is automatically saved</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show main checklist interface if we have a session
   const primaryColor = branding?.primary_color || checklist.brand_color;
   const secondaryColor = branding?.secondary_color || '#059669';
   const fontFamily = branding?.font_family || 'Montserrat';
@@ -734,79 +913,8 @@ export default function PublicChecklistPage() {
               )}
             </div>
           </div>
-        </div>
 
-        {/* Customer Information Form */}
-        {showCustomerForm && (
-          <div className="bg-white rounded-3xl shadow-xl p-8 mb-8 border border-gray-200">
-            <div className="text-center mb-8">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
-                <User className="w-8 h-8 text-white" />
-              </div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-3 font-sans">Let's get started!</h2>
-              <p className="text-gray-600 text-lg font-sans">We need a few details to personalize your experience</p>
-            </div>
-            
-            <form onSubmit={handleCustomerSubmit} className="space-y-6">
-              {error && (
-                <div className="bg-red-50 border border-red-200 rounded-xl p-4">
-                  <p className="text-red-600 text-sm font-sans">{error}</p>
-                </div>
-              )}
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-3 font-sans">
-                    Email Address *
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                      <Mail className="h-5 w-5 text-gray-400" />
-                    </div>
-                    <input
-                      type="email"
-                      value={customerData.email}
-                      onChange={(e) => setCustomerData(prev => ({ ...prev, email: e.target.value }))}
-                      className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all duration-200 font-sans"
-                      placeholder="your@email.com"
-                      required
-                    />
-                  </div>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-3 font-sans">
-                    Company
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                      <Building className="h-5 w-5 text-gray-400" />
-                    </div>
-                    <input
-                      type="text"
-                      value={customerData.company}
-                      onChange={(e) => setCustomerData(prev => ({ ...prev, company: e.target.value }))}
-                      className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all duration-200 font-sans"
-                      placeholder="Your Company"
-                    />
-                  </div>
-                </div>
-              </div>
-              
-              <div className="flex justify-center pt-4">
-                <button
-                  type="submit"
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-10 py-4 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-200 font-sans"
-                >
-                  Continue to Checklist
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
-
-        {/* Main Checklist Content */}
-        {!showCustomerForm && (
+          {/* Main Checklist Content */}
           <div className="space-y-8">
             {/* Step Navigation Pills */}
             <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
@@ -954,7 +1062,6 @@ export default function PublicChecklistPage() {
               </div>
             )}
           </div>
-        )}
 
         {/* Error Display */}
         {(error || sessionError) && (

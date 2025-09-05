@@ -44,25 +44,15 @@ export default function ChecklistsPage() {
   };
 
   const handleCopyUrl = async (checklist: Checklist) => {
-    setCreatingSessionId(checklist.id);
-    
     try {
-      // Create a new customer session
-      const sessionToken = await createPendingSubmission(checklist.id, 'Customer Link');
-      
-      if (sessionToken) {
-        const url = `${window.location.origin}/c/${checklist.id}/${sessionToken}`;
-        await navigator.clipboard.writeText(url);
-        setCopiedId(checklist.id);
-        setTimeout(() => setCopiedId(null), 2000);
-      } else {
-        alert('Failed to create customer link');
-      }
+      // Copy the base checklist URL (customers will create their own sessions)
+      const url = `${window.location.origin}/c/${checklist.id}`;
+      await navigator.clipboard.writeText(url);
+      setCopiedId(checklist.id);
+      setTimeout(() => setCopiedId(null), 2000);
     } catch (err) {
-      console.error('Failed to create customer link:', err);
-      alert('Failed to create customer link');
-    } finally {
-      setCreatingSessionId(null);
+      console.error('Failed to copy URL:', err);
+      alert('Failed to copy URL');
     }
   };
 
@@ -178,29 +168,15 @@ export default function ChecklistsPage() {
                 <div className="flex items-center justify-between space-x-2">
                   <div className="flex items-center space-x-2">
                     <button
-                      onClick={() => handleCopyUrl(checklist)}
-                      disabled={creatingSessionId === checklist.id}
-                      className="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
-                      title="Create & copy customer link"
-                    >
-                      {creatingSessionId === checklist.id ? (
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-emerald-600"></div>
-                      ) : copiedId === checklist.id ? (
-                        <Check className="w-4 h-4 text-emerald-600" />
-                      ) : (
-                        <LinkIcon className="w-4 h-4" />
-                      )}
-                    </button>
-                    <button
                       onClick={() => window.open(`/c/${checklist.id}`, '_blank')}
                       className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                      title="Preview checklist (no session)"
+                      title="Open checklist for customers"
                     >
-                      <Eye className="w-4 h-4" />
+                      <LinkIcon className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => navigate(`/checklists/edit/${checklist.id}`)}
-                      className="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
+                      className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                       title="Edit checklist"
                     >
                       <Edit className="w-4 h-4" />
@@ -211,6 +187,20 @@ export default function ChecklistsPage() {
                       title="View sessions"
                     >
                       <Users className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleCopyUrl(checklist)}
+                      disabled={creatingSessionId === checklist.id}
+                      className="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
+                      title="Copy checklist URL"
+                    >
+                      {creatingSession === checklist.id ? (
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-emerald-600"></div>
+                      ) : copiedId === checklist.id ? (
+                        <Check className="w-4 h-4 text-emerald-600" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
                     </button>
                   </div>
                   <button
