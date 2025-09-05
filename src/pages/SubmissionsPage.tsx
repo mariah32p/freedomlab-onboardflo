@@ -526,20 +526,25 @@ export default function SubmissionsPage() {
                     </div>
                     <div className="flex items-center space-x-2 ml-4">
                       {/* Show action buttons for newly created sessions */}
-                      {sessionActions[session.id] === 'saved' && (
+                      {(sessionActions[session.id] === 'saved' || (session.submission_status === 'pending' && !session.email)) && (
                         <div className="flex items-center space-x-2 mr-2">
-                          <button
-                            onClick={() => handleSendWelcomeEmail(session)}
-                            className="px-3 py-1 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg text-xs font-medium transition-colors font-sans"
-                          >
-                            Send Welcome Email
-                          </button>
-                          <button
-                            onClick={() => handleCopyUrl(session)}
-                            className="px-3 py-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-lg text-xs font-medium transition-colors font-sans"
-                          >
-                            Copy Link
-                          </button>
+                          <div className="bg-blue-50 border border-blue-200 rounded-lg p-2">
+                            <div className="text-xs text-blue-700 font-medium mb-2 font-sans">Ready to send:</div>
+                            <div className="flex space-x-2">
+                              <button
+                                onClick={() => handleSendWelcomeEmail(session)}
+                                className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs font-medium transition-colors font-sans"
+                              >
+                                Send Email
+                              </button>
+                              <button
+                                onClick={() => handleCopyUrl(session)}
+                                className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-xs font-medium transition-colors font-sans"
+                              >
+                                Copy Link
+                              </button>
+                            </div>
+                          </div>
                         </div>
                       )}
                       {sessionActions[session.id] === 'sent' && (
