@@ -565,12 +565,6 @@ export default function SubmissionsPage() {
                               >
                                 Send Email
                               </button>
-                              <button
-                                onClick={() => handleCopyUrl(session)}
-                                className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-xs font-medium transition-colors font-sans"
-                              >
-                                Copy Link
-                              </button>
                             </div>
                           </div>
                         </div>
