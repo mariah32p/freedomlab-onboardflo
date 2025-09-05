@@ -91,24 +91,17 @@ export function useCustomerSessions() {
       if (error) throw error;
       return data || [];
     } catch (err) {
-      console.error('Error fetching session progress:', err);
-      
-      // Provide specific guidance for different error types
+      // Handle fetch errors gracefully
       if (err instanceof TypeError && err.message.includes('Failed to fetch')) {
         console.error('=== SUPABASE CONNECTION ERROR ===');
-        console.error('This usually means:');
-        console.error('1. Missing or incorrect environment variables in .env file');
-        console.error('2. Supabase project URL is incorrect');
-        console.error('3. CORS settings in Supabase don\'t allow localhost:5173');
-        console.error('4. Supabase project is paused or deleted');
-        console.error('');
-        console.error('To fix:');
-        console.error('1. Check your .env file has correct VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY');
-        console.error('2. Restart the dev server after updating .env');
-        console.error('3. Check Supabase project settings -> API -> CORS origins includes localhost:5173');
+        console.error('Failed to connect to Supabase. Please check:');
+        console.error('1. Your .env file contains correct VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY');
+        console.error('2. Your Supabase project is active and accessible');
+        console.error('3. CORS settings allow localhost:5173 in Supabase project settings');
+        console.error('4. Restart your dev server after making .env changes');
+      } else {
+        console.error('Error fetching session progress:', err);
       }
-      
-      // Return empty array instead of throwing to prevent UI crashes
       return [];
     }
   };
