@@ -44,7 +44,7 @@ export default function SubmissionsPage() {
     company: ''
   });
   const [creatingSession, setCreatingSession] = useState(false);
-  const [checklists, setChecklists] = useState<any[]>([]);
+  const [checklists, setChecklists] = useState([]);
   const accessStatus = getAccessStatus();
 
   // Track progress for each session
@@ -52,26 +52,6 @@ export default function SubmissionsPage() {
 
   // Load progress for all sessions
   useEffect(() => {
-    // Fetch user's checklists for the create session modal
-    const fetchChecklists = async () => {
-      if (!user) return;
-      
-      try {
-        const { data, error } = await supabase
-          .from('checklists')
-          .select('id, title')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false });
-
-        if (error) throw error;
-        setChecklists(data || []);
-      } catch (err) {
-        console.error('Error fetching checklists:', err);
-      }
-    };
-
-    fetchChecklists();
-    
     const loadAllProgress = async () => {
       const progressData: Record<string, number> = {};
       
@@ -100,7 +80,7 @@ export default function SubmissionsPage() {
     if (sessions.length > 0) {
       loadAllProgress();
     }
-  }, [sessions, getSessionProgress, user]);
+  }, [sessions, getSessionProgress]);
 
   const stats = getSessionStats();
 
@@ -168,6 +148,29 @@ export default function SubmissionsPage() {
   const handleCancelEdit = () => {
     setEditingSessionId(null);
     setEditingLinkName('');
+  };
+
+  const handleCreateSession = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCreatingSession(true);
+    
+    try {
+      // Create session logic here
+      console.log('Creating session:', createSessionData);
+      // Reset form and close modal
+      setCreateSessionData({
+        checklistId: '',
+        sessionName: '',
+        email: '',
+        name: '',
+        company: ''
+      });
+      setShowCreateSessionModal(false);
+    } catch (err) {
+      console.error('Error creating session:', err);
+    } finally {
+      setCreatingSession(false);
+    }
   };
 
   const getStatusColor = (session: any) => {
@@ -240,6 +243,7 @@ export default function SubmissionsPage() {
           </p>
         </div>
 
+        <div className="mb-8">
           <button
             onClick={() => setShowCreateSessionModal(true)}
             className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center font-sans"
@@ -247,6 +251,8 @@ export default function SubmissionsPage() {
             <Plus className="w-5 h-5 mr-2" />
             Create Session
           </button>
+        </div>
+
         {error && (
           <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
             <p className="text-red-600 text-sm font-sans">{error}</p>
@@ -492,6 +498,110 @@ export default function SubmissionsPage() {
             </div>
           )}
         </div>
+
+        {/* Create Session Modal */}
+        {showCreateSessionModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-900 font-sans">Create New Session</h2>
+                <button
+                  onClick={() => setShowCreateSessionModal(false)}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+              <form onSubmit={handleCreateSession} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">
+                    Checklist *
+                  </label>
+                  <select
+                    value={createSessionData.checklistId}
+                    onChange={(e) => setCreateSessionData(prev => ({ ...prev, checklistId: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 font-sans"
+                    required
+                  >
+                    <option value="">Select a checklist...</option>
+                    {checklists.map((checklist) => (
+                      <option key={checklist.id} value={checklist.id}>
+                        {checklist.title}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">
+                    Session Name
+                  </label>
+                  <input
+                    type="text"
+                    value={createSessionData.sessionName}
+                    onChange={(e) => setCreateSessionData(prev => ({ ...prev, sessionName: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 font-sans"
+                    placeholder="e.g., John's Website Project"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">
+                    Customer Email *
+                  </label>
+                  <input
+                    type="email"
+                    value={createSessionData.email}
+                    onChange={(e) => setCreateSessionData(prev => ({ ...prev, email: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 font-sans"
+                    placeholder="customer@email.com"
+                    required
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">
+                      Customer Name
+                    </label>
+                    <input
+                      type="text"
+                      value={createSessionData.name}
+                      onChange={(e) => setCreateSessionData(prev => ({ ...prev, name: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 font-sans"
+                      placeholder="John Doe"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">
+                      Company
+                    </label>
+                    <input
+                      type="text"
+                      value={createSessionData.company}
+                      onChange={(e) => setCreateSessionData(prev => ({ ...prev, company: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 font-sans"
+                      placeholder="Acme Corp"
+                    />
+                  </div>
+                </div>
+                <div className="flex space-x-3 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setShowCreateSessionModal(false)}
+                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-sans"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={creatingSession}
+                    className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors disabled:opacity-50 font-sans"
+                  >
+                    {creatingSession ? 'Creating...' : 'Create Session'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
