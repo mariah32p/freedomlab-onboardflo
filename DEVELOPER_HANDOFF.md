@@ -734,19 +734,6 @@ npm run build
 4. **Testing**: Add unit and integration tests
 5. **Documentation**: API documentation for integrations
 
-## Support & Maintenance
-
-### Regular Tasks
-- **Database cleanup**: Remove expired secure text data
-- **Email monitoring**: Track delivery rates and bounces
-- **Subscription sync**: Ensure Stripe and database stay in sync
-- **Performance monitoring**: Watch for slow queries
-
-### Backup Strategy
-- **Database**: Supabase handles automatic backups
-- **File Storage**: Supabase Storage with redundancy
-- **Code**: Git repository with proper branching
-
 ## Integration Points
 
 ### Stripe Integration
