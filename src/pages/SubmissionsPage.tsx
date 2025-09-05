@@ -602,29 +602,43 @@ export default function SubmissionsPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">
-                    Description
+                    Name *
                   </label>
-                  <textarea
+                  <input
+                    type="text"
                     value={createSessionData.sessionName}
                     onChange={(e) => setCreateSessionData(prev => ({ ...prev, sessionName: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 font-sans"
                     placeholder="e.g., John's Website Project"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">
+                    Description
+                  </label>
+                  <textarea
+                    value={createSessionData.sessionDescription}
+                    onChange={(e) => setCreateSessionData(prev => ({ ...prev, sessionDescription: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 font-sans"
+                    placeholder="Optional description for this session"
+                    rows={3}
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">
                     Email Recipients *
                   </label>
-                  <input
-                    type="email"
-                    value={createSessionData.email}
-                    onChange={(e) => setCreateSessionData(prev => ({ ...prev, email: e.target.value }))}
+                  <textarea
+                    value={createSessionData.sessionEmails}
+                    onChange={(e) => setCreateSessionData(prev => ({ ...prev, sessionEmails: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 font-sans"
-                    placeholder="john@company.com, sarah@company.com"
+                    placeholder="john@company.com&#10;sarah@company.com&#10;team@company.com"
+                    rows={4}
                     required
                   />
                   <p className="text-xs text-gray-500 mt-1 font-sans">
-                    Comma-separated email addresses. Each person will receive the same session link to collaborate on this specific form.
+                    <strong>Important:</strong> Enter email addresses separated by commas or new lines. All recipients will receive the SAME session link and can collaborate together on this specific checklist. This is NOT for bulk sending - it's for team collaboration on one shared session.
                   </p>
                 </div>
                 <div className="flex space-x-3 pt-4">
