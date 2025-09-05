@@ -261,6 +261,17 @@ export default function SubmissionsPage() {
     }
   };
 
+  const handleCopySessionUrl = async (url: string) => {
+    try {
+      await navigator.clipboard.writeText(url);
+      // You could add a toast notification here
+      alert('Session link copied to clipboard!');
+    } catch (err) {
+      console.error('Failed to copy URL:', err);
+      alert('Failed to copy URL');
+    }
+  };
+
   const getStatusColor = (session: any) => {
     switch (session.submission_status) {
       case 'completed': return 'text-emerald-600';
@@ -566,12 +577,15 @@ export default function SubmissionsPage() {
                       )}
                       {sessionActions[session.id] === 'sent' && (
                         <div className="flex items-center space-x-2 mr-2">
-                          <button
-                            onClick={() => handleScheduleReminders(session)}
-                            className="px-3 py-1 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg text-xs font-medium transition-colors font-sans"
-                          >
-                            Schedule Reminders
-                          </button>
+                          <div className="bg-purple-50 border border-purple-200 rounded-lg p-2">
+                            <div className="text-xs text-purple-700 font-medium mb-2 font-sans">Email sent! Next:</div>
+                            <button
+                              onClick={() => handleScheduleReminders(session)}
+                              className="px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded text-xs font-medium transition-colors font-sans"
+                            >
+                              Send Reminder
+                            </button>
+                          </div>
                         </div>
                       )}
                       {sessionActions[session.id] === 'scheduled' && (
