@@ -26,6 +26,7 @@ import { Checklist, ChecklistStep } from '../types/checklist';
 interface CustomerData {
   email: string;
   company: string;
+  name: string;
 }
 
 export default function PublicChecklistPage() {
@@ -54,6 +55,7 @@ export default function PublicChecklistPage() {
   const [customerData, setCustomerData] = useState<CustomerData>({
     email: '',
     company: '',
+    name: '',
   });
 
   // Initialize session token
@@ -101,18 +103,39 @@ export default function PublicChecklistPage() {
       setCustomerData({
         email: session.email,
         company: session.company,
+        name: session.name || '',
       });
       setShowCustomerForm(false);
     }
   }, [session]);
 
-  // Initialize local values from progress
+  // Load any locally stored progress values
+  useEffect(() => {
+    if (!checklistId) return;
+
+    const storedValues: Record<string, string> = {};
+    if (typeof window !== 'undefined') {
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith(`progress-${checklistId}-`)) {
+          const stepId = key.replace(`progress-${checklistId}-`, '');
+          const value = localStorage.getItem(key);
+          if (value !== null) {
+            storedValues[stepId] = value;
+          }
+        }
+      }
+    }
+    setLocalStepValues(storedValues);
+  }, [checklistId]);
+
+  // Initialize local values from progress, prioritizing any locally stored values
   useEffect(() => {
     const initialValues: Record<string, string> = {};
     progress.forEach(p => {
       initialValues[p.step_id] = p.notes;
     });
-    setLocalStepValues(initialValues);
+    setLocalStepValues(prev => ({ ...initialValues, ...prev }));
   }, [progress]);
 
   const fetchChecklistData = async () => {
@@ -212,15 +235,33 @@ export default function PublicChecklistPage() {
   };
 
   const handleStepChange = useCallback(async (stepId: string, value: string | boolean, file?: File) => {
+    const storageKey = checklistId ? `progress-${checklistId}-${stepId}` : '';
+
     // Update local state immediately for responsive UI
     if (typeof value === 'string') {
       setLocalStepValues(prev => ({
         ...prev,
         [stepId]: value
       }));
+
+      if (checklistId && typeof window !== 'undefined') {
+        if (value.trim()) {
+          localStorage.setItem(storageKey, value);
+        } else {
+          localStorage.removeItem(storageKey);
+        }
+      }
     }
 
     if (typeof value === 'boolean') {
+      if (checklistId && typeof window !== 'undefined') {
+        if (value) {
+          localStorage.setItem(storageKey, 'true');
+        } else {
+          localStorage.removeItem(storageKey);
+        }
+      }
+
       if (value) {
         await saveStepProgress(stepId, '');
       } else {
@@ -234,7 +275,7 @@ export default function PublicChecklistPage() {
         await removeStepProgress(stepId);
       }
     }
-  }, [saveStepProgress, removeStepProgress]);
+  }, [checklistId, saveStepProgress, removeStepProgress]);
 
   // Cleanup timeouts on unmount
   useEffect(() => {

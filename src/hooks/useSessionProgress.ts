@@ -254,8 +254,8 @@ export function useSessionProgress({ checklistId, sessionToken }: UseSessionProg
       setProgress(prev => {
         const existing = prev.find(p => p.step_id === stepId);
         if (existing) {
-          return prev.map(p => 
-            p.step_id === stepId 
+          return prev.map(p =>
+            p.step_id === stepId
               ? { ...p, notes, completed_at: new Date().toISOString() }
               : p
           );
@@ -272,6 +272,11 @@ export function useSessionProgress({ checklistId, sessionToken }: UseSessionProg
       });
 
       await updateSessionActivity(true);
+
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem(`progress-${checklistId}-${stepId}`);
+      }
+
       return true;
     } catch (err) {
       console.error('Error saving step progress:', err);
