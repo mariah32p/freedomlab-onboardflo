@@ -86,8 +86,10 @@ export default function PublicChecklistPage() {
   useEffect(() => {
     if (checklistId) {
       fetchChecklistData();
+      if (hasSessionToken) {
+        fetchSessionData();
+      }
     }
-  }, [checklistId]);
 
   // Update local values when progress changes
   useEffect(() => {
@@ -151,7 +153,11 @@ export default function PublicChecklistPage() {
         .maybeSingle();
 
       if (brandingError && brandingError.code !== 'PGRST116') {
-        console.warn('Could not fetch branding:', brandingError);
+        console.war
+      )
+    }
+  }
+}n('Could not fetch branding:', brandingError);
       }
 
       setBranding(brandingData);

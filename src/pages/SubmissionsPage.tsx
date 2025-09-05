@@ -934,35 +934,6 @@ export default function SubmissionsPage() {
                       {(session as any).checklists?.title || 'Unknown Checklist'}
                     </p>
                   </div>
-                  
-                  {/* Password Protection */}
-                  <div>
-                    <div className="flex items-center mb-3">
-                      <input
-                        type="checkbox"
-                        checked={createSessionData.isPasswordProtected}
-                        onChange={(e) => setCreateSessionData(prev => ({ 
-                          ...prev, 
-                          isPasswordProtected: e.target.checked,
-                          password: e.target.checked ? prev.password : ''
-                        }))}
-                        className="mr-3 text-emerald-600 focus:ring-emerald-500"
-                      />
-                      <label className="text-sm font-medium text-gray-700 font-sans">
-                        Password protect this session
-                      </label>
-                    </div>
-                    {createSessionData.isPasswordProtected && (
-                      <input
-                        type="password"
-                        value={createSessionData.password}
-                        onChange={(e) => setCreateSessionData(prev => ({ ...prev, password: e.target.value }))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 font-sans"
-                        placeholder="Enter session password"
-                        required={createSessionData.isPasswordProtected}
-                      />
-                    )}
-                  </div>
                   <span className={`px-2 py-1 rounded-full text-xs font-medium font-sans ${
                     session.submission_status === 'completed' ? 'bg-emerald-100 text-emerald-700' :
                     session.submission_status === 'started' ? 'bg-blue-100 text-blue-700' :
