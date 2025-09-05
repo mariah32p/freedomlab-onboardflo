@@ -3,6 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useSubscription } from '../hooks/useSubscription';
 import { useNavigate } from 'react-router-dom';
 import { useChecklists } from '../hooks/useChecklists';
+import { useCustomerSessions } from '../hooks/useCustomerSessions';
 import PaymentBanner from '../components/PaymentBanner';
 import TrialBanner from '../components/TrialBanner';
 import { Checklist } from '../types/checklist';
@@ -17,15 +18,18 @@ import {
   Globe,
   Lock,
   Calendar,
-  Users
+  Users,
+  Link as LinkIcon
 } from 'lucide-react';
 
 export default function ChecklistsPage() {
   const { user } = useAuth();
   const { subscription, getAccessStatus } = useSubscription();
   const { checklists, loading, error, deleteChecklist } = useChecklists();
+  const { createPendingSubmission } = useCustomerSessions();
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [creatingSessionId, setCreatingSessionId] = useState<string | null>(null);
   const accessStatus = getAccessStatus();
   const navigate = useNavigate();
 
@@ -40,13 +44,25 @@ export default function ChecklistsPage() {
   };
 
   const handleCopyUrl = async (checklist: Checklist) => {
-    const url = `${window.location.origin}/c/${checklist.id}`;
+    setCreatingSessionId(checklist.id);
+    
     try {
-      await navigator.clipboard.writeText(url);
-      setCopiedId(checklist.id);
-      setTimeout(() => setCopiedId(null), 2000);
+      // Create a new customer session
+      const sessionToken = await createPendingSubmission(checklist.id, 'Customer Link');
+      
+      if (sessionToken) {
+        const url = `${window.location.origin}/c/${checklist.id}/${sessionToken}`;
+        await navigator.clipboard.writeText(url);
+        setCopiedId(checklist.id);
+        setTimeout(() => setCopiedId(null), 2000);
+      } else {
+        alert('Failed to create customer link');
+      }
     } catch (err) {
-      console.error('Failed to copy URL:', err);
+      console.error('Failed to create customer link:', err);
+      alert('Failed to create customer link');
+    } finally {
+      setCreatingSessionId(null);
     }
   };
 
@@ -163,19 +179,22 @@ export default function ChecklistsPage() {
                   <div className="flex items-center space-x-2">
                     <button
                       onClick={() => handleCopyUrl(checklist)}
+                      disabled={creatingSessionId === checklist.id}
                       className="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
-                      title="Copy checklist URL"
+                      title="Create & copy customer link"
                     >
-                      {copiedId === checklist.id ? (
+                      {creatingSessionId === checklist.id ? (
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-emerald-600"></div>
+                      ) : copiedId === checklist.id ? (
                         <Check className="w-4 h-4 text-emerald-600" />
                       ) : (
-                        <Copy className="w-4 h-4" />
+                        <LinkIcon className="w-4 h-4" />
                       )}
                     </button>
                     <button
                       onClick={() => window.open(`/c/${checklist.id}`, '_blank')}
                       className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                      title="Preview checklist"
+                      title="Preview checklist (no session)"
                     >
                       <Eye className="w-4 h-4" />
                     </button>
