@@ -25,7 +25,8 @@ import {
   X,
   Plus,
   ArrowLeft,
-  Save
+  Save,
+  Play
 } from 'lucide-react';
 
 export default function SubmissionsPage() {
