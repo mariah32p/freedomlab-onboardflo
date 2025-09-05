@@ -695,6 +695,57 @@ export default function SubmissionsPage() {
             </div>
           </div>
         )}
+
+        {/* Success Popup */}
+        {showSuccessPopup && newSessionData && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-8">
+              <div className="text-center mb-6">
+                <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Check className="w-8 h-8 text-emerald-600" />
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2 font-sans">Session Created!</h2>
+                <p className="text-gray-600 font-sans">
+                  Your session "{newSessionData.link_name}" is ready. What would you like to do next?
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                <button
+                  onClick={() => handleSendWelcomeEmail(newSessionData)}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-4 rounded-lg font-semibold transition-colors flex items-center justify-center font-sans"
+                >
+                  <Mail className="w-5 h-5 mr-3" />
+                  <div className="text-left">
+                    <div>Send Welcome Email</div>
+                    <div className="text-blue-200 text-sm font-normal">Send personalized email with session link</div>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => handleCopySessionUrl(newSessionData.sessionUrl)}
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-4 rounded-lg font-semibold transition-colors flex items-center justify-center font-sans"
+                >
+                  <Copy className="w-5 h-5 mr-3" />
+                  <div className="text-left">
+                    <div>Copy Session Link</div>
+                    <div className="text-emerald-200 text-sm font-normal">Copy link to share manually</div>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setShowSuccessPopup(false);
+                    window.location.reload();
+                  }}
+                  className="w-full border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors font-sans"
+                >
+                  I'll do this later
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
