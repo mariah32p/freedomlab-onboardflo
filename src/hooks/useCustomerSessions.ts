@@ -85,6 +85,10 @@ export function useCustomerSessions() {
       return data || [];
     } catch (err) {
       console.error('Error fetching session progress:', err);
+      // Check if it's a network/connection error
+      if (err instanceof TypeError && err.message.includes('fetch')) {
+        console.error('Supabase connection error. Please check your environment variables and Supabase project settings.');
+      }
       // Return empty array instead of throwing to prevent UI crashes
       return [];
     }
