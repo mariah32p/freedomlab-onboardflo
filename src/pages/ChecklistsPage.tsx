@@ -168,36 +168,11 @@ export default function ChecklistsPage() {
                 <div className="flex items-center justify-between space-x-2">
                   <div className="flex items-center space-x-2">
                     <button
-                      onClick={() => window.open(`/c/${checklist.id}`, '_blank')}
-                      className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                      title="Open checklist for customers"
-                    >
-                      <LinkIcon className="w-4 h-4" />
-                    </button>
-                    <button
                       onClick={() => navigate(`/checklists/edit/${checklist.id}`)}
                       className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                       title="Edit checklist"
                     >
                       <Edit className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => window.location.href = '/submissions'}
-                      className="p-2 text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
-                      title="View sessions"
-                    >
-                      <Users className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => handleCopyUrl(checklist)}
-                      className="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
-                      title="Copy checklist URL"
-                    >
-                      {copiedId === checklist.id ? (
-                        <Check className="w-4 h-4 text-emerald-600" />
-                      ) : (
-                        <Copy className="w-4 h-4" />
-                      )}
                     </button>
                   </div>
                   <button
