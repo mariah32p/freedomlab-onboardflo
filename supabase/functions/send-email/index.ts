@@ -25,6 +25,7 @@ interface EmailRequest {
   sessionId: string;
   recipientEmails: string[];
   sessionName?: string;
+  businessName?: string;
   checklistTitle?: string;
   sessionUrl?: string;
 }
@@ -62,7 +63,7 @@ Deno.serve(async (req) => {
     }
 
     const emailRequest: EmailRequest = await req.json();
-    const { type, sessionId, recipientEmails, sessionName, checklistTitle, sessionUrl } = emailRequest;
+    const { type, sessionId, recipientEmails, sessionName, businessName, checklistTitle, sessionUrl } = emailRequest;
 
     // Validate request
     if (!type || !sessionId || !recipientEmails || recipientEmails.length === 0) {

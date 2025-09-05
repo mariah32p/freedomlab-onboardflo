@@ -47,6 +47,7 @@ export default function BrandingPage() {
   const [primaryColor, setPrimaryColor] = useState('#10b981');
   const [secondaryColor, setSecondaryColor] = useState('#059669');
   const [fontFamily, setFontFamily] = useState('Montserrat');
+  const [businessName, setBusinessName] = useState('');
 
   useEffect(() => {
     fetchBranding();
@@ -72,6 +73,7 @@ export default function BrandingPage() {
         setPrimaryColor(data.primary_color);
         setSecondaryColor(data.secondary_color);
         setFontFamily(data.font_family);
+        setBusinessName(data.business_name || '');
       }
       
       setLoading(false);
@@ -97,6 +99,7 @@ export default function BrandingPage() {
         primary_color: primaryColor,
         secondary_color: secondaryColor,
         font_family: fontFamily,
+        business_name: businessName.trim(),
       };
 
       const { data, error } = await supabase
@@ -124,6 +127,7 @@ export default function BrandingPage() {
     setPrimaryColor('#10b981');
     setSecondaryColor('#059669');
     setFontFamily('Montserrat');
+    setBusinessName('');
   };
 
   const applyPreset = (preset: typeof PRESET_COLORS[0]) => {
@@ -322,6 +326,23 @@ export default function BrandingPage() {
                       />
                     </div>
                     <p className="text-xs text-gray-500 mt-1 font-sans">Used for buttons and accents</p>
+                  </div>
+
+                  {/* Business Name */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">
+                      Business Name
+                    </label>
+                    <input
+                      type="text"
+                      value={businessName}
+                      onChange={(e) => setBusinessName(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
+                      placeholder="Your Business Name"
+                    />
+                    <p className="text-xs text-gray-500 mt-1 font-sans">
+                      Used in email communications to customers
+                    </p>
                   </div>
 
                   {/* Font Family */}

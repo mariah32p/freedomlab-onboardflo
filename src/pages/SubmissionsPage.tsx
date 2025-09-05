@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useSubscription } from '../hooks/useSubscription';
 import { useCustomerSessions } from '../hooks/useCustomerSessions';
+import { useToast } from '../hooks/useToast';
+import { ToastContainer } from '../components/Toast';
 import PaymentBanner from '../components/PaymentBanner';
 import TrialBanner from '../components/TrialBanner';
 import { supabase } from '../lib/supabase';
@@ -33,6 +35,7 @@ export default function SubmissionsPage() {
   const { user } = useAuth();
   const { subscription, getAccessStatus } = useSubscription();
   const { sessions, loading, error, deleteSession, getSessionStats, getSessionProgress } = useCustomerSessions();
+  const { messages, showSuccess, showError, showWarning, dismissToast } = useToast();
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [copiedSessionId, setCopiedSessionId] = useState<string | null>(null);
   const [selectedSession, setSelectedSession] = useState<any | null>(null);
@@ -52,6 +55,8 @@ export default function SubmissionsPage() {
   const [creatingSession, setCreatingSession] = useState(false);
   const [checklists, setChecklists] = useState<any[]>([]);
   const [sendingEmail, setSendingEmail] = useState(false);
+  const [emailHistory, setEmailHistory] = useState<any[]>([]);
+  const [emailSendingType, setEmailSendingType] = useState<'welcome' | 'reminder' | null>(null);
   const accessStatus = getAccessStatus();
 
   // Track progress for each session
@@ -135,6 +140,29 @@ export default function SubmissionsPage() {
 
     fetchChecklists();
   }, [user]);
+
+  // Load email history for selected session
+  useEffect(() => {
+    const fetchEmailHistory = async () => {
+      if (!selectedSession) return;
+      
+      try {
+        const { data, error } = await supabase
+          .from('email_send_log')
+          .select('*')
+          .eq('session_id', selectedSession.id)
+          .order('sent_at', { ascending: false });
+
+        if (error) throw error;
+        setEmailHistory(data || []);
+      } catch (err) {
+        console.error('Error fetching email history:', err);
+        setEmailHistory([]);
+      }
+    };
+
+    fetchEmailHistory();
+  }, [selectedSession]);
 
   const stats = getSessionStats();
 
@@ -286,13 +314,14 @@ export default function SubmissionsPage() {
     }
     
     setSendingEmail(true);
+    setEmailSendingType(type);
     
     try {
       // Get current session for authentication
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       
       if (sessionError || !session) {
-        throw new Error('Authentication required. Please sign in again.');
+        showError('Authentication Error', 'Please sign in again to send emails.');
         return;
       }
       
@@ -303,10 +332,18 @@ export default function SubmissionsPage() {
         .filter((email: string) => email.length > 0);
       
       if (emailList.length === 0) {
-        throw new Error('No email addresses found for this session. Please add email recipients first.');
+        showWarning('No Recipients', 'Please add email recipients to this session first.');
         return;
       }
       
+      // Get business name for personalization
+      const { data: brandingData } = await supabase
+        .from('user_branding')
+        .select('business_name')
+        .eq('user_id', user?.id)
+        .maybeSingle();
+      
+      const businessName = brandingData?.business_name || 'OnboardFlo';
       const sessionUrl = `${window.location.origin}/c/${selectedSession.checklist_id}/${selectedSession.session_token}`;
       
       const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-email`, {
@@ -320,6 +357,7 @@ export default function SubmissionsPage() {
           sessionId: selectedSession.id,
           recipientEmails: emailList,
           sessionName: selectedSession.link_name,
+          businessName: businessName,
           checklistTitle: (selectedSession as any).checklists?.title,
           sessionUrl,
         }),
@@ -331,20 +369,62 @@ export default function SubmissionsPage() {
         throw new Error(result.error || `Failed to send email (${response.status})`);
       }
       
-      alert(`${type === 'welcome' ? 'Welcome' : 'Reminder'} email sent to ${emailList.length} recipient(s)!`);
+      // Update session with email tracking
+      const updateField = type === 'welcome' ? 'welcome_email_sent_at' : 'reminder_email_sent_at';
+      await supabase
+        .from('customer_sessions')
+        .update({
+          [updateField]: new Date().toISOString(),
+          last_email_type: type,
+        })
+        .eq('id', selectedSession.id);
+
+      // Log the email send
+      await supabase
+        .from('email_send_log')
+        .insert({
+          session_id: selectedSession.id,
+          email_type: type,
+          recipient_emails: emailList,
+          sent_by: user?.id,
+          success: true,
+        });
+
+      // Update local state
+      setSelectedSession(prev => prev ? {
+        ...prev,
+        [updateField]: new Date().toISOString(),
+        last_email_type: type,
+      } : null);
+
+      showSuccess('Email Sent!', `${type === 'welcome' ? 'Welcome' : 'Reminder'} email sent to ${emailList.length} recipient(s)`);
     } catch (err) {
-      console.warn('Error sending email:', err);
-      if (err instanceof Error) {
-        if (err.message.includes('Failed to fetch')) {
-          alert('Unable to connect to email service. Please ensure:\n1. Supabase is properly configured\n2. The send-email Edge Function is deployed\n3. RESEND_API_KEY is set in Supabase environment variables');
-        } else {
-          alert(`Failed to send ${type} email: ${err.message}`);
-        }
+      console.error('Error sending email:', err);
+      
+      // Log failed email attempt
+      try {
+        await supabase
+          .from('email_send_log')
+          .insert({
+            session_id: selectedSession.id,
+            email_type: type,
+            recipient_emails: emailList,
+            sent_by: user?.id,
+            success: false,
+            error_message: err instanceof Error ? err.message : 'Unknown error',
+          });
+      } catch (logError) {
+        console.error('Failed to log email error:', logError);
+      }
+      
+      if (err instanceof Error && err.message.includes('Failed to fetch')) {
+        showError('Connection Error', 'Unable to connect to email service. Please check your Supabase configuration.');
       } else {
-        alert(`Failed to send ${type} email: Unknown error`);
+        showError('Email Failed', err instanceof Error ? err.message : 'Unknown error occurred');
       }
     } finally {
       setSendingEmail(false);
+      setEmailSendingType(null);
     }
   };
 
@@ -582,11 +662,14 @@ export default function SubmissionsPage() {
                   
                   <button
                     onClick={() => handleSendEmail('welcome')}
-                    disabled={sendingEmail || !selectedSession.session_emails}
+                    disabled={sendingEmail || !selectedSession.session_emails || selectedSession.welcome_email_sent_at}
                     className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 font-sans"
                   >
                     <Mail className="w-4 h-4" />
-                    <span>{sendingEmail ? 'Sending...' : 'Send Welcome Email'}</span>
+                    <span>
+                      {sendingEmail && emailSendingType === 'welcome' ? 'Sending...' : 
+                       selectedSession.welcome_email_sent_at ? 'Welcome Email Sent' : 'Send Welcome Email'}
+                    </span>
                   </button>
                   
                   <button
@@ -595,7 +678,9 @@ export default function SubmissionsPage() {
                     className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition-colors disabled:opacity-50 font-sans"
                   >
                     <Send className="w-4 h-4" />
-                    <span>{sendingEmail ? 'Sending...' : 'Send Reminder'}</span>
+                    <span>
+                      {sendingEmail && emailSendingType === 'reminder' ? 'Sending...' : 'Send Reminder'}
+                    </span>
                   </button>
                   
                   <button
@@ -622,6 +707,41 @@ export default function SubmissionsPage() {
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4 font-sans">Timeline</h3>
                 <div className="space-y-4">
+                  {/* Email History */}
+                  {emailHistory.map((emailLog) => (
+                    <div key={emailLog.id} className="flex items-center space-x-3">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                        emailLog.success 
+                          ? emailLog.email_type === 'welcome' 
+                            ? 'bg-blue-100' 
+                            : 'bg-orange-100'
+                          : 'bg-red-100'
+                      }`}>
+                        {emailLog.success ? (
+                          <Mail className={`w-4 h-4 ${
+                            emailLog.email_type === 'welcome' ? 'text-blue-600' : 'text-orange-600'
+                          }`} />
+                        ) : (
+                          <AlertCircle className="w-4 h-4 text-red-600" />
+                        )}
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900 font-sans">
+                          {emailLog.success 
+                            ? `${emailLog.email_type === 'welcome' ? 'Welcome' : 'Reminder'} Email Sent`
+                            : `${emailLog.email_type === 'welcome' ? 'Welcome' : 'Reminder'} Email Failed`
+                          }
+                        </p>
+                        <p className="text-sm text-gray-600 font-sans">
+                          {formatDate(emailLog.sent_at)} • {emailLog.recipient_emails.length} recipient(s)
+                        </p>
+                        {!emailLog.success && emailLog.error_message && (
+                          <p className="text-xs text-red-600 font-sans">{emailLog.error_message}</p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+
                   {/* Session Created */}
                   <div className="flex items-center space-x-3">
                     <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
@@ -674,9 +794,11 @@ export default function SubmissionsPage() {
                   
                   {/* Show message for pending sessions */}
                   {selectedSession.submission_status === 'pending' && (
+                    emailHistory.length === 0 && (
                     <div className="text-center py-4 text-gray-500">
                       <p className="font-sans">Customer hasn't started yet</p>
                     </div>
+                    )
                   )}
                 </div>
               </div>
@@ -859,25 +981,41 @@ export default function SubmissionsPage() {
                   <div className="text-xs text-gray-500 font-sans">
                     {getTimeSince(session.last_activity)}
                   </div>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleCopyUrl(session);
-                    }}
-                    className="flex items-center space-x-1 text-emerald-600 hover:text-emerald-700 transition-colors"
-                  >
-                    {copiedSessionId === session.id ? (
-                      <>
-                        <Check className="w-4 h-4" />
-                        <span className="text-sm font-medium font-sans">Copied!</span>
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-4 h-4" />
-                        <span className="text-sm font-medium font-sans">Copy Link</span>
-                      </>
+                  <div className="flex items-center space-x-2">
+                    {/* Email Status Indicators */}
+                    {session.welcome_email_sent_at && (
+                      <div className="flex items-center space-x-1 text-blue-600" title={`Welcome email sent ${formatDate(session.welcome_email_sent_at)}`}>
+                        <Mail className="w-3 h-3" />
+                        <span className="text-xs font-medium font-sans">W</span>
+                      </div>
                     )}
-                  </button>
+                    {session.reminder_email_sent_at && (
+                      <div className="flex items-center space-x-1 text-orange-600" title={`Reminder email sent ${formatDate(session.reminder_email_sent_at)}`}>
+                        <Send className="w-3 h-3" />
+                        <span className="text-xs font-medium font-sans">R</span>
+                      </div>
+                    )}
+                    
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleCopyUrl(session);
+                      }}
+                      className="flex items-center space-x-1 text-emerald-600 hover:text-emerald-700 transition-colors"
+                    >
+                      {copiedSessionId === session.id ? (
+                        <>
+                          <Check className="w-4 h-4" />
+                          <span className="text-sm font-medium font-sans">Copied!</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-4 h-4" />
+                          <span className="text-sm font-medium font-sans">Copy Link</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -978,6 +1116,9 @@ export default function SubmissionsPage() {
           </div>
         )}
       </div>
+      
+      {/* Toast Container */}
+      <ToastContainer messages={messages} onDismiss={dismissToast} />
     </div>
   );
 }
