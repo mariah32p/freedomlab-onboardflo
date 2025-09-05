@@ -292,7 +292,7 @@ export default function SubmissionsPage() {
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       
       if (sessionError || !session) {
-        alert('Please sign in to send emails');
+        throw new Error('Authentication required. Please sign in again.');
         return;
       }
       
@@ -303,7 +303,7 @@ export default function SubmissionsPage() {
         .filter((email: string) => email.length > 0);
       
       if (emailList.length === 0) {
-        alert('No email addresses found for this session');
+        throw new Error('No email addresses found for this session. Please add email recipients first.');
         return;
       }
       
@@ -328,16 +328,20 @@ export default function SubmissionsPage() {
       const result = await response.json();
       
       if (!response.ok) {
-        throw new Error(result.error || 'Failed to send email');
+        throw new Error(result.error || `Failed to send email (${response.status})`);
       }
       
       alert(`${type === 'welcome' ? 'Welcome' : 'Reminder'} email sent to ${emailList.length} recipient(s)!`);
     } catch (err) {
       console.warn('Error sending email:', err);
-      if (err instanceof Error && err.message.includes('Failed to fetch')) {
-        alert('Unable to connect to email service. Please check your Supabase configuration and ensure the send-email function is deployed.');
+      if (err instanceof Error) {
+        if (err.message.includes('Failed to fetch')) {
+          alert('Unable to connect to email service. Please ensure:\n1. Supabase is properly configured\n2. The send-email Edge Function is deployed\n3. RESEND_API_KEY is set in Supabase environment variables');
+        } else {
+          alert(`Failed to send ${type} email: ${err.message}`);
+        }
       } else {
-        alert(`Failed to send ${type} email: ${err instanceof Error ? err.message : 'Unknown error'}`);
+        alert(`Failed to send ${type} email: Unknown error`);
       }
     } finally {
       setSendingEmail(false);

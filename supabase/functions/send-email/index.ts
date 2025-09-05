@@ -2,7 +2,13 @@ import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 import { Resend } from 'npm:resend@4.0.1';
 import { createClient } from 'npm:@supabase/supabase-js@2.49.1';
 
-const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
+const resendApiKey = Deno.env.get('RESEND_API_KEY');
+
+if (!resendApiKey) {
+  console.error('RESEND_API_KEY environment variable is not set');
+}
+
+const resend = new Resend(resendApiKey);
 const supabase = createClient(
   Deno.env.get('SUPABASE_URL')!,
   Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
