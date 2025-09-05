@@ -199,7 +199,7 @@ export default function ChecklistsPage() {
                       ) : copiedId === checklist.id ? (
                         <Check className="w-4 h-4 text-emerald-600" />
                       ) : (
-                        <Eye className="w-4 h-4" />
+                       <Copy className="w-4 h-4" />
                       )}
                     </button>
                   </div>
