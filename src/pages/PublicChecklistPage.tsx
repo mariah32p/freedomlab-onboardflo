@@ -90,6 +90,7 @@ export default function PublicChecklistPage() {
         fetchSessionData();
       }
     }
+  }, [checklistId, hasSessionToken]);
 
   // Update local values when progress changes
   useEffect(() => {
@@ -153,11 +154,7 @@ export default function PublicChecklistPage() {
         .maybeSingle();
 
       if (brandingError && brandingError.code !== 'PGRST116') {
-        console.war
-      )
-    }
-  }
-}n('Could not fetch branding:', brandingError);
+        console.warn('Could not fetch branding:', brandingError);
       }
 
       setBranding(brandingData);
@@ -168,6 +165,10 @@ export default function PublicChecklistPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchSessionData = async () => {
+    // This function can be implemented if needed
   };
 
   const handlePasswordSubmit = (e: React.FormEvent) => {
