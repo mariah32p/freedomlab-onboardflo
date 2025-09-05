@@ -261,20 +261,16 @@ export default function SubmissionsPage() {
   const handleSendEmail = async (type: 'welcome' | 'reminder') => {
     if (!selectedSession) return;
     
-    // Check if Supabase is properly configured
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-    
-    if (!supabaseUrl || !supabaseKey || 
-        supabaseUrl === 'your_supabase_url' || 
-        supabaseKey === 'your_supabase_anon_key') {
-      alert('Email functionality requires Supabase configuration. Please set up your .env file with actual Supabase credentials.');
-      return;
-    }
-    
     setSendingEmail(true);
     
     try {
+      // Get current session for authentication
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError || !session) {
+        throw new Error('Authentication required to send emails');
+      }
+      
       // Parse emails from the session_emails field
       const emailList = selectedSession.session_emails
         .split(/[,\n]/)
@@ -288,10 +284,10 @@ export default function SubmissionsPage() {
       
       const sessionUrl = `${window.location.origin}/c/${selectedSession.checklist_id}/${selectedSession.session_token}`;
       
-      const response = await fetch(`${supabaseUrl}/functions/v1/send-email`, {
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-email`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${supabaseKey}`,
+          'Authorization': `Bearer ${session.access_token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
