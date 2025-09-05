@@ -84,6 +84,8 @@ export interface CustomerSession {
   last_activity: string;
   is_active: boolean;
   created_at: string;
+  password_hash: string | null;
+  is_password_protected: boolean;
 }
 
 export interface SessionProgress {

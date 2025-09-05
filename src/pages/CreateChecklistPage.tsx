@@ -62,7 +62,6 @@ export default function CreateChecklistPage() {
     title: '',
     description: '',
     is_public: true,
-    password: '',
     completion_page_content: 'Congratulations! You have successfully completed the onboarding process.',
   });
 
