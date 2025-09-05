@@ -602,10 +602,9 @@ export default function SubmissionsPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">
-                    Session Name
+                    Description
                   </label>
-                  <input
-                    type="text"
+                  <textarea
                     value={createSessionData.sessionName}
                     onChange={(e) => setCreateSessionData(prev => ({ ...prev, sessionName: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 font-sans"
@@ -614,42 +613,19 @@ export default function SubmissionsPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">
-                    Customer Email *
+                    Email Recipients *
                   </label>
                   <input
                     type="email"
                     value={createSessionData.email}
                     onChange={(e) => setCreateSessionData(prev => ({ ...prev, email: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 font-sans"
-                    placeholder="customer@email.com"
-                    required
+                    placeholder="john@company.com, sarah@company.com"
+                    rows={3}
                   />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">
-                      Customer Name
-                    </label>
-                    <input
-                      type="text"
-                      value={createSessionData.name}
-                      onChange={(e) => setCreateSessionData(prev => ({ ...prev, name: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 font-sans"
-                      placeholder="John Doe"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">
-                      Company
-                    </label>
-                    <input
-                      type="text"
-                      value={createSessionData.company}
-                      onChange={(e) => setCreateSessionData(prev => ({ ...prev, company: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 font-sans"
-                      placeholder="Acme Corp"
-                    />
-                  </div>
+                  <p className="text-xs text-gray-500 mt-1 font-sans">
+                    Comma-separated email addresses. Each person will receive the same session link to collaborate on this specific form.
+                  </p>
                 </div>
                 <div className="flex space-x-3 pt-4">
                   <button
