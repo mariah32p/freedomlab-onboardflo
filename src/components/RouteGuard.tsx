@@ -34,7 +34,7 @@ export default function RouteGuard({ children }: RouteGuardProps) {
 
     // If not signed in and trying to access protected route (excluding landing page)
     if (!user && !isPublicRoute && location.pathname !== '/') {
-      navigate('/signup');
+      navigate('/signin');
       return;
     }
 
