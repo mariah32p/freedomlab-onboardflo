@@ -1,36 +1,31 @@
-// Stripe product configuration
 export const stripeProducts = [
   {
-    priceId: 'price_1RzrMYDn6VTzl81bogCwhX1U',
-    name: 'Standard',
-    description: 'Perfect for small teams getting started',
+    priceId: import.meta.env.VITE_STRIPE_STANDARD_PRICE_ID,
+    name: "Standard",
+    description: "Perfect for small teams getting started",
     price: 29,
-    mode: 'subscription' as const,
+    mode: "subscription",
     features: [
-      'Up to 3 active checklists',
-      'Up to 100 customers tracked per month',
-      'Shareable public links for each checklist',
-      'Simple branding (logo + 1 color)',
-      'Progress tracking dashboard',
-      'Email completion notifications',
-    ]
+      "Up to 3 active checklists",
+      "Up to 100 customers tracked per month",
+      "Shareable public links for each checklist",
+      "Simple branding (logo + 1 color)",
+      "Progress tracking dashboard",
+      "Email completion notifications",
+    ],
   },
   {
-    priceId: 'price_1RzrMYDn6VTzl81bTSgcl0ZA',
-    name: 'Pro',
-    description: 'For SaaS companies, larger agencies',
+    priceId: import.meta.env.VITE_STRIPE_PRO_PRICE_ID,
+    name: "Pro",
+    description: "For SaaS companies, larger agencies",
     price: 49,
-    mode: 'subscription' as const,
+    mode: "subscription",
     features: [
-      'Everything in Basic, plus:',
-      'Unlimited checklists',
-      'Unlimited customer tracking',
-      'Password protection for checklists',
-      'Custom completion pages'
-    ]
-  }
+      "Everything in Basic, plus:",
+      "Unlimited checklists",
+      "Unlimited customer tracking",
+      "Password protection for checklists",
+      "Custom completion pages",
+    ],
+  },
 ];
-
-export function getProductByPriceId(priceId: string) {
-  return stripeProducts.find(product => product.priceId === priceId);
-}

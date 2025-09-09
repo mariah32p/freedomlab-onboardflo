@@ -16,10 +16,24 @@ export default function ResetPasswordPage() {
     confirmPassword: ''
   });
 
+  // Check for confirmation state in sessionStorage on mount
+  useEffect(() => {
+    const confirmationShown = sessionStorage.getItem('passwordResetSuccess');
+    if (confirmationShown === 'true') {
+      setShowConfirmation(true);
+      sessionStorage.removeItem('passwordResetSuccess');
+    }
+  }, []);
+
   // Check if user has a valid session (came from email link)
   useEffect(() => {
+    // Don't redirect if we're showing confirmation or in the process of updating
     if (!authLoading && !session && !showConfirmation && !loading) {
-      navigate('/signin');
+      // Check if we just completed a password reset
+      const justCompleted = sessionStorage.getItem('passwordResetSuccess');
+      if (justCompleted !== 'true') {
+        navigate('/signin');
+      }
     }
   }, [authLoading, session, showConfirmation, loading, navigate]);
 
@@ -63,10 +77,16 @@ export default function ResetPasswordPage() {
 
       if (authError) {
         setError(authError.message);
+        setLoading(false);
       } else {
+        // Store success state before potential session clear
+        sessionStorage.setItem('passwordResetSuccess', 'true');
         setShowConfirmation(true);
+        setLoading(false);
       }
-    } finally {
+    } catch (err) {
+      console.error('Password update error:', err);
+      setError('An unexpected error occurred. Please try again.');
       setLoading(false);
     }
   };
@@ -79,6 +99,8 @@ export default function ResetPasswordPage() {
   };
 
   const handleContinueToSignIn = () => {
+    // Clean up any stored state
+    sessionStorage.removeItem('passwordResetSuccess');
     navigate('/signin');
   };
 
@@ -117,6 +139,7 @@ export default function ResetPasswordPage() {
     );
   }
 
+  // Show loading state while checking auth
   if (authLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -125,8 +148,9 @@ export default function ResetPasswordPage() {
     );
   }
 
-  if (!session) {
-    return null; // Will redirect to signin
+  // Only redirect if we're not in a valid state
+  if (!session && !showConfirmation && !loading) {
+    return null; // Will redirect to signin via useEffect
   }
 
   return (
@@ -175,13 +199,15 @@ export default function ResetPasswordPage() {
                   onChange={handleChange}
                   className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
                   placeholder="Enter new password"
+                  disabled={loading}
                 />
-                  <button
-                    type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  onClick={() => setShowPassword(!showPassword)}
+                  disabled={loading}
+                >
                   {showPassword ? (
                     <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
                   ) : (
@@ -231,13 +257,15 @@ export default function ResetPasswordPage() {
                   onChange={handleChange}
                   className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-sans"
                   placeholder="Confirm new password"
+                  disabled={loading}
                 />
-                  <button
-                    type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                    aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  >
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  disabled={loading}
+                >
                   {showConfirmPassword ? (
                     <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
                   ) : (
