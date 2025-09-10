@@ -6,10 +6,14 @@ import { useAuth } from '../contexts/AuthContext';
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const { user, signOut } = useAuth();
+  const { subscription, getAccessStatus } = useSubscription();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const showUserMenu = user && location.pathname !== '/reset-password';
+  // Only show full navigation for users with active subscriptions
+  const accessStatus = getAccessStatus();
+  const hasActiveSubscription = accessStatus.hasAccess && !accessStatus.shouldRedirectToGetStarted;
+  const showUserMenu = user && hasActiveSubscription && location.pathname !== '/reset-password';
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -53,7 +57,7 @@ export default function Header() {
           {/* Desktop Navigation and CTA */}
           <div className="hidden md:flex items-center space-x-8">
             <nav className="flex items-center space-x-8">
-              {!showUserMenu && (
+              {!user && (
                 <Link to="/signin" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
                   Login
                 </Link>
@@ -90,7 +94,21 @@ export default function Header() {
                     Sign Out
                   </button>
                 </>
+              ) : user ? (
+                // Logged in but no active subscription - show minimal menu
+                <>
+                  <span className="text-gray-600 font-medium font-sans">
+                    {user?.email}
+                  </span>
+                  <button
+                    onClick={handleSignOut}
+                    className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans"
+                  >
+                    Sign Out
+                  </button>
+                </>
               ) : (
+                // Not logged in - show signup CTA
                 <>
                   <Link to="/signup" className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors font-sans">
                     Start Free Trial
@@ -101,7 +119,7 @@ export default function Header() {
           </div>
 
           {/* Mobile CTA for non-user menu */}
-          {!showUserMenu && (
+          {!user && (
             <div className="md:hidden flex items-center space-x-2">
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -118,7 +136,7 @@ export default function Header() {
               </Link>
             </div>
           )}
-          {showUserMenu && (
+          {user && (
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
@@ -133,7 +151,7 @@ export default function Header() {
         </div>
 
         {/* Mobile Navigation */}
-        {isMenuOpen && !showUserMenu && (
+        {isMenuOpen && !user && (
           <div className="md:hidden py-4 border-t border-gray-100">
             <div className="flex flex-col space-y-4">
               <Link to="/signin" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
@@ -149,21 +167,26 @@ export default function Header() {
         )}
         
         {/* User menu mobile navigation */}
-        {isMenuOpen && showUserMenu && (
+        {isMenuOpen && user && (
           <div className="md:hidden py-4 border-t border-gray-100">
             <div className="flex flex-col space-y-4">
-              <Link to="/checklists" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
-                Checklists
-              </Link>
-              <Link to="/submissions" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
-                Sessions
-              </Link>
-              <Link to="/branding" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
-                Branding
-              </Link>
-              <Link to="/settings" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
-                Settings
-              </Link>
+              {/* Only show navigation links for users with active subscriptions */}
+              {hasActiveSubscription && (
+                <>
+                  <Link to="/checklists" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
+                    Checklists
+                  </Link>
+                  <Link to="/submissions" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
+                    Sessions
+                  </Link>
+                  <Link to="/branding" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
+                    Branding
+                  </Link>
+                  <Link to="/settings" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
+                    Settings
+                  </Link>
+                </>
+              )}
               <div className="pt-4 border-t border-gray-100 flex flex-col space-y-2">
                 <span className="text-gray-600 font-medium font-sans">
                   {user?.email}
