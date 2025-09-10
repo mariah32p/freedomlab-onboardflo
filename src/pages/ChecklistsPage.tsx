@@ -4,7 +4,6 @@ import { useAuth } from '../contexts/AuthContext';
 import { useSubscription } from '../hooks/useSubscription';
 import { useChecklists } from '../hooks/useChecklists';
 import { useCustomerSessions } from '../hooks/useCustomerSessions';
-import { useFeatureGating } from '../hooks/useFeatureGating';
 import PaymentBanner from '../components/PaymentBanner';
 import TrialBanner from '../components/TrialBanner';
 import { Checklist } from '../types/checklist';
@@ -22,7 +21,6 @@ export default function ChecklistsPage() {
   const { subscription, getAccessStatus } = useSubscription();
   const { checklists, loading, error, deleteChecklist } = useChecklists();
   const { createPendingSubmission } = useCustomerSessions();
-  const featureAccess = useFeatureGating(checklists.length);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [creatingSessionId, setCreatingSessionId] = useState<string | null>(null);
@@ -37,12 +35,7 @@ export default function ChecklistsPage() {
   }, [accessStatus, navigate]);
 
   const handleCreateChecklist = () => {
-    if (featureAccess.canCreateMoreChecklists) {
-      navigate('/checklists/create');
-    } else {
-      // Optional: a more user-friendly way to handle this would be a modal.
-      alert("You've reached the maximum number of checklists for your plan. Please upgrade to create more.");
-    }
+    navigate('/checklists/create');
   };
 
   const handleDeleteChecklist = async (id: string) => {
