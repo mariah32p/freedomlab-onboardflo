@@ -7,9 +7,6 @@ import { useCustomerSessions } from '../hooks/useCustomerSessions';
 import { useFeatureGating } from '../hooks/useFeatureGating';
 import UpgradePrompt from '../components/UpgradePrompt';
 import { useFeatureGating } from '../hooks/useFeatureGating';
-import UpgradePrompt from '../components/UpgradePrompt';
-import { useFeatureGating } from '../hooks/useFeatureGating';
-import UpgradePrompt from '../components/UpgradePrompt';
 import PaymentBanner from '../components/PaymentBanner';
 import TrialBanner from '../components/TrialBanner';
 import { Checklist } from '../types/checklist';
@@ -46,7 +43,6 @@ export default function ChecklistsPage() {
     if (featureAccess.canCreateMoreChecklists) {
       navigate('/checklists/create');
     }
-  };
   const handleCreateChecklist = () => {
     if (featureAccess.canCreateMoreChecklists) {
       navigate('/checklists/create');
