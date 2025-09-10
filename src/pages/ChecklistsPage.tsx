@@ -43,6 +43,7 @@ export default function ChecklistsPage() {
     if (featureAccess.canCreateMoreChecklists) {
       navigate('/checklists/create');
     }
+  };
   const handleCreateChecklist = () => {
     if (featureAccess.canCreateMoreChecklists) {
       navigate('/checklists/create');
