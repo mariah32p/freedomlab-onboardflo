@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useSubscription } from '../hooks/useSubscription';
-import { useNavigate, useEffect } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useChecklists } from '../hooks/useChecklists';
 import { useCustomerSessions } from '../hooks/useCustomerSessions';
 import PaymentBanner from '../components/PaymentBanner';
