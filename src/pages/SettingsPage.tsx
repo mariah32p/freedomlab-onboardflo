@@ -3,10 +3,11 @@ import { useAuth } from '../contexts/AuthContext';
 import { useSubscription } from '../hooks/useSubscription';
 import PaymentBanner from '../components/PaymentBanner';
 import TrialBanner from '../components/TrialBanner';
+import SettingsSkeleton from '../components/SettingsSkeleton';
 
 export default function SettingsPage() {
   const { user } = useAuth();
-  const { subscription } = useSubscription();
+  const { subscription, loading } = useSubscription();
 
   const handleManageBilling = () => {
     const portalUrl = import.meta.env.VITE_STRIPE_CUSTOMER_PORTAL;
@@ -16,6 +17,11 @@ export default function SettingsPage() {
       console.error('VITE_STRIPE_CUSTOMER_PORTAL environment variable is not set');
     }
   };
+
+  // Show skeleton while loading
+  if (loading) {
+    return <SettingsSkeleton />;
+  }
 
   return (
     <div className="pt-20 min-h-screen bg-gray-50">
