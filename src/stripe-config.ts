@@ -1,3 +1,11 @@
+// Debug environment variables
+console.log('=== STRIPE CONFIGURATION DEBUG ===');
+console.log('VITE_STRIPE_STANDARD_PRICE_ID:', import.meta.env.VITE_STRIPE_STANDARD_PRICE_ID);
+console.log('VITE_STRIPE_PRO_PRICE_ID:', import.meta.env.VITE_STRIPE_PRO_PRICE_ID);
+console.log('VITE_STRIPE_CUSTOMER_PORTAL:', import.meta.env.VITE_STRIPE_CUSTOMER_PORTAL);
+console.log('VITE_SUPABASE_URL:', import.meta.env.VITE_SUPABASE_URL);
+console.log('VITE_SUPABASE_ANON_KEY:', import.meta.env.VITE_SUPABASE_ANON_KEY ? '[SET]' : '[MISSING]');
+
 export const stripeProducts = [
   {
     priceId: import.meta.env.VITE_STRIPE_STANDARD_PRICE_ID,
@@ -31,3 +39,17 @@ export const stripeProducts = [
     ],
   },
 ];
+
+// Debug the final products array
+console.log('=== STRIPE PRODUCTS ARRAY ===');
+console.log('stripeProducts:', stripeProducts);
+stripeProducts.forEach((product, index) => {
+  console.log(`Product ${index + 1}:`, {
+    name: product.name,
+    priceId: product.priceId,
+    price: product.price,
+    disabled: product.disabled,
+    comingSoon: product.comingSoon
+  });
+});
+console.log('=== END STRIPE DEBUG ===');
