@@ -165,7 +165,6 @@ export default function DashboardPage() {
               <span>✓ Cancel anytime</span>
               <span>✓ No setup fees</span>
               <span>✓ Full access during trial</span>
-              <span>✓ Full access during trial</span>
             </div>
           </div>
         </div>
