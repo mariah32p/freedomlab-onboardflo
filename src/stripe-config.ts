@@ -1,15 +1,7 @@
-// Live mode price IDs
-const STANDARD_PRICE_ID = 'price_1RzrMYDn6VTzl81bogCwhX1U'; // Live mode Standard plan
-const PRO_PRICE_ID = 'price_1RzrMYDn6VTzl81bTSgcl0ZA'; // Live mode Pro plan
-
-console.info('✅ LIVE MODE: Using live Stripe price IDs');
-console.info('Make sure your Supabase Edge Functions have live mode Stripe keys:');
-console.info('- STRIPE_SECRET_KEY=sk_live_...');
-console.info('- STRIPE_WEBHOOK_SECRET=whsec_...');
-
+// Hardcoded live mode price IDs for simplicity
 export const stripeProducts = [
   {
-    priceId: STANDARD_PRICE_ID,
+    priceId: 'price_1RzrMYDn6VTzl81bogCwhX1U', // Live Standard plan
     name: "Standard",
     description: "Perfect for small teams getting started",
     price: 29,
@@ -25,7 +17,7 @@ export const stripeProducts = [
     ],
   },
   {
-    priceId: PRO_PRICE_ID,
+    priceId: 'price_1RzrMYDn6VTzl81bTSgcl0ZA', // Live Pro plan
     name: "Pro",
     description: "For SaaS companies, larger agencies",
     price: 49,
