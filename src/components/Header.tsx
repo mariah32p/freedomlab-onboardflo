@@ -2,6 +2,7 @@ import React from 'react';
 import { Menu, X, Workflow } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useSubscription } from '../hooks/useSubscription';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
