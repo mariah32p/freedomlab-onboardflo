@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useSubscription } from '../hooks/useSubscription';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Palette, Upload, Eye, Save, RotateCcw } from 'lucide-react';
 
@@ -35,6 +37,8 @@ const PRESET_COLORS = [
 
 export default function BrandingPage() {
   const { user } = useAuth();
+  const { getAccessStatus } = useSubscription();
+  const navigate = useNavigate();
   const [branding, setBranding] = useState<UserBranding | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -48,6 +52,15 @@ export default function BrandingPage() {
   const [secondaryColor, setSecondaryColor] = useState('#059669');
   const [fontFamily, setFontFamily] = useState('Montserrat');
   const [businessName, setBusinessName] = useState('');
+
+  const accessStatus = getAccessStatus();
+
+  // Redirect to dashboard if no active subscription
+  useEffect(() => {
+    if (!accessStatus.hasAccess || accessStatus.shouldRedirectToGetStarted) {
+      navigate('/dashboard');
+    }
+  }, [accessStatus, navigate]);
 
   useEffect(() => {
     fetchBranding();

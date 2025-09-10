@@ -52,6 +52,7 @@ export default function CreateChecklistPage() {
   const { user } = useAuth();
   const { subscription, getAccessStatus } = useSubscription();
   const { createChecklist } = useChecklists();
+  const accessStatus = getAccessStatus();
   
   const [currentStep, setCurrentStep] = useState<'welcome' | 'choose' | 'customize' | 'launch'>('welcome');
   const [selectedTemplate, setSelectedTemplate] = useState<ChecklistTemplate | null>(null);
@@ -66,6 +67,13 @@ export default function CreateChecklistPage() {
   });
 
   const [steps, setSteps] = useState<StepData[]>([]);
+
+  // Redirect to dashboard if no active subscription
+  useEffect(() => {
+    if (!accessStatus.hasAccess || accessStatus.shouldRedirectToGetStarted) {
+      navigate('/dashboard');
+    }
+  }, [accessStatus, navigate]);
 
   // Load from URL params if available
   useEffect(() => {

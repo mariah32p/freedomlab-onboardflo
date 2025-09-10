@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useSubscription } from '../hooks/useSubscription';
+import { useNavigate } from 'react-router-dom';
 import PaymentBanner from '../components/PaymentBanner';
 import TrialBanner from '../components/TrialBanner';
 import SettingsSkeleton from '../components/SettingsSkeleton';
@@ -8,6 +9,17 @@ import SettingsSkeleton from '../components/SettingsSkeleton';
 export default function SettingsPage() {
   const { user } = useAuth();
   const { subscription, loading } = useSubscription();
+  const navigate = useNavigate();
+  const { getAccessStatus } = useSubscription();
+
+  const accessStatus = getAccessStatus();
+
+  // Redirect to dashboard if no active subscription
+  React.useEffect(() => {
+    if (!loading && (!accessStatus.hasAccess || accessStatus.shouldRedirectToGetStarted)) {
+      navigate('/dashboard');
+    }
+  }, [accessStatus, navigate, loading]);
 
   const handleManageBilling = () => {
     const portalUrl = import.meta.env.VITE_STRIPE_CUSTOMER_PORTAL;

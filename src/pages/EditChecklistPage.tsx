@@ -47,6 +47,7 @@ export default function EditChecklistPage() {
   const { subscription, getAccessStatus } = useSubscription();
   const { checklists, updateChecklist } = useChecklists();
   const { steps: checklistSteps, createStep, updateStep, deleteStep, reorderSteps } = useChecklistSteps(checklistId || null);
+  const accessStatus = getAccessStatus();
   
   const [loading, setLoading] = useState(false);
   const [editingStepIndex, setEditingStepIndex] = useState<number | null>(null);
@@ -65,6 +66,13 @@ export default function EditChecklistPage() {
 
   // Find the current checklist
   const checklist = checklists.find(c => c.id === checklistId);
+
+  // Redirect to dashboard if no active subscription
+  useEffect(() => {
+    if (!accessStatus.hasAccess || accessStatus.shouldRedirectToGetStarted) {
+      navigate('/dashboard');
+    }
+  }, [accessStatus, navigate]);
 
   useEffect(() => {
     if (!checklistId) {

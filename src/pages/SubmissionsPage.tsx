@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useSubscription } from '../hooks/useSubscription';
+import { useNavigate } from 'react-router-dom';
 import { useCustomerSessions } from '../hooks/useCustomerSessions';
 import { useToast } from '../hooks/useToast';
 import { ToastContainer } from '../components/Toast';
@@ -34,6 +35,7 @@ import {
 export default function SubmissionsPage() {
   const { user } = useAuth();
   const { subscription, getAccessStatus } = useSubscription();
+  const navigate = useNavigate();
   const { sessions, loading, error, deleteSession, getSessionStats, getSessionProgress } = useCustomerSessions();
   const { messages, showSuccess, showError, showWarning, dismissToast } = useToast();
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -58,6 +60,13 @@ export default function SubmissionsPage() {
   const [emailHistory, setEmailHistory] = useState<any[]>([]);
   const [emailSendingType, setEmailSendingType] = useState<'welcome' | 'reminder' | null>(null);
   const accessStatus = getAccessStatus();
+
+  // Redirect to dashboard if no active subscription
+  useEffect(() => {
+    if (!accessStatus.hasAccess || accessStatus.shouldRedirectToGetStarted) {
+      navigate('/dashboard');
+    }
+  }, [accessStatus, navigate]);
 
   // Track progress for each session
   const [sessionProgress, setSessionProgress] = useState<Record<string, number>>({});

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useSubscription } from '../hooks/useSubscription';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useEffect } from 'react-router-dom';
 import { useChecklists } from '../hooks/useChecklists';
 import { useCustomerSessions } from '../hooks/useCustomerSessions';
 import PaymentBanner from '../components/PaymentBanner';
@@ -32,6 +32,13 @@ export default function ChecklistsPage() {
   const [creatingSessionId, setCreatingSessionId] = useState<string | null>(null);
   const accessStatus = getAccessStatus();
   const navigate = useNavigate();
+
+  // Redirect to dashboard if no active subscription
+  useEffect(() => {
+    if (!accessStatus.hasAccess || accessStatus.shouldRedirectToGetStarted) {
+      navigate('/dashboard');
+    }
+  }, [accessStatus, navigate]);
 
   const handleDeleteChecklist = async (id: string) => {
     if (!confirm('Are you sure you want to delete this checklist? This will also delete all customer sessions and cannot be undone.')) {
