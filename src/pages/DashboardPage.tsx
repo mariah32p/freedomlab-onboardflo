@@ -67,42 +67,24 @@ export default function DashboardPage() {
             {stripeProducts
               .filter(plan => !plan.disabled)
               .map((plan, index) => {
-                // Show warning if using fallback price ID
-                const isFallback = plan.priceId.includes('fallback');
-                
                 const Icon = plan.name === 'Standard' ? Zap : Building;
                 return (
                   <div 
                     key={index}
-                    className={`relative bg-white rounded-2xl p-8 border-2 shadow-lg transition-all duration-300 ${
-                      isFallback 
-                        ? 'border-orange-500 ring-4 ring-orange-500/20' 
-                        : 'border-emerald-500 ring-4 ring-emerald-500/20 hover:shadow-xl hover:-translate-y-1'
-                    }`}
+                    className="relative bg-white rounded-2xl p-8 border-2 border-emerald-500 ring-4 ring-emerald-500/20 shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
                   >
                     <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                      <div className={`text-white px-4 py-2 rounded-full text-sm font-medium font-sans ${
-                        isFallback ? 'bg-orange-500' : 'bg-emerald-500'
-                      }`}>
-                        {isFallback ? 'Setup Required' : '7-Day Free Trial'}
+                      <div className="bg-emerald-500 text-white px-4 py-2 rounded-full text-sm font-medium font-sans">
+                        7-Day Free Trial
                       </div>
                     </div>
                     
                     <div className="text-center mb-8">
-                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-4 ${
-                        isFallback ? 'bg-orange-500' : 'bg-emerald-500'
-                      }`}>
+                      <div className="w-12 h-12 rounded-xl bg-emerald-500 flex items-center justify-center mx-auto mb-4">
                         <Icon className="w-6 h-6 text-white" />
                       </div>
                       <h3 className="text-2xl font-bold text-gray-900 mb-2 font-sans">{plan.name}</h3>
                       <p className="text-gray-600 mb-4 font-sans">{plan.description}</p>
-                      {isFallback && (
-                        <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 mb-4">
-                          <p className="text-orange-700 text-sm font-sans">
-                            <strong>Setup Required:</strong> Please configure test mode Stripe price IDs in your .env file
-                          </p>
-                        </div>
-                      )}
                       <div className="mb-6">
                         <span className="text-5xl font-bold text-gray-900 font-sans">${plan.price}</span>
                         <span className="text-gray-600 ml-2 font-sans">/month</span>
@@ -120,16 +102,10 @@ export default function DashboardPage() {
                     
                     <button 
                       onClick={() => handleSelectPlan(plan.priceId)}
-                      disabled={stripeLoading || isFallback}
-                      className={`w-full py-4 rounded-lg font-semibold text-lg text-white shadow-lg transition-all duration-200 font-sans disabled:opacity-50 ${
-                        isFallback 
-                          ? 'bg-gray-400 cursor-not-allowed' 
-                          : 'bg-emerald-500 hover:bg-emerald-600 hover:shadow-xl'
-                      }`}
+                      disabled={stripeLoading}
+                      className="w-full py-4 rounded-lg font-semibold text-lg text-white bg-emerald-500 hover:bg-emerald-600 shadow-lg hover:shadow-xl transition-all duration-200 font-sans disabled:opacity-50"
                     >
-                      {stripeLoading ? 'Loading...' : 
-                       isFallback ? 'Configure Stripe First' : 
-                       'Start 7-Day Free Trial'}
+                      {stripeLoading ? 'Loading...' : 'Start 7-Day Free Trial'}
                     </button>
                   </div>
                 );
@@ -183,10 +159,7 @@ export default function DashboardPage() {
           
           <div className="text-center mt-12">
             <p className="text-gray-600 mb-4 font-sans">
-              {stripeProducts.some(p => p.priceId.includes('fallback')) 
-                ? 'Please configure Stripe test mode price IDs to enable trials'
-                : '7-day free trial on Standard plan • Pro features coming soon • Cancel anytime'
-              }
+              7-day free trial on Standard plan • Pro features coming soon • Cancel anytime
             </p>
             <div className="flex items-center justify-center space-x-8 text-sm text-gray-500 font-sans">
               <span>✓ Cancel anytime</span>
