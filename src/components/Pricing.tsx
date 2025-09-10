@@ -43,18 +43,29 @@ export default function Pricing() {
           {stripeProducts.map((plan, index) => {
             const Icon = planIcons[plan.name as keyof typeof planIcons];
             const isPopular = plan.name === 'Pro';
+            const isDisabled = plan.disabled;
+            const isComingSoon = plan.comingSoon;
             const features = planFeatures[plan.name as keyof typeof planFeatures];
 
             return (
               <div
                 key={index}
-                className={`relative bg-white rounded-2xl p-8 shadow-lg transition-all duration-200 hover:shadow-xl border-2 hover:-translate-y-1 ${
-                  isPopular 
-                    ? 'border-emerald-500 ring-4 ring-emerald-500/20' 
-                    : 'border-gray-200 hover:border-emerald-300'
+                className={`relative bg-white rounded-2xl p-8 shadow-lg transition-all duration-200 border-2 ${
+                  isDisabled 
+                    ? 'opacity-60 border-gray-200' 
+                    : isPopular 
+                      ? 'border-emerald-500 ring-4 ring-emerald-500/20 hover:shadow-xl hover:-translate-y-1' 
+                      : 'border-gray-200 hover:border-emerald-300 hover:shadow-xl hover:-translate-y-1'
                 }`}
               >
-                {isPopular && (
+                {isComingSoon && (
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                    <div className="bg-orange-500 text-white px-4 py-2 rounded-full text-sm font-medium font-sans">
+                      Coming Soon
+                    </div>
+                  </div>
+                )}
+                {isPopular && !isComingSoon && (
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                     <div className="bg-emerald-500 text-white px-4 py-2 rounded-full text-sm font-medium font-sans">
                       Most Popular
@@ -64,17 +75,25 @@ export default function Pricing() {
                 
                 <div className="text-center mb-6">
                   <div className={`inline-flex items-center justify-center w-12 h-12 rounded-lg mb-4 ${
-                    isPopular ? 'bg-emerald-500' : 'bg-gray-100'
+                    isDisabled ? 'bg-gray-100' : isPopular ? 'bg-emerald-500' : 'bg-gray-100'
                   }`}>
-                    <Icon className={`w-6 h-6 ${isPopular ? 'text-white' : 'text-gray-600'}`} />
+                    <Icon className={`w-6 h-6 ${isDisabled ? 'text-gray-400' : isPopular ? 'text-white' : 'text-gray-600'}`} />
                   </div>
                   <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-2 font-sans">{plan.name}</h3>
-                  <p className="text-sm md:text-base text-gray-600 mb-4 font-sans">{plan.description}</p>
+                  <p className="text-sm md:text-base text-gray-600 mb-4 font-sans">
+                    {isComingSoon ? 'Advanced features coming soon!' : plan.description}
+                  </p>
                   <div className="mb-6">
-                    <div>
-                      <span className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 font-sans">${plan.price}</span>
-                      <span className="text-gray-600 ml-1 md:ml-2 text-sm md:text-base font-sans">/month</span>
-                    </div>
+                    {isDisabled ? (
+                      <div className="text-lg font-medium text-gray-500 font-sans">
+                        Available Soon
+                      </div>
+                    ) : (
+                      <div>
+                        <span className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 font-sans">${plan.price}</span>
+                        <span className="text-gray-600 ml-1 md:ml-2 text-sm md:text-base font-sans">/month</span>
+                      </div>
+                    )}
                   </div>
                 </div>
                 
@@ -96,10 +115,10 @@ export default function Pricing() {
             to="/signup"
             className="inline-block bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl font-sans mb-6"
           >
-            Start 7-Day Free Trial
+            Start 7-Day Free Trial (Standard)
           </Link>
           <p className="text-gray-600 mb-4 font-sans">
-            7-day free trial • Full access to all features during trial • Cancel anytime
+            7-day free trial on Standard plan • Cancel anytime • Pro features coming soon
           </p>
           <div className="flex items-center justify-center space-x-8 text-sm text-gray-500 font-sans">
             <span>✓ Cancel anytime</span>
