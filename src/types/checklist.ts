@@ -86,6 +86,11 @@ export interface CustomerSession {
   created_at: string;
   password_hash: string | null;
   is_password_protected: boolean;
+  welcome_email_sent_at?: string | null;
+  reminder_email_sent_at?: string | null;
+  last_email_type?: string | null;
+  session_emails?: string;
+  session_description?: string;
 }
 
 export interface SessionProgress {
