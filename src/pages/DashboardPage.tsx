@@ -110,15 +110,61 @@ export default function DashboardPage() {
                   </div>
                 );
               })}
+            
+            {/* Pro plan coming soon card */}
+            <div className="bg-gray-50 rounded-2xl p-8 border-2 border-gray-200 opacity-60">
+              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                <div className="bg-orange-500 text-white px-4 py-2 rounded-full text-sm font-medium font-sans">
+                  Coming Soon
+                </div>
+              </div>
+              
+              <div className="text-center mb-8">
+                <div className="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
+                  <Building className="w-6 h-6 text-gray-400" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2 font-sans">Pro Plan</h3>
+                <p className="text-gray-600 mb-4 font-sans">Advanced features coming soon!</p>
+                <div className="mb-6">
+                  <div className="bg-orange-100 text-orange-700 px-4 py-2 rounded-full text-sm font-medium font-sans inline-block">
+                    Coming Soon
+                  </div>
+                </div>
+              </div>
+              
+              <ul className="space-y-4 mb-8">
+                <li className="flex items-start">
+                  <Check className="w-5 h-5 text-gray-400 mt-0.5 mr-3 flex-shrink-0" />
+                  <span className="text-gray-600 font-sans">Unlimited checklists</span>
+                </li>
+                <li className="flex items-start">
+                  <Check className="w-5 h-5 text-gray-400 mt-0.5 mr-3 flex-shrink-0" />
+                  <span className="text-gray-600 font-sans">Unlimited customer tracking</span>
+                </li>
+                <li className="flex items-start">
+                  <Check className="w-5 h-5 text-gray-400 mt-0.5 mr-3 flex-shrink-0" />
+                  <span className="text-gray-600 font-sans">Password protection</span>
+                </li>
+                <li className="flex items-start">
+                  <Check className="w-5 h-5 text-gray-400 mt-0.5 mr-3 flex-shrink-0" />
+                  <span className="text-gray-600 font-sans">Custom completion pages</span>
+                </li>
+              </ul>
+              
+              <div className="w-full py-4 rounded-lg font-semibold text-lg text-center bg-gray-200 text-gray-500 cursor-not-allowed">
+                Coming Soon
+              </div>
+            </div>
           </div>
           
           <div className="text-center mt-12">
             <p className="text-gray-600 mb-4 font-sans">
-              7-day free trial • Your card will be charged after the trial ends • Cancel anytime
+              7-day free trial on Standard plan • Pro features coming soon • Cancel anytime
             </p>
             <div className="flex items-center justify-center space-x-8 text-sm text-gray-500 font-sans">
               <span>✓ Cancel anytime</span>
               <span>✓ No setup fees</span>
+              <span>✓ Full access during trial</span>
               <span>✓ Full access during trial</span>
             </div>
           </div>
