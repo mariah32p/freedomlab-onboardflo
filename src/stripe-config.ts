@@ -20,6 +20,8 @@ export const stripeProducts = [
     description: "For SaaS companies, larger agencies",
     price: 49,
     mode: "subscription",
+    disabled: true,
+    comingSoon: true,
     features: [
       "Everything in Basic, plus:",
       "Unlimited checklists",

@@ -3,10 +3,25 @@ import { useAuth } from '../contexts/AuthContext';
 import { useSubscription } from '../hooks/useSubscription';
 import PaymentBanner from '../components/PaymentBanner';
 import TrialBanner from '../components/TrialBanner';
+import SettingsSkeleton from '../components/SettingsSkeleton';
 
 export default function SettingsPage() {
   const { user } = useAuth();
-  const { subscription } = useSubscription();
+  const { subscription, loading } = useSubscription();
+
+  const handleManageBilling = () => {
+    const portalUrl = import.meta.env.VITE_STRIPE_CUSTOMER_PORTAL;
+    if (portalUrl) {
+      window.open(portalUrl, '_blank', 'noopener,noreferrer');
+    } else {
+      console.error('VITE_STRIPE_CUSTOMER_PORTAL environment variable is not set');
+    }
+  };
+
+  // Show skeleton while loading
+  if (loading) {
+    return <SettingsSkeleton />;
+  }
 
   return (
     <div className="pt-20 min-h-screen bg-gray-50">
@@ -39,7 +54,8 @@ export default function SettingsPage() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1 font-sans">Plan</label>
                 <div className="text-gray-900 font-sans">
-                  {subscription?.price_id === 'price_1RzrMYDn6VTzl81bTSgcl0ZA' ? 'Pro' : 'Basic'}
+                  {!subscription ? 'Basic' : 
+                   subscription.price_id === import.meta.env.VITE_STRIPE_PRO_PRICE_ID ? 'Pro' : 'Standard'}
                   {subscription?.status === 'trialing' && (
                     <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium font-sans">
                       Trial
@@ -61,9 +77,15 @@ export default function SettingsPage() {
                   <div className="font-medium text-gray-900 font-sans">Manage Subscription</div>
                   <div className="text-sm text-gray-600 font-sans">Update payment method, view invoices, or cancel subscription</div>
                 </div>
-                <button className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium transition-colors font-sans">
+                <button 
+                  onClick={handleManageBilling}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors font-sans"
+                >
                   Manage Billing
                 </button>
+              </div>
+              <div className="text-sm text-gray-500 font-sans mt-2">
+                Opens Stripe's billing portal where you can update payment methods, view invoices, and manage your subscription.
               </div>
             </div>
           </div>

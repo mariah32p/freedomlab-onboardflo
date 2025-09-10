@@ -6,7 +6,7 @@ import { stripeProducts } from '../stripe-config';
 import { Link } from 'react-router-dom';
 
 const planIcons = {
-  'Basic': Zap,
+  'Standard': Zap,
   'Pro': Building,
 };
 
@@ -50,16 +50,27 @@ export default function PricingPage() {
           {stripeProducts.map((plan, index) => {
             const Icon = planIcons[plan.name as keyof typeof planIcons];
             const isPopular = plan.name === 'Pro';
+            const isDisabled = plan.disabled;
+            const isComingSoon = plan.comingSoon;
             return (
               <div 
                 key={index}
-                className={`relative bg-white rounded-2xl p-8 border-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 ${
-                  isPopular 
-                    ? 'border-emerald-500 ring-4 ring-emerald-500/20' 
-                    : 'border-gray-200 hover:border-emerald-300'
+                className={`relative bg-white rounded-2xl p-8 border-2 shadow-lg transition-all duration-300 ${
+                  isDisabled 
+                    ? 'opacity-60 border-gray-200' 
+                    : isPopular 
+                      ? 'border-emerald-500 ring-4 ring-emerald-500/20 hover:shadow-xl hover:-translate-y-1' 
+                      : 'border-gray-200 hover:border-emerald-300 hover:shadow-xl hover:-translate-y-1'
                 }`}
               >
-                {isPopular && (
+                {isComingSoon && (
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                    <div className="bg-orange-500 text-white px-4 py-2 rounded-full text-sm font-medium font-sans">
+                      Coming Soon
+                    </div>
+                  </div>
+                )}
+                {isPopular && !isComingSoon && (
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                     <div className="bg-emerald-500 text-white px-4 py-2 rounded-full text-sm font-medium font-sans">
                       Most Popular
@@ -69,37 +80,53 @@ export default function PricingPage() {
                 
                 <div className="text-center mb-8">
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-4 ${
-                    isPopular ? 'bg-emerald-500' : 'bg-gray-100'
+                    isDisabled ? 'bg-gray-100' : isPopular ? 'bg-emerald-500' : 'bg-gray-100'
                   }`}>
-                    <Icon className={`w-6 h-6 ${isPopular ? 'text-white' : 'text-gray-600'}`} />
+                    <Icon className={`w-6 h-6 ${isDisabled ? 'text-gray-400' : isPopular ? 'text-white' : 'text-gray-600'}`} />
                   </div>
                   <h3 className="text-2xl font-bold text-gray-900 mb-2 font-sans">{plan.name}</h3>
-                  <p className="text-gray-600 mb-4 font-sans">{plan.description}</p>
+                  <p className="text-gray-600 mb-4 font-sans">
+                    {isComingSoon ? 'Advanced features coming soon!' : plan.description}
+                  </p>
                   <div className="mb-6">
-                    <span className="text-5xl font-bold text-gray-900 font-sans">${plan.price}</span>
-                    <span className="text-gray-600 ml-2 font-sans">/month</span>
+                    {isDisabled ? (
+                      <div className="text-lg font-medium text-gray-500 font-sans">
+                        Available Soon
+                      </div>
+                    ) : (
+                      <div>
+                        <span className="text-5xl font-bold text-gray-900 font-sans">${plan.price}</span>
+                        <span className="text-gray-600 ml-2 font-sans">/month</span>
+                      </div>
+                    )}
                   </div>
                 </div>
                 
                 <ul className="space-y-4 mb-8">
                   {plan.features.map((feature, featureIndex) => (
                     <li key={featureIndex} className="flex items-start">
-                      <Check className="w-5 h-5 text-emerald-500 mt-0.5 mr-3 flex-shrink-0" />
-                      <span className="text-gray-700 font-sans">{feature}</span>
+                      <Check className={`w-5 h-5 mt-0.5 mr-3 flex-shrink-0 ${isDisabled ? 'text-gray-400' : 'text-emerald-500'}`} />
+                      <span className={`${isDisabled ? 'text-gray-500' : 'text-gray-700'} font-sans`}>{feature}</span>
                     </li>
                   ))}
                 </ul>
                 
-                <Link 
-                  to="/signup"
-                  className={`block w-full py-4 rounded-lg font-semibold text-lg transition-all duration-200 text-center ${
-                    isPopular
-                      ? 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg hover:shadow-xl'
-                      : 'bg-gray-900 hover:bg-gray-800 text-white'
-                  }`}
-                >
-                  Get Started
-                </Link>
+                {isDisabled ? (
+                  <div className="w-full py-4 rounded-lg font-semibold text-lg text-center bg-gray-200 text-gray-500 cursor-not-allowed">
+                    Coming Soon
+                  </div>
+                ) : (
+                  <Link 
+                    to="/signup"
+                    className={`block w-full py-4 rounded-lg font-semibold text-lg transition-all duration-200 text-center ${
+                      isPopular
+                        ? 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg hover:shadow-xl'
+                        : 'bg-gray-900 hover:bg-gray-800 text-white'
+                    }`}
+                  >
+                    Get Started
+                  </Link>
+                )}
               </div>
             );
           })}
@@ -107,10 +134,11 @@ export default function PricingPage() {
         
         <div className="text-center mt-12">
           <p className="text-gray-600 mb-4 font-sans">
-            All plans include a 7-day free trial • Choose your plan after creating your account
+            7-day free trial on Standard plan • Pro features coming soon • Choose your plan after creating your account
           </p>
           <div className="flex items-center justify-center space-x-8 text-sm text-gray-500 font-sans">
             <span>✓ Cancel anytime</span>
+            <span>✓ No setup fees</span>
           </div>
         </div>
       </div>

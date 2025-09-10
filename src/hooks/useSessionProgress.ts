@@ -278,7 +278,7 @@ export function useSessionProgress({ checklistId, sessionToken }: UseSessionProg
           table: 'customer_sessions',
           filter: `checklist_id=eq.${checklistId}`,
         },
-        (payload) => {
+        (payload: any) => {
           if (payload.eventType === 'UPDATE' || payload.eventType === 'INSERT') {
             const updatedSession = payload.new as CustomerSession;
             
