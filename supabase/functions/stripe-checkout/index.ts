@@ -4,6 +4,15 @@ import { createClient } from 'npm:@supabase/supabase-js@2.49.1';
 
 const supabase = createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '');
 const stripeSecret = Deno.env.get('STRIPE_SECRET_KEY')!;
+
+// Debug: Check what Stripe key we're using
+console.log('=== STRIPE EDGE FUNCTION DEBUG ===');
+console.log('Stripe secret key prefix:', stripeSecret ? stripeSecret.substring(0, 7) : 'MISSING');
+console.log('Is live mode key:', stripeSecret?.startsWith('sk_live_'));
+console.log('Is test mode key:', stripeSecret?.startsWith('sk_test_'));
+console.log('Supabase URL:', Deno.env.get('SUPABASE_URL'));
+console.log('=== END STRIPE DEBUG ===');
+
 const stripe = new Stripe(stripeSecret, {
   appInfo: {
     name: 'Bolt Integration',
@@ -44,6 +53,12 @@ Deno.serve(async (req) => {
     }
 
     const { price_id, success_url, cancel_url, mode } = await req.json();
+
+    console.log('=== CHECKOUT REQUEST DEBUG ===');
+    console.log('Received price_id:', price_id);
+    console.log('Mode:', mode);
+    console.log('Using Stripe key type:', stripeSecret?.startsWith('sk_live_') ? 'LIVE' : 'TEST');
+    console.log('=== END REQUEST DEBUG ===');
 
     const error = validateParameters(
       { price_id, success_url, cancel_url, mode },
