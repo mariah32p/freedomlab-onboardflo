@@ -1,29 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useSubscription } from '../hooks/useSubscription';
-import { useNavigate } from 'react-router-dom';
 import { useChecklists } from '../hooks/useChecklists';
 import { useCustomerSessions } from '../hooks/useCustomerSessions';
 import { useFeatureGating } from '../hooks/useFeatureGating';
-import UpgradePrompt from '../components/UpgradePrompt';
-import { useFeatureGating } from '../hooks/useFeatureGating';
-import UpgradePrompt from '../components/UpgradePrompt';
 import PaymentBanner from '../components/PaymentBanner';
 import TrialBanner from '../components/TrialBanner';
 import { Checklist } from '../types/checklist';
-import { 
-  Plus, 
-  Edit, 
-  Trash2, 
-  ExternalLink, 
-  Copy, 
-  Check, 
-  Eye,
+import {
+  Plus,
+  Edit,
+  Trash2,
   Globe,
   Lock,
   Calendar,
-  Users,
-  Link as LinkIcon
 } from 'lucide-react';
 
 export default function ChecklistsPage() {
@@ -32,23 +23,12 @@ export default function ChecklistsPage() {
   const { checklists, loading, error, deleteChecklist } = useChecklists();
   const { createPendingSubmission } = useCustomerSessions();
   const featureAccess = useFeatureGating(checklists.length);
-  const featureAccess = useFeatureGating(checklists.length);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [creatingSessionId, setCreatingSessionId] = useState<string | null>(null);
   const accessStatus = getAccessStatus();
   const navigate = useNavigate();
 
-  const handleCreateChecklist = () => {
-    if (featureAccess.canCreateMoreChecklists) {
-      navigate('/checklists/create');
-    }
-  };
-  const handleCreateChecklist = () => {
-    if (featureAccess.canCreateMoreChecklists) {
-      navigate('/checklists/create');
-    }
-  };
   // Redirect to dashboard if no active subscription
   useEffect(() => {
     if (!accessStatus.hasAccess || accessStatus.shouldRedirectToGetStarted) {
@@ -56,13 +36,22 @@ export default function ChecklistsPage() {
     }
   }, [accessStatus, navigate]);
 
+  const handleCreateChecklist = () => {
+    if (featureAccess.canCreateMoreChecklists) {
+      navigate('/checklists/create');
+    } else {
+      // Optional: a more user-friendly way to handle this would be a modal.
+      alert("You've reached the maximum number of checklists for your plan. Please upgrade to create more.");
+    }
+  };
+
   const handleDeleteChecklist = async (id: string) => {
     if (!confirm('Are you sure you want to delete this checklist? This will also delete all customer sessions and cannot be undone.')) {
       return;
     }
     
     setDeletingId(id);
-    const success = await deleteChecklist(id);
+    await deleteChecklist(id);
     setDeletingId(null);
   };
 
@@ -120,7 +109,7 @@ export default function ChecklistsPage() {
             </p>
           </div>
           <button
-            onClick={() => navigate('/checklists/create')}
+            onClick={handleCreateChecklist}
             className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center font-sans"
           >
             <Plus className="w-5 h-5 mr-2" />
@@ -145,7 +134,7 @@ export default function ChecklistsPage() {
               Build a step-by-step onboarding experience that guides your customers to success
             </p>
             <button
-              onClick={() => navigate('/checklists/create')}
+              onClick={handleCreateChecklist}
               className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors font-sans"
             >
               Create Checklist
