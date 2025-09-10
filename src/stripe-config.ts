@@ -1,18 +1,26 @@
-// Debug environment variables
-console.log('=== STRIPE CONFIGURATION DEBUG ===');
-console.log('VITE_STRIPE_STANDARD_PRICE_ID:', import.meta.env.VITE_STRIPE_STANDARD_PRICE_ID);
-console.log('VITE_STRIPE_PRO_PRICE_ID:', import.meta.env.VITE_STRIPE_PRO_PRICE_ID);
-console.log('VITE_STRIPE_CUSTOMER_PORTAL:', import.meta.env.VITE_STRIPE_CUSTOMER_PORTAL);
-console.log('VITE_SUPABASE_URL:', import.meta.env.VITE_SUPABASE_URL);
-console.log('VITE_SUPABASE_ANON_KEY:', import.meta.env.VITE_SUPABASE_ANON_KEY ? '[SET]' : '[MISSING]');
+// Get Stripe price IDs from environment variables with test mode fallbacks
+const STANDARD_PRICE_ID = import.meta.env.VITE_STRIPE_STANDARD_PRICE_ID || 'price_test_standard_fallback';
+const PRO_PRICE_ID = import.meta.env.VITE_STRIPE_PRO_PRICE_ID || 'price_test_pro_fallback';
+
+// Validate that we have proper test mode price IDs (should start with price_test_ for test mode)
+const isTestMode = STANDARD_PRICE_ID.startsWith('price_test_') || PRO_PRICE_ID.startsWith('price_test_');
+const isLiveMode = STANDARD_PRICE_ID.startsWith('price_1') || PRO_PRICE_ID.startsWith('price_1');
+
+if (isLiveMode && !isTestMode) {
+  console.warn('⚠️  WARNING: Using live mode price IDs with test environment');
+  console.warn('Please update your .env file with test mode price IDs:');
+  console.warn('VITE_STRIPE_STANDARD_PRICE_ID=price_test_...');
+  console.warn('VITE_STRIPE_PRO_PRICE_ID=price_test_...');
+}
 
 export const stripeProducts = [
   {
-    priceId: import.meta.env.VITE_STRIPE_STANDARD_PRICE_ID,
+    priceId: STANDARD_PRICE_ID,
     name: "Standard",
     description: "Perfect for small teams getting started",
     price: 29,
     mode: "subscription",
+    disabled: STANDARD_PRICE_ID === 'price_test_standard_fallback',
     features: [
       "Up to 3 active checklists",
       "Up to 100 customers tracked per month",
@@ -23,12 +31,12 @@ export const stripeProducts = [
     ],
   },
   {
-    priceId: import.meta.env.VITE_STRIPE_PRO_PRICE_ID,
+    priceId: PRO_PRICE_ID,
     name: "Pro",
     description: "For SaaS companies, larger agencies",
     price: 49,
     mode: "subscription",
-    disabled: true,
+    disabled: true, // Keep Pro disabled as it's coming soon
     comingSoon: true,
     features: [
       "Everything in Basic, plus:",
@@ -39,17 +47,3 @@ export const stripeProducts = [
     ],
   },
 ];
-
-// Debug the final products array
-console.log('=== STRIPE PRODUCTS ARRAY ===');
-console.log('stripeProducts:', stripeProducts);
-stripeProducts.forEach((product, index) => {
-  console.log(`Product ${index + 1}:`, {
-    name: product.name,
-    priceId: product.priceId,
-    price: product.price,
-    disabled: product.disabled,
-    comingSoon: product.comingSoon
-  });
-});
-console.log('=== END STRIPE DEBUG ===');
