@@ -281,7 +281,7 @@ export default function SubmissionsPage() {
       if (error) throw error;
 
       // Update selected session
-      setSelectedSession(prev => ({
+      setSelectedSession((prev: any) => ({
         ...prev,
         link_name: editFormData.link_name.trim(),
         session_description: editFormData.session_description.trim(),
@@ -316,23 +316,25 @@ export default function SubmissionsPage() {
     setSendingEmail(true);
     setEmailSendingType(type);
     
+    // Parse emails from the session_emails field
+    const emailList = selectedSession.session_emails
+      .split(/[,\n]/)
+      .map((email: string) => email.trim())
+      .filter((email: string) => email.length > 0);
+    
+    if (emailList.length === 0) {
+      showWarning('No Recipients', 'Please add email recipients to this session first.');
+      setSendingEmail(false);
+      setEmailSendingType(null);
+      return;
+    }
+    
     try {
       // Get current session for authentication
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       
       if (sessionError || !session) {
         showError('Authentication Error', 'Please sign in again to send emails.');
-        return;
-      }
-      
-      // Parse emails from the session_emails field
-      const emailList = selectedSession.session_emails
-        .split(/[,\n]/)
-        .map((email: string) => email.trim())
-        .filter((email: string) => email.length > 0);
-      
-      if (emailList.length === 0) {
-        showWarning('No Recipients', 'Please add email recipients to this session first.');
         return;
       }
       
@@ -391,7 +393,7 @@ export default function SubmissionsPage() {
         });
 
       // Update local state
-      setSelectedSession(prev => prev ? {
+      setSelectedSession((prev: any) => prev ? {
         ...prev,
         [updateField]: new Date().toISOString(),
         last_email_type: type,
