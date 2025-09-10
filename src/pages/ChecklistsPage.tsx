@@ -4,6 +4,8 @@ import { useSubscription } from '../hooks/useSubscription';
 import { useNavigate } from 'react-router-dom';
 import { useChecklists } from '../hooks/useChecklists';
 import { useCustomerSessions } from '../hooks/useCustomerSessions';
+import { useFeatureGating } from '../hooks/useFeatureGating';
+import UpgradePrompt from '../components/UpgradePrompt';
 import PaymentBanner from '../components/PaymentBanner';
 import TrialBanner from '../components/TrialBanner';
 import { Checklist } from '../types/checklist';
@@ -27,12 +29,17 @@ export default function ChecklistsPage() {
   const { subscription, getAccessStatus } = useSubscription();
   const { checklists, loading, error, deleteChecklist } = useChecklists();
   const { createPendingSubmission } = useCustomerSessions();
+  const featureAccess = useFeatureGating(checklists.length);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [creatingSessionId, setCreatingSessionId] = useState<string | null>(null);
   const accessStatus = getAccessStatus();
   const navigate = useNavigate();
 
+  const handleCreateChecklist = () => {
+    if (featureAccess.canCreateMoreChecklists) {
+      navigate('/checklists/create');
+    }
   // Redirect to dashboard if no active subscription
   useEffect(() => {
     if (!accessStatus.hasAccess || accessStatus.shouldRedirectToGetStarted) {
