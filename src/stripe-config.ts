@@ -1,25 +1,15 @@
-// Get Stripe price IDs from environment variables with test mode fallbacks
-const STANDARD_PRICE_ID = import.meta.env.VITE_STRIPE_STANDARD_PRICE_ID || 'price_test_standard_fallback';
-const PRO_PRICE_ID = import.meta.env.VITE_STRIPE_PRO_PRICE_ID || 'price_test_pro_fallback';
+// Temporarily use test mode price IDs since Supabase has test mode keys
+// TODO: Switch back to live mode once Supabase environment variables are updated
+const STANDARD_PRICE_ID = 'price_1QdVGSDn6VTzl81bJVQzpQoL'; // Test mode price ID
+const PRO_PRICE_ID = 'price_1QdVGtDn6VTzl81bwxQzpQoM'; // Test mode price ID (placeholder)
 
-// Validate that we have proper price IDs
-const isTestMode = STANDARD_PRICE_ID.startsWith('price_test_');
-const isLiveMode = STANDARD_PRICE_ID.startsWith('price_1') || PRO_PRICE_ID.startsWith('price_1');
-const isFallbackMode = STANDARD_PRICE_ID.includes('fallback') || PRO_PRICE_ID.includes('fallback');
-
-// Log current mode
-if (isFallbackMode) {
-  console.warn('⚠️  WARNING: Using fallback price IDs - Stripe not configured');
-  console.warn('Please set your Stripe price IDs in environment variables');
-} else if (isLiveMode) {
-  console.info('✅ LIVE MODE: Using live Stripe price IDs');
-  console.info('Make sure your Supabase Edge Functions have live mode Stripe keys:');
-  console.info('- STRIPE_SECRET_KEY=sk_live_...');
-  console.info('- STRIPE_WEBHOOK_SECRET=whsec_...');
-} else if (isTestMode) {
-  console.info('🧪 TEST MODE: Using test Stripe price IDs');
-  console.info('Make sure your Supabase Edge Functions have test mode Stripe keys');
-}
+// Currently using test mode to match Supabase test keys
+console.info('🧪 TEST MODE: Using test Stripe price IDs to match Supabase test keys');
+console.info('To switch to live mode:');
+console.info('1. Update Supabase Edge Function environment variables:');
+console.info('   - STRIPE_SECRET_KEY=sk_live_...');
+console.info('   - STRIPE_WEBHOOK_SECRET=whsec_...');
+console.info('2. Update price IDs in stripe-config.ts to live mode IDs');
 
 export const stripeProducts = [
   {
@@ -28,7 +18,7 @@ export const stripeProducts = [
     description: "Perfect for small teams getting started",
     price: 29,
     mode: "subscription",
-    disabled: isFallbackMode,
+    disabled: false,
     features: [
       "Up to 3 active checklists",
       "Up to 100 customers tracked per month",
