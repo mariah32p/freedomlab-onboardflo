@@ -30,8 +30,6 @@ export default function ChecklistsPage() {
   const { checklists, loading, error, deleteChecklist } = useChecklists();
   const { createPendingSubmission } = useCustomerSessions();
   const featureAccess = useFeatureGating(checklists.length);
-  const featureAccess = useFeatureGating(checklists.length);
-  const featureAccess = useFeatureGating(checklists.length);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [creatingSessionId, setCreatingSessionId] = useState<string | null>(null);
