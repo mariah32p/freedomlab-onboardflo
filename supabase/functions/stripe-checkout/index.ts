@@ -5,19 +5,6 @@ import { createClient } from 'npm:@supabase/supabase-js@2.49.1';
 const supabase = createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '');
 const stripeSecret = Deno.env.get('STRIPE_SECRET_KEY')!;
 
-// Debug: Check ALL environment variables
-console.log('=== COMPREHENSIVE STRIPE DEBUG ===');
-console.log('STRIPE_SECRET_KEY exists:', !!Deno.env.get('STRIPE_SECRET_KEY'));
-console.log('STRIPE_SECRET_KEY prefix:', stripeSecret ? stripeSecret.substring(0, 12) : 'MISSING');
-console.log('STRIPE_SECRET_KEY length:', stripeSecret ? stripeSecret.length : 0);
-console.log('Is live mode key:', stripeSecret?.startsWith('sk_live_'));
-console.log('Is test mode key:', stripeSecret?.startsWith('sk_test_'));
-console.log('STRIPE_WEBHOOK_SECRET exists:', !!Deno.env.get('STRIPE_WEBHOOK_SECRET'));
-console.log('STRIPE_WEBHOOK_SECRET prefix:', Deno.env.get('STRIPE_WEBHOOK_SECRET')?.substring(0, 8) || 'MISSING');
-console.log('All Stripe env vars:', Object.keys(Deno.env.toObject()).filter(key => key.includes('STRIPE')));
-console.log('Supabase URL:', Deno.env.get('SUPABASE_URL'));
-console.log('=== END COMPREHENSIVE DEBUG ===');
-
 const stripe = new Stripe(stripeSecret, {
   appInfo: {
     name: 'Bolt Integration',

@@ -1,15 +1,11 @@
-// Temporarily use test mode price IDs since Supabase has test mode keys
-// TODO: Switch back to live mode once Supabase environment variables are updated
-const STANDARD_PRICE_ID = 'price_1QdVGSDn6VTzl81bJVQzpQoL'; // Test mode price ID
-const PRO_PRICE_ID = 'price_1QdVGtDn6VTzl81bwxQzpQoM'; // Test mode price ID (placeholder)
+// Live mode price IDs
+const STANDARD_PRICE_ID = 'price_1RzrMYDn6VTzl81bogCwhX1U'; // Live mode Standard plan
+const PRO_PRICE_ID = 'price_1RzrMYDn6VTzl81bTSgcl0ZA'; // Live mode Pro plan
 
-// Currently using test mode to match Supabase test keys
-console.info('🧪 TEST MODE: Using test Stripe price IDs to match Supabase test keys');
-console.info('To switch to live mode:');
-console.info('1. Update Supabase Edge Function environment variables:');
-console.info('   - STRIPE_SECRET_KEY=sk_live_...');
-console.info('   - STRIPE_WEBHOOK_SECRET=whsec_...');
-console.info('2. Update price IDs in stripe-config.ts to live mode IDs');
+console.info('✅ LIVE MODE: Using live Stripe price IDs');
+console.info('Make sure your Supabase Edge Functions have live mode Stripe keys:');
+console.info('- STRIPE_SECRET_KEY=sk_live_...');
+console.info('- STRIPE_WEBHOOK_SECRET=whsec_...');
 
 export const stripeProducts = [
   {

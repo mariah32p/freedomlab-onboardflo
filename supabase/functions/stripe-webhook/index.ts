@@ -5,14 +5,6 @@ import { createClient } from 'npm:@supabase/supabase-js@2.49.1';
 const stripeSecret = Deno.env.get('STRIPE_SECRET_KEY')!;
 const stripeWebhookSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET')!;
 
-// Debug webhook environment
-console.log('=== WEBHOOK STRIPE DEBUG ===');
-console.log('STRIPE_SECRET_KEY exists:', !!Deno.env.get('STRIPE_SECRET_KEY'));
-console.log('STRIPE_SECRET_KEY prefix:', Deno.env.get('STRIPE_SECRET_KEY')?.substring(0, 12) || 'MISSING');
-console.log('STRIPE_WEBHOOK_SECRET exists:', !!Deno.env.get('STRIPE_WEBHOOK_SECRET'));
-console.log('STRIPE_WEBHOOK_SECRET prefix:', Deno.env.get('STRIPE_WEBHOOK_SECRET')?.substring(0, 8) || 'MISSING');
-console.log('=== END WEBHOOK DEBUG ===');
-
 const stripe = new Stripe(stripeSecret, {
   appInfo: {
     name: 'Bolt Integration',
