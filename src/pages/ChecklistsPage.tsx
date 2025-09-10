@@ -46,12 +46,17 @@ export default function ChecklistsPage() {
     if (featureAccess.canCreateMoreChecklists) {
       navigate('/checklists/create');
     }
+  };
   const handleCreateChecklist = () => {
     if (featureAccess.canCreateMoreChecklists) {
       navigate('/checklists/create');
     }
+  };
   const handleCreateChecklist = () => {
     if (featureAccess.canCreateMoreChecklists) {
+      navigate('/checklists/create');
+    }
+  };
   // Redirect to dashboard if no active subscription
   useEffect(() => {
     if (!accessStatus.hasAccess || accessStatus.shouldRedirectToGetStarted) {
