@@ -6,7 +6,6 @@ import { useChecklists } from '../hooks/useChecklists';
 import { useCustomerSessions } from '../hooks/useCustomerSessions';
 import { useFeatureGating } from '../hooks/useFeatureGating';
 import UpgradePrompt from '../components/UpgradePrompt';
-import { useFeatureGating } from '../hooks/useFeatureGating';
 import PaymentBanner from '../components/PaymentBanner';
 import TrialBanner from '../components/TrialBanner';
 import { Checklist } from '../types/checklist';
