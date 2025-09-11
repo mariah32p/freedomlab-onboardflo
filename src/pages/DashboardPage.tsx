@@ -30,10 +30,6 @@ export default function ChecklistsPage() {
   const accessStatus = getAccessStatus();
   const navigate = useNavigate();
 
-  const handleCreateChecklist = () => {
-    if (featureAccess.canCreateMoreChecklists) {
-      navigate('/checklists/create');
-    }
   // Redirect to dashboard if no active subscription
   useEffect(() => {
     if (!accessStatus.hasAccess || accessStatus.shouldRedirectToGetStarted) {
@@ -42,7 +38,9 @@ export default function ChecklistsPage() {
   }, [accessStatus, navigate]);
 
   const handleCreateChecklist = () => {
-    navigate('/checklists/create');
+    if (featureAccess.canCreateMoreChecklists) {
+      navigate('/checklists/create');
+    }
   };
 
   const handleDeleteChecklist = async (id: string) => {
