@@ -34,20 +34,16 @@ export default function ChecklistsPage() {
     if (featureAccess.canCreateMoreChecklists) {
       navigate('/checklists/create');
     }
-  };
-
   // Redirect to dashboard if no active subscription
   useEffect(() => {
-    if (!user) {
-      navigate('/signin');
-      return;
-    }
-    
-    if (accessStatus.shouldRedirectToGetStarted) {
+    if (!accessStatus.hasAccess || accessStatus.shouldRedirectToGetStarted) {
       navigate('/dashboard');
-      return;
     }
   }, [accessStatus, navigate]);
+
+  const handleCreateChecklist = () => {
+    navigate('/checklists/create');
+  };
 
   const handleDeleteChecklist = async (id: string) => {
     if (!confirm('Are you sure you want to delete this checklist? This will also delete all customer sessions and cannot be undone.')) {
