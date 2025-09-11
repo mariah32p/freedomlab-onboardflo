@@ -34,6 +34,8 @@ export default function ChecklistsPage() {
     if (featureAccess.canCreateMoreChecklists) {
       navigate('/checklists/create');
     }
+  };
+
   // Redirect to dashboard if no active subscription
   useEffect(() => {
     if (!user) {
@@ -46,10 +48,6 @@ export default function ChecklistsPage() {
       return;
     }
   }, [accessStatus, navigate]);
-
-  const handleCreateChecklist = () => {
-    navigate('/checklists/create');
-  };
 
   const handleDeleteChecklist = async (id: string) => {
     if (!confirm('Are you sure you want to delete this checklist? This will also delete all customer sessions and cannot be undone.')) {
