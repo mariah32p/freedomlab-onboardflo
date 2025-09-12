@@ -10,12 +10,29 @@ export default function Header() {
   const { subscription, getAccessStatus } = useSubscription();
   const navigate = useNavigate();
   const location = useLocation();
+  const menuRef = React.useRef<HTMLDivElement>(null);
 
   // Only show full navigation for users with active subscriptions
   const accessStatus = getAccessStatus();
   const hasActiveSubscription = accessStatus.hasAccess;
   const showUserMenu = user && hasActiveSubscription && location.pathname !== '/reset-password';
 
+  // Close menu when clicking outside
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    if (isMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isMenuOpen]);
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -42,7 +59,7 @@ export default function Header() {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 bg-white shadow-sm border-b border-gray-100 z-50" style={{ minHeight: '60px' }}>
+    <header ref={menuRef} className="fixed top-0 left-0 right-0 bg-white shadow-sm border-b border-gray-100 z-50" style={{ minHeight: '60px' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
