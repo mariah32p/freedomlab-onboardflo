@@ -36,15 +36,10 @@ export const stripeProducts: StripeProduct[] = [
     priceId: 'price_1RzrMYDn6VTzl81bTSgcl0ZA',
     mode: 'subscription',
     features: [
-      'Everything in Standard',
       'Advanced analytics & insights dashboard',
       'Multi-team collaboration & permissions',
       'White-label branding & custom domains',
-      'API access & webhook integrations',
-      'Advanced automation & workflows',
-      'Priority support & dedicated success manager',
-      'Custom integrations & enterprise features',
-      'Advanced security & compliance tools'
+      'API access & webhook integrations'
     ],
     disabled: true,
     comingSoon: true

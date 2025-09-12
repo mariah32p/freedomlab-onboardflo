@@ -18,9 +18,6 @@ const planFeatures = {
     'Password-protected checklists'
   ],
   'Pro': [
-    'Unlimited checklists',
-    'Unlimited customer submissions',
-    'Everything in Standard',
     'Advanced analytics & insights dashboard',
     'Multi-team collaboration & permissions',
     'White-label branding & custom domains',
