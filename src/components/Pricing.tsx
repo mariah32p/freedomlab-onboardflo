@@ -17,6 +17,7 @@ const planFeatures = {
     'Advanced branding (logo, colors, fonts)',
     'Password-protected checklists'
   ],
+  'Pro': [
     'Advanced analytics & insights dashboard',
     'Multi-team collaboration & permissions',
     'White-label branding & custom domains',
