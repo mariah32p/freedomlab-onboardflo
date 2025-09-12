@@ -26,11 +26,23 @@ import {
 
 export default function DashboardPage() {
   const { user } = useAuth();
-  const { subscription, getAccessStatus } = useSubscription();
+  const { subscription, loading: subscriptionLoading, getAccessStatus } = useSubscription();
   const { createCheckoutSession, loading: stripeLoading, error: stripeError } = useStripe();
   const urlParams = new URLSearchParams(window.location.search);
   const isSuccess = urlParams.get('success') === 'true';
   const accessStatus = getAccessStatus();
+
+  // Show loading while checking subscription status
+  if (subscriptionLoading) {
+    return (
+      <div className="pt-20 min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
+          <p className="text-gray-600 font-sans">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
   const handleSelectPlan = async (priceId: string) => {
     try {
