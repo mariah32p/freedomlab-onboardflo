@@ -65,56 +65,76 @@ export default function DashboardPage() {
       )}
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {stripeProducts
-          .filter(plan => !plan.disabled)
-          .map((plan, index) => {
+        {stripeProducts.map((plan, index) => {
             const Icon = plan.name === 'Standard' ? Zap : Building;
             return (
               <div 
                 key={index}
-                className="relative bg-white rounded-2xl p-8 border-2 border-emerald-500 ring-4 ring-emerald-500/20 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                className={`relative bg-white rounded-2xl p-8 border-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 ${
+                  plan.disabled 
+                    ? 'opacity-60 border-gray-200' 
+                    : 'border-emerald-500 ring-4 ring-emerald-500/20'
+                }`}
               >
-                {plan.comingSoon && (
+                {plan.comingSoon && !plan.disabled && (
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                     <div className="bg-orange-500 text-white px-4 py-2 rounded-full text-sm font-medium font-sans">
                       Coming Soon
                     </div>
                   </div>
                 )}
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                  <div className="bg-emerald-500 text-white px-4 py-2 rounded-full text-sm font-medium font-sans">
-                    7-Day Free Trial
+                {!plan.comingSoon && !plan.disabled && (
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                    <div className="bg-emerald-500 text-white px-4 py-2 rounded-full text-sm font-medium font-sans">
+                      7-Day Free Trial
+                    </div>
                   </div>
-                </div>
+                )}
                 
                 <div className="text-center mb-8">
-                  <div className="w-12 h-12 rounded-xl bg-emerald-500 flex items-center justify-center mx-auto mb-4">
-                    <Icon className="w-6 h-6 text-white" />
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-4 ${
+                    plan.disabled ? 'bg-gray-100' : 'bg-emerald-500'
+                  }`}>
+                    <Icon className={`w-6 h-6 ${plan.disabled ? 'text-gray-400' : 'text-white'}`} />
                   </div>
                   <h3 className="text-2xl font-bold text-gray-900 mb-2 font-sans">{plan.name}</h3>
                   <p className="text-gray-600 mb-4 font-sans">{plan.description}</p>
                   <div className="mb-6">
-                    <span className="text-5xl font-bold text-gray-900 font-sans">${plan.price}</span>
-                    <span className="text-gray-600 ml-2 font-sans">/month</span>
+                    {plan.disabled ? (
+                      <div className="text-lg font-medium text-gray-500 font-sans">
+                        Available Soon
+                      </div>
+                    ) : (
+                      <div>
+                        <span className="text-5xl font-bold text-gray-900 font-sans">${plan.price}</span>
+                        <span className="text-gray-600 ml-2 font-sans">/month</span>
+                      </div>
+                    )}
                   </div>
                 </div>
                 
                 <ul className="space-y-4 mb-8">
                   {plan.features.map((feature, featureIndex) => (
                     <li key={featureIndex} className="flex items-start">
-                      <Check className="w-5 h-5 text-emerald-500 mt-0.5 mr-3 flex-shrink-0" />
-                      <span className="text-gray-700 font-sans">{feature}</span>
+                      <Check className={`w-5 h-5 mt-0.5 mr-3 flex-shrink-0 ${plan.disabled ? 'text-gray-400' : 'text-emerald-500'}`} />
+                      <span className={`font-sans ${plan.disabled ? 'text-gray-500' : 'text-gray-700'}`}>{feature}</span>
                     </li>
                   ))}
                 </ul>
                 
-                <button 
-                  onClick={() => handleSelectPlan(plan.priceId)}
-                  disabled={stripeLoading}
-                  className="w-full py-4 rounded-lg font-semibold text-lg bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg hover:shadow-xl transition-all duration-200 font-sans disabled:opacity-50"
-                >
-                  {stripeLoading ? 'Loading...' : 'Start 7-Day Free Trial'}
-                </button>
+                {plan.disabled ? (
+                  <div className="w-full py-4 rounded-lg font-semibold text-lg text-center bg-gray-200 text-gray-500 cursor-not-allowed">
+                    Coming Soon
+                  </div>
+                ) : (
+                  <button 
+                    onClick={() => handleSelectPlan(plan.priceId)}
+                    disabled={stripeLoading}
+                    className="w-full py-4 rounded-lg font-semibold text-lg bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg hover:shadow-xl transition-all duration-200 font-sans disabled:opacity-50"
+                  >
+                    {stripeLoading ? 'Loading...' : 'Start 7-Day Free Trial'}
+                  </button>
+                )}
               </div>
             );
           })}
@@ -177,17 +197,23 @@ export default function DashboardPage() {
                   Select a plan to reactivate your OnboardFlo account and regain access to your checklists.
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {stripeProducts
-                    .filter(plan => !plan.disabled)
-                    .map((plan, index) => (
+                  {stripeProducts.map((plan, index) => (
                       <button
                         key={index}
                         onClick={() => handleSelectPlan(plan.priceId)}
-                        disabled={stripeLoading}
-                        className="p-6 border-2 border-gray-200 rounded-xl hover:border-emerald-500 hover:bg-emerald-50 transition-all text-left disabled:opacity-50"
+                        disabled={stripeLoading || plan.disabled}
+                        className={`p-6 border-2 rounded-xl transition-all text-left disabled:opacity-50 ${
+                          plan.disabled 
+                            ? 'border-gray-200 bg-gray-50 cursor-not-allowed' 
+                            : 'border-gray-200 hover:border-emerald-500 hover:bg-emerald-50'
+                        }`}
                       >
                         <h4 className="text-lg font-bold text-gray-900 mb-2 font-sans">{plan.name}</h4>
-                        <p className="text-3xl font-bold text-gray-900 mb-2 font-sans">${plan.price}<span className="text-base text-gray-600">/mo</span></p>
+                        {plan.disabled ? (
+                          <p className="text-lg font-medium text-gray-500 mb-2 font-sans">Available Soon</p>
+                        ) : (
+                          <p className="text-3xl font-bold text-gray-900 mb-2 font-sans">${plan.price}<span className="text-base text-gray-600">/mo</span></p>
+                        )}
                         <p className="text-sm text-gray-600 font-sans">{plan.description}</p>
                       </button>
                     ))}
