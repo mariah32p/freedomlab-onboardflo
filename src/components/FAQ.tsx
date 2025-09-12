@@ -8,7 +8,7 @@ const faqs = [
   },
   {
     question: 'Do my customers need to create accounts to use the checklists?',
-    answer: 'No! Your customers simply click a link you send them and can complete the checklist immediately. No signups or downloads required on their end. Note: Pro users can optionally add password protection to their checklists for extra security.'
+    answer: 'No! Your customers simply click a link you send them and can complete the checklist immediately. No signups or downloads required on their end. You can optionally add password protection to individual sessions for extra security.'
   },
   {
     question: 'Can I customize the look and feel to match my brand?',
