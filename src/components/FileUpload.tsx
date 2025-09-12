@@ -81,34 +81,23 @@ export default function FileUpload({
               uploadedAt: new Date().toISOString()
             });
           } else {
-            // If storage upload fails, fall back to filename tracking
-            console.warn('Storage upload failed, tracking filename only:', result.error);
-            newFiles.push({
-              name: file.name,
-              url: '', // No URL for filename-only tracking
-              path: '', // No path for filename-only tracking
-              size: file.size,
-              type: file.type,
-              uploadedAt: new Date().toISOString()
-            });
+            // If storage upload fails, show error and don't add file
+            setError(`Failed to upload "${file.name}": ${result.error || 'Upload failed'}`);
+            continue;
           }
         } catch (uploadError) {
-          console.warn('Upload error, falling back to filename tracking:', uploadError);
-          // Fall back to filename tracking
-          newFiles.push({
-            name: file.name,
-            url: '', // No URL for filename-only tracking
-            path: '', // No path for filename-only tracking
-            size: file.size,
-            type: file.type,
-            uploadedAt: new Date().toISOString()
-          });
+          console.error('Upload error:', uploadError);
+          setError(`Failed to upload "${file.name}": ${uploadError instanceof Error ? uploadError.message : 'Upload failed'}`);
+          continue;
         }
       }
 
       if (newFiles.length > 0) {
         const allFiles = multiple ? [...uploadedFiles, ...newFiles] : newFiles;
         onChange(JSON.stringify(allFiles));
+      } else if (files.length > 0) {
+        // If no files were successfully uploaded, show a general error
+        setError('No files were successfully uploaded. Please try again.');
       }
     } catch (err) {
       console.error('File upload error:', err);
@@ -248,25 +237,19 @@ export default function FileUpload({
                       {file.name}
                     </div>
                     <div className="text-xs text-gray-500 font-sans">
-                      {formatFileSize(file.size)} • {new Date(file.uploadedAt).toLocaleDateString()}
-                      {file.url ? (
-                        <span className="ml-2 text-emerald-600">✓ Uploaded</span>
-                      ) : (
-                        <span className="ml-2 text-blue-600">📎 Tracked</span>
-                      )}
+                      {formatFileSize(file.size)} • {new Date(file.uploadedAt).toLocaleDateString()} • 
+                      <span className="ml-1 text-emerald-600">✓ Uploaded</span>
                     </div>
                   </div>
                 </div>
                 <div className="flex items-center space-x-1">
-                  {file.url && (
-                    <button
-                      onClick={() => downloadFile(file)}
-                      className="p-1 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-100 rounded transition-colors"
-                      title="Download file"
-                    >
-                      <Download className="w-4 h-4" />
-                    </button>
-                  )}
+                  <button
+                    onClick={() => downloadFile(file)}
+                    className="p-1 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-100 rounded transition-colors"
+                    title="Download file"
+                  >
+                    <Download className="w-4 h-4" />
+                  </button>
                   {!disabled && (
                     <button
                       onClick={() => removeFile(index)}
