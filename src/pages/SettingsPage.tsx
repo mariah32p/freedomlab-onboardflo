@@ -5,12 +5,14 @@ import { useNavigate } from 'react-router-dom';
 import PaymentBanner from '../components/PaymentBanner';
 import TrialBanner from '../components/TrialBanner';
 import SettingsSkeleton from '../components/SettingsSkeleton';
+import { supabase } from '../lib/supabase';
 
 export default function SettingsPage() {
   const { user } = useAuth();
   // Use a single subscription hook instance to avoid inconsistent state
   const { subscription, loading, getAccessStatus } = useSubscription();
   const navigate = useNavigate();
+  const [portalLoading, setPortalLoading] = useState(false);
 
   const accessStatus = getAccessStatus();
 
@@ -21,12 +23,44 @@ export default function SettingsPage() {
     }
   }, [accessStatus, navigate, loading]);
 
-  const handleManageBilling = () => {
-    const portalUrl = import.meta.env.VITE_STRIPE_CUSTOMER_PORTAL;
-    if (portalUrl) {
-      window.open(portalUrl, '_blank', 'noopener,noreferrer');
-    } else {
-      console.error('VITE_STRIPE_CUSTOMER_PORTAL environment variable is not set');
+  const handleManageBilling = async () => {
+    if (!user || !subscription) return;
+    
+    setPortalLoading(true);
+    
+    try {
+      // Get current session for authentication
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError || !session) {
+        alert('Please sign in again to access billing portal');
+        return;
+      }
+      
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/stripe-portal`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          return_url: `${window.location.origin}/settings`
+        }),
+      });
+
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to create portal session');
+      }
+
+      // Open the portal in the same tab
+      window.location.href = data.url;
+    } catch (err) {
+      console.error('Error opening billing portal:', err);
+      alert('Failed to open billing portal. Please try again.');
+    } finally {
+      setPortalLoading(false);
     }
   };
 
@@ -91,9 +125,10 @@ export default function SettingsPage() {
                 </div>
                 <button 
                   onClick={handleManageBilling}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors font-sans"
+                  disabled={portalLoading}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors font-sans disabled:opacity-50"
                 >
-                  Manage Billing
+                  {portalLoading ? 'Loading...' : 'Manage Billing'}
                 </button>
               </div>
               <div className="text-sm text-gray-500 font-sans mt-2">
