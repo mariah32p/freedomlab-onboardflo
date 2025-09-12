@@ -154,21 +154,19 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
   // For subscription checkouts, verify this is for OnboardFlo
   if (session.mode === 'subscription') {
-    // Get the subscription to check the price ID
-    const subscriptions = await stripe.subscriptions.list({
-      customer: session.customer,
-      limit: 1,
-      status: 'all',
-    });
+    // Check the specific subscription created by this checkout session
+    if (!session.subscription || typeof session.subscription !== 'string') {
+      console.error('❌ No subscription ID in checkout session');
+      return;
+    }
 
-    if (subscriptions.data.length > 0) {
-      const subscription = subscriptions.data[0];
-      const priceId = subscription.items.data[0]?.price?.id;
-      
-      if (!priceId || !ONBOARDFLO_PRICE_IDS.includes(priceId)) {
-        console.log(`ℹ️ Ignoring checkout for different product. Price ID: ${priceId}`);
-        return;
-      }
+    // Get the specific subscription from this checkout
+    const subscription = await stripe.subscriptions.retrieve(session.subscription);
+    const priceId = subscription.items.data[0]?.price?.id;
+    
+    if (!priceId || !ONBOARDFLO_PRICE_IDS.includes(priceId)) {
+      console.log(`ℹ️ Ignoring checkout for different product. Price ID: ${priceId}`);
+      return;
     }
   }
 
