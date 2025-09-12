@@ -1,10 +1,15 @@
 import React from 'react';
-import { Clock, Settings } from 'lucide-react';
+import { Clock } from 'lucide-react';
 import { useSubscription } from '../hooks/useSubscription';
 import { Link } from 'react-router-dom';
 
 export default function TrialBanner() {
-  const { subscription, getTrialDaysRemaining } = useSubscription();
+  const { subscription, getTrialDaysRemaining, loading } = useSubscription();
+
+  // Don't render anything while loading to prevent flash
+  if (loading) {
+    return null;
+  }
 
   if (!subscription || subscription.status !== 'trialing') {
     return null;
@@ -16,7 +21,7 @@ export default function TrialBanner() {
     : 'Unknown';
 
   return (
-    <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
       <div className="flex items-center">
         <div className="flex-shrink-0">
           <Clock className="h-5 w-5 text-blue-400" />

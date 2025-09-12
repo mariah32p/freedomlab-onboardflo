@@ -3,7 +3,12 @@ import { AlertTriangle, CreditCard } from 'lucide-react';
 import { useSubscription } from '../hooks/useSubscription';
 
 export default function PaymentBanner() {
-  const { subscription, isInGracePeriod } = useSubscription();
+  const { subscription, isInGracePeriod, loading } = useSubscription();
+
+  // Don't render anything while loading to prevent flash
+  if (loading) {
+    return null;
+  }
 
   if (!subscription || subscription.status !== 'past_due' || !isInGracePeriod()) {
     return null;
@@ -20,7 +25,7 @@ export default function PaymentBanner() {
   };
 
   return (
-    <div className="bg-orange-50 border-l-4 border-orange-400 p-4 mb-6">
+    <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-6">
       <div className="flex items-center">
         <div className="flex-shrink-0">
           <AlertTriangle className="h-5 w-5 text-orange-400" />
