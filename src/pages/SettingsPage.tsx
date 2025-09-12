@@ -8,9 +8,9 @@ import SettingsSkeleton from '../components/SettingsSkeleton';
 
 export default function SettingsPage() {
   const { user } = useAuth();
-  const { subscription, loading } = useSubscription();
+  // Use a single subscription hook instance to avoid inconsistent state
+  const { subscription, loading, getAccessStatus } = useSubscription();
   const navigate = useNavigate();
-  const { getAccessStatus } = useSubscription();
 
   const accessStatus = getAccessStatus();
 
