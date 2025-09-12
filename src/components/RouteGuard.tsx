@@ -28,7 +28,7 @@ export default function RouteGuard({ children }: RouteGuardProps) {
       return;
     }
 
-    // If not signed in and trying to access protected route
+    // If not signed in and trying to access protected route  
     if (!user && !isPublicRoute && !isPublicChecklistRoute && location.pathname !== '/') {
       navigate('/signin');
       return;

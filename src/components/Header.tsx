@@ -13,7 +13,7 @@ export default function Header() {
 
   // Only show full navigation for users with active subscriptions
   const accessStatus = getAccessStatus();
-  const hasActiveSubscription = accessStatus.hasAccess && !accessStatus.shouldRedirectToGetStarted;
+  const hasActiveSubscription = accessStatus.hasAccess;
   const showUserMenu = user && hasActiveSubscription && location.pathname !== '/reset-password';
 
   const scrollToTop = () => {
