@@ -18,8 +18,8 @@ import {
 
 export default function ChecklistsPage() {
   const { user } = useAuth();
-  const { subscription, getAccessStatus } = useSubscription();
-  const { checklists, loading, error, deleteChecklist } = useChecklists();
+  const { loading, getAccessStatus } = useSubscription();
+  const { checklists, loading: checklistsLoading, error, deleteChecklist } = useChecklists();
   const { createPendingSubmission } = useCustomerSessions();
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -29,10 +29,10 @@ export default function ChecklistsPage() {
 
   // Redirect to dashboard if no active subscription
   useEffect(() => {
-    if (!accessStatus.hasAccess || accessStatus.shouldRedirectToGetStarted) {
+    if (!loading && (!accessStatus.hasAccess || accessStatus.shouldRedirectToGetStarted)) {
       navigate('/dashboard');
     }
-  }, [accessStatus, navigate]);
+  }, [loading, accessStatus, navigate]);
 
   const handleCreateChecklist = () => {
     navigate('/checklists/create');
@@ -73,7 +73,7 @@ export default function ChecklistsPage() {
     navigate('/submissions');
   };
 
-  if (loading) {
+  if (checklistsLoading) {
     return (
       <div className="pt-20 min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">

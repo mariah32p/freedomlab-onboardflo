@@ -37,10 +37,10 @@ const PRESET_COLORS = [
 
 export default function BrandingPage() {
   const { user } = useAuth();
-  const { getAccessStatus } = useSubscription();
+  const { loading, getAccessStatus } = useSubscription();
   const navigate = useNavigate();
   const [branding, setBranding] = useState<UserBranding | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [brandingLoading, setBrandingLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -57,10 +57,10 @@ export default function BrandingPage() {
 
   // Redirect to dashboard if no active subscription
   useEffect(() => {
-    if (!accessStatus.hasAccess || accessStatus.shouldRedirectToGetStarted) {
+    if (!loading && (!accessStatus.hasAccess || accessStatus.shouldRedirectToGetStarted)) {
       navigate('/dashboard');
     }
-  }, [accessStatus, navigate]);
+  }, [loading, accessStatus, navigate]);
 
   useEffect(() => {
     fetchBranding();
@@ -89,11 +89,11 @@ export default function BrandingPage() {
         setBusinessName(data.business_name || '');
       }
       
-      setLoading(false);
+      setBrandingLoading(false);
     } catch (error) {
       console.error('Error fetching branding:', error);
       setError('Failed to load branding settings');
-      setLoading(false);
+      setBrandingLoading(false);
     }
   };
 
@@ -186,7 +186,7 @@ export default function BrandingPage() {
     }
   };
 
-  if (loading) {
+  if (brandingLoading) {
     return (
       <div className="pt-20 min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
