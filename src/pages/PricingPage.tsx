@@ -17,7 +17,7 @@ export default function PricingPage() {
   const handleSubscribe = async (priceId: string) => {
     if (!user) {
       // Redirect to sign up if not authenticated
-      window.location.href = '/get-started';
+      window.location.href = '/signup';
       return;
     }
 

@@ -39,7 +39,7 @@ export default function SignUpPage() {
       if (authError) {
         setError(authError.message);
       } else {
-        navigate('/get-started');
+        navigate('/dashboard');
       }
     } finally {
       setLoading(false);
