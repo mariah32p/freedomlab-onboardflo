@@ -12,17 +12,19 @@ const planIcons = {
 // Updated feature lists with realistic limits
 const planFeatures = {
   'Standard': [
-    'Up to 3 active checklists',
-    'Up to 50 customer submissions per month',
-    'Basic branding (logo + colors)',
-    'Shareable customer links'
+    'Unlimited checklists',
+    'Unlimited customer submissions',
+    'Advanced branding (logo, colors, fonts)',
+    'Password-protected checklists'
   ],
   'Pro': [
     'Unlimited checklists',
     'Unlimited customer submissions',
-    'Advanced branding (logo, colors, fonts)',
-    'Password-protected checklists',
-    'Custom completion pages'
+    'Everything in Standard',
+    'Advanced analytics & insights dashboard',
+    'Multi-team collaboration & permissions',
+    'White-label branding & custom domains',
+    'API access & webhook integrations'
   ]
 };
 

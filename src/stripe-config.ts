@@ -12,14 +12,15 @@ export interface StripeProduct {
 export const stripeProducts: StripeProduct[] = [
   {
     name: 'Standard',
-    description: 'Perfect for growing businesses',
+    description: 'Everything you need to succeed',
     price: 29,
     priceId: 'price_1RzrMYDn6VTzl81bogCwhX1U',
     mode: 'subscription',
     features: [
       'Unlimited checklists',
       'Unlimited customer submissions',
-      'Complete branding customization',
+      'Advanced branding (logo, colors, fonts)',
+      'Password-protected checklists',
       'Shareable customer links',
       'Real-time progress tracking',
       'Email notifications',
@@ -30,19 +31,20 @@ export const stripeProducts: StripeProduct[] = [
   },
   {
     name: 'Pro',
-    description: 'Advanced features for enterprise teams',
+    description: 'Enterprise-grade power and control',
     price: 79,
     priceId: 'price_1RzrMYDn6VTzl81bTSgcl0ZA',
     mode: 'subscription',
     features: [
       'Everything in Standard',
-      'Advanced analytics & reporting',
-      'Team collaboration tools',
-      'API access & integrations',
-      'Priority support',
-      'Custom domain support',
-      'Advanced security features',
-      'Dedicated account manager'
+      'Advanced analytics & insights dashboard',
+      'Multi-team collaboration & permissions',
+      'White-label branding & custom domains',
+      'API access & webhook integrations',
+      'Advanced automation & workflows',
+      'Priority support & dedicated success manager',
+      'Custom integrations & enterprise features',
+      'Advanced security & compliance tools'
     ],
     disabled: true,
     comingSoon: true
