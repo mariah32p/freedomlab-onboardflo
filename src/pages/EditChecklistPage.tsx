@@ -44,12 +44,12 @@ export default function EditChecklistPage() {
   const navigate = useNavigate();
   const { checklistId } = useParams<{ checklistId: string }>();
   const { user } = useAuth();
-  const { subscription, getAccessStatus } = useSubscription();
+  const { loading, getAccessStatus } = useSubscription();
   const { checklists, updateChecklist } = useChecklists();
   const { steps: checklistSteps, createStep, updateStep, deleteStep, reorderSteps } = useChecklistSteps(checklistId || null);
   const accessStatus = getAccessStatus();
-  
-  const [loading, setLoading] = useState(false);
+
+  const [saving, setSaving] = useState(false);
   const [editingStepIndex, setEditingStepIndex] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -69,10 +69,10 @@ export default function EditChecklistPage() {
 
   // Redirect to dashboard if no active subscription
   useEffect(() => {
-    if (!accessStatus.hasAccess || accessStatus.shouldRedirectToGetStarted) {
+    if (!loading && (!accessStatus.hasAccess || accessStatus.shouldRedirectToGetStarted)) {
       navigate('/dashboard');
     }
-  }, [accessStatus, navigate]);
+  }, [loading, accessStatus, navigate]);
 
   useEffect(() => {
     if (!checklistId) {
@@ -197,7 +197,7 @@ export default function EditChecklistPage() {
       return;
     }
 
-    setLoading(true);
+    setSaving(true);
     setError(null);
     setSuccess(null);
 
@@ -212,7 +212,7 @@ export default function EditChecklistPage() {
         setError('Failed to update checklist');
       }
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
 
@@ -569,10 +569,10 @@ export default function EditChecklistPage() {
             </button>
             <button
               onClick={handleSave}
-              disabled={loading || !formData.title.trim()}
+              disabled={saving || !formData.title.trim()}
               className="bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-3 rounded-lg font-semibold transition-colors flex items-center disabled:opacity-50 font-sans"
             >
-              {loading ? (
+              {saving ? (
                 <>
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
                   Saving...

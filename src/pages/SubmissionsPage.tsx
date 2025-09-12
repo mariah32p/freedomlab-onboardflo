@@ -34,9 +34,9 @@ import {
 
 export default function SubmissionsPage() {
   const { user } = useAuth();
-  const { subscription, getAccessStatus } = useSubscription();
+  const { loading, getAccessStatus } = useSubscription();
   const navigate = useNavigate();
-  const { sessions, loading, error, deleteSession, getSessionStats, getSessionProgress } = useCustomerSessions();
+  const { sessions, loading: sessionsLoading, error, deleteSession, getSessionStats, getSessionProgress } = useCustomerSessions();
   const { messages, showSuccess, showError, showWarning, dismissToast } = useToast();
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [copiedSessionId, setCopiedSessionId] = useState<string | null>(null);
@@ -63,10 +63,10 @@ export default function SubmissionsPage() {
 
   // Redirect to dashboard if no active subscription
   useEffect(() => {
-    if (!accessStatus.hasAccess || accessStatus.shouldRedirectToGetStarted) {
+    if (!loading && (!accessStatus.hasAccess || accessStatus.shouldRedirectToGetStarted)) {
       navigate('/dashboard');
     }
-  }, [accessStatus, navigate]);
+  }, [loading, accessStatus, navigate]);
 
   // Track progress for each session
   const [sessionProgress, setSessionProgress] = useState<Record<string, number>>({});
@@ -481,7 +481,7 @@ export default function SubmissionsPage() {
     });
   };
 
-  if (loading) {
+  if (sessionsLoading) {
     return (
       <div className="pt-20 min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">

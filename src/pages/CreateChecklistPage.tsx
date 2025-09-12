@@ -7,7 +7,7 @@ import { useChecklists } from '../hooks/useChecklists';
 import PaymentBanner from '../components/PaymentBanner';
 import TrialBanner from '../components/TrialBanner';
 import { CreateChecklistData } from '../types/checklist';
-import { 
+import {
   ArrowRight, 
   ArrowLeft, 
   CheckCircle, 
@@ -50,13 +50,13 @@ export default function CreateChecklistPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
-  const { subscription, getAccessStatus } = useSubscription();
+  const { loading, getAccessStatus } = useSubscription();
   const { createChecklist } = useChecklists();
   const accessStatus = getAccessStatus();
   
   const [currentStep, setCurrentStep] = useState<'welcome' | 'choose' | 'customize' | 'launch'>('welcome');
   const [selectedTemplate, setSelectedTemplate] = useState<ChecklistTemplate | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [editingStepIndex, setEditingStepIndex] = useState<number | null>(null);
   
   const [formData, setFormData] = useState<CreateChecklistData>({
@@ -70,10 +70,10 @@ export default function CreateChecklistPage() {
 
   // Redirect to dashboard if no active subscription
   useEffect(() => {
-    if (!accessStatus.hasAccess || accessStatus.shouldRedirectToGetStarted) {
+    if (!loading && (!accessStatus.hasAccess || accessStatus.shouldRedirectToGetStarted)) {
       navigate('/dashboard');
     }
-  }, [accessStatus, navigate]);
+  }, [loading, accessStatus, navigate]);
 
   // Load from URL params if available
   useEffect(() => {
@@ -246,7 +246,7 @@ export default function CreateChecklistPage() {
       return;
     }
 
-    setLoading(true);
+    setSaving(true);
     try {
       const success = await createChecklist({ ...formData, steps });
       if (success) {
@@ -254,7 +254,7 @@ export default function CreateChecklistPage() {
         navigate('/checklists');
       }
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
 
@@ -776,10 +776,10 @@ export default function CreateChecklistPage() {
       <div className="space-y-4">
         <button
           onClick={handleSave}
-          disabled={loading || !formData.title.trim() || steps.length === 0}
+          disabled={saving || !formData.title.trim() || steps.length === 0}
           className="bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-colors flex items-center mx-auto disabled:opacity-50 font-sans"
         >
-          {loading ? (
+          {saving ? (
             <>
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
               Creating Checklist...
