@@ -55,7 +55,7 @@ export default function SettingsPage() {
       }
 
       // Open the portal in the same tab
-      window.location.href = data.url;
+      window.open(data.url, '_blank', 'noopener,noreferrer');
     } catch (err) {
       console.error('Error opening billing portal:', err);
       alert('Failed to open billing portal. Please try again.');
