@@ -24,7 +24,7 @@ export default function TrialBanner() {
         <div className="ml-3 flex-1">
           <p className="text-sm text-blue-700 font-sans">
             <strong>Trial ends in {daysRemaining} days.</strong> Your card will be charged on {chargeDate}.{' '}
-            <Link to="/settings" className="underline hover:no-underline">
+            <Link to="/settings" className="underline hover:no-underline font-medium">
               Manage in Settings
             </Link>
           </p>
