@@ -2,6 +2,12 @@ import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 import Stripe from 'npm:stripe@17.7.0';
 import { createClient } from 'npm:@supabase/supabase-js@2.49.1';
 
+// OnboardFlo specific price IDs - only process events for these products
+const ONBOARDFLO_PRICE_IDS = [
+  'price_1RzrMYDn6VTzl81bogCwhX1U', // Standard plan
+  'price_1RzrMYDn6VTzl81bTSgcl0ZA', // Pro plan
+];
+
 const stripeSecret = Deno.env.get('STRIPE_SECRET_KEY')!;
 const stripeWebhookSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET')!;
 
@@ -146,6 +152,26 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     return;
   }
 
+  // For subscription checkouts, verify this is for OnboardFlo
+  if (session.mode === 'subscription') {
+    // Get the subscription to check the price ID
+    const subscriptions = await stripe.subscriptions.list({
+      customer: session.customer,
+      limit: 1,
+      status: 'all',
+    });
+
+    if (subscriptions.data.length > 0) {
+      const subscription = subscriptions.data[0];
+      const priceId = subscription.items.data[0]?.price?.id;
+      
+      if (!priceId || !ONBOARDFLO_PRICE_IDS.includes(priceId)) {
+        console.log(`ℹ️ Ignoring checkout for different product. Price ID: ${priceId}`);
+        return;
+      }
+    }
+  }
+
   const customerId = session.customer;
   
   // For subscription checkouts, ensure customer mapping exists
@@ -224,6 +250,13 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 async function handleSubscriptionChange(subscription: Stripe.Subscription) {
   console.log(`🔄 Processing subscription change: ${subscription.id} (${subscription.status})`);
   
+  // Only process OnboardFlo subscriptions
+  const priceId = subscription.items.data[0]?.price?.id;
+  if (!priceId || !ONBOARDFLO_PRICE_IDS.includes(priceId)) {
+    console.log(`ℹ️ Ignoring subscription change for different product. Price ID: ${priceId}`);
+    return;
+  }
+
   if (!subscription.customer || typeof subscription.customer !== 'string') {
     console.error('❌ No customer ID in subscription');
     return;
@@ -235,6 +268,13 @@ async function handleSubscriptionChange(subscription: Stripe.Subscription) {
 async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
   console.log(`🗑️ Processing subscription deletion: ${subscription.id}`);
   
+  // Only process OnboardFlo subscriptions
+  const priceId = subscription.items.data[0]?.price?.id;
+  if (!priceId || !ONBOARDFLO_PRICE_IDS.includes(priceId)) {
+    console.log(`ℹ️ Ignoring subscription deletion for different product. Price ID: ${priceId}`);
+    return;
+  }
+
   if (!subscription.customer || typeof subscription.customer !== 'string') {
     console.error('❌ No customer ID in deleted subscription');
     return;
@@ -259,6 +299,15 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
 async function handlePaymentFailed(invoice: Stripe.Invoice) {
   console.log(`💳❌ Processing payment failure: ${invoice.id}`);
   
+  // Only process OnboardFlo invoices
+  if (invoice.lines && invoice.lines.data.length > 0) {
+    const priceId = invoice.lines.data[0]?.price?.id;
+    if (!priceId || !ONBOARDFLO_PRICE_IDS.includes(priceId)) {
+      console.log(`ℹ️ Ignoring payment failure for different product. Price ID: ${priceId}`);
+      return;
+    }
+  }
+
   if (!invoice.customer || typeof invoice.customer !== 'string') {
     console.error('❌ No customer ID in failed invoice');
     return;
@@ -285,6 +334,15 @@ async function handlePaymentFailed(invoice: Stripe.Invoice) {
 async function handlePaymentSucceeded(invoice: Stripe.Invoice) {
   console.log(`💳✅ Processing payment success: ${invoice.id}`);
   
+  // Only process OnboardFlo invoices
+  if (invoice.lines && invoice.lines.data.length > 0) {
+    const priceId = invoice.lines.data[0]?.price?.id;
+    if (!priceId || !ONBOARDFLO_PRICE_IDS.includes(priceId)) {
+      console.log(`ℹ️ Ignoring payment success for different product. Price ID: ${priceId}`);
+      return;
+    }
+  }
+
   if (!invoice.customer || typeof invoice.customer !== 'string') {
     console.error('❌ No customer ID in successful invoice');
     return;
