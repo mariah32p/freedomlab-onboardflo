@@ -160,6 +160,31 @@ export default function FileUpload({
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
+  const getFileIcon = (type: string) => {
+    if (type.startsWith('image/')) return '🖼️';
+    if (type.includes('pdf')) return '📄';
+    if (type.includes('word') || type.includes('doc')) return '📝';
+    if (type.includes('excel') || type.includes('sheet')) return '📊';
+    if (type.includes('powerpoint') || type.includes('presentation')) return '📋';
+    if (type.includes('zip') || type.includes('rar')) return '📦';
+    if (type.includes('video')) return '🎥';
+    if (type.includes('audio')) return '🎵';
+    return '📎';
+  };
+
+  const isImageFile = (type: string) => type.startsWith('image/');
+
+  const getFileTypeLabel = (type: string) => {
+    if (type.includes('pdf')) return 'PDF';
+    if (type.includes('word') || type.includes('doc')) return 'Document';
+    if (type.includes('excel') || type.includes('sheet')) return 'Spreadsheet';
+    if (type.includes('powerpoint') || type.includes('presentation')) return 'Presentation';
+    if (type.includes('zip') || type.includes('rar')) return 'Archive';
+    if (type.startsWith('image/')) return 'Image';
+    if (type.startsWith('video/')) return 'Video';
+    if (type.startsWith('audio/')) return 'Audio';
+    return 'File';
+  };
   return (
     <div className="space-y-4">
       {/* Upload Area */}
@@ -225,40 +250,78 @@ export default function FileUpload({
           <h4 className="text-sm font-medium text-gray-700 font-sans">
             Uploaded Files ({uploadedFiles.length})
           </h4>
-          <div className="space-y-2">
+          <div className="grid grid-cols-1 gap-3">
             {uploadedFiles.map((file, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
-                <div className="flex items-center space-x-3 flex-1">
-                  <div className="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center">
-                    <File className="w-4 h-4 text-emerald-600" />
+              <div key={index} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all duration-200">
+                <div className="flex items-start space-x-4">
+                  {/* File Icon/Preview */}
+                  <div className="flex-shrink-0">
+                    {isImageFile(file.type) ? (
+                      <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
+                        <img 
+                          src={file.url} 
+                          alt={file.name}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            // Fallback to icon if image fails to load
+                            e.currentTarget.style.display = 'none';
+                            e.currentTarget.nextElementSibling!.style.display = 'flex';
+                          }}
+                        />
+                        <div className="w-full h-full bg-gray-100 rounded-lg hidden items-center justify-center">
+                          <span className="text-2xl">{getFileIcon(file.type)}</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center border border-gray-200">
+                        <span className="text-2xl">{getFileIcon(file.type)}</span>
+                      </div>
+                    )}
                   </div>
+                  
+                  {/* File Details */}
                   <div className="flex-1 min-w-0">
-                    <div className="font-medium text-gray-900 text-sm truncate font-sans">
+                    <div className="font-semibold text-gray-900 text-base truncate font-sans mb-1">
                       {file.name}
                     </div>
+                    <div className="flex items-center space-x-3 text-sm text-gray-600 mb-2">
+                      <span className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium font-sans">
+                        {getFileTypeLabel(file.type)}
+                      </span>
+                      <span className="font-sans">{formatFileSize(file.size)}</span>
+                    </div>
                     <div className="text-xs text-gray-500 font-sans">
-                      {formatFileSize(file.size)} • {new Date(file.uploadedAt).toLocaleDateString()} • 
-                      <span className="ml-1 text-emerald-600">✓ Uploaded</span>
+                      Uploaded {new Date(file.uploadedAt).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
                     </div>
                   </div>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <button
-                    onClick={() => downloadFile(file)}
-                    className="p-1 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-100 rounded transition-colors"
-                    title="Download file"
-                  >
-                    <Download className="w-4 h-4" />
-                  </button>
-                  {!disabled && (
+                  
+                  {/* Actions */}
+                  <div className="flex items-center space-x-2">
                     <button
-                      onClick={() => removeFile(index)}
-                      className="p-1 text-red-600 hover:text-red-700 hover:bg-red-100 rounded transition-colors"
-                      title="Remove file"
+                      onClick={() => downloadFile(file)}
+                      className="flex items-center space-x-2 px-3 py-2 bg-emerald-50 text-emerald-700 rounded-lg hover:bg-emerald-100 transition-colors font-sans text-sm font-medium"
+                      title="Download file"
                     >
-                      <X className="w-4 h-4" />
+                      <Download className="w-4 h-4" />
+                      <span>Download</span>
                     </button>
-                  )}
+                    {!disabled && (
+                      <button
+                        onClick={() => removeFile(index)}
+                        className="flex items-center space-x-2 px-3 py-2 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors font-sans text-sm font-medium"
+                        title="Remove file"
+                      >
+                        <X className="w-4 h-4" />
+                        <span>Remove</span>
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}
