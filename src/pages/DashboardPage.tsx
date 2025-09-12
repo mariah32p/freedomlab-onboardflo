@@ -74,6 +74,13 @@ export default function DashboardPage() {
                 key={index}
                 className="relative bg-white rounded-2xl p-8 border-2 border-emerald-500 ring-4 ring-emerald-500/20 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
               >
+                {plan.comingSoon && (
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                    <div className="bg-orange-500 text-white px-4 py-2 rounded-full text-sm font-medium font-sans">
+                      Coming Soon
+                    </div>
+                  </div>
+                )}
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                   <div className="bg-emerald-500 text-white px-4 py-2 rounded-full text-sm font-medium font-sans">
                     7-Day Free Trial
