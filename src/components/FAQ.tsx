@@ -20,7 +20,7 @@ const faqs = [
   },
   {
     question: 'Is there a limit to how many checklists I can create?',
-    answer: 'The Standard plan includes up to 3 active checklists, while the Pro plan offers unlimited checklists. You can always upgrade as your needs grow.'
+    answer: 'The Standard plan includes unlimited checklists and unlimited customer submissions. You can create as many onboarding flows as you need for your business.'
   },
   {
     question: 'How does the 7-day free trial work?',
