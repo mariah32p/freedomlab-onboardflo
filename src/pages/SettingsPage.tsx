@@ -16,8 +16,8 @@ export default function SettingsPage() {
 
   // Redirect to dashboard if no active subscription
   React.useEffect(() => {
-    if (!loading && (!accessStatus.hasAccess || accessStatus.shouldRedirectToGetStarted)) {
-      navigate('/dashboard');
+    if (!loading && accessStatus.shouldRedirectToGetStarted) {
+      navigate('/get-started');
     }
   }, [accessStatus, navigate, loading]);
 
