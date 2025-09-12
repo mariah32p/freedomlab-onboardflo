@@ -72,6 +72,12 @@ function App() {
                     <Route path="/submissions" element={<SubmissionsPage />} />
                     <Route path="/settings" element={<SettingsPage />} />
                     <Route path="/branding" element={<BrandingPage />} />
+                    <Route path="/checklists" element={<ChecklistsPage />} />
+                    <Route path="/checklists/create" element={<CreateChecklistPage />} />
+                    <Route path="/checklists/edit/:checklistId" element={<EditChecklistPage />} />
+                    <Route path="/submissions" element={<SubmissionsPage />} />
+                    <Route path="/settings" element={<SettingsPage />} />
+                    <Route path="/branding" element={<BrandingPage />} />
                   </Routes>
                 </main>
               </div>
