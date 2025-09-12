@@ -16,7 +16,6 @@ import SignUpPage from './pages/SignUpPage';
 import SignInPage from './pages/SignInPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
-import GetStartedPage from './pages/GetStartedPage';
 import DashboardPage from './pages/DashboardPage';
 import ChecklistsPage from './pages/ChecklistsPage';
 import SubmissionsPage from './pages/SubmissionsPage';
@@ -63,7 +62,6 @@ function App() {
                     <Route path="/" element={<LandingPage />} />
                     <Route path="/pricing" element={<PricingPage />} />
                     <Route path="/signup" element={<SignUpPage />} />
-                    <Route path="/get-started" element={<GetStartedPage />} />
                     <Route path="/signin" element={<SignInPage />} />
                     <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                     <Route path="/reset-password" element={<ResetPasswordPage />} />
