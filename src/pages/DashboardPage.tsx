@@ -261,8 +261,8 @@ export default function DashboardPage() {
 
       {/* Branding Setup Prompt */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
+          <div className="flex items-start sm:items-center">
             <Palette className="w-6 h-6 text-blue-600 mr-3" />
             <div>
               <h3 className="text-lg font-semibold text-blue-800 font-sans">Before you get started</h3>
@@ -273,7 +273,7 @@ export default function DashboardPage() {
           </div>
           <Link
             to="/branding"
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2 font-sans"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2 font-sans w-full sm:w-auto"
           >
             <Palette className="w-4 h-4" />
             <span>Update Branding</span>
