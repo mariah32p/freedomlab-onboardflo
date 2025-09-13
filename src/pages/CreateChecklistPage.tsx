@@ -623,12 +623,12 @@ export default function CreateChecklistPage() {
                     />
                     <div className="flex items-center">
                       <Globe className="w-4 h-4 text-emerald-500 mr-2" />
-                      <span className="font-sans">Public - Sessions can be public or password-protected</span>
+                      <span className="font-sans">Public - Anyone with a session link can access</span>
                     </div>
                   </label>
                 </div>
                 <p className="text-xs text-gray-500 mt-2 font-sans">
-                  Password protection is now set when creating individual customer sessions
+                  Password protection can be added when creating individual customer sessions
                 </p>
               </div>
             </div>
