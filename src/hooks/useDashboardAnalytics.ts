@@ -89,24 +89,11 @@ export function useDashboardAnalytics(): DashboardAnalytics {
       const completedSessions = allSessions.filter(s => s.submission_status === 'completed').length;
       const pendingSessions = allSessions.filter(s => s.submission_status === 'pending').length;
       
-      // Active customers: those who have started but not completed (within last 30 days)
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      // Active customers: those who have started but not completed (all time)
+      const activeSessions = allSessions.filter(s => s.submission_status === 'started').length;
       
-      const activeSessions = allSessions.filter(s => {
-        if (s.submission_status !== 'started') return false;
-        const lastActivity = new Date(s.last_activity);
-        return lastActivity > thirtyDaysAgo;
-      }).length;
-
-      // Active customers includes both active sessions and recently completed ones
-      const recentlyCompleted = allSessions.filter(s => {
-        if (s.submission_status !== 'completed' || !s.completed_at) return false;
-        const completedDate = new Date(s.completed_at);
-        return completedDate > thirtyDaysAgo;
-      }).length;
-
-      const activeCustomers = activeSessions + recentlyCompleted;
+      // Active customers = sessions currently in progress
+      const activeCustomers = activeSessions;
 
       // Completion rate: completed / (completed + started + abandoned)
       // Exclude pending sessions as they haven't been attempted yet
