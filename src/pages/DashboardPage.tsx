@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useSubscription } from '../hooks/useSubscription';
 import { useStripe } from '../hooks/useStripe';
+import { useDashboardAnalytics } from '../hooks/useDashboardAnalytics';
 import PaymentBanner from '../components/PaymentBanner';
 import TrialBanner from '../components/TrialBanner';
 import { stripeProducts } from '../stripe-config';
@@ -28,6 +29,7 @@ export default function DashboardPage() {
   const { user } = useAuth();
   const { subscription, loading: subscriptionLoading, getAccessStatus } = useSubscription();
   const { createCheckoutSession, loading: stripeLoading, error: stripeError } = useStripe();
+  const analytics = useDashboardAnalytics();
   const urlParams = new URLSearchParams(window.location.search);
   const isSuccess = urlParams.get('success') === 'true';
   const accessStatus = getAccessStatus();
@@ -272,7 +274,9 @@ export default function DashboardPage() {
               <Users className="w-6 h-6 text-blue-600" />
             </div>
             <div className="ml-4">
-              <div className="text-2xl font-bold text-gray-900 font-sans">247</div>
+              <div className="text-2xl font-bold text-gray-900 font-sans">
+                {analytics.loading ? '...' : analytics.activeCustomers}
+              </div>
               <div className="text-sm text-gray-600 font-sans">Active Customers</div>
             </div>
           </div>
@@ -284,7 +288,9 @@ export default function DashboardPage() {
               <CheckCircle className="w-6 h-6 text-emerald-600" />
             </div>
             <div className="ml-4">
-              <div className="text-2xl font-bold text-gray-900 font-sans">87%</div>
+              <div className="text-2xl font-bold text-gray-900 font-sans">
+                {analytics.loading ? '...' : `${analytics.completionRate}%`}
+              </div>
               <div className="text-sm text-gray-600 font-sans">Completion Rate</div>
             </div>
           </div>
@@ -296,7 +302,9 @@ export default function DashboardPage() {
               <Clock className="w-6 h-6 text-orange-600" />
             </div>
             <div className="ml-4">
-              <div className="text-2xl font-bold text-gray-900 font-sans">2.3</div>
+              <div className="text-2xl font-bold text-gray-900 font-sans">
+                {analytics.loading ? '...' : `${analytics.avgCompletionDays}`}
+              </div>
               <div className="text-sm text-gray-600 font-sans">Avg Days</div>
             </div>
           </div>
