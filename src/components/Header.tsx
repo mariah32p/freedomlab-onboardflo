@@ -82,14 +82,14 @@ export default function Header() {
               )}
               {showUserMenu && (
                 <>
+                  <Link to="/branding" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
+                    Branding
+                  </Link>
                   <Link to="/checklists" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
                     Checklists
                   </Link>
                   <Link to="/submissions" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
                     Sessions
-                  </Link>
-                  <Link to="/branding" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
-                    Branding
                   </Link>
                 </>
               )}
@@ -191,14 +191,14 @@ export default function Header() {
               {/* Only show navigation links for users with active subscriptions */}
               {hasActiveSubscription && (
                 <>
+                  <Link to="/branding" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
+                    Branding
+                  </Link>
                   <Link to="/checklists" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
                     Checklists
                   </Link>
                   <Link to="/submissions" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
                     Sessions
-                  </Link>
-                  <Link to="/branding" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
-                    Branding
                   </Link>
                   <Link to="/settings" className="text-gray-600 hover:text-gray-900 transition-colors font-medium font-sans">
                     Settings
