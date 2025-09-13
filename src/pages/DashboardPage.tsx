@@ -22,7 +22,8 @@ import {
   CreditCard,
   Plus,
   Eye,
-  Mail
+  Mail,
+  Palette
 } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -257,6 +258,28 @@ export default function DashboardPage() {
           </div>
         </div>
       )}
+
+      {/* Branding Setup Prompt */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <Palette className="w-6 h-6 text-blue-600 mr-3" />
+            <div>
+              <h3 className="text-lg font-semibold text-blue-800 font-sans">Before you get started</h3>
+              <p className="text-blue-700 font-sans">
+                Set up your branding to create professional, branded onboarding experiences for your customers.
+              </p>
+            </div>
+          </div>
+          <Link
+            to="/branding"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2 font-sans"
+          >
+            <Palette className="w-4 h-4" />
+            <span>Update Branding</span>
+          </Link>
+        </div>
+      </div>
 
       {/* Header */}
       <div className="mb-8">
